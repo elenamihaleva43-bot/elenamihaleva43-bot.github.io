@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Задания по классам · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--mint:#7fffd4;--mint-soft:#a8f0dc;
+    --coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass-brd:rgba(26,188,156,0.4);
+  }
+  html,body{min-height:100vh;font-family:'Georgia','Times New Roman',serif;color:var(--text);
+    background:radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.25),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.18),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.08),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;overflow-x:hidden;
+    display:flex;justify-content:center;padding:24px 20px 60px;}
+  .corner-logo{position:fixed;top:14px;left:16px;z-index:50;font-family:'Times New Roman',serif;text-align:center;line-height:1;padding:8px 14px 10px;background:rgba(10,42,51,0.6);border:1px solid rgba(26,188,156,0.4);border-radius:12px;backdrop-filter:blur(8px);cursor:pointer;text-decoration:none;}
+  .corner-logo .dots{font-size:9px;letter-spacing:2px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:13px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:4px;}
+  .corner-logo .ru{font-size:9px;letter-spacing:2px;color:var(--text-soft);margin-top:2px;}
+  .app{max-width:1100px;width:100%;position:relative;z-index:2;}
+
+  .header{text-align:center;margin-bottom:30px;padding:20px 0;}
+  .back-link{display:inline-block;font-size:13px;color:var(--text-soft);text-decoration:none;letter-spacing:1px;margin-bottom:16px;padding:8px 16px;border:1px solid var(--glass-brd);border-radius:20px;transition:0.2s;}
+  .back-link:hover{background:rgba(26,188,156,0.1);color:var(--mint);}
+  .header h1{font-size:clamp(26px,4vw,38px);color:var(--mint);letter-spacing:3px;margin-bottom:10px;text-shadow:0 0 30px rgba(127,255,212,0.4);font-family:'Times New Roman',serif;font-weight:700;}
+  .header h1 span{color:var(--gold-light);}
+  .header .subtitle{font-size:clamp(14px,1.8vw,17px);color:var(--text-soft);font-style:italic;max-width:640px;margin:0 auto;line-height:1.6;}
+
+  /* ТАБЫ-КЛАССЫ (сверху) */
+  .class-tabs{
+    display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
+    padding:14px 16px;margin-bottom:24px;
+    background:rgba(255,255,255,0.04);
+    border:1.5px solid var(--glass-brd);
+    border-radius:20px;backdrop-filter:blur(10px);
+  }
+  .class-tab{
+    padding:11px 22px;border-radius:14px;border:2px solid transparent;
+    background:rgba(255,255,255,0.04);
+    font-family:inherit;font-size:15px;font-weight:700;letter-spacing:1px;
+    color:var(--text-soft);cursor:pointer;transition:all 0.25s;
+    white-space:nowrap;
+  }
+  .class-tab:hover{background:rgba(26,188,156,0.12);color:var(--mint);}
+  .class-tab.active{
+    background:linear-gradient(135deg,#1abc9c,#16a085);
+    color:#04231d;border-color:var(--mint);
+    box-shadow:0 6px 20px rgba(26,188,156,0.4);
+  }
+  .class-tab.special{border-color:rgba(244,211,94,0.4);}
+  .class-tab.special.active{
+    background:linear-gradient(135deg,#f4d35e,#c9a32b);
+    color:#4a3800;border-color:var(--gold);
+    box-shadow:0 6px 20px rgba(244,211,94,0.5);
+  }
+
+  /* ПАНЕЛИ КЛАССОВ */
+  .class-panel{display:none;animation:fade 0.4s ease;}
+  .class-panel.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+  .panel-title{font-size:20px;color:var(--mint);letter-spacing:2px;margin-bottom:20px;text-align:center;font-weight:700;}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px;}
+  @media(max-width:600px){.cards{grid-template-columns:1fr;}}
+
+  .card{
+    display:block;text-decoration:none;color:inherit;
+    background:rgba(255,255,255,0.04);
+    border:1.5px solid var(--glass-brd);
+    border-radius:18px;padding:20px 22px 18px;
+    backdrop-filter:blur(10px);
+    transition:all 0.3s cubic-bezier(.2,.9,.3,1.1);
+    position:relative;overflow:hidden;
+    cursor:pointer;
+  }
+  .card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--teal);transition:width 0.3s;}
+  .card:hover{transform:translateY(-4px);border-color:var(--mint);background:rgba(26,188,156,0.1);box-shadow:0 14px 36px rgba(26,188,156,0.28);}
+  .card:hover::before{width:8px;}
+  .card .card-icon{font-size:32px;margin-bottom:8px;display:block;line-height:1;}
+  .card .card-title{font-size:17px;font-weight:700;color:var(--mint);letter-spacing:0.3px;margin-bottom:5px;line-height:1.35;}
+  .card .card-desc{font-size:13px;color:var(--text-soft);line-height:1.5;font-style:italic;}
+  .card .card-tag{display:inline-block;font-size:10.5px;letter-spacing:1px;font-weight:700;padding:3px 10px;border-radius:8px;margin-top:10px;background:rgba(244,211,94,0.15);color:var(--gold-light);border:1px solid rgba(244,211,94,0.3);text-transform:uppercase;font-family:'Courier New',monospace;}
+
+  /* Заглушка "Скоро" */
+  .coming-soon{
+    text-align:center;padding:60px 20px;
+    background:rgba(255,255,255,0.03);
+    border:2px dashed rgba(255,255,255,0.15);
+    border-radius:20px;
+  }
+  .coming-soon .icon{font-size:56px;display:block;margin-bottom:14px;opacity:0.6;}
+  .coming-soon h3{font-size:20px;color:var(--mint);letter-spacing:2px;margin-bottom:8px;font-weight:700;}
+  .coming-soon p{font-size:15px;color:var(--text-soft);font-style:italic;max-width:480px;margin:0 auto;line-height:1.6;}
+
+  .footer{text-align:center;margin-top:50px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.08);font-size:12px;color:var(--text-soft);letter-spacing:1px;opacity:0.7;line-height:1.8;font-style:italic;}
+  .footer a{color:var(--mint);text-decoration:none;}
+</style>
+</head>
+<body>
+
+<a class="corner-logo" href="index.html" title="На главную">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+</a>
+
+<div class="app">
+
+  <div class="header">
+    <a class="back-link" href="index.html">← На главную</a>
+    <h1>📚 <span>Задания</span> по классам</h1>
+    <div class="subtitle">Выбери класс или раздел — и приступай</div>
+  </div>
+
+  <!-- ============== ТАБЫ-КЛАССЫ ============== -->
+  <div class="class-tabs">
+    <button class="class-tab" data-class="5">5 класс</button>
+    <button class="class-tab" data-class="6">6 класс</button>
+    <button class="class-tab active" data-class="7">7 класс</button>
+    <button class="class-tab" data-class="8">8 класс</button>
+    <button class="class-tab" data-class="9">9 класс</button>
+    <button class="class-tab" data-class="10">10 класс</button>
+    <button class="class-tab" data-class="11">11 класс</button>
+    <button class="class-tab special" data-class="oge">📐 ОГЭ</button>
+    <button class="class-tab special" data-class="ege">🎓 ЕГЭ профиль</button>
+  </div>
+
+  <!-- ============== 5 КЛАСС ============== -->
+  <div class="class-panel" data-panel="5">
+    <div class="coming-soon">
+      <span class="icon">🌱</span>
+      <h3>5 класс · Скоро</h3>
+      <p>Задания для 5 класса появятся здесь совсем скоро</p>
+    </div>
+  </div>
+
+  <!-- ============== 6 КЛАСС ============== -->
+  <div class="class-panel" data-panel="6">
+    <div class="coming-soon">
+      <span class="icon">🌿</span>
+      <h3>6 класс · Скоро</h3>
+      <p>Задания для 6 класса появятся здесь совсем скоро</p>
+    </div>
+  </div>
+
+  <!-- ============== 7 КЛАСС ============== -->
+  <div class="class-panel active" data-panel="7">
+    <div class="panel-title">✦ 7 класс ✦</div>
+    <div class="cards">
+
+      <a class="card" href="urok8.html">
+        <span class="card-icon">📐</span>
+        <div class="card-title">§8 · Линейное уравнение</div>
+        <div class="card-desc">Алгоритм решения, визуализация переноса, практика</div>
+        <div class="card-tag">Урок</div>
+      </a>
+
+      <a class="card" href="urok9-1.html">
+        <span class="card-icon">📖</span>
+        <div class="card-title">§9 Урок 1 · Задачи на 2 объекта</div>
+        <div class="card-desc">«В … раз» и «на … больше» · пошаговый разбор + практика</div>
+        <div class="card-tag">Урок</div>
+      </a>
+
+      <a class="card" href="urok9-2.html">
+        <span class="card-icon">🔄</span>
+        <div class="card-title">§9 Урок 2 · Задачи на перестановку</div>
+        <div class="card-desc">Таблица «Было-Стало» + практика на canvas</div>
+        <div class="card-tag">Урок</div>
+      </a>
+
+      <a class="card" href="urok9-3.html">
+        <span class="card-icon">🏛️</span>
+        <div class="card-title">§9 Урок 3 · 3 объекта + движение</div>
+        <div class="card-desc">Три объекта и задачи «скорость-время-расстояние»</div>
+        <div class="card-tag">Урок</div>
+      </a>
+
+      <a class="card" href="kontrol-1.html">
+        <span class="card-icon">🔷</span>
+        <div class="card-title">Контрольная №1 · Тождественные преобразования</div>
+        <div class="card-desc">2 варианта: Макарычев и Ершова · с решением на canvas</div>
+        <div class="card-tag">Контрольная</div>
+      </a>
+
+      <a class="card" href="kontrol-2.html">
+        <span class="card-icon">🔶</span>
+        <div class="card-title">Контрольная №2 · Уравнения</div>
+        <div class="card-desc">2 варианта: Макарычев и Ершова · с решением на canvas</div>
+        <div class="card-tag">Контрольная</div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- ============== 8 КЛАСС ============== -->
+  <div class="class-panel" data-panel="8">
+    <div class="coming-soon">
+      <span class="icon">📗</span>
+      <h3>8 класс · Скоро</h3>
+      <p>Задания для 8 класса появятся здесь совсем скоро</p>
+    </div>
+  </div>
+
+  <!-- ============== 9 КЛАСС ============== -->
+  <div class="class-panel" data-panel="9">
+    <div class="coming-soon">
+      <span class="icon">📘</span>
+      <h3>9 класс · Скоро</h3>
+      <p>Задания для 9 класса появятся здесь совсем скоро</p>
+    </div>
+  </div>
+
+  <!-- ============== 10 КЛАСС ============== -->
+  <div class="class-panel" data-panel="10">
+    <div class="coming-soon">
+      <span class="icon">📙</span>
+      <h3>10 класс · Скоро</h3>
+      <p>Задания для 10 класса появятся здесь совсем скоро</p>
+    </div>
+  </div>
+
+  <!-- ============== 11 КЛАСС ============== -->
+  <div class="class-panel" data-panel="11">
+    <div class="coming-soon">
+      <span class="icon">🎓</span>
+      <h3>11 класс · Скоро</h3>
+      <p>Задания для 11 класса появятся здесь совсем скоро</p>
+    </div>
+  </div>
+
+  <!-- ============== ОГЭ ============== -->
+  <div class="class-panel" data-panel="oge">
+    <div class="panel-title">📐 Задания ОГЭ</div>
+    <div class="cards">
+
+      <a class="card" href="listy.html">
+        <span class="card-icon">📄</span>
+        <div class="card-title">Форматы листов бумаги</div>
+        <div class="card-desc">5 заданий · ОБЗ · заполни ответы и отправь учителю</div>
+        <div class="card-tag">Тренажёр по 5</div>
+      </a>
+
+      <!-- Новые задания ОГЭ добавляй здесь -->
+
+    </div>
+  </div>
+
+  <!-- ============== ЕГЭ ПРОФИЛЬ ============== -->
+  <div class="class-panel" data-panel="ege">
+    <div class="coming-soon">
+      <span class="icon">🎓</span>
+      <h3>ЕГЭ профиль · Скоро</h3>
+      <p>Задания для подготовки к ЕГЭ появятся здесь совсем скоро</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    © 2026 · Τετρακτύς · <a href="index.html">Школа Елены Михалевой</a><br>
+    Математика превращается в приключение ✦
+  </div>
+
+</div>
+
+<script>
+/* ПЕРЕКЛЮЧЕНИЕ ТАБОВ */
+document.querySelectorAll('.class-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    const cls = this.dataset.class;
+    document.querySelectorAll('.class-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    document.querySelectorAll('.class-panel').forEach(p => p.classList.remove('active'));
+    const panel = document.querySelector(`.class-panel[data-panel="${cls}"]`);
+    if(panel) panel.classList.add('active');
+    // Запоминаем выбор
+    try{ localStorage.setItem('last_class', cls); }catch(e){}
+  });
+});
+
+/* Восстанавливаем последний выбранный класс */
+try{
+  const last = localStorage.getItem('last_class');
+  if(last){
+    const tab = document.querySelector(`.class-tab[data-class="${last}"]`);
+    if(tab) tab.click();
+  }
+}catch(e){}
+</script>
+</body>
+</html>
