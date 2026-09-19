@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>ДЗ · Деление многочленов · Схема Горнера · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--mint:#7fffd4;--mint-soft:#a8f0dc;
+    --coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{min-height:100vh;font-family:'Georgia','Times New Roman',serif;color:var(--text);
+    background:radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(255,107,107,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.06),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;overflow-x:hidden;display:flex;justify-content:center;padding:20px;}
+  .corner-logo{position:fixed;top:14px;left:16px;z-index:50;font-family:'Times New Roman',serif;text-align:center;line-height:1;padding:8px 14px 10px;background:rgba(10,42,51,0.6);border:1px solid rgba(26,188,156,0.4);border-radius:12px;backdrop-filter:blur(8px);}
+  .corner-logo .dots{font-size:9px;letter-spacing:2px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:13px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:4px;}
+  .corner-logo .ru{font-size:9px;letter-spacing:2px;color:var(--text-soft);margin-top:2px;}
+  .app{max-width:950px;width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--glass-brd);border-radius:24px;padding:28px 30px;backdrop-filter:blur(12px);box-shadow:0 12px 50px rgba(0,0,0,0.5);position:relative;z-index:2;}
+  .header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:1px solid rgba(26,188,156,0.2);padding-bottom:14px;margin-bottom:20px;}
+  .header-title{font-size:14px;color:var(--text-soft);font-style:italic;}
+  .header-date{font-size:13px;color:var(--text-soft);background:rgba(0,0,0,0.25);padding:6px 14px;border-radius:20px;border:1px solid var(--glass-brd);}
+  h1{font-size:clamp(20px,2.8vw,26px);color:var(--mint);letter-spacing:1.5px;text-align:center;margin-bottom:6px;}
+  .subtitle{text-align:center;font-size:14px;color:var(--text-soft);font-style:italic;margin-bottom:20px;}
+  .name-block{background:linear-gradient(135deg,rgba(244,211,94,0.12),rgba(26,188,156,0.08));border:1.5px solid var(--gold);border-radius:14px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .name-block label{font-size:15px;color:var(--gold-light);font-weight:700;font-family:'Georgia',serif;white-space:nowrap;}
+  .name-block input{flex:1;min-width:200px;padding:10px 14px;border-radius:10px;border:2px solid rgba(244,211,94,0.4);background:rgba(0,0,0,0.3);color:#fff;font-family:'Georgia',serif;font-size:16px;outline:none;transition:0.2s;}
+  .name-block input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(244,211,94,0.25);}
+  .name-block input::placeholder{color:#a89a6a;font-style:italic;}
+  .intro-block{background:rgba(255,255,255,0.03);border-radius:16px;padding:18px 22px;margin-bottom:20px;border-left:4px solid var(--teal);font-size:15px;line-height:1.75;color:var(--text);}
+  .intro-block b{color:var(--mint);}
+  .intro-block .frm{font-family:'Cambria Math',serif;color:var(--mint);font-style:italic;font-size:17px;}
+  .intro-block .signature{display:block;text-align:right;font-size:13px;color:var(--text-soft);font-style:italic;margin-top:10px;}
+  .task-block{background:rgba(0,0,0,0.2);border-radius:16px;padding:20px 24px;margin-bottom:16px;border-left:4px solid var(--mint);}
+  .task-num{font-size:12px;letter-spacing:1.5px;color:var(--mint);font-weight:700;text-transform:uppercase;margin-bottom:8px;}
+  .task-num .badge{display:inline-block;background:rgba(244,211,94,0.2);color:var(--gold-light);padding:2px 10px;border-radius:8px;font-family:'Courier New',monospace;font-size:11px;margin-left:6px;text-transform:none;letter-spacing:0.5px;}
+  .task-label{font-size:16px;color:var(--text);line-height:1.55;margin-bottom:14px;}
+  .task-label b{color:var(--mint);}
+  .task-label .frm{font-family:'Cambria Math','Times New Roman',serif;color:#fff;font-style:italic;font-size:18px;background:rgba(26,188,156,0.1);padding:2px 8px;border-radius:6px;display:inline-block;margin:2px 0;}
+  .task-label .frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 4px;line-height:1.1;font-size:0.9em;}
+  .task-label .frac .num{border-bottom:1.6px solid currentColor;padding:0 5px 1px;}
+  .task-label .frac .den{padding:1px 5px 0;}
+  .pow{font-size:0.75em;vertical-align:super;line-height:0;}
+  .answer-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;}
+  .answer-row:last-child{margin-bottom:0;}
+  .answer-row label{font-size:14px;color:var(--text-soft);font-family:'Georgia',serif;white-space:nowrap;min-width:100px;}
+  .answer-row input{flex:1;min-width:180px;padding:10px 14px;border-radius:10px;border:2px solid var(--glass-brd);background:rgba(255,255,255,0.05);color:#fff;font-family:'Cambria Math',serif;font-size:16px;outline:none;transition:0.2s;}
+  .answer-row input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(26,188,156,0.2);}
+  .answer-row input::placeholder{color:#6a8a84;font-size:14px;font-family:'Georgia',serif;font-style:italic;}
+  .btn-send{width:100%;padding:16px 32px;font-size:18px;font-weight:700;font-family:inherit;letter-spacing:1px;border:none;border-radius:16px;background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;cursor:pointer;transition:0.3s;box-shadow:0 6px 24px rgba(26,188,156,0.4);margin-top:10px;}
+  .btn-send:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(26,188,156,0.5);}
+  .btn-send:active{transform:translateY(1px);}
+  .result-area{margin-top:16px;display:none;}
+  .result-area.show{display:block;animation:fade 0.4s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .result-text{background:rgba(0,0,0,0.35);border:1.5px solid var(--mint);border-radius:12px;padding:16px 18px;font-family:'Courier New',monospace;font-size:13px;color:var(--text);white-space:pre-wrap;line-height:1.7;user-select:all;cursor:text;}
+  .result-hint{text-align:center;font-size:13px;color:var(--gold-light);font-style:italic;margin-top:10px;}
+  .btn-copy{display:block;width:100%;margin-top:12px;padding:13px 24px;font-size:15px;font-weight:700;font-family:inherit;border:2px solid var(--glass-brd);border-radius:12px;background:transparent;color:var(--mint);cursor:pointer;transition:0.25s;letter-spacing:1px;}
+  .btn-copy:hover{background:rgba(26,188,156,0.15);}
+  .btn-copy.copied{background:linear-gradient(135deg,#2ecc71,#27ae60);color:#fff;border-color:var(--ok);}
+  @media(max-width:600px){
+    .app{padding:18px 14px;}
+    .name-block{flex-direction:column;align-items:stretch;gap:8px;}
+    .name-block label{text-align:center;}
+    .task-block{padding:16px 18px;}
+    .answer-row label{min-width:80px;font-size:13px;}
+    .answer-row input{font-size:15px;padding:9px 12px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="corner-logo">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+</div>
+
+<div class="app">
+
+  <div class="header">
+    <div class="header-title">ДЗ · Деление многочленов · Схема Горнера</div>
+    <div class="header-date" id="dateDisplay">📅 00.00.0000</div>
+  </div>
+
+  <h1>Деление многочлена на многочлен. Схема Горнера</h1>
+  <div class="subtitle">Реши 9 заданий · заполни поля · отправь учителю</div>
+
+  <div class="name-block">
+    <label for="studentName">👤 Имя ученика:</label>
+    <input type="text" id="studentName" placeholder="Введи своё имя и фамилию..." maxlength="60" autocomplete="off">
+  </div>
+
+  <div class="intro-block">
+    <b>Теория.</b> Чтобы поделить многочлен <span class="frm">P(x)</span> на многочлен <span class="frm">Q(x)</span>, можно использовать <b>деление уголком</b> или, если делитель вида <span class="frm">(x − a)</span>, — <b>схему Горнера</b>.
+    <br><br>
+    <b>Результат деления</b> записывается так:
+    <br>
+    <span class="frm">P(x) / Q(x) = C(x) + R(x) / Q(x)</span>,
+    <br>
+    где <span class="frm">C(x)</span> — частное, <span class="frm">R(x)</span> — остаток, причём <span class="frm">deg R(x) &lt; deg Q(x)</span>.
+    <br><br>
+    <b>Выделить целую часть из дроби</b> — значит представить её в виде <b>целой части и правильной дроби</b>:
+    <br>
+    <span class="frm">(x³ + 2x² − 3x + 4) / (x − 1) = x² + 3x + 1 + 5/(x − 1)</span>
+    <br><br>
+    <b>Схема Горнера</b> — быстрый способ деления многочлена на <span class="frm">(x − a)</span>:
+    <br>
+    коэффициенты выписываются в строку, умножаются на <span class="frm">a</span> и складываются по диагонали.
+    <br><br>
+    <b>Для уравнений:</b> подбираем корень <span class="frm">x = a</span> среди делителей свободного члена, делим — и получаем уравнение меньшей степени.
+
+    <span class="signature">ΤΕΤΡΑΚΤΥΣ · Школа математики Елены Михалевой</span>
+  </div>
+
+  <!-- Задание 1 -->
+  <div class="task-block">
+    <div class="task-num">Задание 1 <span class="badge">Деление уголком</span></div>
+    <div class="task-label">
+      Разделите многочлен на многочлен:<br>
+      <span class="frm">(2x<span class="pow">4</span> − 3x<span class="pow">3</span> + 4x<span class="pow">2</span> − 5x + 1) : (x − 2)</span>
+    </div>
+    <div class="answer-row">
+      <label>Частное:</label>
+      <input type="text" id="t1_c" placeholder="введи многочлен">
+    </div>
+    <div class="answer-row">
+      <label>Остаток:</label>
+      <input type="text" id="t1_r" placeholder="введи число">
+    </div>
+  </div>
+
+  <!-- Задание 2 -->
+  <div class="task-block">
+    <div class="task-num">Задание 2 <span class="badge">Деление уголком</span></div>
+    <div class="task-label">
+      Разделите многочлен на многочлен:<br>
+      <span class="frm">(x<span class="pow">4</span> + 2x<span class="pow">3</span> − 5x<span class="pow">2</span> + 3x − 7) : (x<span class="pow">2</span> − 2x + 1)</span>
+    </div>
+    <div class="answer-row">
+      <label>Частное:</label>
+      <input type="text" id="t2_c" placeholder="введи многочлен">
+    </div>
+    <div class="answer-row">
+      <label>Остаток:</label>
+      <input type="text" id="t2_r" placeholder="введи остаток">
+    </div>
+  </div>
+
+  <!-- Задание 3 -->
+  <div class="task-block">
+    <div class="task-num">Задание 3 <span class="badge">Целая часть</span></div>
+    <div class="task-label">
+      Выделите целую часть из дроби:<br>
+      <span class="frm"><span class="frac"><span class="num">x<span class="pow">3</span> + 2x<span class="pow">2</span> − 3x + 4</span><span class="den">x − 1</span></span></span>
+    </div>
+    <div class="answer-row">
+      <label>Целая часть:</label>
+      <input type="text" id="t3_c" placeholder="введи целую часть">
+    </div>
+    <div class="answer-row">
+      <label>Остаток (числитель дроби):</label>
+      <input type="text" id="t3_r" placeholder="введи число">
+    </div>
+  </div>
+
+  <!-- Задание 4 -->
+  <div class="task-block">
+    <div class="task-num">Задание 4 <span class="badge">Целая часть</span></div>
+    <div class="task-label">
+      Выделите целую часть из дроби:<br>
+      <span class="frm"><span class="frac"><span class="num">2x<span class="pow">3</span> − 5x<span class="pow">2</span> + x + 3</span><span class="den">x<span class="pow">2</span> + x − 2</span></span></span>
+    </div>
+    <div class="answer-row">
+      <label>Целая часть:</label>
+      <input type="text" id="t4_c" placeholder="введи целую часть">
+    </div>
+    <div class="answer-row">
+      <label>Остаток (числитель дроби):</label>
+      <input type="text" id="t4_r" placeholder="введи остаток">
+    </div>
+  </div>
+
+  <!-- Задание 5 -->
+  <div class="task-block">
+    <div class="task-num">Задание 5 <span class="badge">Уравнение 3 степени</span></div>
+    <div class="task-label">
+      Решите уравнение:<br>
+      <span class="frm">x<span class="pow">3</span> − 3x<span class="pow">2</span> + 3x − 1 = 0</span>
+    </div>
+    <div class="answer-row">
+      <label>Корни:</label>
+      <input type="text" id="t5" placeholder="корни через точку с запятой">
+    </div>
+  </div>
+
+  <!-- Задание 6 -->
+  <div class="task-block">
+    <div class="task-num">Задание 6 <span class="badge">Уравнение 3 степени</span></div>
+    <div class="task-label">
+      Решите уравнение:<br>
+      <span class="frm">x<span class="pow">3</span> − 6x<span class="pow">2</span> + 11x − 6 = 0</span>
+    </div>
+    <div class="answer-row">
+      <label>Корни:</label>
+      <input type="text" id="t6" placeholder="корни через точку с запятой">
+    </div>
+  </div>
+
+  <!-- Задание 7 -->
+  <div class="task-block">
+    <div class="task-num">Задание 7 <span class="badge">Уравнение 4 степени</span></div>
+    <div class="task-label">
+      Решите уравнение:<br>
+      <span class="frm">x<span class="pow">4</span> − 7x<span class="pow">3</span> + 17x<span class="pow">2</span> − 17x + 6 = 0</span>
+    </div>
+    <div class="answer-row">
+      <label>Корни:</label>
+      <input type="text" id="t7" placeholder="корни через точку с запятой">
+    </div>
+  </div>
+
+  <!-- Задание 8 -->
+  <div class="task-block">
+    <div class="task-num">Задание 8 <span class="badge">Уравнение 4 степени</span></div>
+    <div class="task-label">
+      Решите уравнение:<br>
+      <span class="frm">x<span class="pow">4</span> − 5x<span class="pow">2</span> + 4 = 0</span>
+    </div>
+    <div class="answer-row">
+      <label>Корни:</label>
+      <input type="text" id="t8" placeholder="корни через точку с запятой">
+    </div>
+  </div>
+
+  <!-- Задание 9 -->
+  <div class="task-block">
+    <div class="task-num">Задание 9 <span class="badge">Уравнение 5 степени</span></div>
+    <div class="task-label">
+      Решите уравнение:<br>
+      <span class="frm">x<span class="pow">5</span> − 15x<span class="pow">4</span> + 85x<span class="pow">3</span> − 225x<span class="pow">2</span> + 274x − 120 = 0</span>
+    </div>
+    <div class="answer-row">
+      <label>Корни:</label>
+      <input type="text" id="t9" placeholder="корни через точку с запятой">
+    </div>
+  </div>
+
+  <button class="btn-send" id="btnSend">📩 Сформировать ответ для учителя</button>
+
+  <div class="result-area" id="resultArea">
+    <div class="result-text" id="resultText"></div>
+    <div class="result-hint">👇 Скопируй текст и отправь учителю</div>
+    <button class="btn-copy" id="btnCopy">📋 Скопировать ответы</button>
+  </div>
+
+</div>
+
+<script>
+/* ДАТА */
+document.getElementById('dateDisplay').textContent='📅 '+new Date().toLocaleDateString('ru-RU',{day:'2-digit',month:'long',year:'numeric'});
+
+/* ИМЯ ИЗ LOCALSTORAGE */
+const nameInput = document.getElementById('studentName');
+const savedName = localStorage.getItem('mnogochlen_student_name');
+if(savedName) nameInput.value = savedName;
+nameInput.addEventListener('input', function(){
+  localStorage.setItem('mnogochlen_student_name', this.value.trim());
+});
+
+/* КНОПКА "СФОРМИРОВАТЬ" */
+document.getElementById('btnSend').addEventListener('click', function(){
+  const name = nameInput.value.trim();
+  const t1c = document.getElementById('t1_c').value.trim();
+  const t1r = document.getElementById('t1_r').value.trim();
+  const t2c = document.getElementById('t2_c').value.trim();
+  const t2r = document.getElementById('t2_r').value.trim();
+  const t3c = document.getElementById('t3_c').value.trim();
+  const t3r = document.getElementById('t3_r').value.trim();
+  const t4c = document.getElementById('t4_c').value.trim();
+  const t4r = document.getElementById('t4_r').value.trim();
+  const t5 = document.getElementById('t5').value.trim();
+  const t6 = document.getElementById('t6').value.trim();
+  const t7 = document.getElementById('t7').value.trim();
+  const t8 = document.getElementById('t8').value.trim();
+  const t9 = document.getElementById('t9').value.trim();
+
+  const empty = [];
+  if(!name) empty.push('Имя');
+  if(!t1c || !t1r) empty.push('Задание 1');
+  if(!t2c || !t2r) empty.push('Задание 2');
+  if(!t3c || !t3r) empty.push('Задание 3');
+  if(!t4c || !t4r) empty.push('Задание 4');
+  if(!t5) empty.push('Задание 5');
+  if(!t6) empty.push('Задание 6');
+  if(!t7) empty.push('Задание 7');
+  if(!t8) empty.push('Задание 8');
+  if(!t9) empty.push('Задание 9');
+
+  if(empty.length > 0){
+    alert('Заполни все поля! Не хватает: ' + empty.join(', '));
+    return;
+  }
+
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
+
+  const text =
+`📐 ОТВЕТЫ · ДЗ · Деление многочленов
+Дата: ${dateStr}
+Ученик: ${name}
+
+Задание 1. (2x^4 − 3x^3 + 4x^2 − 5x + 1) : (x − 2)
+  Частное: ${t1c}
+  Остаток: ${t1r}
+
+Задание 2. (x^4 + 2x^3 − 5x^2 + 3x − 7) : (x^2 − 2x + 1)
+  Частное: ${t2c}
+  Остаток: ${t2r}
+
+Задание 3. (x^3 + 2x^2 − 3x + 4) / (x − 1)
+  Целая часть: ${t3c}
+  Остаток (числитель): ${t3r}
+
+Задание 4. (2x^3 − 5x^2 + x + 3) / (x^2 + x − 2)
+  Целая часть: ${t4c}
+  Остаток (числитель): ${t4r}
+
+Задание 5. x^3 − 3x^2 + 3x − 1 = 0
+  Корни: ${t5}
+
+Задание 6. x^3 − 6x^2 + 11x − 6 = 0
+  Корни: ${t6}
+
+Задание 7. x^4 − 7x^3 + 17x^2 − 17x + 6 = 0
+  Корни: ${t7}
+
+Задание 8. x^4 − 5x^2 + 4 = 0
+  Корни: ${t8}
+
+Задание 9. x^5 − 15x^4 + 85x^3 − 225x^2 + 274x − 120 = 0
+  Корни: ${t9}`;
+
+  document.getElementById('resultText').textContent = text;
+  document.getElementById('resultArea').classList.add('show');
+  document.getElementById('resultArea').scrollIntoView({behavior:'smooth', block:'nearest'});
+});
+
+/* КОПИРОВАНИЕ */
+document.getElementById('btnCopy').addEventListener('click', async function(){
+  const text = document.getElementById('resultText').textContent;
+  try{
+    await navigator.clipboard.writeText(text);
+    this.textContent = '✓ Скопировано!';
+    this.classList.add('copied');
+    setTimeout(()=>{
+      this.textContent = '📋 Скопировать ответы';
+      this.classList.remove('copied');
+    }, 2500);
+  }catch(e){
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+    this.textContent = '✓ Скопировано!';
+    this.classList.add('copied');
+    setTimeout(()=>{
+      this.textContent = '📋 Скопировать ответы';
+      this.classList.remove('copied');
+    }, 2500);
+  }
+});
+</script>
+</body>
+</html>
