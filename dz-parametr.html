@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ДЗ. Линейные уравнения с параметром — ΤΕΤΡΑΚΤΥΣ</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap');
+  :root{
+    --teal:#1abc9c; --teal-dark:#16a085;
+    --mint:#7fffd4; --mint-soft:#a8f0dc;
+    --coral:#ff6b6b; --gold:#f4d35e; --gold-light:#ffe89a;
+    --text:#e8f8f5; --text-soft:#b8d8d0;
+    --ok:#2ecc71; --err:#ff6b6b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:Georgia,'Times New Roman',serif;
+    color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(26,188,156,0.22), transparent 55%),
+      radial-gradient(ellipse at 85% 90%, rgba(127,255,212,0.15), transparent 55%),
+      radial-gradient(ellipse at 50% 50%, rgba(244,211,94,0.06), transparent 70%),
+      linear-gradient(160deg, #0a2a33 0%, #0d3b47 50%, #134e5e 100%);
+    background-attachment:fixed;
+    min-height:100vh;
+    padding:20px;
+  }
+  .logo{
+    position:fixed; top:18px; left:18px; z-index:1000;
+    display:flex; align-items:center; gap:12px;
+    padding:10px 18px 10px 14px;
+    background:rgba(10,42,51,0.65);
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    border:1.5px solid rgba(26,188,156,0.45);
+    border-radius:16px;
+    box-shadow:0 6px 24px rgba(0,0,0,0.35);
+  }
+  .logo-dots{
+    font-family:'Courier New',monospace;
+    color:var(--teal); font-size:11px; line-height:1.05;
+    letter-spacing:1px;
+  }
+  .logo-text{display:flex;flex-direction:column;line-height:1.1}
+  .logo-gr{
+    font-family:'Times New Roman',serif;
+    color:var(--teal); font-size:17px; letter-spacing:2px; font-weight:700;
+  }
+  .logo-ru{
+    font-family:'Times New Roman',serif;
+    color:var(--text-soft); font-size:12px; letter-spacing:3px;
+  }
+  .topbar{
+    position:fixed; top:18px; right:18px; z-index:1000;
+    display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    justify-content:flex-end;
+  }
+  .date-badge, .timer-badge{
+    font-family:'Courier New',monospace;
+    background:rgba(10,42,51,0.65);
+    height:46px; border-radius:14px;
+    display:flex; align-items:center; padding:0 16px;
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    box-shadow:0 6px 24px rgba(0,0,0,0.35);
+    font-weight:700; letter-spacing:1px; font-size:16px;
+  }
+  .date-badge{
+    border:1.5px solid rgba(127,255,212,0.45);
+    color:var(--mint);
+  }
+  .timer-badge{
+    border:1.5px solid rgba(244,211,94,0.55);
+    color:var(--gold); cursor:pointer;
+  }
+  .btn-icon{
+    width:46px; height:46px; border-radius:14px;
+    background:rgba(10,42,51,0.65);
+    border:1.5px solid rgba(26,188,156,0.45);
+    color:var(--teal); font-size:20px; cursor:pointer;
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    box-shadow:0 6px 24px rgba(0,0,0,0.35);
+    transition:.2s; display:flex; align-items:center; justify-content:center;
+  }
+  .btn-icon:hover{transform:translateY(-2px); border-color:var(--mint); color:var(--mint)}
+  .btn-pdf{
+    height:46px; padding:0 18px; border-radius:14px;
+    background:linear-gradient(135deg,#f4d35e,#c9a32b);
+    color:#2a1f00; border:none; cursor:pointer;
+    font-family:'Times New Roman',serif; font-weight:700;
+    font-size:14px; letter-spacing:1px; text-transform:uppercase;
+    display:flex; align-items:center; gap:8px;
+    box-shadow:0 6px 24px rgba(244,211,94,0.4);
+    transition:.2s;
+  }
+  .btn-pdf:hover{transform:translateY(-2px); box-shadow:0 8px 28px rgba(244,211,94,0.55)}
+  .btn-pdf:disabled{opacity:.6; cursor:wait; transform:none}
+  .btn-max{
+    height:54px; padding:0 28px; border-radius:14px;
+    background:linear-gradient(135deg,#1abc9c,#16a085);
+    color:#04231d; border:none; cursor:pointer;
+    font-family:'Times New Roman',serif; font-weight:700;
+    font-size:15px; letter-spacing:1px; text-transform:uppercase;
+    display:flex; align-items:center; gap:8px;
+    box-shadow:0 6px 24px rgba(26,188,156,0.45);
+    transition:.2s; text-decoration:none;
+  }
+  .btn-max:hover{transform:translateY(-2px); box-shadow:0 8px 28px rgba(26,188,156,0.6)}
+  .wrap{ max-width:1000px; margin:100px auto 40px; }
+  .card{
+    background:rgba(255,255,255,0.04);
+    border:1.5px solid rgba(26,188,156,0.4);
+    border-radius:20px;
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    box-shadow:0 8px 30px rgba(0,0,0,0.3);
+    padding:26px 28px; margin-bottom:20px;
+    transition:.25s;
+  }
+  .card:hover{border-color:var(--mint)}
+  h1{
+    font-family:'Times New Roman',serif;
+    font-size:28px; color:var(--teal);
+    letter-spacing:1px; margin-bottom:8px;
+  }
+  h1 .num{color:var(--gold); margin-right:8px}
+  .subtitle{color:var(--text-soft); font-style:italic; font-size:15px}
+  h2{
+    font-family:'Times New Roman',serif;
+    font-size:19px; color:var(--mint);
+    margin-bottom:16px; letter-spacing:1px;
+    display:flex; align-items:center; gap:10px;
+  }
+  h2::before{
+    content:''; width:6px; height:20px;
+    background:linear-gradient(180deg,var(--teal),var(--mint));
+    border-radius:3px;
+  }
+  p{line-height:1.7; color:var(--text); margin-bottom:12px; font-size:15px}
+  .soft{color:var(--text-soft)}
+  .frac{
+    display:inline-flex; flex-direction:column;
+    vertical-align:middle; text-align:center;
+    font-family:'Cambria Math','Times New Roman',serif;
+    font-style:italic; color:var(--mint);
+    font-size:17px; line-height:1.15;
+    margin:0 4px; position:relative; top:-2px;
+  }
+  .frac .num{ border-bottom:1.5px solid var(--mint); padding:0 6px 2px 6px; }
+  .frac .den{ padding:2px 6px 0 6px; }
+  .name-field{
+    display:flex; flex-direction:column; gap:8px;
+    padding:18px 20px;
+    background:rgba(26,188,156,0.06);
+    border:1.5px solid rgba(26,188,156,0.3);
+    border-radius:14px;
+    margin-bottom:20px;
+  }
+  .name-field label{
+    font-family:'Times New Roman',serif;
+    color:var(--gold); font-size:14px; letter-spacing:1.5px;
+    text-transform:uppercase; font-weight:700;
+  }
+  .name-input{
+    width:100%;
+    background:rgba(10,42,51,0.5);
+    border:1.5px solid rgba(26,188,156,0.4);
+    border-radius:10px;
+    padding:12px 16px;
+    color:var(--text);
+    font-family:Georgia,'Times New Roman',serif;
+    font-size:16px;
+    outline:none; transition:.2s;
+  }
+  .name-input:focus{
+    border-color:var(--mint);
+    box-shadow:0 0 0 3px rgba(127,255,212,0.15);
+  }
+  .name-input::placeholder{color:var(--text-soft); opacity:.5}
+  .name-hint{
+    font-size:12px; color:var(--text-soft);
+    font-style:italic; letter-spacing:.5px;
+  }
+  .task-item{
+    background:rgba(255,255,255,0.02);
+    border:1.5px solid rgba(26,188,156,0.25);
+    border-radius:14px;
+    padding:16px 18px;
+    margin-bottom:16px;
+  }
+  .task-item:last-child{margin-bottom:0}
+  .task-eq{
+    font-family:'Cambria Math','Times New Roman',serif;
+    color:var(--mint); font-size:19px; font-style:italic;
+    margin-bottom:12px; line-height:1.5;
+    padding-left:6px;
+  }
+  .task-num{
+    display:inline-block; min-width:28px; height:28px;
+    background:linear-gradient(135deg,var(--gold),#c9a32b);
+    color:#2a1f00; border-radius:8px;
+    font-family:'Courier New',monospace; font-weight:700;
+    text-align:center; line-height:28px; font-size:13px;
+    margin-right:10px; vertical-align:middle;
+  }
+  .hw-canvas{
+    display:block; width:100%; height:150px;
+    background:#f7fcfa; border-radius:10px;
+    cursor:none; touch-action:none;
+    box-shadow:inset 0 0 12px rgba(14,124,102,0.08);
+    border:1px solid rgba(14,124,102,0.15);
+  }
+  .actions{
+    display:flex; gap:14px; flex-wrap:wrap; justify-content:center;
+    padding:24px;
+  }
+  .actions .btn-pdf{
+    height:54px; padding:0 28px; font-size:15px;
+  }
+  .hint-block{
+    margin-top:18px; padding:16px 20px;
+    background:rgba(26,188,156,0.08);
+    border:1.5px solid rgba(26,188,156,0.3);
+    border-radius:12px;
+    font-size:14px; line-height:1.7;
+    color:var(--text);
+  }
+  .hint-block b{
+    color:var(--gold);
+    font-family:'Times New Roman',serif;
+    letter-spacing:1px;
+  }
+  .hint-block .sub{
+    margin-top:10px; padding-top:10px;
+    border-top:1px dashed rgba(127,255,212,0.2);
+    font-size:13px; color:var(--text-soft);
+  }
+  .hint-block .sub .phone{
+    font-family:'Courier New',monospace; color:var(--mint);
+  }
+  .footer{
+    text-align:center; padding:30px 20px 20px;
+    color:var(--text-soft); font-size:13px;
+    font-family:'Times New Roman',serif; letter-spacing:2px;
+  }
+  .footer .f-logo{color:var(--teal); font-size:15px; margin-bottom:6px}
+  .footer .f-sub{font-style:italic; opacity:.75}
+  @media(max-width:700px){
+    .wrap{margin-top:170px}
+    .topbar{gap:6px}
+    .date-badge, .timer-badge{padding:0 10px; font-size:14px}
+    .btn-pdf{padding:0 12px; font-size:12px}
+  }
+</style>
+</head>
+<body>
+
+<div class="logo">
+  <div class="logo-dots">●<br>●●<br>●●●<br>●●●●</div>
+  <div class="logo-text">
+    <span class="logo-gr">ΤΕΤΡΑΚΤΥΣ</span>
+    <span class="logo-ru">ТЕТРАКТИС</span>
+  </div>
+</div>
+
+<div class="topbar">
+  <div class="date-badge" id="dateBadge">--.--.----</div>
+  <div class="timer-badge" id="timer">00:00</div>
+  <button class="btn-icon" id="soundBtn" title="Звук">🔊</button>
+  <button class="btn-pdf" id="pdfBtnTop">📄 PDF</button>
+</div>
+
+<div class="wrap">
+
+  <div class="card">
+    <h1><span class="num">ДЗ.</span>Линейные уравнения с параметром</h1>
+    <p class="subtitle">10 класс · профильный уровень · домашнее задание</p>
+  </div>
+
+  <div class="card">
+    <div class="name-field">
+      <label for="studentName">👤 Ваше имя и фамилия</label>
+      <input type="text" id="studentName" class="name-input" placeholder="Например: Иван Петров" autocomplete="off">
+      <div class="name-hint">Имя сохранится и попадёт в PDF с решением.</div>
+    </div>
+
+    <p class="soft" style="margin-bottom:18px">Решите уравнения. Запись решения ведите прямо в клетчатых полях под каждым уравнением (стилусом или мышью). Не забудьте исследовать все случаи для параметра.</p>
+
+    <h2>Практика 1</h2>
+
+    <div class="task-item">
+      <div class="task-eq"><span class="task-num">1</span>−x = b</div>
+      <canvas class="hw-canvas" data-id="hw-p1-1"></canvas>
+    </div>
+
+    <div class="task-item">
+      <div class="task-eq"><span class="task-num">2</span>−<span class="frac"><span class="num">x + 2</span><span class="den">5</span></span> = 5 − c</div>
+      <canvas class="hw-canvas" data-id="hw-p1-2"></canvas>
+    </div>
+
+    <div class="task-item">
+      <div class="task-eq"><span class="task-num">3</span><span class="frac"><span class="num">x − 9</span><span class="den">b − 3</span></span> = b + 3</div>
+      <canvas class="hw-canvas" data-id="hw-p1-3"></canvas>
+    </div>
+
+    <h2 style="margin-top:28px">Практика 2</h2>
+
+    <div class="task-item">
+      <div class="task-eq"><span class="task-num">4</span>(a + 1)x = 0</div>
+      <canvas class="hw-canvas" data-id="hw-p2-1"></canvas>
+    </div>
+
+    <div class="task-item">
+      <div class="task-eq"><span class="task-num">5</span>(1 − b)x = −1</div>
+      <canvas class="hw-canvas" data-id="hw-p2-2"></canvas>
+    </div>
+
+    <div class="task-item">
+      <div class="task-eq"><span class="task-num">6</span><span class="frac"><span class="num">ax − a</span><span class="den">2</span></span> = a − 1</div>
+      <canvas class="hw-canvas" data-id="hw-p2-3"></canvas>
+    </div>
+
+    <h2 style="margin-top:28px">Практика 3</h2>
+
+    <div class="task-item">
+      <div class="task-eq"><span class="task-num">7</span>(1 − a)²x = a − 1</div>
+      <canvas class="hw-canvas" data-id="hw-p3-1"></canvas>
+    </div>
+
+    <div class="task-item">
+      <div class="task-eq"><span class="task-num">8</span>ax = a²(a + 1)</div>
+      <canvas class="hw-canvas" data-id="hw-p3-2"></canvas>
+    </div>
+
+    <div class="task-item">
+      <div class="task-eq"><span class="task-num">9</span>−a(2 − a)x = a² − 4</div>
+      <canvas class="hw-canvas" data-id="hw-p3-3"></canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="actions">
+      <button class="btn-pdf" id="pdfBtn">📄 Сохранить в PDF</button>
+      <a class="btn-max" href="https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes" target="_blank" rel="noopener">💬 Отправить учителю</a>
+    </div>
+
+    <div class="hint-block">
+      <b>💡 Как отправить ДЗ:</b><br>
+      1. Впишите имя и фамилию в поле выше.<br>
+      2. Нарисуйте решения в клетчатых полях.<br>
+      3. Нажмите <b>«📄 Сохранить в PDF»</b> — файл скачается.<br>
+      4. Нажмите <b>«💬 Отправить учителю»</b> — откроется страница с кнопкой <b>«Отправить сообщение»</b>.<br>
+      5. Нажмите её — откроется <b>личный чат</b> с Еленой Александровной.<br>
+      6. Прикрепите PDF к сообщению и отправьте.
+      <div class="sub">
+        <b>Если страница не открылась</b> — напишите Елене Александровне напрямую: <span class="phone">+7 903 880-17-16</span>. Ваше ДЗ увидите только вы и учитель.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <div class="f-logo">ΤΕΤΡΑΚΤΥΣ · ТЕТРАКТИС</div>
+  <div class="f-sub">где математика превращается в приключение</div>
+</div>
+
+<script>
+/* ============ ИМЯ УЧЕНИКА ============ */
+(function(){
+  const input = document.getElementById('studentName');
+  const KEY = 'tetraktys_student_name';
+  try{
+    const saved = localStorage.getItem(KEY);
+    if(saved) input.value = saved;
+  }catch(err){}
+  input.addEventListener('input', function(){
+    try{ localStorage.setItem(KEY, input.value); }catch(err){}
+  });
+})();
+
+/* ============ ДАТА ============ */
+(function(){
+  const el = document.getElementById('dateBadge');
+  function updateDate(){
+    const d = new Date();
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yyyy = d.getFullYear();
+    el.textContent = dd + '.' + mm + '.' + yyyy;
+  }
+  updateDate();
+  setInterval(updateDate, 60000);
+})();
+
+/* ============ ПРЯМОЙ ТАЙМЕР ============ */
+(function(){
+  const el = document.getElementById('timer');
+  let seconds = 0;
+  let running = true;
+  function tick(){
+    if(!running) return;
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    el.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+    seconds++;
+    setTimeout(tick, 1000);
+  }
+  tick();
+  el.addEventListener('click', function(){
+    running = !running;
+    el.style.opacity = running ? '1' : '0.5';
+    if(running) tick();
+  });
+})();
+
+/* ============ ЗВУК ============ */
+(function(){
+  const btn = document.getElementById('soundBtn');
+  let enabled = true;
+  let lastSpoken = 0;
+  function speak(text){
+    if(!enabled) return;
+    if(!('speechSynthesis' in window)) return;
+    const now = Date.now();
+    if(now - lastSpoken < 1500) return;
+    lastSpoken = now;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ru-RU';
+    u.rate = 0.95;
+    const voices = window.speechSynthesis.getVoices();
+    const v = voices.find(v => /Pavel|Dmitry|Irina/i.test(v.name));
+    if(v) u.voice = v;
+    window.speechSynthesis.speak(u);
+  }
+  btn.addEventListener('click', function(){
+    enabled = !enabled;
+    btn.textContent = enabled ? '🔊' : '🔇';
+    btn.style.color = enabled ? '#1abc9c' : '#ff6b6b';
+    if(enabled) speak('Звук включён');
+  });
+  window.addEventListener('load', function(){
+    setTimeout(function(){ speak('Домашнее задание по линейным уравнениям с параметром'); }, 700);
+  });
+})();
+
+/* ============ CANVAS ============ */
+(function(){
+  const PEN_COLOR = '#0e7c66';
+  const ERASER_COLOR = '#f7fcfa';
+  const GRID = 20;
+  const DPR = window.devicePixelRatio || 1;
+
+  function initCanvas(canvas){
+    const rect = canvas.getBoundingClientRect();
+    const w = Math.max(rect.width, 200);
+    const h = Math.max(rect.height, 150);
+    canvas.width = Math.floor(w * DPR);
+    canvas.height = Math.floor(h * DPR);
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(DPR, DPR);
+    canvas._ctx = ctx;
+    canvas._w = w;
+    canvas._h = h;
+    drawGrid(canvas);
+    loadState(canvas);
+    if(!canvas._eventsAttached){
+      attachEvents(canvas);
+      canvas._eventsAttached = true;
+    }
+  }
+
+  function drawGrid(canvas){
+    const ctx = canvas._ctx;
+    const w = canvas._w, h = canvas._h;
+    ctx.fillStyle = ERASER_COLOR;
+    ctx.fillRect(0, 0, w, h);
+    ctx.strokeStyle = 'rgba(14,124,102,0.14)';
+    ctx.lineWidth = 1;
+    for(let x = 0; x <= w; x += GRID){
+      ctx.beginPath(); ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, h); ctx.stroke();
+    }
+    for(let y = 0; y <= h; y += GRID){
+      ctx.beginPath(); ctx.moveTo(0, y + 0.5); ctx.lineTo(w, y + 0.5); ctx.stroke();
+    }
+    ctx.strokeStyle = 'rgba(14,124,102,0.25)';
+    ctx.lineWidth = 1.2;
+    for(let x = 0; x <= w; x += 100){
+      ctx.beginPath(); ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, h); ctx.stroke();
+    }
+    for(let y = 0; y <= h; y += 100){
+      ctx.beginPath(); ctx.moveTo(0, y + 0.5); ctx.lineTo(w, y + 0.5); ctx.stroke();
+    }
+  }
+
+  function getPos(canvas, e){
+    const rect = canvas.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return { x: clientX - rect.left, y: clientY - rect.top };
+  }
+
+  function drawLine(canvas, x1, y1, x2, y2){
+    const ctx = canvas._ctx;
+    ctx.beginPath();
+    ctx.strokeStyle = PEN_COLOR;
+    ctx.lineWidth = 2.2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+  }
+
+  function drawPoint(canvas, x, y){
+    const ctx = canvas._ctx;
+    ctx.beginPath();
+    ctx.fillStyle = PEN_COLOR;
+    ctx.arc(x, y, 1.4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  function attachEvents(canvas){
+    let drawing = false;
+    let rafId = null;
+    let pending = [];
+    function flush(){
+      if(pending.length === 0){ rafId = null; return; }
+      for(let i = 0; i < pending.length - 1; i++){
+        drawLine(canvas, pending[i].x, pending[i].y, pending[i+1].x, pending[i+1].y);
+      }
+      if(pending.length === 1){
+        drawPoint(canvas, pending[0].x, pending[0].y);
+      }
+      pending = [pending[pending.length - 1]];
+      rafId = requestAnimationFrame(flush);
+    }
+    canvas.addEventListener('pointerdown', function(e){
+      e.preventDefault();
+      drawing = true;
+      pending = [getPos(canvas, e)];
+      if(rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(flush);
+    });
+    canvas.addEventListener('pointermove', function(e){
+      if(!drawing) return;
+      e.preventDefault();
+      let events = [e];
+      if(e.getCoalescedEvents){
+        const co = e.getCoalescedEvents();
+        if(co && co.length) events = co;
+      }
+      for(const ev of events){ pending.push(getPos(canvas, ev)); }
+      if(!rafId) rafId = requestAnimationFrame(flush);
+    });
+    function stop(){
+      if(!drawing) return;
+      drawing = false;
+      if(rafId){ cancelAnimationFrame(rafId); rafId = null; }
+      flush();
+      saveState(canvas);
+    }
+    canvas.addEventListener('pointerup', stop);
+    canvas.addEventListener('pointerleave', stop);
+    canvas.addEventListener('pointercancel', stop);
+    if('onpointerrawupdate' in canvas){
+      canvas.addEventListener('pointerrawupdate', function(e){
+        if(!drawing) return;
+        let events = [e];
+        if(e.getCoalescedEvents){
+          const co = e.getCoalescedEvents();
+          if(co && co.length) events = co;
+        }
+        for(const ev of events){ pending.push(getPos(canvas, ev)); }
+        if(!rafId) rafId = requestAnimationFrame(flush);
+      });
+    }
+    canvas.addEventListener('dblclick', function(e){
+      e.preventDefault();
+      if(confirm('Очистить эту запись?')){
+        drawGrid(canvas);
+        saveState(canvas);
+      }
+    });
+  }
+
+  function saveState(canvas){
+    try{
+      const id = canvas.dataset.id || 'default';
+      localStorage.setItem('tetraktys_dz_parametr_' + id, canvas.toDataURL('image/png'));
+    }catch(err){}
+  }
+
+  function loadState(canvas){
+    try{
+      const id = canvas.dataset.id || 'default';
+      const data = localStorage.getItem('tetraktys_dz_parametr_' + id);
+      if(data){
+        const img = new Image();
+        img.onload = function(){
+          canvas._ctx.drawImage(img, 0, 0, canvas._w, canvas._h);
+        };
+        img.src = data;
+        return true;
+      }
+    }catch(err){}
+    return false;
+  }
+
+  function initAll(){
+    document.querySelectorAll('.hw-canvas').forEach(function(c){
+      initCanvas(c);
+    });
+  }
+
+  let resizeTimer = null;
+  window.addEventListener('resize', function(){
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function(){
+      document.querySelectorAll('.hw-canvas').forEach(function(c){
+        const id = c.dataset.id || 'default';
+        let data = null;
+        try{ data = localStorage.getItem('tetraktys_dz_parametr_' + id); }catch(err){}
+        initCanvas(c);
+        if(data){
+          const img = new Image();
+          img.onload = function(){
+            c._ctx.drawImage(img, 0, 0, c._w, c._h);
+          };
+          img.src = data;
+        }
+      });
+    }, 300);
+  });
+
+  if(document.readyState === 'complete'){
+    initAll();
+  } else {
+    window.addEventListener('load', initAll);
+  }
+  setTimeout(initAll, 400);
+})();
+
+/* ============ СОХРАНЕНИЕ В PDF — С КИРИЛЛИЦЕЙ ============ */
+(function(){
+  let fontLoaded = false;
+  let fontBase64 = null;
+
+  async function loadFont(){
+    try{
+      const url = 'https://cdn.jsdelivr.net/gh/googlefonts/PT-Serif@main/fonts/ttf/PTSerif-Regular.ttf';
+      const response = await fetch(url);
+      const buffer = await response.arrayBuffer();
+      let binary = '';
+      const bytes = new Uint8Array(buffer);
+      for(let i = 0; i < bytes.byteLength; i++){
+        binary += String.fromCharCode(bytes[i]);
+      }
+      fontBase64 = btoa(binary);
+      fontLoaded = true;
+      return true;
+    }catch(err){
+      console.warn('Не удалось загрузить PT Serif:', err);
+      return false;
+    }
+  }
+
+  async function buildPDF(){
+    if(!window.jspdf || !window.jspdf.jsPDF){
+      alert('Не удалось загрузить библиотеку PDF. Проверьте интернет и попробуйте ещё раз.');
+      return;
+    }
+    const btns = [document.getElementById('pdfBtn'), document.getElementById('pdfBtnTop')];
+    btns.forEach(b => { if(b){ b.disabled = true; b.textContent = '⏳ Подготовка…'; } });
+
+    if(!fontLoaded){ await loadFont(); }
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+    const margin = 12;
+    const contentW = pageW - margin * 2;
+
+    let fontName = 'helvetica';
+    if(fontBase64){
+      try{
+        pdf.addFileToVFS('PTSerif-Regular.ttf', fontBase64);
+        pdf.addFont('PTSerif-Regular.ttf', 'PTSerif', 'normal');
+        fontName = 'PTSerif';
+      }catch(err){
+        console.warn('Не удалось встроить PT Serif:', err);
+      }
+    }
+
+    pdf.setFont(fontName, 'normal');
+    pdf.setFontSize(18);
+    pdf.setTextColor(26, 188, 156);
+    pdf.text('ΤΕΤΡΑΚΤΥΣ', margin, 16);
+
+    pdf.setFontSize(10);
+    pdf.setTextColor(120, 140, 140);
+    pdf.text('ТЕТРАКТИС', margin, 21);
+
+    pdf.setFont(fontName, 'normal');
+    pdf.setFontSize(15);
+    pdf.setTextColor(30, 40, 40);
+    pdf.text('ДЗ. Линейные уравнения с параметром', margin, 32);
+
+    pdf.setFontSize(11);
+    pdf.setTextColor(80, 90, 90);
+    pdf.text('10 класс · профильный уровень', margin, 38);
+
+    pdf.setDrawColor(26, 188, 156);
+    pdf.setLineWidth(0.6);
+    pdf.line(margin, 42, pageW - margin, 42);
+
+    pdf.setFont(fontName, 'normal');
+    pdf.setFontSize(12);
+    pdf.setTextColor(30, 40, 40);
+    const studentName = (document.getElementById('studentName').value || '').trim();
+    pdf.text('Ученик: ' + (studentName || '______________________'), margin, 52);
+
+    const d = new Date();
+    const dd = String(d.getDate()).padStart(2,'0');
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const yyyy = d.getFullYear();
+    pdf.text('Дата:   ' + dd + '.' + mm + '.' + yyyy, margin, 60);
+
+    let y = 72;
+
+    const tasks = [
+      { num: 1, eq: '−x = b',                  id: 'hw-p1-1' },
+      { num: 2, eq: '−(x + 2)/5 = 5 − c',      id: 'hw-p1-2' },
+      { num: 3, eq: '(x − 9)/(b − 3) = b + 3', id: 'hw-p1-3' },
+      { num: 4, eq: '(a + 1)x = 0',            id: 'hw-p2-1' },
+      { num: 5, eq: '(1 − b)x = −1',           id: 'hw-p2-2' },
+      { num: 6, eq: '(ax − a)/2 = a − 1',      id: 'hw-p2-3' },
+      { num: 7, eq: '(1 − a)²x = a − 1',       id: 'hw-p3-1' },
+      { num: 8, eq: 'ax = a²(a + 1)',          id: 'hw-p3-2' },
+      { num: 9, eq: '−a(2 − a)x = a² − 4',     id: 'hw-p3-3' }
+    ];
+
+    tasks.forEach(function(task){
+      const canvas = document.querySelector('.hw-canvas[data-id="' + task.id + '"]');
+      if(!canvas) return;
+      if(y + 75 > pageH - 10){
+        pdf.addPage();
+        y = 20;
+      }
+      pdf.setFont(fontName, 'normal');
+      pdf.setFontSize(13);
+      pdf.setTextColor(30, 40, 40);
+      pdf.text(task.num + '.  ' + task.eq, margin, y);
+      y += 4;
+      try{
+        const dataURL = canvas.toDataURL('image/png');
+        const imgW = contentW;
+        const cw = canvas.width;
+        const ch = canvas.height;
+        const imgH = (ch / cw) * imgW;
+        let finalW = imgW, finalH = imgH;
+        if(y + finalH > pageH - 10){
+          finalH = pageH - 10 - y;
+          finalW = (cw / ch) * finalH;
+        }
+        pdf.addImage(dataURL, 'PNG', margin, y, finalW, finalH, undefined, 'FAST');
+        y += finalH + 8;
+      }catch(err){
+        pdf.setFont(fontName, 'italic');
+        pdf.setFontSize(10);
+        pdf.setTextColor(150, 150, 150);
+        pdf.text('(решение не записано)', margin + 4, y + 6);
+        y += 14;
+      }
+    });
+
+    const totalPages = pdf.internal.getNumberOfPages();
+    for(let p = 1; p <= totalPages; p++){
+      pdf.setPage(p);
+      pdf.setFont(fontName, 'italic');
+      pdf.setFontSize(9);
+      pdf.setTextColor(150, 160, 160);
+      pdf.text('ΤΕΤΡΑΚΤΥΣ · где математика превращается в приключение',
+               pageW / 2, pageH - 6, { align: 'center' });
+    }
+
+    const safeName = studentName ? studentName.replace(/[^\wа-яА-ЯёЁ\s-]/g, '').trim().replace(/\s+/g, '-') : 'uchenik';
+    const fileName = 'dz-parametr_' + safeName + '_' + dd + '-' + mm + '-' + yyyy + '.pdf';
+    pdf.save(fileName);
+
+    btns.forEach(b => {
+      if(b){
+        b.disabled = false;
+        b.textContent = b.id === 'pdfBtnTop' ? '📄 PDF' : '📄 Сохранить в PDF';
+      }
+    });
+  }
+
+  const btn1 = document.getElementById('pdfBtn');
+  const btn2 = document.getElementById('pdfBtnTop');
+  if(btn1) btn1.addEventListener('click', buildPDF);
+  if(btn2) btn2.addEventListener('click', buildPDF);
+})();
+</script>
+</body>
+</html>
