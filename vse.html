@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Карта сайта — ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  :root{
+    --teal:#1abc9c; --teal-dark:#16a085;
+    --mint:#7fffd4; --mint-soft:#a8f0dc;
+    --coral:#ff6b6b; --gold:#f4d35e; --gold-light:#ffe89a;
+    --text:#e8f8f5; --text-soft:#b8d8d0;
+    --ok:#2ecc71; --err:#ff6b6b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:Georgia,'Times New Roman',serif;
+    color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(26,188,156,0.22), transparent 55%),
+      radial-gradient(ellipse at 85% 90%, rgba(127,255,212,0.15), transparent 55%),
+      radial-gradient(ellipse at 50% 50%, rgba(244,211,94,0.06), transparent 70%),
+      linear-gradient(160deg, #0a2a33 0%, #0d3b47 50%, #134e5e 100%);
+    background-attachment:fixed;
+    min-height:100vh;
+    padding:20px;
+  }
+  /* ЛОГОТИП */
+  .logo{
+    position:fixed; top:18px; left:18px; z-index:1000;
+    display:flex; align-items:center; gap:12px;
+    padding:10px 18px 10px 14px;
+    background:rgba(10,42,51,0.65);
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    border:1.5px solid rgba(26,188,156,0.45);
+    border-radius:16px;
+    box-shadow:0 6px 24px rgba(0,0,0,0.35);
+  }
+  .logo-dots{
+    font-family:'Courier New',monospace;
+    color:var(--teal); font-size:11px; line-height:1.05;
+    letter-spacing:1px;
+  }
+  .logo-text{display:flex;flex-direction:column;line-height:1.1}
+  .logo-gr{
+    font-family:'Times New Roman',serif;
+    color:var(--teal); font-size:17px; letter-spacing:2px; font-weight:700;
+  }
+  .logo-ru{
+    font-family:'Times New Roman',serif;
+    color:var(--text-soft); font-size:12px; letter-spacing:3px;
+  }
+  /* ВЕРХНЯЯ ПАНЕЛЬ */
+  .topbar{
+    position:fixed; top:18px; right:18px; z-index:1000;
+    display:flex; gap:10px; align-items:center;
+  }
+  .date-badge{
+    font-family:'Courier New',monospace;
+    background:rgba(10,42,51,0.65);
+    height:46px; border-radius:14px;
+    display:flex; align-items:center; padding:0 16px;
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    box-shadow:0 6px 24px rgba(0,0,0,0.35);
+    font-weight:700; letter-spacing:1px; font-size:16px;
+    border:1.5px solid rgba(127,255,212,0.45);
+    color:var(--mint);
+  }
+  .btn-home{
+    height:46px; padding:0 18px; border-radius:14px;
+    background:linear-gradient(135deg,var(--teal),var(--teal-dark));
+    color:#04231d; border:none; cursor:pointer;
+    font-family:'Times New Roman',serif; font-weight:700;
+    font-size:14px; letter-spacing:1px; text-transform:uppercase;
+    display:flex; align-items:center; gap:8px;
+    box-shadow:0 6px 24px rgba(26,188,156,0.45);
+    transition:.2s; text-decoration:none;
+  }
+  .btn-home:hover{transform:translateY(-2px); box-shadow:0 8px 28px rgba(26,188,156,0.6)}
+  /* КОНТЕЙНЕР */
+  .wrap{ max-width:1000px; margin:100px auto 40px; }
+  /* КАРТОЧКИ */
+  .card{
+    background:rgba(255,255,255,0.04);
+    border:1.5px solid rgba(26,188,156,0.4);
+    border-radius:20px;
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    box-shadow:0 8px 30px rgba(0,0,0,0.3);
+    padding:26px 28px; margin-bottom:20px;
+    transition:.25s;
+  }
+  .card:hover{border-color:var(--mint)}
+  h1{
+    font-family:'Times New Roman',serif;
+    font-size:30px; color:var(--teal);
+    letter-spacing:1px; margin-bottom:8px;
+  }
+  .subtitle{color:var(--text-soft); font-style:italic; font-size:15px}
+  h2{
+    font-family:'Times New Roman',serif;
+    font-size:20px; color:var(--mint);
+    margin-bottom:18px; letter-spacing:1.5px;
+    display:flex; align-items:center; gap:10px;
+    text-transform:uppercase;
+  }
+  h2::before{
+    content:''; width:6px; height:22px;
+    background:linear-gradient(180deg,var(--teal),var(--mint));
+    border-radius:3px;
+  }
+  /* ССЫЛКИ-КАРТОЧКИ */
+  .link-item{
+    display:flex; align-items:center; gap:16px;
+    padding:16px 20px;
+    background:rgba(255,255,255,0.02);
+    border:1.5px solid rgba(26,188,156,0.25);
+    border-radius:14px;
+    margin-bottom:10px;
+    transition:.2s;
+    text-decoration:none;
+    color:inherit;
+  }
+  .link-item:hover{
+    border-color:var(--mint);
+    background:rgba(26,188,156,0.08);
+    transform:translateX(4px);
+  }
+  .link-item:last-child{margin-bottom:0}
+  .link-icon{
+    width:44px; height:44px; flex-shrink:0;
+    border-radius:12px;
+    background:linear-gradient(135deg,rgba(26,188,156,0.2),rgba(127,255,212,0.1));
+    border:1.5px solid rgba(26,188,156,0.35);
+    display:flex; align-items:center; justify-content:center;
+    font-size:20px;
+  }
+  .link-info{flex:1; min-width:0}
+  .link-title{
+    font-family:'Times New Roman',serif;
+    color:var(--text); font-size:16px; font-weight:700;
+    margin-bottom:4px;
+    letter-spacing:.3px;
+  }
+  .link-file{
+    font-family:'Courier New',monospace;
+    color:var(--text-soft); font-size:12px;
+    word-break:break-all;
+  }
+  .link-arrow{
+    color:var(--teal); font-size:20px;
+    flex-shrink:0; transition:.2s;
+  }
+  .link-item:hover .link-arrow{color:var(--mint); transform:translateX(4px)}
+  /* ФУТЕР */
+  .footer{
+    text-align:center; padding:30px 20px 20px;
+    color:var(--text-soft); font-size:13px;
+    font-family:'Times New Roman',serif; letter-spacing:2px;
+  }
+  .footer .f-logo{color:var(--teal); font-size:15px; margin-bottom:6px}
+  .footer .f-sub{font-style:italic; opacity:.75}
+  /* АДАПТИВ */
+  @media(max-width:700px){
+    .wrap{margin-top:140px}
+    .topbar{gap:6px}
+    .date-badge{padding:0 10px; font-size:14px}
+    .btn-home{padding:0 12px; font-size:12px}
+    .link-item{padding:12px 14px; gap:12px}
+    .link-icon{width:38px; height:38px; font-size:18px}
+    .link-title{font-size:14px}
+    .link-file{font-size:11px}
+  }
+</style>
+</head>
+<body>
+
+<!-- ЛОГОТИП -->
+<div class="logo">
+  <div class="logo-dots">●<br>●●<br>●●●<br>●●●●</div>
+  <div class="logo-text">
+    <span class="logo-gr">ΤΕΤΡΑΚΤΥΣ</span>
+    <span class="logo-ru">ТЕТРАКТИС</span>
+  </div>
+</div>
+
+<!-- ВЕРХНЯЯ ПАНЕЛЬ -->
+<div class="topbar">
+  <div class="date-badge" id="dateBadge">--.--.----</div>
+  <a class="btn-home" href="index.html">🏠 На главную</a>
+</div>
+
+<!-- КОНТЕНТ -->
+<div class="wrap">
+
+  <div class="card">
+    <h1>🗺 Карта сайта</h1>
+    <p class="subtitle">Все материалы в одном месте · ΤΕΤΡΑΚΤΥΣ</p>
+  </div>
+
+  <!-- ГЛАВНОЕ -->
+  <div class="card">
+    <h2>🏠 Главное</h2>
+
+    <a class="link-item" href="index.html">
+      <div class="link-icon">👩‍🏫</div>
+      <div class="link-info">
+        <div class="link-title">Персональная страница учителя</div>
+        <div class="link-file">index.html</div>
+      </div>
+      <div class="link-arrow">→</div>
+    </a>
+
+    <a class="link-item" href="lessons.html">
+      <div class="link-icon">📚</div>
+      <div class="link-info">
+        <div class="link-title">Задания по классам</div>
+        <div class="link-file">lessons.html</div>
+      </div>
+      <div class="link-arrow">→</div>
+    </a>
+  </div>
+
+  <!-- 10 КЛАСС -->
+  <div class="card">
+    <h2>📐 10 класс · профиль</h2>
+
+    <a class="link-item" href="urok10-parametr-1.html">
+      <div class="link-icon">📖</div>
+      <div class="link-info">
+        <div class="link-title">§1. Линейное уравнение с параметром</div>
+        <div class="link-file">urok10-parametr-1.html</div>
+      </div>
+      <div class="link-arrow">→</div>
+    </a>
+
+    <a class="link-item" href="2dz-parametr.html">
+      <div class="link-icon">📝</div>
+      <div class="link-info">
+        <div class="link-title">ДЗ. Линейные уравнения с параметром</div>
+        <div class="link-file">2dz-parametr.html</div>
+      </div>
+      <div class="link-arrow">→</div>
+    </a>
+  </div>
+
+  <!-- 7 КЛАСС -->
+  <div class="card">
+    <h2>📏 7 класс</h2>
+
+    <a class="link-item" href="urok8.html">
+      <div class="link-icon">📖</div>
+      <div class="link-info">
+        <div class="link-title">§8. Линейное уравнение</div>
+        <div class="link-file">urok8.html</div>
+      </div>
+      <div class="link-arrow">→</div>
+    </a>
+
+    <a class="link-item" href="urok9-1.html">
+      <div class="link-icon">📖</div>
+      <div class="link-info">
+        <div class="link-title">§9 Урок 1. Задачи на 2 объекта</div>
+        <div class="link-file">urok9-1.html</div>
+      </div>
+      <div class="link-arrow">→</div>
+    </a>
+
+    <a class="link-item" href="urok9-2.html">
+      <div class="link-icon">📖</div>
+      <div class="link-info">
+        <div class="link-title">§9 Урок 2. Задачи на перестановку</div>
+        <div class="link-file">urok9-2.html</div>
+      </div>
+      <div class="link-arrow">→</div>
+    </a>
+
+    <a class="link-item" href="urok9-3.html">
+      <div class="link-icon">📖</div>
+      <div class="link-info">
+        <div class="link-title">§9 Урок 3. 3 объекта + движение</div>
+        <div class="link-file">urok9-3.html</div>
+      </div>
+      <div class="link-arrow">→</div>
+    </a>
+  </div>
+
+  <!-- КОНТРОЛЬНЫЕ -->
+  <div class="card">
+    <h2>✍️ Контрольные работы</h2>
+
+    <a class="link-item" href="kontrol-1.html">
+      <div class="link-icon">⚔️</div>
+      <div class="link-info">
+        <div class="link-title">К1. Тождественные преобразования</div>
+        <div class="link-file">kontrol-1.html</div>
+      </div>
+      <div class="link-arrow">→</div>
+    </a>
+
+    <a class="link-item" href="kontrol-2.html">
+      <div class="link-icon">⚔️</div>
+      <div class="link-info">
+        <div class="link-title">К2. Уравнения</div>
+        <div class="link-file">kontrol-2.html</div>
+      </div>
+      <div class="link-arrow">→</div>
+    </a>
+  </div>
+
+  <!-- ОГЭ -->
+  <div class="card">
+    <h2>📊 ОГЭ</h2>
+
+    <a class="link-item" href="listy.html">
+      <div class="link-icon">📄</div>
+      <div class="link-info">
+        <div class="link-title">Форматы листов бумаги</div>
+        <div class="link-file">listy.html</div>
+      </div>
+      <div class="link-arrow">→</div>
+    </a>
+  </div>
+
+</div>
+
+<!-- ФУТЕР -->
+<div class="footer">
+  <div class="f-logo">ΤΕΤΡΑΚΤΥΣ · ТЕТРАКТИС</div>
+  <div class="f-sub">где математика превращается в приключение</div>
+</div>
+
+<script>
+/* ============ ДАТА ============ */
+(function(){
+  const el = document.getElementById('dateBadge');
+  function updateDate(){
+    const d = new Date();
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yyyy = d.getFullYear();
+    el.textContent = dd + '.' + mm + '.' + yyyy;
+  }
+  updateDate();
+  setInterval(updateDate, 60000);
+})();
+</script>
+</body>
+</html>
