@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Урок · Как по графику восстановить уравнение прямой · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--mint-soft:#a8f0dc;
+    --coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass:rgba(255,255,255,0.04);--glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{min-height:100vh;font-family:Georgia,'Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.06),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;padding:20px;overflow-x:hidden;}
+  .corner-logo{position:fixed;top:14px;left:16px;z-index:50;font-family:'Times New Roman',serif;text-align:center;line-height:1;padding:10px 18px 12px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(26,188,156,0.45);border-radius:14px;backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(0,0,0,0.35);}
+  .corner-logo .dots{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:16px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:4px;}
+  .corner-logo .ru{font-size:10px;letter-spacing:3px;color:var(--text-soft);margin-top:2px;}
+  .top-right{position:fixed;top:14px;right:16px;z-index:50;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+  .date-badge,.timer-box,.sound-btn{display:flex;align-items:center;justify-content:center;height:46px;border-radius:14px;backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;font-size:16px;}
+  .date-badge{padding:0 16px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(127,255,212,0.45);color:var(--mint);font-family:'Courier New',monospace;}
+  .timer-box{padding:0 16px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(244,211,94,0.55);color:var(--gold);cursor:pointer;min-width:96px;font-family:'Courier New',monospace;}
+  .sound-btn{width:46px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(26,188,156,0.45);color:var(--teal);cursor:pointer;font-size:20px;transition:.2s;}
+  .sound-btn:hover{transform:translateY(-2px);border-color:var(--mint);color:var(--mint);}
+  .sound-btn.muted{color:#8aa8a0;opacity:0.65;}
+  .wrap{position:relative;z-index:10;max-width:1000px;margin:80px auto 40px;}
+  .card{background:var(--glass);border:1.5px solid var(--glass-brd);border-radius:20px;padding:26px 28px;backdrop-filter:blur(10px);box-shadow:0 8px 30px rgba(0,0,0,0.3);margin-bottom:20px;transition:.25s;}
+  h1{font-family:'Times New Roman',serif;font-size:clamp(22px,3.2vw,30px);color:var(--teal);letter-spacing:1px;margin-bottom:8px;}
+  h1 .num{color:var(--gold);margin-right:10px;}
+  .subtitle{color:var(--text-soft);font-style:italic;font-size:15px;}
+  h2{font-family:'Times New Roman',serif;font-size:21px;color:var(--mint);letter-spacing:1px;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+  h2::before{content:'';width:6px;height:22px;background:linear-gradient(180deg,var(--teal),var(--mint));border-radius:3px;}
+  p{line-height:1.75;color:var(--text);margin-bottom:12px;font-size:15px;}
+  .soft{color:var(--text-soft);}
+  .frm{font-family:'Cambria Math','Times New Roman',serif;color:var(--mint);font-style:italic;font-size:16px;background:rgba(26,188,156,0.08);padding:1px 7px;border-radius:6px;}
+  .frm-block{font-family:'Cambria Math','Times New Roman',serif;font-size:17px;color:var(--mint);font-style:italic;background:rgba(26,188,156,0.08);border-left:3px solid var(--teal);padding:12px 18px;border-radius:0 10px 10px 0;margin:12px 0;line-height:1.9;}
+  .props-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:16px 0;}
+  @media(max-width:700px){.props-grid{grid-template-columns:1fr;}}
+  .prop-card{background:rgba(26,188,156,0.06);border:1.5px solid rgba(26,188,156,0.3);border-radius:14px;padding:16px 18px;}
+  .prop-card .head{font-family:'Times New Roman',serif;color:var(--gold);font-size:14px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:10px;}
+  .prop-card .val{font-family:'Cambria Math',serif;font-size:20px;color:var(--mint);font-style:italic;font-weight:700;margin-bottom:8px;}
+  .prop-card .desc{font-size:14px;color:var(--text);line-height:1.6;}
+  /* Интерактивный блок с пошаговым показом */
+  .anim-block{background:rgba(10,42,51,0.5);border:1px solid var(--glass-brd);border-radius:16px;padding:18px 20px;margin:16px 0;}
+  .anim-block .anim-title{font-size:15px;color:var(--mint);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .anim-block .anim-title .badge{background:rgba(244,211,94,0.2);color:var(--gold-light);padding:3px 10px;border-radius:8px;font-family:'Courier New',monospace;font-size:12px;font-weight:700;}
+  .graph-canvas-wrap{background:#f7fcfa;border-radius:14px;border:1.5px solid rgba(26,188,156,0.3);padding:10px;margin-bottom:12px;}
+  .graph-canvas-wrap canvas{display:block;width:100%;max-width:520px;height:auto;aspect-ratio:1/1;margin:0 auto;background:#f7fcfa;border-radius:10px;}
+  .step-comment{background:rgba(26,188,156,0.1);border-left:4px solid var(--teal);border-radius:0 12px 12px 0;padding:14px 18px;margin-bottom:12px;font-size:15px;line-height:1.65;min-height:80px;color:var(--text);}
+  .step-comment .step-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;background:var(--teal);color:#04231d;border-radius:50%;font-family:'Courier New',monospace;font-weight:700;font-size:12px;margin-right:10px;flex-shrink:0;vertical-align:middle;}
+  .step-comment .formula-inline{font-family:'Cambria Math',serif;color:var(--mint);font-style:italic;font-size:16px;background:rgba(26,188,156,0.15);padding:2px 8px;border-radius:6px;display:inline-block;margin:2px 0;}
+  .step-comment b{color:var(--mint);}
+  .step-controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .step-controls .btn{padding:10px 24px;font-size:14px;}
+  .step-progress{text-align:center;font-size:12px;color:var(--text-soft);margin-top:8px;font-family:'Courier New',monospace;letter-spacing:1px;}
+  /* Пример через систему */
+  .method-block{background:rgba(10,42,51,0.5);border:1px solid var(--glass-brd);border-radius:16px;padding:18px 20px;margin:16px 0;}
+  .method-block .method-title{font-size:15px;color:var(--mint);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .method-block .method-title .badge{background:rgba(244,211,94,0.2);color:var(--gold-light);padding:3px 10px;border-radius:8px;font-family:'Courier New',monospace;font-size:12px;font-weight:700;}
+  .method-block .step{padding:10px 0;border-bottom:1px dashed rgba(127,255,212,0.15);font-size:15px;line-height:1.7;opacity:0;transform:translateX(-20px);transition:all 0.4s;display:none;}
+  .method-block .step.visible{opacity:1;transform:translateX(0);display:block;}
+  .method-block .step:last-child{border-bottom:none;}
+  .method-block .step b{color:var(--mint);}
+  .method-block .step .num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;background:var(--teal);color:#04231d;border-radius:50%;font-family:'Courier New',monospace;font-weight:700;font-size:12px;margin-right:10px;}
+  .method-block .answer{margin-top:12px;padding:12px 16px;background:rgba(46,204,113,0.1);border-left:3px solid var(--ok);border-radius:0 8px 8px 0;font-family:'Cambria Math',serif;color:var(--ok);font-size:16px;font-style:italic;}
+  /* Practice */
+  .practice-block{background:rgba(10,42,51,0.5);border:1px solid var(--glass-brd);border-radius:16px;padding:20px 22px;margin:16px 0;}
+  .practice-block .task-title{font-size:14px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+  .practice-block .task-title .num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;background:linear-gradient(135deg,var(--gold),#c9a32b);color:#2a1f00;border-radius:9px;font-family:'Courier New',monospace;font-weight:700;font-size:14px;}
+  .answer-area{display:flex;gap:14px;justify-content:center;align-items:flex-end;flex-wrap:wrap;margin-top:14px;}
+  .answer-group{display:flex;flex-direction:column;align-items:center;gap:6px;}
+  .answer-group label{font-size:17px;color:var(--text);font-weight:700;font-family:'Cambria Math',serif;}
+  .answer-group label .var{color:var(--mint);font-style:italic;}
+  .answer-group input{padding:10px 14px;font-size:18px;width:100px;border:2px solid var(--glass-brd);border-radius:12px;text-align:center;font-family:'Cambria Math',serif;outline:none;transition:.2s;background:rgba(10,42,51,0.5);color:var(--text);}
+  .answer-group input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+  .answer-group input.ok{border-color:var(--ok);background:rgba(46,204,113,0.12);color:var(--ok);}
+  .answer-group input.err{border-color:var(--err);background:rgba(255,107,107,0.12);color:var(--err);}
+  .answer-group input::placeholder{color:var(--text-soft);opacity:0.4;}
+  .btn{padding:12px 28px;font-size:15px;font-weight:700;border:none;border-radius:12px;background:linear-gradient(135deg,#f4d35e,#c9a32b);color:#4a3800;cursor:pointer;font-family:inherit;letter-spacing:1px;box-shadow:0 6px 20px rgba(244,211,94,0.4);transition:.2s;text-decoration:none;display:inline-block;}
+  .btn:hover:not(:disabled){transform:translateY(-2px);}
+  .btn:disabled{opacity:0.4;cursor:not-allowed;}
+  .btn.ghost{background:transparent;color:var(--mint);border:1.5px solid var(--glass-brd);box-shadow:none;}
+  .btn.ghost:hover:not(:disabled){background:rgba(26,188,156,0.12);}
+  .btn.teal{background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;}
+  .feedback{text-align:center;font-size:15px;font-weight:700;min-height:26px;margin-top:12px;}
+  .feedback.ok{color:var(--ok);}
+  .feedback.err{color:var(--err);}
+  .feedback .formula{color:var(--mint);font-family:'Cambria Math',serif;font-style:italic;}
+  /* Canvas для записи */
+  .canvas-block{background:rgba(10,42,51,0.5);border:1px solid var(--glass-brd);border-radius:14px;padding:14px;margin:14px 0;}
+  .canvas-block .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:12px;color:var(--text-soft);letter-spacing:1.5px;text-transform:uppercase;}
+  .canvas-block .head button{font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;border:1px solid rgba(26,188,156,0.3);border-radius:8px;padding:5px 12px;background:rgba(212,240,234,0.15);color:var(--mint-soft);transition:.2s;}
+  .canvas-block .head button:hover{background:rgba(26,188,156,0.25);}
+  .write-area{position:relative;background:#f7fcfa;border-radius:12px;overflow:hidden;touch-action:none;height:200px;}
+  .write-area canvas{display:block;width:100%;height:100%;touch-action:none;background:#f7fcfa;cursor:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke-linecap="round"><circle cx="12" cy="12" r="8" stroke="%23ffffff" stroke-width="3"/><circle cx="12" cy="12" r="8" stroke="%230e7c66" stroke-width="1.5"/><line x1="12" y1="2" x2="12" y2="9" stroke="%23ffffff" stroke-width="3"/><line x1="12" y1="2" x2="12" y2="9" stroke="%230e7c66" stroke-width="1.5"/><line x1="12" y1="15" x2="12" y2="22" stroke="%23ffffff" stroke-width="3"/><line x1="12" y1="15" x2="12" y2="22" stroke="%230e7c66" stroke-width="1.5"/><line x1="2" y1="12" x2="9" y2="12" stroke="%23ffffff" stroke-width="3"/><line x1="2" y1="12" x2="9" y2="12" stroke="%230e7c66" stroke-width="1.5"/><line x1="15" y1="12" x2="22" y2="12" stroke="%23ffffff" stroke-width="3"/><line x1="15" y1="12" x2="22" y2="12" stroke="%230e7c66" stroke-width="1.5"/><circle cx="12" cy="12" r="1.5" fill="%230e7c66"/></g></svg>') 12 12, crosshair;}
+  /* Тренажёр */
+  .trener-block{background:linear-gradient(135deg,rgba(244,211,94,0.12),rgba(26,188,156,0.08));border:2px solid var(--gold);border-radius:20px;padding:28px;text-align:center;margin:20px 0;}
+  .trener-block .icon{font-size:56px;margin-bottom:10px;display:block;}
+  .trener-block h3{font-family:'Times New Roman',serif;color:var(--gold-light);font-size:22px;letter-spacing:1.5px;margin-bottom:10px;font-weight:700;}
+  .trener-block p{color:var(--text);font-size:15px;margin-bottom:18px;max-width:520px;margin-left:auto;margin-right:auto;}
+  .nav-row{display:flex;justify-content:space-between;gap:12px;margin-top:26px;flex-wrap:wrap;}
+  .footer{text-align:center;padding:30px 20px 20px;color:var(--text-soft);font-size:13px;font-family:'Times New Roman',serif;letter-spacing:2px;}
+  .footer .f-logo{color:var(--teal);font-size:15px;margin-bottom:6px;}
+  .footer .f-sub{font-style:italic;opacity:.75;}
+  @media(max-width:700px){
+    .wrap{margin-top:150px;}
+    .top-right{gap:6px;}
+    .date-badge,.timer-box{padding:0 12px;font-size:14px;height:40px;}
+    .sound-btn{width:40px;height:40px;font-size:17px;}
+    .card{padding:20px 18px;}
+    .write-area{height:180px;}
+    .answer-group input{width:90px;font-size:16px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="corner-logo">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+</div>
+
+<div class="top-right">
+  <div class="date-badge" id="dateBadge">--.--.----</div>
+  <div class="timer-box" id="timerBox">00:00</div>
+  <button class="sound-btn" id="soundBtn" title="Звук">🔊</button>
+</div>
+
+<div class="wrap">
+
+  <!-- ЗАГОЛОВОК -->
+  <div class="card">
+    <h1><span class="num">§.</span>Как по графику восстановить уравнение прямой</h1>
+    <p class="subtitle">Подготовка к ЕГЭ · базовый и профильный · ΤΕΤΡΑΚΤΥΣ</p>
+  </div>
+
+  <!-- ТЕОРИЯ 1 -->
+  <div class="card">
+    <h2>Что такое линейная функция</h2>
+    <div class="frm-block">y = kx + b</div>
+    <div class="props-grid">
+      <div class="prop-card">
+        <div class="head">k</div>
+        <div class="val">угловой коэффициент</div>
+        <div class="desc">отвечает за <b>наклон</b>. k > 0 — возрастает, k < 0 — убывает.</div>
+      </div>
+      <div class="prop-card">
+        <div class="head">b</div>
+        <div class="val">свободный член</div>
+        <div class="desc">ордината точки пересечения с OY. Точка <b>(0; b)</b>.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- СПОСОБ 1, ГРАФИК А (острый угол) -->
+  <div class="card">
+    <h2>Способ 1 · Через тангенс · Случай А</h2>
+    <p>Прямая <b>возрастает</b> — угол наклона <b>острый</b>, коэффициент <b>k > 0</b>.</p>
+
+    <div class="anim-block" data-demo="A">
+      <div class="graph-canvas-wrap">
+        <canvas id="canvasA" width="500" height="500"></canvas>
+      </div>
+      <div class="step-comment" id="commentA">
+        <span class="step-num">0</span>Нажми <b>«▶ Дальше»</b>, чтобы начать пошаговый разбор.
+      </div>
+      <div class="step-controls">
+        <button class="btn ghost" data-ctrl="reset" data-demo="A">↺ Сначала</button>
+        <button class="btn teal" data-ctrl="next" data-demo="A">▶ Дальше</button>
+      </div>
+      <div class="step-progress" id="progressA">Шаг 0 из 7</div>
+    </div>
+  </div>
+
+  <!-- СПОСОБ 1, ГРАФИК Б (тупой угол) -->
+  <div class="card">
+    <h2>Способ 1 · Через тангенс · Случай Б</h2>
+    <p>Прямая <b>убывает</b> — угол наклона <b>тупой</b>, коэффициент <b>k < 0</b> (с минусом!).</p>
+
+    <div class="anim-block" data-demo="B">
+      <div class="graph-canvas-wrap">
+        <canvas id="canvasB" width="500" height="500"></canvas>
+      </div>
+      <div class="step-comment" id="commentB">
+        <span class="step-num">0</span>Нажми <b>«▶ Дальше»</b>, чтобы начать пошаговый разбор.
+      </div>
+      <div class="step-controls">
+        <button class="btn ghost" data-ctrl="reset" data-demo="B">↺ Сначала</button>
+        <button class="btn teal" data-ctrl="next" data-demo="B">▶ Дальше</button>
+      </div>
+      <div class="step-progress" id="progressB">Шаг 0 из 7</div>
+    </div>
+  </div>
+
+  <!-- СПОСОБ 2 -->
+  <div class="card">
+    <h2>Способ 2 · Через систему уравнений</h2>
+    <p>Прямая проходит через точки <span class="frm">(1; 5)</span> и <span class="frm">(3; 9)</span>.</p>
+
+    <div class="anim-block" data-demo="C">
+      <div class="graph-canvas-wrap">
+        <canvas id="canvasC" width="500" height="500"></canvas>
+      </div>
+      <div class="step-comment" id="commentC">
+        <span class="step-num">0</span>Нажми <b>«▶ Дальше»</b>, чтобы начать пошаговый разбор.
+      </div>
+      <div class="step-controls">
+        <button class="btn ghost" data-ctrl="reset" data-demo="C">↺ Сначала</button>
+        <button class="btn teal" data-ctrl="next" data-demo="C">▶ Дальше</button>
+      </div>
+      <div class="step-progress" id="progressC">Шаг 0 из 6</div>
+    </div>
+  </div>
+
+  <!-- ПРАКТИКА -->
+  <div class="card">
+    <h2>Практика · Найди k и b по графику</h2>
+    <p class="soft">Под каждым графиком — впиши <span class="frm">k</span> и <span class="frm">b</span> и нажми «Проверить».</p>
+
+    <div class="practice-block">
+      <div class="task-title"><span class="num">1</span>Задание 1</div>
+      <div class="graph-canvas-wrap"><canvas id="graphP1" width="500" height="500"></canvas></div>
+      <div class="canvas-block">
+        <div class="head">
+          <span>📝 Решение</span>
+          <button onclick="clearById('cv-p1')">🧹 Очистить</button>
+        </div>
+        <div class="write-area"><canvas class="write-canvas" id="cv-p1"></canvas></div>
+      </div>
+      <div class="answer-area">
+        <div class="answer-group"><label><span class="var">k</span> =</label><input type="text" id="k1" placeholder="?" autocomplete="off"></div>
+        <div class="answer-group"><label><span class="var">b</span> =</label><input type="text" id="b1" placeholder="?" autocomplete="off"></div>
+        <button class="btn-check btn" data-task="1">⚡ Проверить</button>
+      </div>
+      <div class="feedback" id="fb1"></div>
+    </div>
+
+    <div class="practice-block">
+      <div class="task-title"><span class="num">2</span>Задание 2</div>
+      <div class="graph-canvas-wrap"><canvas id="graphP2" width="500" height="500"></canvas></div>
+      <div class="canvas-block">
+        <div class="head">
+          <span>📝 Решение</span>
+          <button onclick="clearById('cv-p2')">🧹 Очистить</button>
+        </div>
+        <div class="write-area"><canvas class="write-canvas" id="cv-p2"></canvas></div>
+      </div>
+      <div class="answer-area">
+        <div class="answer-group"><label><span class="var">k</span> =</label><input type="text" id="k2" placeholder="?" autocomplete="off"></div>
+        <div class="answer-group"><label><span class="var">b</span> =</label><input type="text" id="b2" placeholder="?" autocomplete="off"></div>
+        <button class="btn-check btn" data-task="2">⚡ Проверить</button>
+      </div>
+      <div class="feedback" id="fb2"></div>
+    </div>
+
+    <div class="practice-block">
+      <div class="task-title"><span class="num">3</span>Задание 3</div>
+      <div class="graph-canvas-wrap"><canvas id="graphP3" width="500" height="500"></canvas></div>
+      <div class="canvas-block">
+        <div class="head">
+          <span>📝 Решение</span>
+          <button onclick="clearById('cv-p3')">🧹 Очистить</button>
+        </div>
+        <div class="write-area"><canvas class="write-canvas" id="cv-p3"></canvas></div>
+      </div>
+      <div class="answer-area">
+        <div class="answer-group"><label><span class="var">k</span> =</label><input type="text" id="k3" placeholder="?" autocomplete="off"></div>
+        <div class="answer-group"><label><span class="var">b</span> =</label><input type="text" id="b3" placeholder="?" autocomplete="off"></div>
+        <button class="btn-check btn" data-task="3">⚡ Проверить</button>
+      </div>
+      <div class="feedback" id="fb3"></div>
+    </div>
+  </div>
+
+  <!-- ТРЕНАЖЁР -->
+  <div class="trener-block">
+    <span class="icon">🎯</span>
+    <h3>Тренажёр «Найди k и b»</h3>
+    <p>Проверь себя: по графику определи коэффициенты <b>k</b> и <b>b</b>. Два уровня сложности. 10 заданий за сессию.</p>
+    <a class="btn" href="trener-lineynaya.html" target="_blank" rel="noopener">🚀 Открыть тренажёр</a>
+  </div>
+
+  <!-- ИТОГ -->
+  <div class="card">
+    <h2>Итог</h2>
+    <ul style="list-style:none;padding:0;">
+      <li style="padding:10px 0;border-bottom:1px dashed rgba(127,255,212,0.15);">✅ <b>k</b> — наклон, <b>b</b> — сдвиг по OY.</li>
+      <li style="padding:10px 0;border-bottom:1px dashed rgba(127,255,212,0.15);">✅ Точка на OY — всегда <b>(0; b)</b>.</li>
+      <li style="padding:10px 0;border-bottom:1px dashed rgba(127,255,212,0.15);">✅ <b>Острый угол</b> → k > 0, <b>тупой угол</b> → k < 0.</li>
+      <li style="padding:10px 0;border-bottom:1px dashed rgba(127,255,212,0.15);">✅ <span class="frm">k = tg α = противолежащий / прилежащий</span>.</li>
+      <li style="padding:10px 0;">✅ Всегда делай <b>проверку</b>.</li>
+    </ul>
+  </div>
+
+  <div class="nav-row">
+    <a class="btn ghost" href="lessons.html">← К заданиям</a>
+    <a class="btn ghost" href="index.html">🏠 На главную</a>
+  </div>
+
+</div>
+
+<div class="footer">
+  <div class="f-logo">ΤΕΤΡΑΚΤΥΣ · ТЕТРАКТИС</div>
+  <div class="f-sub">где математика превращается в приключение</div>
+</div>
+
+<script>
+/* ===== ДАТА ===== */
+(function(){
+  const el=document.getElementById('dateBadge');
+  function upd(){
+    const d=new Date();
+    el.textContent=String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();
+  }
+  upd();setInterval(upd,60000);
+})();
+
+/* ===== ТАЙМЕР ===== */
+(function(){
+  const el=document.getElementById('timerBox');
+  let s=0,run=true;
+  setInterval(()=>{
+    if(!run)return;
+    const m=Math.floor(s/60),ss=s%60;
+    el.textContent=String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0');
+    s++;
+  },1000);
+  el.addEventListener('click',()=>{run=!run;el.style.opacity=run?'1':'0.5';});
+})();
+
+/* ===== ЗВУК ===== */
+let soundEnabled=true;
+const soundBtn=document.getElementById('soundBtn');
+soundBtn.addEventListener('click',()=>{
+  soundEnabled=!soundEnabled;
+  soundBtn.textContent=soundEnabled?'🔊':'🔇';
+  soundBtn.classList.toggle('muted',!soundEnabled);
+});
+
+/* ============================================================
+   БАЗОВАЯ ФУНКЦИЯ РИСОВАНИЯ ГРАФИКА
+   ============================================================ */
+function drawBase(canvas, options){
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const pad = 40, size = W - 2*pad;
+
+  /* сетка */
+  ctx.fillStyle = '#f7fcfa';
+  ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle = '#e0f0ea';
+  ctx.lineWidth = 1;
+  for(let i=-5;i<=5;i++){
+    const x = pad + (i+5)*size/10;
+    const y = pad + (5-i)*size/10;
+    ctx.beginPath(); ctx.moveTo(x,pad); ctx.lineTo(x,pad+size); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(pad+size,y); ctx.stroke();
+  }
+
+  /* оси */
+  ctx.strokeStyle = '#0e7c66';
+  ctx.lineWidth = 2;
+  const xZero = pad + 5*size/10;
+  const yZero = pad + 5*size/10;
+  ctx.beginPath(); ctx.moveTo(pad,yZero); ctx.lineTo(pad+size,yZero); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(xZero,pad); ctx.lineTo(xZero,pad+size); ctx.stroke();
+
+  /* стрелки */
+  ctx.fillStyle = '#0e7c66';
+  ctx.beginPath(); ctx.moveTo(pad+size-4,yZero-6); ctx.lineTo(pad+size,yZero); ctx.lineTo(pad+size-4,yZero+6); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(xZero-6,pad+4); ctx.lineTo(xZero,pad); ctx.lineTo(xZero+6,pad+4); ctx.fill();
+
+  /* подписи осей */
+  ctx.fillStyle = '#0e7c66';
+  ctx.font = 'bold 14px Times New Roman';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  ctx.fillText('x', pad+size-10, yZero+10);
+  ctx.textBaseline = 'bottom';
+  ctx.fillText('y', xZero+10, pad+6);
+
+  /* числа на осях */
+  ctx.font = '11px Times New Roman';
+  for(let i=-4;i<=4;i++){
+    if(i===0)continue;
+    const x = pad + (i+5)*size/10;
+    const y = pad + (5-i)*size/10;
+    ctx.fillStyle = '#6a8a84';
+    ctx.textBaseline = 'top'; ctx.textAlign = 'center';
+    ctx.fillText(i, x, yZero+4);
+    ctx.textBaseline = 'middle'; ctx.textAlign = 'right';
+    ctx.fillText(i, xZero-6, y);
+  }
+  ctx.fillStyle = '#6a8a84';
+  ctx.textBaseline = 'top'; ctx.textAlign = 'center';
+  ctx.fillText('0', xZero, yZero+4);
+
+  /* график прямой */
+  ctx.strokeStyle = '#0e7c66';
+  ctx.lineWidth = 3;
+  ctx.shadowColor = 'rgba(14,124,102,0.4)';
+  ctx.shadowBlur = 8;
+  ctx.beginPath();
+  const range = 5, steps = 200;
+  let first = true;
+  for(let i=0;i<=steps;i++){
+    const x = -range + (i/steps)*2*range;
+    const y = options.k*x + options.b;
+    const px = pad + (x+range)/(2*range)*size;
+    const py = pad + (range-y)/(2*range)*size;
+    if(py < pad-20 || py > pad+size+20){ first = true; continue; }
+    if(first){ ctx.moveTo(px,py); first = false; }
+    else ctx.lineTo(px,py);
+  }
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  /* возвращаем координатную систему для доп.рисования */
+  return {
+    toScreen: function(x,y){
+      return {
+        px: pad + (x+range)/(2*range)*size,
+        py: pad + (range-y)/(2*range)*size
+      };
+    },
+    pad, size, range, ctx
+  };
+}
+
+/* ============================================================
+   АНИМАЦИЯ СПОСОБА 1 — ЧЕРЕЗ ТАНГЕНС
+   Каждый шаг — отдельная функция отрисовки
+   ============================================================ */
+
+/* График А: возрастающая прямая y = 2x + 1 (острый угол) */
+/* График Б: убывающая прямая y = -x + 3 (тупой угол) */
+/* График В: y = 2x + 3 (для способа 2) */
+
+const DEMOS = {
+  A: {
+    k: 2, b: 1, canvasId: 'canvasA', commentId: 'commentA', progressId: 'progressA',
+    p1: {x: 0, y: 1},   /* точка 1 */
+    p2: {x: 2, y: 5},   /* точка 2 */
+    isSharp: true,      /* острый угол */
+    totalSteps: 7
+  },
+  B: {
+    k: -1, b: 3, canvasId: 'canvasB', commentId: 'commentB', progressId: 'progressB',
+    p1: {x: 0, y: 3},
+    p2: {x: 3, y: 0},
+    isSharp: false,     /* тупой угол */
+    totalSteps: 7
+  },
+  C: {
+    k: 2, b: 3, canvasId: 'canvasC', commentId: 'commentC', progressId: 'progressC',
+    p1: {x: 1, y: 5},
+    p2: {x: 3, y: 9},
+    isSystem: true,     /* способ 2 — через систему */
+    totalSteps: 6
+  }
+};
+
+const demoState = {
+  A: 0, B: 0, C: 0
+};
+
+/* ---------- Вспомогательные рисовалки ---------- */
+
+/* пульсирующая точка */
+function drawPulsePoint(ctx, px, py, time){
+  const r = 9 + 3*Math.sin(time/300);
+  ctx.beginPath();
+  ctx.arc(px, py, r, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(244,211,94,0.35)';
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(px, py, 7, 0, Math.PI*2);
+  ctx.fillStyle = '#f4d35e';
+  ctx.strokeStyle = '#c9a32b';
+  ctx.lineWidth = 2;
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(px, py, 2.5, 0, Math.PI*2);
+  ctx.fillStyle = '#4a3800';
+  ctx.fill();
+}
+
+/* статичная точка */
+function drawPoint(ctx, px, py, color){
+  ctx.beginPath();
+  ctx.arc(px, py, 7, 0, Math.PI*2);
+  ctx.fillStyle = color || '#1abc9c';
+  ctx.strokeStyle = '#0e7c66';
+  ctx.lineWidth = 2;
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(px, py, 2.5, 0, Math.PI*2);
+  ctx.fillStyle = '#fff';
+  ctx.fill();
+}
+
+/* дуга угла — рисуется между горизонталью вправо и направлением прямой */
+function drawAngleArc(ctx, px, py, isSharp, radius){
+  ctx.beginPath();
+  if(isSharp){
+    /* острый — дуга от OX (0) до угла α против часовой, прямая восходит */
+    ctx.arc(px, py, radius, -Math.PI/4, 0, false);
+  } else {
+    /* тупой — дуга от OX (0) до угла больше 90° */
+    ctx.arc(px, py, radius, -Math.PI*0.75, 0, false);
+  }
+  ctx.strokeStyle = '#ff6b6b';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  /* стрелка направления дуги */
+  /* ничего не рисуем, просто дуга */
+}
+
+/* подпись угла */
+function drawAngleLabel(ctx, px, py, isSharp){
+  const labelX = px + 42;
+  const labelY = py - 18;
+  ctx.fillStyle = '#ff6b6b';
+  ctx.font = 'bold 18px Cambria Math';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('α', labelX, labelY);
+  ctx.font = 'bold 13px Georgia';
+  ctx.fillStyle = '#ffb3b3';
+  ctx.fillText(isSharp ? 'острый' : 'тупой', labelX + 14, labelY);
+}
+
+/* катеты: прямоугольный треугольник между двумя точками */
+function drawCatheti(ctx, p1, p2, isSharp){
+  const startX = isSharp ? p1.x : p2.x;
+  const startY = isSharp ? p1.y : p2.y;
+  const endX = isSharp ? p2.x : p1.x;
+  const endY = isSharp ? p2.y : p1.y;
+  const cornerX = endX;
+  const cornerY = startY;
+
+  /* горизонтальный катет */
+  ctx.strokeStyle = '#f4d35e';
+  ctx.lineWidth = 4;
+  ctx.setLineDash([8,4]);
+  ctx.beginPath();
+  ctx.moveTo(startX, startY);
+  ctx.lineTo(cornerX, cornerY);
+  ctx.stroke();
+
+  /* вертикальный катет */
+  ctx.strokeStyle = '#ff6b6b';
+  ctx.beginPath();
+  ctx.moveTo(cornerX, cornerY);
+  ctx.lineTo(endX, endY);
+  ctx.stroke();
+
+  ctx.setLineDash([]);
+
+  /* подписи катетов */
+  ctx.font = 'bold 14px Courier New';
+  const dx = Math.abs(endX - startX);
+  const dy = Math.abs(endY - startY);
+
+  /* подпись горизонтального */
+  ctx.fillStyle = '#f4d35e';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  ctx.fillText(dx, (startX + cornerX)/2, cornerY + 6);
+
+  /* подпись вертикального */
+  ctx.fillStyle = '#ffb3b3';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(dy, cornerX + 8, (cornerY + endY)/2);
+}
+
+/* ============================================================
+   ОСНОВНАЯ ФУНКЦИЯ РЕНДЕРА
+   ============================================================ */
+function renderDemo(key){
+  const cfg = DEMOS[key];
+  const canvas = document.getElementById(cfg.canvasId);
+  const step = demoState[key];
+
+  /* базовая отрисовка */
+  const base = drawBase(canvas, cfg);
+  const ctx = base.ctx;
+
+  /* получаем экранные координаты ключевых точек */
+  const s1 = base.toScreen(cfg.p1.x, cfg.p1.y);
+  const s2 = base.toScreen(cfg.p2.x, cfg.p2.y);
+
+  /* ХОРОШИЕ ТОЧКИ */
+  if(step >= 2){
+    /* Анимация пульсации для шага 2-3, статичные для 4+ */
+    if(step === 2 || step === 3){
+      const t = Date.now();
+      drawPulsePoint(ctx, s1.px, s1.py, t);
+      drawPulsePoint(ctx, s2.px, s2.py, t);
+    } else {
+      drawPoint(ctx, s1.px, s1.py, '#f4d35e');
+      drawPoint(ctx, s2.px, s2.py, '#f4d35e');
+    }
+    /* подписи координат */
+    ctx.font = 'bold 13px Courier New';
+    ctx.fillStyle = '#4a3800';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText('('+cfg.p1.x+'; '+cfg.p1.y+')', s1.px + 10, s1.py - 8);
+    ctx.textBaseline = 'top';
+    ctx.fillText('('+cfg.p2.x+'; '+cfg.p2.y+')', s2.px + 10, s2.py + 8);
+  }
+
+  /* УГОЛ И ДУГА (только для A и B, не для C) */
+  if(!cfg.isSystem && step >= 4){
+    /* угол строим от нижней-левой точки */
+    const basePoint = cfg.isSharp ? s1 : s2;
+    drawAngleArc(ctx, basePoint.px, basePoint.py, cfg.isSharp, 55);
+    drawAngleLabel(ctx, basePoint.px, basePoint.py, cfg.isSharp);
+  }
+
+  /* КАТЕТЫ */
+  if(!cfg.isSystem && step >= 5){
+    drawCatheti(ctx, s1, s2, cfg.isSharp);
+  }
+
+  /* ТОЧКА НА OY (для b) */
+  if(!cfg.isSystem && step >= 6){
+    /* точка пересечения с OY: (0; b) */
+    const sB = base.toScreen(0, cfg.b);
+    ctx.beginPath();
+    ctx.arc(sB.px, sB.py, 10, 0, Math.PI*2);
+    ctx.strokeStyle = '#1abc9c';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    ctx.font = 'bold 14px Courier New';
+    ctx.fillStyle = '#1abc9c';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('b = '+cfg.b, sB.px - 14, sB.py);
+  }
+
+  /* ДЛЯ СПОСОБА 2 — показать проекции системы */
+  if(cfg.isSystem && step >= 5){
+    /* подсветить точки p1, p2 */
+    const sA = base.toScreen(cfg.p1.x, cfg.p1.y);
+    const sB2 = base.toScreen(cfg.p2.x, cfg.p2.y);
+    ctx.beginPath();
+    ctx.arc(sA.px, sA.py, 12, 0, Math.PI*2);
+    ctx.strokeStyle = '#f4d35e';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(sB2.px, sB2.py, 12, 0, Math.PI*2);
+    ctx.strokeStyle = '#f4d35e';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+  }
+
+  /* если идёт анимация пульсации — перезапускаем */
+  if((step === 2 || step === 3) && !cfg.isSystem){
+    requestAnimationFrame(()=>renderDemo(key));
+  }
+
+  /* обновляем комментарий */
+  updateComment(key, step);
+
+  /* обновляем прогресс */
+  const pEl = document.getElementById(cfg.progressId);
+  if(pEl) pEl.textContent = 'Шаг ' + step + ' из ' + cfg.totalSteps;
+
+  /* блокируем кнопку "Дальше" на последнем шаге */
+  const nextBtn = document.querySelector('[data-ctrl="next"][data-demo="'+key+'"]');
+  if(nextBtn){
+    nextBtn.disabled = step >= cfg.totalSteps;
+  }
+}
+
+/* ============================================================
+   КОММЕНТАРИИ ПО ШАГАМ
+   ============================================================ */
+function updateComment(key, step){
+  const el = document.getElementById(DEMOS[key].commentId);
+  if(!el) return;
+
+  let html = '';
+
+  if(key === 'A' || key === 'B'){
+    /* Способ 1 — через тангенс */
+    const cfg = DEMOS[key];
+    const isSharp = cfg.isSharp;
+    const dx = Math.abs(cfg.p2.x - cfg.p1.x);
+    const dy = Math.abs(cfg.p2.y - cfg.p1.y);
+    const k = cfg.k;
+    const b = cfg.b;
+    const p1 = cfg.p1, p2 = cfg.p2;
+
+    if(step === 0){
+      html = '<span class="step-num">0</span>Нажми <b>«▶ Дальше»</b>, чтобы начать разбор.';
+    } else if(step === 1){
+      html = '<span class="step-num">1</span>Рассмотрим прямую на графике. Наша задача — найти <b>k</b> и <b>b</b>.';
+    } else if(step === 2){
+      html = '<span class="step-num">2</span>Находим <b>две «хорошие» точки</b> с целыми координатами: <span class="formula-inline">('+p1.x+'; '+p1.y+')</span> и <span class="formula-inline">('+p2.x+'; '+p2.y+')</span>.';
+    } else if(step === 3){
+      html = '<span class="step-num">3</span>Точки отмечены на графике. По ним будем строить прямоугольный треугольник и считать тангенс угла наклона.';
+    } else if(step === 4){
+      html = '<span class="step-num">4</span>Из нижней точки проводим горизонталь вправо — получаем <b>угол наклона α</b>. Он <b>'+(isSharp?'острый':'тупой')+'</b> → коэффициент <b>'+(isSharp?'k > 0':'k < 0')+'</b>.';
+    } else if(step === 5){
+      html = '<span class="step-num">5</span>Достраиваем прямоугольный треугольник. Катеты считаем <b>по клеточкам</b>:<br>противолежащий = <b>'+dy+'</b>, прилежащий = <b>'+dx+'</b>.<br>Тогда <span class="formula-inline">'+(isSharp?'k = tg α':'k = −tg α')+' = '+(isSharp?'':'−')+dy+' / '+dx+' = '+k+'</span>';
+    } else if(step === 6){
+      html = '<span class="step-num">6</span>Находим <b>b</b> — ординату точки пересечения с осью OY. Это точка <span class="formula-inline">(0; '+b+')</span>, значит <b>b = '+b+'</b>.';
+    } else if(step === 7){
+      html = '<span class="step-num">7</span>Собираем всё вместе: <span class="formula-inline">y = '+k+'x + '+b+'</span>.<br><b>Готово!</b>';
+    }
+  } else if(key === 'C'){
+    /* Способ 2 — через систему */
+    const cfg = DEMOS[key];
+    const p1 = cfg.p1, p2 = cfg.p2;
+    const k = cfg.k, b = cfg.b;
+
+    if(step === 0){
+      html = '<span class="step-num">0</span>Нажми <b>«▶ Дальше»</b>, чтобы начать разбор.';
+    } else if(step === 1){
+      html = '<span class="step-num">1</span>Задача: найти <b>k</b> и <b>b</b> по двум «хорошим» точкам графика.';
+    } else if(step === 2){
+      html = '<span class="step-num">2</span>Берём две точки с целыми координатами: <span class="formula-inline">('+p1.x+'; '+p1.y+')</span> и <span class="formula-inline">('+p2.x+'; '+p2.y+')</span>.';
+    } else if(step === 3){
+      html = '<span class="step-num">3</span>Подставляем каждую точку в уравнение <span class="formula-inline">y = kx + b</span> — получаем систему:<br><span class="formula-inline">'+p1.y+' = '+p1.x+'k + b</span><br><span class="formula-inline">'+p2.y+' = '+p2.x+'k + b</span>';
+    } else if(step === 4){
+      const dLeft = p2.y - p1.y;
+      const dRight = (p2.x - p1.x);
+      html = '<span class="step-num">4</span>Вычитаем первое из второго: <span class="formula-inline">'+dLeft+' = '+dRight+'k</span> → <b>k = '+k+'</b>.';
+    } else if(step === 5){
+      html = '<span class="step-num">5</span>Подставляем k в первое уравнение: <span class="formula-inline">'+p1.y+' = '+k+' · '+p1.x+' + b</span> → <b>b = '+b+'</b>.';
+    } else if(step === 6){
+      html = '<span class="step-num">6</span>Собираем всё вместе: <span class="formula-inline">y = '+k+'x + '+b+'</span>.<br><b>Готово!</b>';
+    }
+  }
+
+  el.innerHTML = html;
+}
+
+/* ============================================================
+   УПРАВЛЕНИЕ ШАГАМИ
+   ============================================================ */
+document.querySelectorAll('[data-ctrl]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const key = btn.dataset.demo;
+    const action = btn.dataset.ctrl;
+    const cfg = DEMOS[key];
+
+    if(action === 'next'){
+      if(demoState[key] < cfg.totalSteps){
+        demoState[key]++;
+        renderDemo(key);
+      }
+    } else if(action === 'reset'){
+      demoState[key] = 0;
+      renderDemo(key);
+    }
+  });
+});
+
+/* ============================================================
+   ПРОВЕРКА ОТВЕТОВ В ПРАКТИКЕ
+   ============================================================ */
+const TASKS = {
+  1: {k: 1, b: 2},   /* y = x + 2 */
+  2: {k: -1, b: 3},  /* y = -x + 3 */
+  3: {k: 2, b: -1}   /* y = 2x - 1 */
+};
+
+function parseVal(s){
+  s = s.trim().replace(/\s/g,'').replace(',','.');
+  if(s.includes('/')){
+    const p = s.split('/');
+    if(p.length === 2){
+      const a = parseFloat(p[0]), b = parseFloat(p[1]);
+      if(!isNaN(a) && !isNaN(b) && b !== 0) return a/b;
+    }
+  }
+  return parseFloat(s);
+}
+function isClose(a,b){ return Math.abs(a-b) < 0.001; }
+
+document.querySelectorAll('.btn-check').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const n = parseInt(btn.dataset.task);
+    const task = TASKS[n];
+    const kEl = document.getElementById('k'+n);
+    const bEl = document.getElementById('b'+n);
+    const fb = document.getElementById('fb'+n);
+    const kVal = parseVal(kEl.value);
+    const bVal = parseVal(bEl.value);
+
+    if(isNaN(kVal) || isNaN(bVal)){
+      fb.textContent = '📐 Введи оба коэффициента!';
+      fb.className = 'feedback err';
+      return;
+    }
+    kEl.classList.remove('ok','err');
+    bEl.classList.remove('ok','err');
+    const kOk = isClose(kVal, task.k);
+    const bOk = isClose(bVal, task.b);
+    if(kOk && bOk){
+      kEl.classList.add('ok');
+      bEl.classList.add('ok');
+      fb.textContent = '✅ Верно! y = ' + task.k + 'x + ' + task.b;
+      fb.className = 'feedback ok';
+    } else {
+      kEl.classList.add(kOk?'ok':'err');
+      bEl.classList.add(bOk?'ok':'err');
+      fb.innerHTML = '❌ Неправильно. Верно: <span class="formula">k = ' + task.k + ', b = ' + task.b + '</span>';
+      fb.className = 'feedback err';
+    }
+  });
+});
+
+/* ============================================================
+   CANVAS ДЛЯ ЗАПИСИ РЕШЕНИЙ
+   ============================================================ */
+const cvStates = {};
+
+function initCv(cv){
+  if(cvStates[cv.id]) return;
+  const dpr = window.devicePixelRatio || 1;
+  cv.style.width = '100%';
+  cv.style.height = '100%';
+  void cv.offsetWidth;
+  const rect0 = cv.getBoundingClientRect();
+  const cssW = Math.max(300, rect0.width);
+  const cssH = Math.max(180, rect0.height);
+  cv.width = Math.round(cssW * dpr);
+  cv.height = Math.round(cssH * dpr);
+  const ctx = cv.getContext('2d', {desynchronized:true});
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  drawGrid(ctx, cssW, cssH);
+  ctx.lineWidth = 0.9;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.strokeStyle = '#0e7c66';
+
+  let cachedRect = null;
+  function refreshRect(){ cachedRect = cv.getBoundingClientRect(); }
+  void cv.offsetWidth;
+  refreshRect();
+
+  const state = {cv, ctx, cssW, cssH, dpr, drawing:false, refreshRect};
+  cvStates[cv.id] = state;
+
+  function toCanvas(cx, cy){
+    if(!cachedRect) refreshRect();
+    return {x: cx - cachedRect.left, y: cy - cachedRect.top};
+  }
+  function strokeLine(from, to){
+    const dx = to.x - from.x, dy = to.y - from.y;
+    const dist = Math.hypot(dx,dy);
+    if(dist < 0.3) return;
+    const n = Math.max(1, Math.ceil(dist/1.2));
+    ctx.beginPath();
+    ctx.moveTo(from.x, from.y);
+    for(let i=1;i<=n;i++){
+      const t = i/n;
+      ctx.lineTo(from.x + dx*t, from.y + dy*t);
+    }
+    ctx.stroke();
+  }
+  let lastPt = null, rafPending = false, pendingPoints = [];
+  function flushPoints(){
+    rafPending = false;
+    if(!pendingPoints.length) return;
+    for(const pt of pendingPoints){
+      if(lastPt) strokeLine(lastPt, pt);
+      lastPt = pt;
+    }
+    pendingPoints = [];
+  }
+  function handleMove(cx, cy){
+    const pt = toCanvas(cx, cy);
+    pendingPoints.push(pt);
+    if(!rafPending){
+      rafPending = true;
+      requestAnimationFrame(flushPoints);
+    }
+  }
+  cv.addEventListener('pointerdown', e=>{
+    e.preventDefault();
+    refreshRect();
+    state.drawing = true;
+    try { cv.setPointerCapture(e.pointerId); } catch(_){}
+    lastPt = toCanvas(e.clientX, e.clientY);
+    ctx.beginPath();
+    ctx.arc(lastPt.x, lastPt.y, 0.6, 0, Math.PI*2);
+    ctx.fillStyle = '#0e7c66';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(lastPt.x, lastPt.y);
+  }, {passive:false});
+
+  const mv = ('onpointerrawupdate' in window) ? 'pointerrawupdate' : 'pointermove';
+  cv.addEventListener(mv, e=>{
+    if(!state.drawing) return;
+    e.preventDefault();
+    let events = [e];
+    if(typeof e.getCoalescedEvents === 'function'){
+      const co = e.getCoalescedEvents();
+      if(co && co.length) events = co;
+    }
+    for(const ev of events) handleMove(ev.clientX, ev.clientY);
+  }, {passive:false});
+  if(mv === 'pointerrawupdate'){
+    cv.addEventListener('pointermove', e=>{
+      if(!state.drawing) return;
+      if(typeof e.getCoalescedEvents !== 'function'){
+        e.preventDefault();
+        handleMove(e.clientX, e.clientY);
+      }
+    }, {passive:false});
+  }
+  const stop = e=>{
+    state.drawing = false;
+    flushPoints();
+    lastPt = null;
+    try { if(e) cv.releasePointerCapture(e.pointerId); } catch(_){}
+  };
+  cv.addEventListener('pointerup', stop);
+  cv.addEventListener('pointercancel', stop);
+  cv.addEventListener('pointerleave', stop);
+  cv.addEventListener('contextmenu', e=>e.preventDefault());
+  window.addEventListener('scroll', refreshRect, {passive:true});
+  window.addEventListener('resize', ()=>refreshRect(), {passive:true});
+  if('ResizeObserver' in window){
+    const ro = new ResizeObserver(()=>refreshRect());
+    ro.observe(cv);
+  }
+}
+
+function drawGrid(ctx, W, H){
+  ctx.fillStyle = '#f7fcfa';
+  ctx.fillRect(0,0,W,H);
+  const cell = 20;
+  ctx.strokeStyle = '#cfe8e0';
+  ctx.lineWidth = 0.5;
+  for(let x=0;x<=W+cell;x+=cell){
+    const px = Math.round(x)+0.5;
+    ctx.beginPath(); ctx.moveTo(px,0); ctx.lineTo(px,H); ctx.stroke();
+  }
+  for(let y=0;y<=H+cell;y+=cell){
+    const py = Math.round(y)+0.5;
+    ctx.beginPath(); ctx.moveTo(0,py); ctx.lineTo(W,py); ctx.stroke();
+  }
+}
+
+window.clearById = function(id){
+  const st = cvStates[id];
+  if(!st) return;
+  st.ctx.setTransform(1,0,0,1,0,0);
+  st.ctx.clearRect(0,0,st.cv.width,st.cv.height);
+  st.ctx.setTransform(st.dpr,0,0,st.dpr,0,0);
+  drawGrid(st.ctx, st.cssW, st.cssH);
+  st.ctx.lineWidth = 0.9;
+  st.ctx.lineCap = 'round';
+  st.ctx.lineJoin = 'round';
+  st.ctx.strokeStyle = '#0e7c66';
+};
+
+/* ============================================================
+   СТАТИЧНЫЕ ГРАФИКИ ДЛЯ ПРАКТИКИ
+   ============================================================ */
+function drawStaticGraph(canvas, k, b){
+  drawBase(canvas, {k, b});
+}
+
+/* Практика */
+drawStaticGraph(document.getElementById('graphP1'), 1, 2);    /* y = x + 2 */
+drawStaticGraph(document.getElementById('graphP2'), -1, 3);   /* y = -x + 3 */
+drawStaticGraph(document.getElementById('graphP3'), 2, -1);   /* y = 2x - 1 */
+
+/* ============================================================
+   ИНИЦИАЛИЗАЦИЯ
+   ============================================================ */
+function initAll(){
+  /* записывающие canvas */
+  document.querySelectorAll('.write-canvas').forEach(c=>initCv(c));
+
+  /* графики-демонстрации */
+  renderDemo('A');
+  renderDemo('B');
+  renderDemo('C');
+
+  /* пульсация обновляется в цикле — отдельный rAF */
+  function loop(){
+    ['A','B'].forEach(key=>{
+      if(demoState[key] === 2 || demoState[key] === 3) renderDemo(key);
+    });
+    requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+if(document.readyState === 'complete') initAll();
+else window.addEventListener('load', initAll);
+setTimeout(initAll, 300);
+</script>
+</body>
+</html>
