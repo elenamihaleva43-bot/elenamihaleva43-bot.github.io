@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Тренажёр · Свойства степени · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass:rgba(255,255,255,0.06);--glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{min-height:100%;font-family:'Georgia','Times New Roman',serif;color:var(--text);
+    background:radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.08),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;overflow-x:hidden;padding:20px;}
+  .glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.5;}
+  .glow.g1{width:520px;height:520px;top:-120px;left:-120px;background:radial-gradient(circle,rgba(26,188,156,0.55),transparent 70%);animation:pulse 9s ease-in-out infinite;}
+  .glow.g2{width:600px;height:600px;bottom:-200px;right:-180px;background:radial-gradient(circle,rgba(127,255,212,0.4),transparent 70%);animation:pulse 11s ease-in-out infinite reverse;}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:0.35;}50%{transform:scale(1.15);opacity:0.6;}}
+  .corner-logo{position:fixed;top:14px;left:16px;z-index:50;font-family:'Times New Roman',serif;text-align:center;line-height:1;padding:8px 14px 10px;background:rgba(10,42,51,0.6);border:1px solid rgba(26,188,156,0.4);border-radius:12px;backdrop-filter:blur(8px);box-shadow:0 4px 20px rgba(0,0,0,0.35);}
+  .corner-logo .dots{font-size:9px;letter-spacing:2px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:13px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:4px;}
+  .corner-logo .ru{font-size:9px;letter-spacing:2px;color:var(--text-soft);margin-top:2px;}
+  .top-right{position:fixed;top:14px;right:16px;z-index:50;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+  .date-badge,.timer-box,.sound-btn,.new-btn{display:flex;align-items:center;justify-content:center;height:46px;border-radius:14px;backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;}
+  .date-badge{padding:0 16px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(127,255,212,0.45);color:var(--mint);font-family:'Courier New',monospace;font-size:16px;}
+  .timer-box{padding:0 16px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(244,211,94,0.55);color:var(--gold);cursor:pointer;min-width:96px;font-family:'Courier New',monospace;font-size:16px;}
+  .sound-btn{width:46px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(26,188,156,0.45);color:var(--teal);cursor:pointer;font-size:20px;}
+  .sound-btn:hover{transform:translateY(-2px);border-color:var(--mint);color:var(--mint);}
+  .sound-btn.muted{color:#8aa8a0;opacity:0.65;}
+  .new-btn{padding:0 18px;background:linear-gradient(135deg,#f4d35e,#c9a32b);border:none;color:#2a1f00;cursor:pointer;font-family:'Times New Roman',serif;font-size:14px;letter-spacing:1px;box-shadow:0 6px 24px rgba(244,211,94,0.4);transition:0.2s;gap:8px;}
+  .new-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(244,211,94,0.55);}
+  .wrap{position:relative;z-index:10;max-width:900px;margin:70px auto 40px;}
+  .card{background:var(--glass);border:1.5px solid var(--glass-brd);border-radius:20px;padding:26px 28px;backdrop-filter:blur(12px);box-shadow:0 8px 40px rgba(0,0,0,0.45);margin-bottom:20px;}
+  h1{font-family:'Times New Roman',serif;font-size:clamp(22px,3.4vw,32px);color:var(--teal);letter-spacing:1px;margin-bottom:10px;}
+  h1 .num{color:var(--gold);margin-right:10px;}
+  .subtitle{color:var(--text-soft);font-style:italic;font-size:15px;}
+  .intro-note{margin-top:14px;padding:14px 18px;background:rgba(244,211,94,0.08);border-left:4px solid var(--gold);border-radius:0 12px 12px 0;font-size:15px;line-height:1.6;color:var(--text);}
+  .intro-note b{color:var(--gold-light);}
+  .progress-bar{padding:14px 20px;border-radius:16px;background:rgba(10,42,51,0.9);border:1px solid var(--glass-brd);backdrop-filter:blur(12px);margin-bottom:20px;}
+  .progress-bar .row1{display:flex;flex-wrap:wrap;gap:14px;align-items:center;font-size:14px;color:var(--text-soft);margin-bottom:10px;}
+  .progress-bar .row1 .num{font-family:'Courier New',monospace;font-weight:700;color:var(--mint);font-size:16px;}
+  .progress-bar .row1 .count-ok{color:var(--ok);font-weight:700;}
+  .progress-bar .row1 .count-err{color:var(--err);font-weight:700;}
+  .progress-bar .row1 .percent{margin-left:auto;color:var(--mint);font-family:'Courier New',monospace;font-weight:700;}
+  .progress-bar .bar{height:8px;border-radius:6px;background:rgba(255,255,255,0.08);overflow:hidden;}
+  .progress-bar .bar .fill{height:100%;width:0%;background:linear-gradient(90deg,#1abc9c,#7fffd4);border-radius:6px;transition:0.4s;}
+  .task-list{display:flex;flex-direction:column;gap:14px;}
+  .task-item{background:rgba(255,255,255,0.03);border:1.5px solid rgba(26,188,156,0.25);border-radius:14px;padding:16px 20px;transition:0.2s;}
+  .task-item:hover{border-color:var(--mint);}
+  .task-item.solved-correct{border-color:var(--ok);background:rgba(46,204,113,0.05);}
+  .task-item.solved-wrong{border-color:var(--err);background:rgba(255,107,107,0.05);}
+  .task-header{display:flex;align-items:center;gap:14px;margin-bottom:12px;flex-wrap:wrap;}
+  .task-num{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:34px;background:linear-gradient(135deg,var(--gold),#c9a32b);color:#2a1f00;border-radius:10px;font-family:'Courier New',monospace;font-weight:700;font-size:14px;flex-shrink:0;}
+  .task-expr{font-family:'Cambria Math','Times New Roman',serif;font-size:clamp(18px,2.2vw,22px);color:var(--mint);line-height:1.6;font-style:italic;flex:1;min-width:200px;}
+  .task-mark{font-size:22px;font-weight:700;flex-shrink:0;}
+  .task-mark.ok{color:var(--ok);}
+  .task-mark.err{color:var(--err);}
+  .answer-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .answer-row input{flex:1;min-width:140px;padding:12px 16px;border-radius:10px;border:1.5px solid var(--glass-brd);background:rgba(10,42,51,0.5);color:var(--text);font-family:'Cambria Math',serif;font-size:16px;outline:none;transition:0.2s;}
+  .answer-row input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(26,188,156,0.15);}
+  .answer-row input.ok{border-color:var(--ok);background:rgba(46,204,113,0.12);}
+  .answer-row input.err{border-color:var(--err);background:rgba(255,107,107,0.12);}
+  .answer-row input::placeholder{color:var(--text-soft);opacity:0.5;font-style:italic;}
+  .answer-row input:disabled{opacity:0.85;cursor:not-allowed;}
+  .answer-row button{padding:12px 22px;border-radius:10px;border:none;background:var(--teal);color:#04231d;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:0.5px;transition:0.2s;}
+  .answer-row button:hover:not(:disabled){filter:brightness(1.1);transform:translateY(-1px);}
+  .answer-row button:disabled{opacity:0.5;cursor:not-allowed;}
+  .hint{font-size:13px;color:var(--text-soft);font-style:italic;margin-top:8px;}
+  .hint.ok{color:var(--ok);font-weight:700;font-style:normal;}
+  .hint.err{color:var(--err);font-weight:700;font-style:normal;}
+  .footer{text-align:center;padding:30px 20px 20px;color:var(--text-soft);font-size:13px;font-family:'Times New Roman',serif;letter-spacing:2px;}
+  .footer .f-logo{color:var(--teal);font-size:15px;margin-bottom:6px;}
+  .footer .f-sub{font-style:italic;opacity:.75;}
+  .pow{font-size:0.75em;vertical-align:super;line-height:0;}
+  .frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 4px;line-height:1.1;font-size:0.9em;}
+  .frac .num{border-bottom:1.6px solid currentColor;padding:0 5px 1px;}
+  .frac .den{padding:1px 5px 0;}
+  @media(max-width:720px){
+    .wrap{margin-top:150px;}
+    .top-right{gap:6px;}
+    .date-badge,.timer-box{padding:0 12px;font-size:14px;height:40px;}
+    .sound-btn{width:40px;height:40px;font-size:17px;}
+    .new-btn{padding:0 12px;font-size:12px;height:40px;}
+    .card{padding:18px 16px;}
+    .task-item{padding:12px 14px;}
+    .answer-row input,.answer-row button{font-size:15px;padding:10px 14px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div><div class="glow g2"></div>
+
+<div class="corner-logo">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+</div>
+
+<div class="top-right">
+  <div class="date-badge" id="dateBadge">--.--.----</div>
+  <div class="timer-box" id="timerBox">00:00</div>
+  <button class="sound-btn" id="soundBtn" title="Звук">🔊</button>
+  <button class="new-btn" id="newBtn">🎲 Новое задание</button>
+</div>
+
+<div class="wrap">
+
+  <div class="card">
+    <h1><span class="num">🎯</span>Тренажёр · Свойства степени</h1>
+    <p class="subtitle">ΤΕΤΡΑΚΤΥΣ · Школа математики Елены Михалевой · 7 класс</p>
+    <div class="intro-note">
+      <b>💎 Как играть:</b> реши пример, впиши <b>ответ</b> (число: <b>8</b>, <b>27</b>, <b>0,5</b>), нажми <b>«Проверить»</b>. Даётся <b>2 попытки</b>. Хочешь новые числа — жми <b>«🎲 Новое задание»</b>.
+    </div>
+  </div>
+
+  <div class="progress-bar">
+    <div class="row1">
+      <span>📊 Прогресс:</span>
+      <span class="num" id="prNum">0 / 12</span>
+      <span class="count-ok" id="prOk">✓ 0</span>
+      <span class="count-err" id="prErr">✗ 0</span>
+      <span class="percent" id="prPct">0%</span>
+    </div>
+    <div class="bar"><div class="fill" id="prFill"></div></div>
+  </div>
+
+  <div class="task-list" id="taskList"></div>
+
+</div>
+
+<div class="footer">
+  <div class="f-logo">ΤΕΤΡΑΚΤΥΣ · ТЕТРАКТИС</div>
+  <div class="f-sub">где математика превращается в приключение</div>
+</div>
+
+<script>
+/* ===== ДАТА ===== */
+(function(){
+  const el=document.getElementById('dateBadge');
+  function upd(){
+    const d=new Date();
+    el.textContent=String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();
+  }
+  upd();setInterval(upd,60000);
+})();
+
+/* ===== ТАЙМЕР ===== */
+(function(){
+  const el=document.getElementById('timerBox');
+  let s=0,run=true;
+  setInterval(()=>{
+    if(!run)return;
+    const m=Math.floor(s/60),ss=s%60;
+    el.textContent=String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0');
+    s++;
+  },1000);
+  el.addEventListener('click',()=>{run=!run;el.style.opacity=run?'1':'0.5';});
+})();
+
+/* ===== ЗВУК ===== */
+(function(){
+  const btn=document.getElementById('soundBtn');let on=true;
+  function speak(text){
+    if(!on||!('speechSynthesis'in window))return;
+    try{
+      speechSynthesis.cancel();
+      const u=new SpeechSynthesisUtterance(text);
+      u.lang='ru-RU';u.rate=1.0;u.pitch=0.9;
+      const v=speechSynthesis.getVoices().find(x=>/Pavel|Dmitry|Irina/i.test(x.name));
+      if(v)u.voice=v;
+      speechSynthesis.speak(u);
+    }catch(_){}
+  }
+  btn.addEventListener('click',()=>{
+    on=!on;
+    if(!on){try{speechSynthesis.cancel();}catch(_){}btn.textContent='🔇';btn.classList.add('muted');}
+    else{btn.textContent='🔊';btn.classList.remove('muted');}
+  });
+  window._speak=speak;
+})();
+
+/* ===== ХЕЛПЕРЫ ===== */
+function rand(arr){return arr[Math.floor(Math.random()*arr.length)];}
+function randInt(a,b){return a+Math.floor(Math.random()*(b-a+1));}
+function isValidNum(x){return Number.isFinite(x)&&Math.abs(x)<1e6;}
+function isClean(x){
+  /* проверяем: не бесконечная дробь */
+  if(!isValidNum(x))return false;
+  if(Number.isInteger(x))return true;
+  /* проверяем до 4 знаков после запятой */
+  const s=x.toFixed(4);
+  const trimmed=s.replace(/0+$/,'').replace(/\.$/,'');
+  return trimmed.length<=8;
+}
+
+/* ===== ГЕНЕРАТОРЫ — те же типы, что у Василисы ===== */
+
+/* Тип 1: (a^n)^-m / a^-k = a^(k - n*m) */
+function gen1(){
+  const a=rand([2,3,5]);
+  const n=randInt(2,4);
+  const m=randInt(1,3);
+  const k=randInt(n*m-2,n*m+2);
+  const exp=k-n*m;
+  if(exp<0)return gen1();
+  const ans=Math.pow(a,exp);
+  if(!isClean(ans)||ans>10000)return gen1();
+  return {
+    html:`<span class="frac"><span class="num">(${a}<span class="pow">${n}</span>)<span class="pow">−${m}</span></span><span class="den">${a}<span class="pow">−${k}</span></span></span>`,
+    ans:ans
+  };
+}
+
+/* Тип 2: a^-n · a^m / a^k = a^(m-n-k) */
+function gen2(){
+  const a=rand([2,3,5,7]);
+  const n=randInt(1,4);
+  const m=randInt(n+1,n+5);
+  const k=randInt(1,m-n);
+  const exp=m-n-k;
+  if(exp<0)return gen2();
+  const ans=Math.pow(a,exp);
+  if(!isClean(ans)||ans>10000)return gen2();
+  return {
+    html:`<span class="frac"><span class="num">${a}<span class="pow">−${n}</span> · ${a}<span class="pow">${m}</span></span><span class="den">${a}<span class="pow">${k}</span></span></span>`,
+    ans:ans
+  };
+}
+
+/* Тип 3: (1/a^-m) · (1/a^n) = a^m · a^-n = a^(m-n) */
+function gen3(){
+  const a=rand([2,3,5]);
+  const m=randInt(3,6);
+  const n=randInt(m-2,m+2);
+  const exp=m-n;
+  if(exp<0)return gen3();
+  const ans=Math.pow(a,exp);
+  if(!isClean(ans)||ans>10000)return gen3();
+  return {
+    html:`<span class="frac"><span class="num">1</span><span class="den">${a}<span class="pow">−${m}</span></span></span> · <span class="frac"><span class="num">1</span><span class="den">${a}<span class="pow">${n}</span></span></span>`,
+    ans:ans
+  };
+}
+
+/* Тип 4: (a^p · a^q)^r / (a · a^s)^t = a^(r(p+q) - t(1+s)) */
+function gen4(){
+  const a=rand([2,3]);
+  const p=randInt(2,4);
+  const q=randInt(2,4);
+  const r=randInt(1,2);
+  const s=randInt(3,5);
+  const t=randInt(1,2);
+  const exp=r*(p+q)-t*(1+s);
+  if(exp<0)return gen4();
+  const ans=Math.pow(a,exp);
+  if(!isClean(ans)||ans>10000)return gen4();
+  return {
+    html:`<span class="frac"><span class="num">(${a}<span class="pow">${p}</span> · ${a}<span class="pow">${q}</span>)<span class="pow">${r}</span></span><span class="den">(${a} · ${a}<span class="pow">${s}</span>)<span class="pow">${t}</span></span></span>`,
+    ans:ans
+  };
+}
+
+/* Тип 5: a^n / a^2k где a^2k — квадрат (25, 49, 4, 9) */
+function gen5(){
+  const variants=[
+    {base:5,sq:25,root:2},
+    {base:7,sq:49,root:2},
+    {base:2,sq:4,root:2},
+    {base:3,sq:9,root:2}
+  ];
+  const v=rand(variants);
+  const n=randInt(3,5);
+  const exp=n-v.root;
+  if(exp<0)return gen5();
+  const ans=Math.pow(v.base,exp);
+  if(!isClean(ans)||ans>10000)return gen5();
+  return {
+    html:`<span class="frac"><span class="num">${v.base}<span class="pow">${n}</span></span><span class="den">${v.sq}</span></span>`,
+    ans:ans
+  };
+}
+
+/* Тип 6: a^n / a^3k (64, 8, 27) */
+function gen6(){
+  const variants=[
+    {base:4,den:64,root:3},
+    {base:2,den:8,root:3},
+    {base:3,den:27,root:3},
+    {base:5,den:125,root:3}
+  ];
+  const v=rand(variants);
+  const n=randInt(v.root+1,v.root+4);
+  const exp=n-v.root;
+  if(exp<0)return gen6();
+  const ans=Math.pow(v.base,exp);
+  if(!isClean(ans)||ans>10000)return gen6();
+  return {
+    html:`<span class="frac"><span class="num">${v.base}<span class="pow">${n}</span></span><span class="den">${v.den}</span></span>`,
+    ans:ans
+  };
+}
+
+/* Тип 7: (a^k)^n / (a^m)^r = a^(kn - mr) — например 81^5 / 27^6 */
+function gen7(){
+  /* 81=3^4, 27=3^3 → 3^(20-18)=3^2=9 */
+  const pairs=[
+    {a:3,b1:81,b1p:4,b2:27,b2p:3},
+    {a:2,b1:16,b1p:4,b2:8,b2p:3},
+    {a:2,b1:4,b1p:2,b2:8,b2p:3},
+    {a:5,b1:25,b1p:2,b2:125,b2p:3}
+  ];
+  const v=rand(pairs);
+  const n=randInt(4,6);
+  const m=randInt(5,7);
+  const exp=n*v.b1p-m*v.b2p;
+  if(exp<0)return gen7();
+  const ans=Math.pow(v.a,exp);
+  if(!isClean(ans)||ans>10000)return gen7();
+  return {
+    html:`<span class="frac"><span class="num">${v.b1}<span class="pow">${n}</span></span><span class="den">${v.b2}<span class="pow">${m}</span></span></span>`,
+    ans:ans
+  };
+}
+
+/* Тип 8: (ab)^n / (a^p · b^q) — приведение */
+function gen8(){
+  const a=rand([2,3,4]);
+  const b=rand([2,3]);
+  const n=randInt(3,4);
+  const ab=a*b;
+  const total=Math.pow(ab,n);
+  /* подбираем a^p · b^q чтобы делилось */
+  const p=randInt(1,n);
+  const q=randInt(1,n);
+  const denom=Math.pow(a,p)*Math.pow(b,q);
+  const num=total;
+  const ans=num/denom;
+  if(!isClean(ans)||!Number.isInteger(ans)||ans>10000||ans<1)return gen8();
+  return {
+    html:`<span class="frac"><span class="num">${ab}<span class="pow">${n}</span></span><span class="den">${a}<span class="pow">${p}</span> · ${b}<span class="pow">${q}</span></span></span>`,
+    ans:ans
+  };
+}
+
+/* Тип 9: a^n · b^m / (ab)^m = a^(n-m) — например 3^8 · 10^5 / 30^5 */
+function gen9(){
+  const a=rand([3,5,7]);
+  const b=rand([2,10]);
+  const n=randInt(5,8);
+  const m=randInt(3,5);
+  const exp=n-m;
+  if(exp<0)return gen9();
+  const ans=Math.pow(a,exp);
+  if(!isClean(ans)||ans>10000)return gen9();
+  return {
+    html:`<span class="frac"><span class="num">${a}<span class="pow">${n}</span> · ${b}<span class="pow">${m}</span></span><span class="den">${a*b}<span class="pow">${m}</span></span></span>`,
+    ans:ans
+  };
+}
+
+/* Тип 10: a^-n · (a^m)^2 = a^(2m-n) */
+function gen10(){
+  const a=rand([2,3,5]);
+  const n=randInt(3,7);
+  const m=randInt(2,5);
+  const exp=2*m-n;
+  if(exp<0)return gen10();
+  const ans=Math.pow(a,exp);
+  if(!isClean(ans)||ans>10000)return gen10();
+  return {
+    html:`${a}<span class="pow">−${n}</span> · (${a}<span class="pow">${m}</span>)<span class="pow">2</span>`,
+    ans:ans
+  };
+}
+
+/* Тип 11: b^-n · (b^m)^2 = b^(2m-n) с большим основанием */
+function gen11(){
+  const b=rand([5,7,11,13]);
+  const n=randInt(3,6);
+  const m=randInt(2,4);
+  const exp=2*m-n;
+  if(exp<0||exp>4)return gen11();
+  const ans=Math.pow(b,exp);
+  if(!isClean(ans)||ans>10000)return gen11();
+  return {
+    html:`${b}<span class="pow">−${n}</span> · (${b}<span class="pow">${m}</span>)<span class="pow">2</span>`,
+    ans:ans
+  };
+}
+
+/* Тип 12: k·(1/a)^2 − m·(1/a) = k/a² − m/a — подбираем так, чтобы ответ был короткий */
+function gen12(){
+  const a=rand([2,3,4,5]);
+  /* хотим ответ = k/a² - m/a = (k - m·a)/a² — подбираем чтобы делилось */
+  const k=randInt(2,10);
+  const m=randInt(1,5);
+  const num=k-m*a;
+  const ans=num/(a*a);
+  if(!isClean(ans))return gen12();
+  if(Math.abs(ans)>1000)return gen12();
+  return {
+    html:`${k} · ( <span class="frac"><span class="num">1</span><span class="den">${a}</span></span> )<span class="pow">2</span> − ${m} · <span class="frac"><span class="num">1</span><span class="den">${a}</span></span>`,
+    ans:ans
+  };
+}
+
+const GENERATORS=[gen1,gen2,gen3,gen4,gen5,gen6,gen7,gen8,gen9,gen10,gen11,gen12];
+
+/* ===== СОСТОЯНИЕ ===== */
+const state=[];
+
+function renderAll(){
+  const box=document.getElementById('taskList');
+  box.innerHTML='';
+  state.length=0;
+  GENERATORS.forEach((gen,i)=>{
+    let task;
+    let tries=0;
+    do{ task=gen(); tries++; } while(!task && tries<50);
+    if(!task){ task={html:'?',ans:0}; }
+    state.push({task,attempts:0,solved:false,correct:false});
+    const el=document.createElement('div');
+    el.className='task-item';
+    el.id='task-'+i;
+    el.innerHTML=`
+      <div class="task-header">
+        <span class="task-num">${i+1}</span>
+        <span class="task-expr">${task.html} = ?</span>
+        <span class="task-mark" id="mark-${i}"></span>
+      </div>
+      <div class="answer-row">
+        <input type="text" id="in-${i}" placeholder="Твой ответ (число)..." autocomplete="off">
+        <button id="btn-${i}">Проверить</button>
+      </div>
+      <div class="hint" id="hint-${i}">Введи ответ и нажми «Проверить»</div>
+    `;
+    box.appendChild(el);
+    document.getElementById('btn-'+i).addEventListener('click',()=>check(i));
+    document.getElementById('in-'+i).addEventListener('keydown',e=>{if(e.key==='Enter')check(i);});
+  });
+  updateProgress();
+}
+
+function check(i){
+  const st=state[i];
+  if(st.solved)return;
+  const inp=document.getElementById('in-'+i);
+  const hint=document.getElementById('hint-'+i);
+  const val=inp.value.trim();
+  if(!val){hint.textContent='Сначала введи число';hint.className='hint err';return;}
+  const parsed=parseFloat(val.replace(',','.').replace('−','-').replace(/\s/g,''));
+  if(isNaN(parsed)){hint.textContent='Это не число';hint.className='hint err';return;}
+
+  const ok=Math.abs(parsed-st.task.ans)<0.001;
+  st.attempts++;
+
+  if(ok){
+    st.solved=true;st.correct=true;
+    inp.classList.add('ok');inp.disabled=true;
+    document.getElementById('btn-'+i).disabled=true;
+    document.getElementById('mark-'+i).textContent='✓';
+    document.getElementById('mark-'+i).className='task-mark ok';
+    document.getElementById('task-'+i).classList.add('solved-correct');
+    hint.textContent='✓ Верно!';hint.className='hint ok';
+    if(window._speak)window._speak('Верно');
+  } else if(st.attempts>=2){
+    st.solved=true;st.correct=false;
+    inp.classList.add('err');inp.disabled=true;
+    document.getElementById('btn-'+i).disabled=true;
+    document.getElementById('mark-'+i).textContent='✗';
+    document.getElementById('mark-'+i).className='task-mark err';
+    document.getElementById('task-'+i).classList.add('solved-wrong');
+    const ansStr=Number.isInteger(st.task.ans)?String(st.task.ans):st.task.ans.toString().replace('.',',');
+    hint.textContent='✗ Неверно. Правильный ответ: '+ansStr;
+    hint.className='hint err';
+  } else {
+    inp.classList.add('err');
+    hint.textContent='Неверно. Попробуй ещё раз! (попытка '+st.attempts+' из 2)';
+    hint.className='hint err';
+    if(window._speak)window._speak('Попробуй ещё раз');
+    setTimeout(()=>{inp.classList.remove('err');},800);
+  }
+  updateProgress();
+}
+
+function updateProgress(){
+  let total=state.length,done=0,ok=0,err=0;
+  state.forEach(s=>{if(s.solved){done++;if(s.correct)ok++;else err++;}});
+  document.getElementById('prNum').textContent=done+' / '+total;
+  document.getElementById('prOk').textContent='✓ '+ok;
+  document.getElementById('prErr').textContent='✗ '+err;
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('prPct').textContent=pct+'%';
+  document.getElementById('prFill').style.width=pct+'%';
+}
+
+document.getElementById('newBtn').addEventListener('click',()=>{
+  if(confirm('Создать новые задания? Текущие результаты сбросятся.'))renderAll();
+});
+
+renderAll();
+</script>
+</body>
+</html>
