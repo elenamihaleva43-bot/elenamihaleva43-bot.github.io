@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Контрольная работа №1 · 6 класс · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;--mint:#7fffd4;--mint-soft:#a8f0dc;
+    --coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{min-height:100%;font-family:'Georgia','Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.06),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;overflow-x:hidden;}
+
+  .corner-logo{position:fixed;top:14px;left:16px;z-index:50;font-family:'Times New Roman',serif;text-align:center;line-height:1;padding:8px 14px 10px;background:rgba(10,42,51,0.6);border:1px solid rgba(26,188,156,0.4);border-radius:12px;backdrop-filter:blur(8px);box-shadow:0 4px 20px rgba(0,0,0,0.35);}
+  .corner-logo .dots{font-size:9px;letter-spacing:2px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:13px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:4px;}
+  .corner-logo .ru{font-size:9px;letter-spacing:2px;color:var(--text-soft);margin-top:2px;}
+  .corner-logo .sub{font-size:8px;letter-spacing:1px;color:var(--text-soft);margin-top:2px;font-style:italic;}
+
+  .top-right{position:fixed;top:14px;right:16px;z-index:50;display:flex;gap:8px;align-items:center;}
+  .header-date,.timer-display{display:flex;align-items:center;justify-content:center;height:44px;background:rgba(10,42,51,0.75);border:1px solid rgba(26,188,156,0.4);border-radius:12px;backdrop-filter:blur(8px);color:var(--mint);box-shadow:0 4px 20px rgba(0,0,0,0.35);font-size:13px;padding:0 16px;}
+  .timer-display{font-family:'Courier New',monospace;font-size:18px;font-weight:700;letter-spacing:2px;min-width:96px;color:#fff;}
+
+  .app{position:relative;z-index:10;max-width:1100px;margin:0 auto;padding:90px 20px 70px;}
+
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;border-bottom:1.5px solid rgba(26,188,156,0.3);padding-bottom:8px;}
+  .tab{padding:8px 22px;border-radius:30px;font-weight:600;font-size:14px;cursor:pointer;background:transparent;color:var(--text-soft);border:1px solid transparent;transition:0.25s;font-family:inherit;}
+  .tab:hover{color:var(--mint);background:rgba(26,188,156,0.1);}
+  .tab.active{background:rgba(26,188,156,0.18);color:var(--mint);border-color:rgba(26,188,156,0.5);}
+  .tab:disabled{opacity:0.3;cursor:not-allowed;}
+
+  .page{display:none;animation:fade 0.35s ease;}
+  .page.active{display:block;}
+  @keyframes fade{from{opacity:0.3;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+  .glass{background:rgba(255,255,255,0.05);border:1.5px solid var(--glass-brd);border-radius:20px;padding:26px 28px;backdrop-filter:blur(10px);box-shadow:0 8px 30px rgba(0,0,0,0.35);}
+
+  .welcome{text-align:center;padding:10px 0;}
+  .welcome .spirit-svg{display:inline-block;margin-bottom:6px;cursor:pointer;transition:0.3s;}
+  .welcome .spirit-svg:hover{transform:scale(1.05) rotate(-5deg);}
+  .welcome h1{font-size:clamp(24px,3.6vw,32px);font-weight:800;color:var(--mint);letter-spacing:1.5px;}
+  .welcome h1 span{color:var(--teal);}
+  .welcome .sub{font-size:clamp(13px,1.6vw,16px);color:var(--text-soft);margin-top:4px;font-style:italic;}
+  .welcome .desc{font-size:15px;color:var(--text);max-width:640px;margin:14px auto 0;line-height:1.65;}
+  .welcome .desc .spirit-name{color:var(--mint);font-weight:700;}
+  .welcome .name-input-group{margin-top:18px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap;align-items:center;}
+  .welcome .name-input-group input{background:rgba(255,255,255,0.06);border:1.5px solid var(--glass-brd);border-radius:12px;padding:11px 18px;font-size:16px;color:var(--text);width:250px;transition:0.2s;font-family:inherit;outline:none;}
+  .welcome .name-input-group input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(26,188,156,0.2);}
+  .welcome .name-input-group input::placeholder{color:var(--text-soft);}
+  .welcome .greeting{font-size:17px;font-weight:600;color:var(--mint);margin-top:8px;min-height:28px;}
+
+  .variant-select{margin-top:18px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+  .variant-btn{padding:12px 32px;border-radius:16px;border:1.5px solid var(--glass-brd);background:rgba(255,255,255,0.05);color:var(--text-soft);font-size:16px;font-weight:600;cursor:pointer;transition:0.25s;font-family:inherit;}
+  .variant-btn:hover{border-color:var(--mint);color:var(--mint);background:rgba(26,188,156,0.1);}
+  .variant-btn.selected{border-color:var(--teal);color:var(--ink,#04231d);background:linear-gradient(135deg,#1abc9c,#16a085);box-shadow:0 0 24px rgba(26,188,156,0.4);}
+
+  .btn-start-battle{margin-top:18px;padding:14px 48px;font-size:20px;font-weight:700;border:none;border-radius:40px;background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;cursor:pointer;transition:0.3s;box-shadow:0 6px 24px rgba(26,188,156,0.35);font-family:inherit;letter-spacing:1px;}
+  .btn-start-battle:hover{transform:scale(1.04);box-shadow:0 8px 32px rgba(26,188,156,0.55);}
+  .btn-start-battle:disabled{opacity:0.35;cursor:not-allowed;transform:none!important;}
+
+  .battle-score{display:flex;gap:24px;font-size:18px;font-weight:700;padding:10px 22px;background:rgba(26,188,156,0.1);border-radius:16px;border:1.5px solid var(--glass-brd);}
+  .battle-score .player{color:var(--ok);}
+  .battle-score .robot{color:var(--mint);}
+  .battle-score .vs{color:var(--gold);}
+
+  .task-block{background:rgba(255,255,255,0.04);border-radius:16px;padding:20px 24px;margin-bottom:16px;border-left:4px solid var(--teal);}
+  .task-block h3{font-size:18px;margin-bottom:6px;color:var(--mint);}
+  .task-block .task-num{color:var(--text-soft);font-size:13px;}
+  .task-card{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start;margin:8px 0;}
+  .task-expression{font-size:17px;font-weight:500;color:var(--text);padding:14px 18px;background:rgba(127,255,212,0.05);border-radius:12px;flex:1;min-width:200px;line-height:1.7;}
+
+  .flip-container{perspective:1000px;flex:0 0 auto;width:320px;min-height:200px;cursor:pointer;}
+  .flip-container.flipped .flipper{transform:rotateY(180deg);}
+  .flipper{position:relative;width:100%;min-height:200px;transition:0.6s;transform-style:preserve-3d;}
+  .front,.back{position:absolute;top:0;left:0;width:100%;min-height:200px;backface-visibility:hidden;border-radius:16px;padding:16px 20px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}
+  .front{background:rgba(10,42,51,0.7);border:2px dashed var(--teal);z-index:2;transform:rotateY(0deg);box-shadow:0 4px 20px rgba(0,0,0,0.3);}
+  .front .spirit-icon{font-size:52px;margin-bottom:6px;animation:spiritFloat 2s ease-in-out infinite;}
+  @keyframes spiritFloat{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-8px) scale(1.05);}}
+  .front .hint{font-size:14px;color:var(--text-soft);margin-top:6px;}
+  .front .spirit-label{font-size:16px;font-weight:700;color:var(--mint);}
+  .back{background:rgba(10,42,51,0.85);border:2px solid var(--mint);transform:rotateY(180deg);box-shadow:0 4px 20px rgba(26,188,156,0.25);}
+  .back .spirit-answer{font-size:17px;font-weight:700;color:#fff;padding:10px 14px;background:rgba(127,255,212,0.08);border-radius:10px;width:100%;line-height:1.6;}
+  .back .spirit-think{font-size:13px;color:var(--text-soft);margin-top:8px;}
+  .back .spirit-think .icon{font-size:18px;}
+  .back .reveal-hint{font-size:12px;color:var(--text-soft);margin-top:8px;font-style:italic;opacity:0.7;}
+
+  .task-buttons{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap;justify-content:center;}
+  .btn-agree{padding:10px 30px;border:none;border-radius:30px;font-weight:700;font-size:15px;cursor:pointer;background:rgba(46,204,113,0.15);color:var(--ok);border:1.5px solid rgba(46,204,113,0.4);transition:0.2s;font-family:inherit;}
+  .btn-agree:hover{background:rgba(46,204,113,0.28);transform:scale(1.04);}
+  .btn-disagree{padding:10px 30px;border:none;border-radius:30px;font-weight:700;font-size:15px;cursor:pointer;background:rgba(255,107,107,0.15);color:var(--err);border:1.5px solid rgba(255,107,107,0.4);transition:0.2s;font-family:inherit;}
+  .btn-disagree:hover{background:rgba(255,107,107,0.28);transform:scale(1.04);}
+
+  .task-result{margin-top:12px;font-weight:600;font-size:16px;min-height:28px;text-align:center;padding:10px 14px;border-radius:10px;background:rgba(255,255,255,0.04);}
+  .task-result.ok{color:var(--ok);border:1px solid rgba(46,204,113,0.3);}
+  .task-result.fail{color:var(--err);border:1px solid rgba(255,107,107,0.3);}
+  .task-result .correct-answer{color:var(--mint);}
+
+  .battle-final{text-align:center;padding:30px 20px;background:rgba(26,188,156,0.06);border-radius:20px;border:2px solid var(--teal);margin-top:10px;}
+  .battle-final h2{font-size:clamp(24px,3.5vw,34px);color:var(--mint);}
+  .battle-final .result-text{font-size:clamp(18px,2.4vw,24px);font-weight:700;margin:14px 0;}
+  .battle-final .result-text.win{color:var(--ok);}
+  .battle-final .result-text.lose{color:var(--err);}
+  .battle-final .result-text.draw{color:var(--gold);}
+
+  .progress-text{color:var(--text-soft);font-size:14px;}
+
+  @media (max-width:700px){
+    .app{padding:80px 12px 50px;}
+    .corner-logo{padding:6px 10px 8px;}
+    .header-date{font-size:11px;padding:0 10px;}
+    .timer-display{font-size:15px;min-width:80px;padding:0 12px;}
+    .task-card{flex-direction:column;align-items:stretch;}
+    .flip-container{width:100%;min-height:180px;}
+    .front,.back{min-height:180px;position:relative;}
+    .flipper{min-height:180px;}
+    .battle-score{font-size:15px;padding:8px 14px;gap:14px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="corner-logo">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+  <div class="sub">Школа Елены Михалевой</div>
+</div>
+
+<div class="top-right">
+  <div class="header-date" id="dateDisplay">📅 00.00.0000</div>
+  <div class="timer-display" id="timerDisplay">⏱ 00:00</div>
+</div>
+
+<div class="app">
+
+  <div class="tabs">
+    <button class="tab active" data-page="pageWelcome">🏠 Старт</button>
+    <button class="tab" data-page="pageBattle" id="battleTab" disabled>👻 Битва</button>
+  </div>
+
+  <!-- СТАРТ -->
+  <div class="page active" id="pageWelcome">
+    <div class="glass">
+      <div class="welcome">
+        <div class="spirit-svg" id="spiritClick">
+          <svg width="140" height="150" viewBox="0 0 140 150">
+            <circle cx="70" cy="65" r="50" fill="rgba(26,188,156,0.15)" stroke="#1abc9c" stroke-width="2.5"/>
+            <circle cx="70" cy="65" r="42" fill="rgba(26,188,156,0.08)" stroke="#1abc9c" stroke-width="1.5"/>
+            <circle cx="55" cy="55" r="18" fill="rgba(127,255,212,0.2)" stroke="#1abc9c" stroke-width="2"/>
+            <circle cx="85" cy="55" r="18" fill="rgba(127,255,212,0.2)" stroke="#1abc9c" stroke-width="2"/>
+            <circle cx="55" cy="55" r="9" fill="#1abc9c"/>
+            <circle cx="85" cy="55" r="9" fill="#1abc9c"/>
+            <circle cx="52" cy="52" r="4" fill="#fff"/>
+            <circle cx="82" cy="52" r="4" fill="#fff"/>
+            <circle cx="55" cy="55" r="4" fill="#0a2a33"/>
+            <circle cx="85" cy="55" r="4" fill="#0a2a33"/>
+            <path d="M 60 78 Q 70 90 80 78" stroke="#1abc9c" stroke-width="3" fill="none"/>
+            <path d="M 45 40 Q 55 32 65 40" stroke="#1abc9c" stroke-width="2" fill="none" opacity="0.6"/>
+            <path d="M 75 40 Q 85 32 95 40" stroke="#1abc9c" stroke-width="2" fill="none" opacity="0.6"/>
+            <text x="70" y="120" font-family="monospace" font-size="20" fill="#7fffd4" font-weight="700" text-anchor="middle">👻</text>
+            <text x="70" y="138" font-family="monospace" font-size="10" fill="#7fffd4" font-weight="600" text-anchor="middle">ДУХ УСРЕДНЕНИЯ</text>
+            <circle cx="70" cy="65" r="52" fill="none" stroke="#7fffd4" stroke-width="1" opacity="0.4">
+              <animate attributeName="r" values="52;58;52" dur="3s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values="0.4;0.7;0.4" dur="3s" repeatCount="indefinite"/>
+            </circle>
+          </svg>
+        </div>
+        <h1>Контрольная работа <span>№1</span></h1>
+        <div class="sub">6 класс · «Битва с Духом Усреднения»</div>
+        <div class="desc">
+          👻 <strong class="spirit-name">Дух Усреднения</strong> украл правильные ответы и пытается тебя запутать!<br>
+          Решай задания в тетради. <strong style="color:var(--mint);">Кликни по карточке</strong>, чтобы увидеть ответ Духа.<br>
+          Затем <strong style="color:var(--ok);">согласись</strong> или <strong style="color:var(--err);">не согласись</strong> с ним.<br>
+          <strong style="color:var(--gold);">Будь внимателен: Дух иногда ошибается!</strong>
+        </div>
+        <div class="name-input-group">
+          <input type="text" id="nameInput" placeholder="Введи своё имя..." maxlength="30">
+        </div>
+        <div class="greeting" id="greetingText">✨ Представься, чтобы начать битву!</div>
+
+        <div class="variant-select">
+          <button class="variant-btn" data-variant="variant1">📘 Вариант 1</button>
+          <button class="variant-btn" data-variant="variant2">📗 Вариант 2</button>
+        </div>
+
+        <button class="btn-start-battle" id="startBattleBtn" disabled>👻 Начать битву!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- БИТВА -->
+  <div class="page" id="pageBattle">
+    <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:16px; align-items:center;">
+      <div class="battle-score" id="battleScore">
+        <span class="player">🧑‍🎓 <span id="playerScore">0</span></span>
+        <span class="vs">⚔️</span>
+        <span class="robot">👻 <span id="robotScore">0</span></span>
+      </div>
+      <div class="progress-text" id="progressText">Задание 1 из 5</div>
+    </div>
+    <div id="taskContainer"></div>
+    <div id="finalResult" style="display:none;"></div>
+  </div>
+
+</div>
+
+<script>
+/* ДАТА */
+document.getElementById('dateDisplay').textContent =
+  '📅 ' + new Date().toLocaleDateString('ru-RU', { day:'2-digit', month:'2-digit', year:'numeric' });
+
+/* ИМЯ И ВАРИАНТ */
+const nameInput = document.getElementById('nameInput');
+const greetingText = document.getElementById('greetingText');
+const startBtn = document.getElementById('startBattleBtn');
+let playerName = '';
+let selectedVariant = null;
+
+const variantBtns = document.querySelectorAll('.variant-btn');
+variantBtns.forEach(btn => {
+  btn.addEventListener('click', function(){
+    variantBtns.forEach(b => b.classList.remove('selected'));
+    this.classList.add('selected');
+    selectedVariant = this.dataset.variant;
+    checkReady();
+  });
+});
+
+nameInput.addEventListener('input', function(){
+  const name = this.value.trim();
+  if(name){ playerName = name; greetingText.textContent = `👋 Привет, ${name}! Выбери вариант и начинай!`; greetingText.style.color = '#2ecc71'; }
+  else { playerName = ''; greetingText.textContent = '✨ Представься, чтобы начать битву!'; greetingText.style.color = '#7fffd4'; }
+  checkReady();
+});
+function checkReady(){ startBtn.disabled = !(playerName && selectedVariant); }
+
+/* ЗВУК */
+function speak(text, callback, isSpirit=false){
+  if(!window.speechSynthesis){ if(callback) callback(); return; }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ru-RU';
+  if(isSpirit){ u.rate = 0.5; u.pitch = 0.2; }
+  else { u.rate = 0.85; u.pitch = 1.1; }
+  const voices = window.speechSynthesis.getVoices();
+  let voice = null;
+  if(isSpirit){
+    voice = voices.find(v => v.lang.startsWith('ru') &&
+      (v.name.toLowerCase().includes('pavel') || v.name.toLowerCase().includes('maxim') ||
+       v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('alexander')))
+      || voices.find(v => v.lang.startsWith('ru')) || null;
+  } else {
+    voice = voices.find(v => v.lang.startsWith('ru') &&
+      (v.name.toLowerCase().includes('irina') || v.name.toLowerCase().includes('female')))
+      || voices.find(v => v.lang.startsWith('ru')) || null;
+  }
+  if(voice) u.voice = voice;
+  if(callback) u.onend = callback;
+  window.speechSynthesis.speak(u);
+}
+if(window.speechSynthesis){
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
+}
+document.addEventListener('touchstart', function(){}, { once:true });
+
+document.getElementById('spiritClick').addEventListener('click', function(){
+  if(playerName) speak(`Ха-ха-ха! ${playerName}, я — Дух Усреднения! Я украл все правильные ответы! Попробуй меня победить!`, null, true);
+  else speak('Ха-ха-ха! Я — Дух Усреднения! Введи своё имя и выбери вариант, если посмеешь!', null, true);
+});
+
+/* ТАЙМЕР */
+let timerSeconds = 0, timerInterval = null, isBattleActive = false;
+function startTimer(){
+  if(isBattleActive) return;
+  isBattleActive = true;
+  timerInterval = setInterval(() => {
+    timerSeconds++;
+    const m = String(Math.floor(timerSeconds / 60)).padStart(2,'0');
+    const s = String(timerSeconds % 60).padStart(2,'0');
+    document.getElementById('timerDisplay').textContent = `⏱ ${m}:${s}`;
+  }, 1000);
+}
+function stopTimer(){ if(timerInterval){ clearInterval(timerInterval); timerInterval = null; } }
+
+/* ВКЛАДКИ */
+function enableBattleTab(){ document.getElementById('battleTab').disabled = false; }
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', function(){
+    if(this.disabled) return;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(this.dataset.page).classList.add('active');
+  });
+});
+
+/* СТАРТ */
+startBtn.addEventListener('click', function(){
+  if(!playerName || !selectedVariant) return;
+  enableBattleTab();
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('battleTab').classList.add('active');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('pageBattle').classList.add('active');
+  startTimer();
+  generateTasks(selectedVariant);
+  const variantName = selectedVariant === 'variant1' ? '1' : '2';
+  speak(`${playerName}, битва началась! Вариант ${variantName}. Решай в тетради, затем кликай по карточке с Духом. Удачи!`);
+});
+
+/* ЗАДАНИЯ */
+const taskData = {
+  variant1: [
+    { id:1, label:'Налог', text:'Продали дом и заплатили налог 13% от его стоимости. Сколько рублей составил налог, если стоимость дома равна 2 300 000 р.?', spiritAnswer:'299 000 рублей', isSpiritCorrect:true },
+    { id:2, label:'Треугольник', text:'Один из углов треугольника 50°, а другие два угла равны. Найдите неизвестные углы треугольника. Определите вид этого треугольника.', spiritAnswer:'65° и 65°. Треугольник равнобедренный, остроугольный.', isSpiritCorrect:true },
+    { id:3, label:'Средняя скорость', text:'Поезд шёл 4 ч со скоростью 60,5 км/ч и 3 ч со скоростью 70,3 км/ч. Найдите среднюю скорость поезда на всём пути.', spiritAnswer:'64,7 км/ч', isSpiritCorrect:true },
+    { id:4, label:'Круговая диаграмма', text:'Постройте круговую диаграмму по данным таблицы (тополь 30%, берёза 25%, клён 35%, другие 10%).', spiritAnswer:'Тополь 108°, Берёза 90°, Клён 126°, Другие 36°', isSpiritCorrect:false },
+    { id:5, label:'Множества', text:'Составьте множество X натуральных чисел, на которые делится без остатка число 18, и множество Y натуральных чисел, на которые делится без остатка число 24. Найдите пересечение и объединение.', spiritAnswer:'X = {1,2,3,6,9,18}; Y = {1,2,3,4,6,8,12,24}; X∩Y = {1,2,3,6}; X∪Y = {1,2,3,4,6,8,9,12,18,24}', isSpiritCorrect:false }
+  ],
+  variant2: [
+    { id:1, label:'Налог', text:'Продали автомобиль и заплатили налог 30% от его стоимости. Сколько рублей составил налог, если стоимость автомобиля равна 570 000 р.?', spiritAnswer:'171 000 рублей', isSpiritCorrect:true },
+    { id:2, label:'Треугольник', text:'Один из углов треугольника 110°, а другие два угла равны. Найдите неизвестные углы треугольника. Определите вид этого треугольника.', spiritAnswer:'35° и 35°. Треугольник равнобедренный, тупоугольный.', isSpiritCorrect:true },
+    { id:3, label:'Средняя скорость', text:'Автомобиль шёл 4 ч со скоростью 56,5 км/ч и 2 ч со скоростью 68,2 км/ч. Найдите среднюю скорость автомобиля на всём пути.', spiritAnswer:'60,4 км/ч', isSpiritCorrect:true },
+    { id:4, label:'Круговая диаграмма', text:'Постройте круговую диаграмму по данным таблицы (приём пищи 15%, прогулка 40%, сон 20%, игры 25%).', spiritAnswer:'Приём пищи 54°, Прогулка 144°, Сон 72°, Игры 90°', isSpiritCorrect:false },
+    { id:5, label:'Множества', text:'Составьте множество A двузначных чисел, которые делятся без остатка на число 15, и множество B двузначных чисел, которые делятся без остатка на число 20. Найдите пересечение и объединение.', spiritAnswer:'A = {15,30,45,60,75,90}; B = {20,40,60,80}; A∩B = {60}; A∪B = {15,20,30,40,45,60,75,80,90}', isSpiritCorrect:false }
+  ]
+};
+
+/* ЛОГИКА БИТВЫ */
+let tasks = [], currentTaskIndex = 0, playerScore = 0, spiritScore = 0;
+
+function generateTasks(variant){
+  const raw = taskData[variant] || taskData.variant1;
+  tasks = raw.map(t => ({ ...t, answered:false, isPlayerCorrect:null }));
+  currentTaskIndex = 0; playerScore = 0; spiritScore = 0;
+  document.getElementById('playerScore').textContent = '0';
+  document.getElementById('robotScore').textContent = '0';
+  document.getElementById('finalResult').style.display = 'none';
+  renderTask();
+}
+
+function renderTask(){
+  const container = document.getElementById('taskContainer');
+  const progress = document.getElementById('progressText');
+  if(currentTaskIndex >= tasks.length){ showFinalResult(); return; }
+  const task = tasks[currentTaskIndex];
+  progress.textContent = `Задание ${currentTaskIndex + 1} из ${tasks.length}`;
+  const isAnswered = task.answered === true;
+  const spiritCorrectText = task.isSpiritCorrect ? '✅ Дух уверен в ответе' : '❓ Дух сомневается...';
+
+  container.innerHTML = `
+    <div class="glass task-block">
+      <div class="task-num">Задание ${task.id}</div>
+      <h3>${task.label}</h3>
+      <div class="task-card">
+        <div class="task-expression">${task.text}</div>
+        <div class="flip-container" id="flipContainer">
+          <div class="flipper">
+            <div class="front">
+              <div class="spirit-icon">👻</div>
+              <div class="spirit-label">Ответ Духа Усреднения</div>
+              <div class="hint">👆 Нажми, чтобы открыть</div>
+            </div>
+            <div class="back">
+              <div class="spirit-answer">${task.spiritAnswer}</div>
+              <div class="spirit-think"><span class="icon">👻</span> ${spiritCorrectText}</div>
+              <div class="reveal-hint">👆 Нажми, чтобы закрыть</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      ${!isAnswered ? `
+        <div class="task-buttons">
+          <button class="btn-agree" id="agreeBtn">✅ Согласен с Духом</button>
+          <button class="btn-disagree" id="disagreeBtn">❌ Не согласен</button>
+        </div>
+      ` : `
+        <div class="task-result ${task.isPlayerCorrect ? 'ok' : 'fail'}">
+          ${task.isPlayerCorrect ? '✅ Верно! +1 очко тебе!' : '❌ Ошибка! Очко достаётся Духу!'}
+          ${!task.isPlayerCorrect ? `<br><span class="correct-answer">Правильный ответ: ${task.spiritAnswer}</span>` : ''}
+        </div>
+      `}
+    </div>
+  `;
+
+  const flipEl = document.getElementById('flipContainer');
+  if(flipEl) flipEl.addEventListener('click', function(){ this.classList.toggle('flipped'); });
+
+  if(!isAnswered){
+    document.getElementById('agreeBtn').addEventListener('click', () => handleAnswer(true));
+    document.getElementById('disagreeBtn').addEventListener('click', () => handleAnswer(false));
+  }
+  document.getElementById('playerScore').textContent = playerScore;
+  document.getElementById('robotScore').textContent = spiritScore;
+}
+
+function handleAnswer(playerAgrees){
+  const task = tasks[currentTaskIndex];
+  if(task.answered) return;
+  const spiritCorrect = task.isSpiritCorrect;
+  const playerChoseCorrect = playerAgrees ? spiritCorrect : !spiritCorrect;
+  task.answered = true;
+  task.isPlayerCorrect = playerChoseCorrect;
+  if(playerChoseCorrect){
+    playerScore++;
+    speak('Верно! Ты получаешь очко!');
+  } else {
+    spiritScore++;
+    if(spiritCorrect) speak('Ха-ха-ха! Дух был прав! Очко уходит мне!', null, true);
+    else speak('Ты ошибся! Дух был неправ, но ты не заметил. Очко достаётся мне!', null, true);
+  }
+  document.getElementById('playerScore').textContent = playerScore;
+  document.getElementById('robotScore').textContent = spiritScore;
+  currentTaskIndex++;
+  setTimeout(() => renderTask(), 400);
+}
+
+function showFinalResult(){
+  const container = document.getElementById('taskContainer');
+  const finalDiv = document.getElementById('finalResult');
+  container.innerHTML = '';
+  finalDiv.style.display = 'block';
+
+  let resultText, resultClass;
+  if(playerScore > spiritScore){
+    resultText = `🏆 ${playerName} победил Духа Усреднения! 🎉`;
+    resultClass = 'win';
+    speak('Поздравляю! Ты победил Духа Усреднения! Ты — настоящий мастер!');
+  } else if(playerScore < spiritScore){
+    resultText = `👻 Дух Усреднения победил! В следующий раз обязательно получится!`;
+    resultClass = 'lose';
+    speak('Ха-ха-ха! Я победил! В следующий раз тебе меня не одолеть!', null, true);
+  } else {
+    resultText = `🤝 Ничья! Ты и Дух — равные противники!`;
+    resultClass = 'draw';
+    speak('Ничья! Ты достойный противник!', null, true);
+  }
+
+  finalDiv.innerHTML = `
+    <div class="glass battle-final">
+      <h2>👻 Битва окончена!</h2>
+      <div class="result-text ${resultClass}">${resultText}</div>
+      <div style="display:flex; justify-content:center; gap:40px; font-size:22px; font-weight:700; margin:16px 0; flex-wrap:wrap;">
+        <span style="color:var(--ok);">🧑‍🎓 ${playerName}: ${playerScore}</span>
+        <span style="color:var(--gold);">⚔️</span>
+        <span style="color:var(--mint);">👻 Дух: ${spiritScore}</span>
+      </div>
+      <div style="color:var(--text-soft); font-size:14px;">
+        ⏱ Время: ${document.getElementById('timerDisplay').textContent}
+      </div>
+      <button class="btn-start-battle" id="rematchBtn" style="margin-top:18px; padding:10px 32px; font-size:16px;">🔄 Реванш!</button>
+    </div>
+  `;
+
+  document.getElementById('rematchBtn').addEventListener('click', function(){
+    stopTimer();
+    timerSeconds = 0;
+    document.getElementById('timerDisplay').textContent = '⏱ 00:00';
+    isBattleActive = false;
+    generateTasks(selectedVariant);
+    startTimer();
+    document.getElementById('finalResult').style.display = 'none';
+    speak('Реванш! Начинаем новую битву!');
+  });
+
+  document.getElementById('progressText').textContent = 'Битва окончена!';
+}
+</script>
+</body>
+</html>
