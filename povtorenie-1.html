@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Повторение · Квадратные уравнения и многочлены · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass:rgba(255,255,255,0.04);--glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{min-height:100vh;font-family:Georgia,'Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.06),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;padding:20px;overflow-x:hidden;}
+  .glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.5;}
+  .glow.g1{width:520px;height:520px;top:-120px;left:-120px;background:radial-gradient(circle,rgba(26,188,156,0.55),transparent 70%);animation:pulse 9s ease-in-out infinite;}
+  .glow.g2{width:600px;height:600px;bottom:-200px;right:-180px;background:radial-gradient(circle,rgba(127,255,212,0.4),transparent 70%);animation:pulse 11s ease-in-out infinite reverse;}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:0.35;}50%{transform:scale(1.15);opacity:0.6;}}
+  .corner-logo{position:fixed;top:14px;left:16px;z-index:50;font-family:'Times New Roman',serif;text-align:center;line-height:1;padding:10px 18px 12px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(26,188,156,0.45);border-radius:14px;backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(0,0,0,0.35);}
+  .corner-logo .dots{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:16px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:4px;}
+  .corner-logo .ru{font-size:10px;letter-spacing:3px;color:var(--text-soft);margin-top:2px;}
+  .top-right{position:fixed;top:14px;right:16px;z-index:50;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+  .date-badge,.timer-box,.sound-btn{display:flex;align-items:center;justify-content:center;height:46px;border-radius:14px;backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;font-size:16px;}
+  .date-badge{padding:0 16px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(127,255,212,0.45);color:var(--mint);font-family:'Courier New',monospace;}
+  .timer-box{padding:0 16px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(244,211,94,0.55);color:var(--gold);cursor:pointer;min-width:96px;font-family:'Courier New',monospace;}
+  .sound-btn{width:46px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(26,188,156,0.45);color:var(--teal);cursor:pointer;font-size:20px;transition:.2s;}
+  .sound-btn:hover{transform:translateY(-2px);border-color:var(--mint);color:var(--mint);}
+  .sound-btn.muted{color:#8aa8a0;opacity:0.65;}
+  .wrap{position:relative;z-index:10;max-width:900px;margin:80px auto 40px;}
+  .card{background:var(--glass);border:1.5px solid var(--glass-brd);border-radius:20px;padding:26px 28px;backdrop-filter:blur(10px);box-shadow:0 8px 30px rgba(0,0,0,0.3);margin-bottom:20px;}
+  h1{font-family:'Times New Roman',serif;font-size:clamp(22px,3.2vw,30px);color:var(--teal);letter-spacing:1px;margin-bottom:8px;}
+  h1 .num{color:var(--gold);margin-right:10px;}
+  .subtitle{color:var(--text-soft);font-style:italic;font-size:15px;}
+  .intro-note{margin-top:14px;padding:14px 18px;background:rgba(244,211,94,0.08);border-left:4px solid var(--gold);border-radius:0 12px 12px 0;font-size:15px;line-height:1.6;color:var(--text);}
+  .intro-note b{color:var(--gold-light);}
+  .progress-bar{padding:14px 20px;border-radius:16px;background:rgba(10,42,51,0.9);border:1px solid var(--glass-brd);backdrop-filter:blur(12px);margin-bottom:20px;}
+  .progress-bar .row1{display:flex;flex-wrap:wrap;gap:14px;align-items:center;font-size:14px;color:var(--text-soft);margin-bottom:10px;}
+  .progress-bar .row1 .num{font-family:'Courier New',monospace;font-weight:700;color:var(--mint);font-size:16px;}
+  .progress-bar .row1 .count-ok{color:var(--ok);font-weight:700;}
+  .progress-bar .row1 .count-err{color:var(--err);font-weight:700;}
+  .progress-bar .row1 .percent{margin-left:auto;color:var(--mint);font-family:'Courier New',monospace;font-weight:700;}
+  .progress-bar .bar{height:8px;border-radius:6px;background:rgba(255,255,255,0.08);overflow:hidden;}
+  .progress-bar .bar .fill{height:100%;width:0%;background:linear-gradient(90deg,#1abc9c,#7fffd4);border-radius:6px;transition:0.4s;}
+  .task-list{display:flex;flex-direction:column;gap:14px;}
+  .task-item{background:rgba(255,255,255,0.03);border:1.5px solid rgba(26,188,156,0.25);border-radius:14px;padding:18px 22px;transition:.2s;}
+  .task-item:hover{border-color:var(--mint);}
+  .task-item.solved-correct{border-color:var(--ok);background:rgba(46,204,113,0.05);}
+  .task-item.solved-wrong{border-color:var(--err);background:rgba(255,107,107,0.05);}
+  .task-header{display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap;}
+  .task-num{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:34px;background:linear-gradient(135deg,var(--gold),#c9a32b);color:#2a1f00;border-radius:10px;font-family:'Courier New',monospace;font-weight:700;font-size:14px;flex-shrink:0;}
+  .task-title{font-family:'Times New Roman',serif;font-size:14px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;flex:1;font-weight:700;}
+  .task-mark{font-size:22px;font-weight:700;flex-shrink:0;min-width:24px;text-align:center;}
+  .task-mark.ok{color:var(--ok);}
+  .task-mark.err{color:var(--err);}
+  .task-body{font-family:'Cambria Math','Times New Roman',serif;font-size:clamp(17px,2.2vw,21px);color:var(--mint);line-height:1.6;margin-bottom:14px;font-style:italic;}
+  .frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 5px;line-height:1.1;font-size:0.92em;}
+  .frac .num{border-bottom:1.6px solid currentColor;padding:0 6px 2px;}
+  .frac .den{padding:2px 6px 0;}
+  .pow{font-size:0.75em;vertical-align:super;line-height:0;}
+  .answer-rows{display:flex;flex-direction:column;gap:10px;}
+  .answer-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .answer-row label{font-size:15px;color:var(--text-soft);font-family:Georgia,serif;min-width:110px;}
+  .answer-row input{flex:1;min-width:180px;padding:11px 14px;border-radius:10px;border:1.5px solid var(--glass-brd);background:rgba(10,42,51,0.5);color:var(--text);font-family:'Cambria Math',serif;font-size:16px;outline:none;transition:.2s;}
+  .answer-row input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+  .answer-row input.ok{border-color:var(--ok);background:rgba(46,204,113,0.12);color:var(--ok);}
+  .answer-row input.err{border-color:var(--err);background:rgba(255,107,107,0.12);color:var(--err);}
+  .answer-row input::placeholder{color:var(--text-soft);opacity:0.5;font-style:italic;}
+  .answer-row input:disabled{opacity:0.85;cursor:not-allowed;}
+  .answer-row button{padding:11px 22px;border-radius:10px;border:none;background:var(--teal);color:#04231d;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:0.5px;transition:.2s;}
+  .answer-row button:hover:not(:disabled){filter:brightness(1.1);transform:translateY(-1px);}
+  .answer-row button:disabled{opacity:0.5;cursor:not-allowed;}
+  .hint{font-size:13px;color:var(--text-soft);font-style:italic;margin-top:8px;}
+  .hint.ok{color:var(--ok);font-weight:700;font-style:normal;}
+  .hint.err{color:var(--err);font-weight:700;font-style:normal;}
+  .footer{text-align:center;padding:30px 20px 20px;color:var(--text-soft);font-size:13px;font-family:'Times New Roman',serif;letter-spacing:2px;}
+  .footer .f-logo{color:var(--teal);font-size:15px;margin-bottom:6px;}
+  .footer .f-sub{font-style:italic;opacity:.75;}
+  @media(max-width:720px){
+    .wrap{margin-top:150px;}
+    .top-right{gap:6px;}
+    .date-badge,.timer-box{padding:0 12px;font-size:14px;height:40px;}
+    .sound-btn{width:40px;height:40px;font-size:17px;}
+    .card{padding:18px 16px;}
+    .task-item{padding:14px 16px;}
+    .answer-row label{min-width:80px;font-size:13px;}
+    .answer-row input{font-size:15px;padding:10px 12px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div><div class="glow g2"></div>
+
+<div class="corner-logo">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+</div>
+
+<div class="top-right">
+  <div class="date-badge" id="dateBadge">--.--.----</div>
+  <div class="timer-box" id="timerBox">00:00</div>
+  <button class="sound-btn" id="soundBtn" title="Звук">🔊</button>
+</div>
+
+<div class="wrap">
+
+  <div class="card">
+    <h1><span class="num">🔁</span>Повторение · Квадратные уравнения и многочлены</h1>
+    <p class="subtitle">ΤΕΤΡΑΚΤΥΣ · Школа математики Елены Михалевой</p>
+    <div class="intro-note">
+      <b>💎 Как писать ответы:</b><br>
+      • Степень — через <b>x2</b>, <b>x3</b> (например, <b>x2+3x</b>).<br>
+      • Дроби — через <b>/</b> или <b>,</b> (например, <b>1/2</b> или <b>0,5</b>).<br>
+      • Несколько корней — через <b>точку с запятой</b> (например, <b>1; 2; 3</b>).<br>
+      • Если корней нет — напиши <b>нет</b>.
+    </div>
+  </div>
+
+  <div class="progress-bar">
+    <div class="row1">
+      <span>📊 Прогресс:</span>
+      <span class="num" id="prNum">0 / 7</span>
+      <span class="count-ok" id="prOk">✓ 0</span>
+      <span class="count-err" id="prErr">✗ 0</span>
+      <span class="percent" id="prPct">0%</span>
+    </div>
+    <div class="bar"><div class="fill" id="prFill"></div></div>
+  </div>
+
+  <div class="task-list" id="taskList"></div>
+
+</div>
+
+<div class="footer">
+  <div class="f-logo">ΤΕΤΡΑΚΤΥΣ · ТЕТРАКТИС</div>
+  <div class="f-sub">где математика превращается в приключение</div>
+</div>
+
+<script>
+/* ===== ДАТА ===== */
+(function(){
+  const el=document.getElementById('dateBadge');
+  function upd(){
+    const d=new Date();
+    el.textContent=String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();
+  }
+  upd();setInterval(upd,60000);
+})();
+
+/* ===== ТАЙМЕР ===== */
+(function(){
+  const el=document.getElementById('timerBox');
+  let s=0,run=true;
+  setInterval(()=>{
+    if(!run)return;
+    const m=Math.floor(s/60),ss=s%60;
+    el.textContent=String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0');
+    s++;
+  },1000);
+  el.addEventListener('click',()=>{run=!run;el.style.opacity=run?'1':'0.5';});
+})();
+
+/* ===== ЗВУК ===== */
+let soundEnabled=true;
+const soundBtn=document.getElementById('soundBtn');
+soundBtn.addEventListener('click',()=>{
+  soundEnabled=!soundEnabled;
+  if(!soundEnabled){try{speechSynthesis.cancel();}catch(_){}}
+  soundBtn.textContent=soundEnabled?'🔊':'🔇';
+  soundBtn.classList.toggle('muted',!soundEnabled);
+});
+
+/* ===== ЗАДАНИЯ ===== */
+const TASKS = [
+  {
+    num: 1,
+    title: 'Приведённое квадратное уравнение',
+    body: 'x<span class="pow">2</span> − 7x + 12 = 0',
+    rows: [
+      { id: 't1', label: 'Корни:', placeholder: 'введи корни', answers: ['3;4','4;3','3,4','4,3'] }
+    ]
+  },
+  {
+    num: 2,
+    title: 'Неприведённое квадратное уравнение',
+    body: '6x<span class="pow">2</span> − 5x + 1 = 0',
+    rows: [
+      { id: 't2', label: 'Корни:', placeholder: 'введи корни', answers: ['1/2;1/3','1/3;1/2','0,5;1/3','1/3;0,5','1/2;0,33','0,5;0,33'] }
+    ]
+  },
+  {
+    num: 3,
+    title: 'Неприведённое квадратное уравнение',
+    body: '2x<span class="pow">2</span> + 3x + 5 = 0',
+    rows: [
+      { id: 't3', label: 'Корни:', placeholder: 'введи корни', answers: ['нет','неткорней','нет корней','неткорня','н'] }
+    ]
+  },
+  {
+    num: 4,
+    title: 'Рациональное уравнение',
+    body: '<span class="frac"><span class="num">x<span class="pow">3</span> − 5x<span class="pow">2</span></span><span class="den">x − 5</span></span> = 25',
+    rows: [
+      { id: 't4', label: 'Корни:', placeholder: 'введи корни', answers: ['-5','-5;','−5'] }
+    ]
+  },
+  {
+    num: 5,
+    title: 'Выделить целую часть из дроби',
+    body: '<span class="frac"><span class="num">x<span class="pow">3</span> + 2x<span class="pow">2</span> − 3x + 4</span><span class="den">x − 1</span></span>',
+    rows: [
+      { id: 't5c', label: 'Целая часть:', placeholder: 'введи целую часть', answers: ['x2+3x','x^2+3x','x2+3*x'] },
+      { id: 't5r', label: 'Остаток:', placeholder: 'введи число', answers: ['4'] }
+    ]
+  },
+  {
+    num: 6,
+    title: 'Разделить многочлены уголком',
+    body: '(2x<span class="pow">4</span> − 3x<span class="pow">3</span> + 4x<span class="pow">2</span> − 5x + 1) : (x − 2)',
+    rows: [
+      { id: 't6c', label: 'Частное:', placeholder: 'введи частное', answers: ['2x3+x2+6x+7','2x^3+x^2+6x+7'] },
+      { id: 't6r', label: 'Остаток:', placeholder: 'введи число', answers: ['15'] }
+    ]
+  },
+  {
+    num: 7,
+    title: 'Уравнение 4 степени',
+    body: 'x<span class="pow">4</span> − 7x<span class="pow">3</span> + 17x<span class="pow">2</span> − 17x + 6 = 0',
+    rows: [
+      { id: 't7', label: 'Корни:', placeholder: 'введи корни', answers: ['1;2;3','1;3;2','2;1;3','2;3;1','3;1;2','3;2;1'] }
+    ]
+  }
+];
+
+/* ===== НОРМАЛИЗАЦИЯ ОТВЕТА ===== */
+function normAns(s){
+  return String(s||'')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g,'')
+    .replace(/[−–—]/g,'-')
+    .replace(/,/g,';')
+    .replace(/;/g,';')
+    .replace(/\*/g,'')
+    .replace(/\^/g,'');
+}
+
+/* ===== ПРОВЕРКА ===== */
+function checkAnswer(userAns, correctList){
+  const u = normAns(userAns);
+  if(!u) return false;
+  return correctList.some(c => normAns(c) === u);
+}
+
+/* ===== РЕНДЕР ===== */
+const state = TASKS.map(()=>({solved:false,correct:false,attempts:0}));
+
+function renderAll(){
+  const box = document.getElementById('taskList');
+  box.innerHTML = '';
+  TASKS.forEach((t,i)=>{
+    const el = document.createElement('div');
+    el.className = 'task-item';
+    el.id = 'task-'+i;
+    let rowsHtml = '';
+    t.rows.forEach(row=>{
+      rowsHtml += `
+        <div class="answer-row">
+          <label>${row.label}</label>
+          <input type="text" id="${row.id}" placeholder="${row.placeholder}" autocomplete="off">
+          <button data-i="${i}">Проверить</button>
+        </div>
+      `;
+    });
+    el.innerHTML = `
+      <div class="task-header">
+        <span class="task-num">${t.num}</span>
+        <span class="task-title">${t.title}</span>
+        <span class="task-mark" id="mark-${i}"></span>
+      </div>
+      <div class="task-body">${t.body}</div>
+      <div class="answer-rows">${rowsHtml}</div>
+      <div class="hint" id="hint-${i}">Введи ответ и нажми «Проверить»</div>
+    `;
+    box.appendChild(el);
+  });
+
+  document.querySelectorAll('.answer-row button').forEach(btn=>{
+    btn.addEventListener('click',()=>checkTask(parseInt(btn.dataset.i)));
+  });
+  document.querySelectorAll('.answer-row input').forEach(inp=>{
+    inp.addEventListener('keydown',e=>{
+      if(e.key === 'Enter'){ e.preventDefault(); inp.blur(); }
+    });
+  });
+}
+
+function checkTask(i){
+  const st = state[i];
+  if(st.solved) return;
+  const t = TASKS[i];
+  const hint = document.getElementById('hint-'+i);
+
+  let allCorrect = true;
+  let anyEmpty = false;
+  const inputs = [];
+
+  for(const row of t.rows){
+    const inp = document.getElementById(row.id);
+    inputs.push(inp);
+    const v = inp.value.trim();
+    if(!v) anyEmpty = true;
+    const ok = checkAnswer(v, row.answers);
+    if(!ok) allCorrect = false;
+  }
+
+  if(anyEmpty){
+    hint.textContent = '⚠ Заполни все поля!';
+    hint.className = 'hint err';
+    return;
+  }
+
+  st.attempts++;
+
+  if(allCorrect){
+    st.solved = true;
+    st.correct = true;
+    inputs.forEach(inp=>{ inp.classList.remove('err'); inp.classList.add('ok'); inp.disabled = true; });
+    document.getElementById('mark-'+i).textContent = '✓';
+    document.getElementById('mark-'+i).className = 'task-mark ok';
+    document.getElementById('task-'+i).classList.add('solved-correct');
+    hint.textContent = '✓ Верно!';
+    hint.className = 'hint ok';
+  } else if(st.attempts >= 2){
+    st.solved = true;
+    st.correct = false;
+    inputs.forEach(inp=>{ inp.classList.remove('ok'); inp.classList.add('err'); inp.disabled = true; });
+    document.getElementById('mark-'+i).textContent = '✗';
+    document.getElementById('mark-'+i).className = 'task-mark err';
+    document.getElementById('task-'+i).classList.add('solved-wrong');
+    const correctText = t.rows.map(r => r.answers[0]).join(' · ');
+    hint.textContent = '✗ Неверно. Правильно: ' + correctText;
+    hint.className = 'hint err';
+  } else {
+    inputs.forEach(inp=>{
+      inp.classList.add('err');
+      setTimeout(()=>inp.classList.remove('err'),700);
+    });
+    hint.textContent = '✗ Неверно. Попробуй ещё раз! (попытка ' + st.attempts + ' из 2)';
+    hint.className = 'hint err';
+  }
+
+  updateProgress();
+}
+
+function updateProgress(){
+  let total = state.length, done = 0, ok = 0, err = 0;
+  state.forEach(s=>{
+    if(s.solved){ done++; if(s.correct) ok++; else err++; }
+  });
+  document.getElementById('prNum').textContent = done + ' / ' + total;
+  document.getElementById('prOk').textContent = '✓ ' + ok;
+  document.getElementById('prErr').textContent = '✗ ' + err;
+  const pct = total ? Math.round(done/total*100) : 0;
+  document.getElementById('prPct').textContent = pct + '%';
+  document.getElementById('prFill').style.width = pct + '%';
+}
+
+renderAll();
+</script>
+</body>
+</html>
