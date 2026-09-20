@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Собери башню · Десятичные дроби · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--mint-soft:#a8f0dc;
+    --coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass:rgba(255,255,255,0.04);--glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{min-height:100vh;font-family:Georgia,'Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.06),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;padding:20px;overflow-x:hidden;display:flex;justify-content:center;align-items:flex-start;}
+  .glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.5;}
+  .glow.g1{width:520px;height:520px;top:-120px;left:-120px;background:radial-gradient(circle,rgba(26,188,156,0.55),transparent 70%);animation:pulse 9s ease-in-out infinite;}
+  .glow.g2{width:600px;height:600px;bottom:-200px;right:-180px;background:radial-gradient(circle,rgba(127,255,212,0.4),transparent 70%);animation:pulse 11s ease-in-out infinite reverse;}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:0.35;}50%{transform:scale(1.15);opacity:0.6;}}
+  /* ЛОГОТИП */
+  .corner-logo{position:fixed;top:14px;left:16px;z-index:50;font-family:'Times New Roman',serif;text-align:center;line-height:1;padding:10px 18px 12px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(26,188,156,0.45);border-radius:14px;backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(0,0,0,0.35);}
+  .corner-logo .dots{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:16px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:4px;}
+  .corner-logo .ru{font-size:10px;letter-spacing:3px;color:var(--text-soft);margin-top:2px;}
+  /* ПАНЕЛЬ СПРАВА */
+  .top-right{position:fixed;top:14px;right:16px;z-index:50;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+  .date-badge,.timer-box,.sound-btn{display:flex;align-items:center;justify-content:center;height:46px;border-radius:14px;backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;font-size:16px;}
+  .date-badge{padding:0 16px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(127,255,212,0.45);color:var(--mint);font-family:'Courier New',monospace;}
+  .timer-box{padding:0 16px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(244,211,94,0.55);color:var(--gold);cursor:pointer;min-width:96px;font-family:'Courier New',monospace;}
+  .sound-btn{width:46px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(26,188,156,0.45);color:var(--teal);cursor:pointer;font-size:20px;transition:.2s;}
+  .sound-btn:hover{transform:translateY(-2px);border-color:var(--mint);color:var(--mint);}
+  .sound-btn.muted{color:#8aa8a0;opacity:0.65;}
+  /* КОНТЕЙНЕР */
+  .container{max-width:750px;width:100%;background:var(--glass);border:1.5px solid var(--glass-brd);border-radius:24px;padding:26px 28px 22px;backdrop-filter:blur(12px);box-shadow:0 12px 50px rgba(0,0,0,0.5);position:relative;min-height:500px;z-index:2;margin-top:60px;}
+  .page{display:none;animation:fadeIn 0.4s ease;}
+  .page.active{display:block;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  /* СТАРТ */
+  .welcome{text-align:center;padding:10px 0 6px;}
+  .welcome .emoji{font-size:64px;display:block;animation:float 3s ease-in-out infinite;}
+  @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+  .welcome h1{font-size:28px;color:var(--mint);margin:4px 0 6px;letter-spacing:1px;}
+  .welcome h1 span{color:var(--teal);}
+  .welcome p{font-size:15px;color:var(--text-soft);margin-bottom:16px;text-align:center;font-style:italic;}
+  .form-row{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin:8px 0 10px;}
+  .form-group{display:flex;flex-direction:column;align-items:flex-start;gap:6px;width:100%;max-width:280px;}
+  .form-group label{font-size:14px;font-weight:700;color:var(--gold-light);letter-spacing:0.5px;}
+  .form-group input,.form-group select{padding:11px 14px;font-size:16px;width:100%;border:1.5px solid var(--glass-brd);border-radius:12px;font-family:Georgia,serif;outline:none;transition:.2s;background:rgba(10,42,51,0.5);color:var(--text);}
+  .form-group input:focus,.form-group select:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+  .form-group input::placeholder{color:var(--text-soft);opacity:0.5;}
+  .form-group select option{background:#0d3b47;color:var(--text);}
+  .level-desc{font-size:13px;color:var(--text-soft);margin-top:2px;font-style:italic;min-height:20px;}
+  /* КНОПКИ */
+  .btn-start{display:inline-block;padding:13px 40px;border:none;border-radius:14px;background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;font-size:18px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:1px;box-shadow:0 8px 26px rgba(26,188,156,0.45);transition:.2s;margin-top:10px;}
+  .btn-start:hover:not(:disabled){transform:translateY(-2px);}
+  .btn-start:disabled{opacity:0.4;cursor:not-allowed;}
+  .btn-center{text-align:center;}
+  .btn-back{padding:10px 26px;border:1.5px solid var(--glass-brd);border-radius:30px;background:transparent;font-size:14px;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;color:var(--mint);margin-top:10px;}
+  .btn-back:hover{background:rgba(26,188,156,0.15);}
+  /* ИГРА */
+  .game-header{display:flex;justify-content:space-between;align-items:center;border-bottom:1.5px solid rgba(26,188,156,0.3);padding-bottom:10px;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+  .game-header .title{font-size:18px;font-weight:700;color:var(--mint);letter-spacing:1px;}
+  .game-header .title span{color:var(--teal);}
+  .game-header .stats{font-size:15px;color:var(--text-soft);display:flex;gap:16px;font-family:'Courier New',monospace;}
+  .game-header .stats strong{color:var(--gold);font-size:17px;}
+  .level-indicator{text-align:center;font-size:14px;color:var(--text-soft);margin-bottom:8px;font-style:italic;}
+  .level-indicator strong{color:var(--mint);font-style:normal;}
+  .progress-bar{height:8px;background:rgba(255,255,255,0.08);border-radius:6px;margin:8px 0;overflow:hidden;}
+  .progress-bar .fill{height:100%;background:linear-gradient(90deg,#1abc9c,#7fffd4);border-radius:6px;transition:width 0.5s;}
+  .game-body{text-align:center;padding:6px 0;}
+  /* БАШНЯ */
+  .tower-area{display:flex;flex-direction:column;align-items:center;margin:14px 0 16px;min-height:180px;justify-content:flex-end;position:relative;}
+  .tower{display:flex;flex-direction:column-reverse;align-items:center;gap:3px;min-height:140px;padding-bottom:4px;transition:all 0.3s;position:relative;}
+  .block{width:60px;height:24px;border-radius:6px;border:1.5px solid rgba(0,0,0,0.2);box-shadow:0 2px 6px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.2);animation:blockAppear 0.4s ease;transition:.3s;}
+  .block:nth-child(1){background:linear-gradient(135deg,#1abc9c,#16a085);}
+  .block:nth-child(2){background:linear-gradient(135deg,#f4d35e,#c9a32b);}
+  .block:nth-child(3){background:linear-gradient(135deg,#7fffd4,#4ecdc4);}
+  .block:nth-child(4){background:linear-gradient(135deg,#ff6b6b,#c0392b);}
+  .block:nth-child(5){background:linear-gradient(135deg,#a8f0dc,#1abc9c);}
+  @keyframes blockAppear{0%{transform:scale(0) rotate(-20deg);opacity:0;}60%{transform:scale(1.1) rotate(3deg);opacity:1;}100%{transform:scale(1) rotate(0deg);}}
+  .tower.falling .block{animation:fall 0.6s ease forwards;}
+  @keyframes fall{0%{transform:translateY(0) rotate(0deg);opacity:1;}100%{transform:translateY(180px) rotate(90deg);opacity:0;}}
+  .tower .block:nth-child(1){animation-delay:0s;}
+  .tower .block:nth-child(2){animation-delay:0.1s;}
+  .tower .block:nth-child(3){animation-delay:0.2s;}
+  .tower .block:nth-child(4){animation-delay:0.3s;}
+  .tower .block:nth-child(5){animation-delay:0.4s;}
+  .tower-empty{color:var(--text-soft);font-size:15px;font-style:italic;padding:20px 0;}
+  /* ЗАДАНИЕ */
+  .task-display{font-family:'Cambria Math','Times New Roman',serif;font-size:30px;font-weight:700;color:var(--mint);padding:18px;background:rgba(10,42,51,0.5);border:1.5px solid var(--glass-brd);border-radius:16px;margin:6px 0 12px;min-height:76px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px;}
+  /* ВВОД */
+  .input-area{display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;margin:8px 0 10px;}
+  .input-area input{padding:11px 18px;font-size:22px;width:180px;border:2px solid var(--glass-brd);border-radius:12px;text-align:center;font-family:'Cambria Math',serif;outline:none;transition:.2s;background:rgba(10,42,51,0.5);color:var(--text);}
+  .input-area input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+  .input-area input.correct{border-color:var(--ok);background:rgba(46,204,113,0.12);color:var(--ok);}
+  .input-area input.wrong{border-color:var(--err);background:rgba(255,107,107,0.12);color:var(--err);animation:shake 0.4s;}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+  .input-area input:disabled{opacity:0.85;}
+  .input-area input::placeholder{color:var(--text-soft);opacity:0.4;}
+  /* КНОПКА ПРОВЕРИТЬ */
+  .btn-check{padding:11px 26px;font-size:17px;font-weight:700;border:none;border-radius:12px;background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;cursor:pointer;font-family:inherit;letter-spacing:1px;box-shadow:0 6px 20px rgba(26,188,156,0.4);transition:.2s;}
+  .btn-check:hover:not(:disabled){transform:translateY(-2px);}
+  .btn-check:disabled{opacity:0.5;cursor:not-allowed;}
+  /* ФИДБЕК */
+  .feedback{font-size:17px;font-weight:700;min-height:36px;margin:8px 0;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;}
+  .feedback.correct{color:var(--ok);}
+  .feedback.wrong{color:var(--err);}
+  .feedback .correct-answer{color:var(--mint);font-family:'Cambria Math',serif;font-style:italic;}
+  /* УРОВЕНЬ ПРОЙДЕН */
+  .level-complete{text-align:center;padding:24px 0;}
+  .level-complete .big-emoji{font-size:72px;display:block;animation:pulse2 1.5s ease-in-out infinite;}
+  @keyframes pulse2{0%,100%{transform:scale(1) rotate(0deg);}50%{transform:scale(1.08) rotate(3deg);}}
+  .level-complete h2{font-size:26px;color:var(--mint);margin:10px 0;letter-spacing:1px;}
+  .level-complete h2 span{color:var(--gold);}
+  .level-complete p{font-size:17px;color:var(--text);margin:8px 0 18px;}
+  /* ФИНИШ */
+  .finish{text-align:center;padding:20px 0;}
+  .finish .trophy{font-size:76px;display:block;animation:pulse2 1.5s ease-in-out infinite;}
+  .finish h2{font-size:28px;color:var(--mint);margin:10px 0;letter-spacing:1px;}
+  .finish h2 span{color:var(--gold);}
+  .finish p{font-size:17px;color:var(--text);margin:8px 0;}
+  .finish .result-stats{font-size:19px;color:var(--text);margin:14px 0 20px;font-family:'Courier New',monospace;}
+  .finish .result-stats strong{color:var(--gold);font-size:22px;}
+  @media(max-width:720px){
+    .container{padding:20px 16px;margin-top:130px;}
+    .top-right{gap:6px;}
+    .date-badge,.timer-box{padding:0 12px;font-size:14px;height:40px;}
+    .sound-btn{width:40px;height:40px;font-size:17px;}
+    .welcome h1{font-size:22px;}
+    .form-group{max-width:100%;}
+    .task-display{font-size:24px;padding:14px;min-height:64px;}
+    .input-area input{width:130px;font-size:19px;}
+    .btn-start{padding:11px 30px;font-size:16px;}
+    .btn-check{padding:9px 20px;font-size:15px;}
+    .block{width:48px;height:20px;}
+    .tower{min-height:110px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div><div class="glow g2"></div>
+
+<div class="corner-logo">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+</div>
+
+<div class="top-right">
+  <div class="date-badge" id="dateBadge">--.--.----</div>
+  <div class="timer-box" id="timerBox">00:00</div>
+  <button class="sound-btn" id="soundBtn" title="Звук">🔊</button>
+</div>
+
+<div class="container">
+
+  <!-- СТАРТ -->
+  <div class="page active" id="pageStart">
+    <div class="welcome">
+      <span class="emoji">🏗️</span>
+      <h1>Собери <span>башню</span></h1>
+      <p>Десятичные дроби · Решай примеры и строй башню!</p>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="studentName">👤 Имя</label>
+          <input type="text" id="studentName" placeholder="Введи имя..." maxlength="25">
+        </div>
+        <div class="form-group">
+          <label for="studentDate">📅 Дата</label>
+          <input type="date" id="studentDate">
+        </div>
+      </div>
+
+      <div class="form-row" style="justify-content:center;">
+        <div class="form-group" style="max-width:400px;">
+          <label for="levelSelect">🎯 Уровень</label>
+          <select id="levelSelect">
+            <option value="1">1 — Сложение и вычитание</option>
+            <option value="2">2 — Умножение</option>
+            <option value="3">3 — Деление</option>
+            <option value="4">4 — Все действия</option>
+          </select>
+          <span class="level-desc" id="levelDesc">Сложение и вычитание десятичных дробей</span>
+        </div>
+      </div>
+
+      <div class="btn-center">
+        <button class="btn-start" id="startBtn" disabled>🚀 Строить башню!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ИГРА -->
+  <div class="page" id="pageGame">
+    <div class="game-header">
+      <div class="title">🏗️ <span id="gameLevelName">Уровень 1</span></div>
+      <div class="stats">
+        <span>🧱 <strong id="blockCount">0</strong>/5</span>
+        <span>✅ <strong id="scoreDisplay">0</strong></span>
+      </div>
+    </div>
+
+    <div class="level-indicator">
+      👤 <span id="studentNameDisplay">—</span> · 📅 <span id="studentDateDisplay">—</span>
+      <span style="margin-left:12px;">🎯 <span id="levelTypeDisplay">Сложение/вычитание</span></span>
+    </div>
+
+    <div class="progress-bar"><div class="fill" id="progressFill"></div></div>
+
+    <div class="game-body">
+      <div class="tower-area">
+        <div class="tower" id="towerContainer">
+          <div class="tower-empty" id="towerEmpty">🧱 Начни строить!</div>
+        </div>
+      </div>
+
+      <div class="task-display" id="taskDisplay">
+        <span style="color:var(--text-soft);">Загрузка...</span>
+      </div>
+
+      <div class="input-area">
+        <input type="text" id="answerInput" placeholder="Ответ" autocomplete="off">
+        <button class="btn-check" id="checkBtn">⚡ Проверить</button>
+      </div>
+
+      <div class="feedback" id="feedback"></div>
+    </div>
+
+    <div style="text-align:center;">
+      <button class="btn-back" onclick="backToMenu()">🏠 В меню</button>
+    </div>
+  </div>
+
+  <!-- УРОВЕНЬ ПРОЙДЕН -->
+  <div class="page" id="pageLevelComplete">
+    <div class="level-complete">
+      <span class="big-emoji">🏗️</span>
+      <h2>🎉 <span>Уровень пройден!</span></h2>
+      <p>Ты построил башню из 5 кубиков!</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn-start" onclick="nextLevel()" style="font-size:17px;padding:12px 32px;">➡️ Следующий уровень</button>
+        <button class="btn-back" onclick="backToMenu()" style="margin-top:0;">🏠 В меню</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ФИНИШ -->
+  <div class="page" id="pageFinish">
+    <div class="finish">
+      <span class="trophy" id="finishEmoji">🏆</span>
+      <h2 id="finishTitle">🎉 <span>Башня построена!</span></h2>
+      <p id="finishDesc">Ты прошёл все 4 уровня!</p>
+      <div class="result-stats">
+        ✅ Всего правильных: <strong id="finalScore">0</strong>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn-start" onclick="restartGame()">🔄 Пройти заново</button>
+        <button class="btn-back" onclick="backToMenu()" style="margin-top:0;">🏠 В меню</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ===== ДАТА ===== */
+(function(){
+  const el=document.getElementById('dateBadge');
+  function upd(){
+    const d=new Date();
+    el.textContent=String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();
+  }
+  upd();setInterval(upd,60000);
+})();
+
+/* ===== ТАЙМЕР ===== */
+(function(){
+  const el=document.getElementById('timerBox');
+  let s=0,run=true;
+  setInterval(()=>{
+    if(!run)return;
+    const m=Math.floor(s/60),ss=s%60;
+    el.textContent=String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0');
+    s++;
+  },1000);
+  el.addEventListener('click',()=>{run=!run;el.style.opacity=run?'1':'0.5';});
+})();
+
+/* ===== БАНК ЗАДАНИЙ ===== */
+const LEVEL_BANK = {
+  1:{name:'Сложение и вычитание',desc:'Сложение и вычитание десятичных дробей',tasks:[
+    {expr:'0,7 + 3',answer:'3.7'},
+    {expr:'1,12 + 3,4',answer:'4.52'},
+    {expr:'5 − 0,3',answer:'4.7'},
+    {expr:'2,5 + 0,07',answer:'2.57'},
+    {expr:'4,2 − 1,03',answer:'3.17'},
+    {expr:'0,6 + 2,15',answer:'2.75'},
+    {expr:'8 − 1,25',answer:'6.75'},
+    {expr:'3,4 + 0,56',answer:'3.96'},
+    {expr:'7,12 − 3,2',answer:'3.92'},
+    {expr:'0,03 + 4,6',answer:'4.63'}
+  ]},
+  2:{name:'Умножение',desc:'Умножение десятичных дробей',tasks:[
+    {expr:'0,4 × 0,5',answer:'0.2'},
+    {expr:'0,4 × 50',answer:'20'},
+    {expr:'2,3 × 100',answer:'230'},
+    {expr:'0,23 × 0,1',answer:'0.023'},
+    {expr:'1,5 × 0,2',answer:'0.3'},
+    {expr:'0,8 × 0,9',answer:'0.72'},
+    {expr:'3,2 × 10',answer:'32'},
+    {expr:'0,04 × 0,7',answer:'0.028'},
+    {expr:'2,5 × 0,6',answer:'1.5'},
+    {expr:'4,8 × 0,5',answer:'2.4'},
+    {expr:'0,12 × 0,3',answer:'0.036'},
+    {expr:'1,25 × 100',answer:'125'},
+    {expr:'0,7 × 0,03',answer:'0.021'},
+    {expr:'5,6 × 0,2',answer:'1.12'},
+    {expr:'0,15 × 0,4',answer:'0.06'},
+    {expr:'3,7 × 1000',answer:'3700'},
+    {expr:'0,06 × 0,05',answer:'0.003'},
+    {expr:'1,8 × 0,5',answer:'0.9'},
+    {expr:'0,24 × 0,3',answer:'0.072'},
+    {expr:'2,5 × 0,4',answer:'1'}
+  ]},
+  3:{name:'Деление',desc:'Деление десятичных дробей',tasks:[
+    {expr:'7,2 ÷ 9',answer:'0.8'},
+    {expr:'0,72 ÷ 9',answer:'0.08'},
+    {expr:'7,2 ÷ 0,9',answer:'8'},
+    {expr:'0,72 ÷ 0,9',answer:'0.8'},
+    {expr:'4,8 ÷ 6',answer:'0.8'},
+    {expr:'4,8 ÷ 0,6',answer:'8'},
+    {expr:'0,48 ÷ 0,6',answer:'0.8'},
+    {expr:'0,48 ÷ 6',answer:'0.08'},
+    {expr:'3,6 ÷ 0,04',answer:'90'},
+    {expr:'3,6 ÷ 4',answer:'0.9'},
+    {expr:'12,6 ÷ 0,3',answer:'42'},
+    {expr:'12,6 ÷ 3',answer:'4.2'},
+    {expr:'1,26 ÷ 0,3',answer:'4.2'},
+    {expr:'1,26 ÷ 3',answer:'0.42'},
+    {expr:'8,4 ÷ 0,07',answer:'120'},
+    {expr:'8,4 ÷ 7',answer:'1.2'},
+    {expr:'0,84 ÷ 0,07',answer:'12'},
+    {expr:'0,84 ÷ 7',answer:'0.12'},
+    {expr:'15,5 ÷ 0,5',answer:'31'},
+    {expr:'1,55 ÷ 0,5',answer:'3.1'}
+  ]},
+  4:{name:'Все действия',desc:'Сложение, вычитание, умножение, деление',tasks:[
+    {expr:'0,7 + 3',answer:'3.7'},
+    {expr:'0,4 × 50',answer:'20'},
+    {expr:'5 − 0,3',answer:'4.7'},
+    {expr:'0,72 ÷ 9',answer:'0.08'},
+    {expr:'0,6 + 2,15',answer:'2.75'},
+    {expr:'0,23 × 0,1',answer:'0.023'},
+    {expr:'8 − 1,25',answer:'6.75'},
+    {expr:'7,2 ÷ 0,9',answer:'8'},
+    {expr:'3,4 + 0,56',answer:'3.96'},
+    {expr:'2,5 × 0,4',answer:'1'}
+  ]}
+};
+
+/* ===== ЗВУКИ ===== */
+let soundEnabled=true;
+const soundBtn=document.getElementById('soundBtn');
+soundBtn.addEventListener('click',()=>{
+  soundEnabled=!soundEnabled;
+  soundBtn.textContent=soundEnabled?'🔊':'🔇';
+  soundBtn.classList.toggle('muted',!soundEnabled);
+});
+
+let audioCtx=null;
+function initAudio(){
+  if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+}
+function playSound(type){
+  if(!soundEnabled)return;
+  try{
+    initAudio();
+    const osc=audioCtx.createOscillator();
+    const gain=audioCtx.createGain();
+    osc.connect(gain);gain.connect(audioCtx.destination);
+    if(type==='correct'){
+      osc.frequency.value=523.25;osc.type='sine';gain.gain.value=0.15;
+      osc.start();osc.stop(audioCtx.currentTime+0.15);
+      setTimeout(()=>{
+        const o2=audioCtx.createOscillator(),g2=audioCtx.createGain();
+        o2.connect(g2);g2.connect(audioCtx.destination);
+        o2.frequency.value=659.25;o2.type='sine';g2.gain.value=0.12;
+        o2.start();o2.stop(audioCtx.currentTime+0.15);
+      },120);
+    } else if(type==='wrong'){
+      osc.frequency.value=200;osc.type='sawtooth';gain.gain.value=0.08;
+      osc.start();osc.stop(audioCtx.currentTime+0.4);
+    } else if(type==='complete'){
+      [523.25,587.33,659.25,783.99].forEach((f,i)=>{
+        setTimeout(()=>{
+          const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+          o.connect(g);g.connect(audioCtx.destination);
+          o.frequency.value=f;o.type='sine';g.gain.value=0.1;
+          o.start();o.stop(audioCtx.currentTime+0.15);
+        },i*100);
+      });
+    } else if(type==='levelup'){
+      [523.25,659.25,783.99].forEach((f,i)=>{
+        setTimeout(()=>{
+          const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+          o.connect(g);g.connect(audioCtx.destination);
+          o.frequency.value=f;o.type='sine';g.gain.value=0.12;
+          o.start();o.stop(audioCtx.currentTime+0.2);
+        },i*150);
+      });
+    }
+  }catch(e){}
+}
+
+/* ===== СОСТОЯНИЕ ===== */
+let currentLevel=1,studentName='',studentDate='',tasks=[],currentTask=null,currentIndex=0;
+let blockCount=0,score=0,totalScore=0,isAnswered=false,isFalling=false,levelComplete=false;
+
+/* ===== DOM ===== */
+const nameInput=document.getElementById('studentName');
+const dateInput=document.getElementById('studentDate');
+const levelSelect=document.getElementById('levelSelect');
+const levelDesc=document.getElementById('levelDesc');
+const startBtn=document.getElementById('startBtn');
+const gameLevelName=document.getElementById('gameLevelName');
+const levelTypeDisplay=document.getElementById('levelTypeDisplay');
+const studentNameDisplay=document.getElementById('studentNameDisplay');
+const studentDateDisplay=document.getElementById('studentDateDisplay');
+const taskDisplay=document.getElementById('taskDisplay');
+const answerInput=document.getElementById('answerInput');
+const checkBtn=document.getElementById('checkBtn');
+const feedback=document.getElementById('feedback');
+const blockCountDisplay=document.getElementById('blockCount');
+const scoreDisplay=document.getElementById('scoreDisplay');
+const progressFill=document.getElementById('progressFill');
+const towerContainer=document.getElementById('towerContainer');
+const finalScore=document.getElementById('finalScore');
+
+/* ===== СТРАНИЦЫ ===== */
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ===== СТАРТ ===== */
+const levelDescs={
+  '1':'Сложение и вычитание десятичных дробей',
+  '2':'Умножение десятичных дробей',
+  '3':'Деление десятичных дробей',
+  '4':'Все действия с десятичными дробями'
+};
+levelSelect.addEventListener('change',function(){levelDesc.textContent=levelDescs[this.value];});
+
+function checkStart(){startBtn.disabled=!(nameInput.value.trim()&&dateInput.value);}
+nameInput.addEventListener('input',checkStart);
+dateInput.addEventListener('change',checkStart);
+
+/* дата по умолчанию */
+(function setDefaultDate(){
+  const today=new Date().toISOString().split('T')[0];
+  dateInput.value=today;
+  checkStart();
+})();
+
+startBtn.addEventListener('click',()=>{
+  studentName=nameInput.value.trim();
+  const rawDate=dateInput.value;
+  if(rawDate){const d=new Date(rawDate);studentDate=d.toLocaleDateString('ru-RU');}
+  currentLevel=parseInt(levelSelect.value);
+  totalScore=0;
+  startGame();
+  initAudio();
+});
+
+/* ===== ИГРА ===== */
+function shuffleArray(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+function getTasksForLevel(level){return shuffleArray([...LEVEL_BANK[level].tasks]).slice(0,5);}
+
+function startGame(){
+  const levelData=LEVEL_BANK[currentLevel];
+  tasks=getTasksForLevel(currentLevel);
+  currentIndex=0;blockCount=0;score=0;isAnswered=false;isFalling=false;levelComplete=false;
+  showPage('pageGame');
+  gameLevelName.textContent=`Уровень ${currentLevel}`;
+  levelTypeDisplay.textContent=levelData.name;
+  studentNameDisplay.textContent=studentName;
+  studentDateDisplay.textContent=studentDate;
+  updateStats();buildTower();showTask();answerInput.focus();
+}
+
+function buildTower(){
+  towerContainer.innerHTML='';
+  if(blockCount===0){
+    towerContainer.innerHTML='<div class="tower-empty">🧱 Начни строить!</div>';
+    return;
+  }
+  for(let i=0;i<blockCount;i++){
+    const b=document.createElement('div');b.className='block';
+    towerContainer.appendChild(b);
+  }
+}
+
+function showTask(){
+  if(currentIndex>=tasks.length||levelComplete)return;
+  currentTask=tasks[currentIndex];
+  taskDisplay.textContent=currentTask.expr;
+  answerInput.value='';answerInput.className='';answerInput.disabled=false;
+  feedback.textContent='';feedback.className='feedback';
+  checkBtn.disabled=false;isAnswered=false;
+  updateStats();answerInput.focus();
+}
+
+function checkAnswer(){
+  if(isAnswered||isFalling||levelComplete)return;
+  const raw=answerInput.value.trim().replace(/\s/g,'').replace(',','.');
+  if(!raw){feedback.textContent='✏️ Введи ответ!';feedback.className='feedback wrong';return;}
+  const userAns=parseFloat(raw);
+  if(isNaN(userAns)){feedback.textContent='❌ Введи число!';feedback.className='feedback wrong';return;}
+  const correctAns=parseFloat(currentTask.answer);
+  const isCorrect=Math.abs(userAns-correctAns)<0.0001;
+  isAnswered=true;
+  if(isCorrect){
+    playSound('correct');score++;blockCount++;totalScore++;
+    feedback.textContent='✅ Отлично! Кубик добавлен!';
+    feedback.className='feedback correct';
+    answerInput.className='correct';answerInput.disabled=true;checkBtn.disabled=true;
+    buildTower();updateStats();currentIndex++;
+    if(blockCount>=5){
+      levelComplete=true;playSound('complete');
+      setTimeout(()=>showLevelComplete(),600);
+    } else {
+      setTimeout(()=>showTask(),600);
+    }
+  } else {
+    isFalling=true;playSound('wrong');
+    feedback.innerHTML=`❌ Неправильно. Верный ответ: <span class="correct-answer">${currentTask.answer.replace('.',',')}</span>`;
+    feedback.className='feedback wrong';
+    answerInput.className='wrong';answerInput.disabled=true;checkBtn.disabled=true;
+    towerContainer.classList.add('falling');
+    setTimeout(()=>{
+      towerContainer.classList.remove('falling');
+      blockCount=0;buildTower();updateStats();
+      isFalling=false;currentIndex=0;
+      tasks=shuffleArray([...LEVEL_BANK[currentLevel].tasks]).slice(0,5);
+      showTask();
+    },1400);
+  }
+}
+
+function updateStats(){
+  blockCountDisplay.textContent=blockCount;
+  scoreDisplay.textContent=score;
+  const p=(currentIndex/tasks.length)*100;
+  progressFill.style.width=Math.min(p,100)+'%';
+}
+
+/* ===== УРОВЕНЬ ПРОЙДЕН ===== */
+function showLevelComplete(){playSound('levelup');showPage('pageLevelComplete');}
+function nextLevel(){
+  currentLevel++;
+  if(currentLevel>4){showFinish();return;}
+  startGame();
+}
+
+/* ===== ФИНИШ ===== */
+function showFinish(){
+  showPage('pageFinish');
+  finalScore.textContent=totalScore;
+  if(totalScore===20){
+    document.getElementById('finishEmoji').textContent='🏆';
+    document.getElementById('finishTitle').innerHTML='🎉 <span>Башня построена!</span>';
+    document.getElementById('finishDesc').textContent='Ты прошёл все 4 уровня без ошибок! Настоящий строитель!';
+  } else if(totalScore>=15){
+    document.getElementById('finishEmoji').textContent='🌟';
+    document.getElementById('finishTitle').innerHTML='👏 <span>Отлично!</span>';
+    document.getElementById('finishDesc').textContent=`Ты набрал ${totalScore} очков! Хороший результат!`;
+  } else {
+    document.getElementById('finishEmoji').textContent='💪';
+    document.getElementById('finishTitle').innerHTML='😊 <span>Неплохо!</span>';
+    document.getElementById('finishDesc').textContent=`Ты набрал ${totalScore} очков. Попробуй ещё!`;
+  }
+}
+
+/* ===== КНОПКИ ===== */
+checkBtn.addEventListener('click',checkAnswer);
+answerInput.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){e.preventDefault();checkBtn.click();}
+});
+function restartGame(){totalScore=0;currentLevel=1;startGame();}
+function backToMenu(){showPage('pageStart');}
+
+document.addEventListener('click',initAudio,{once:true});
+</script>
+
+</body>
+</html>
