@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>ДЗ · Графики · Найди k, b, x, y · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{min-height:100vh;font-family:Georgia,'Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.06),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;padding:20px;overflow-x:hidden;display:flex;justify-content:center;}
+  .glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.5;}
+  .glow.g1{width:520px;height:520px;top:-120px;left:-120px;background:radial-gradient(circle,rgba(26,188,156,0.55),transparent 70%);}
+  .glow.g2{width:600px;height:600px;bottom:-200px;right:-180px;background:radial-gradient(circle,rgba(127,255,212,0.4),transparent 70%);}
+  .corner-logo{position:fixed;top:14px;left:16px;z-index:50;font-family:'Times New Roman',serif;text-align:center;line-height:1;padding:10px 18px 12px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(26,188,156,0.45);border-radius:14px;backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(0,0,0,0.35);}
+  .corner-logo .dots{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:16px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:4px;}
+  .corner-logo .ru{font-size:10px;letter-spacing:3px;color:var(--text-soft);margin-top:2px;}
+  .top-right{position:fixed;top:14px;right:16px;z-index:50;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+  .date-badge{display:flex;align-items:center;justify-content:center;height:46px;padding:0 16px;border-radius:14px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(127,255,212,0.45);color:var(--mint);backdrop-filter:blur(10px);font-weight:700;font-family:'Courier New',monospace;font-size:15px;}
+  .app{max-width:900px;width:100%;background:rgba(255,255,255,0.04);border:1.5px solid var(--glass-brd);border-radius:24px;padding:28px 30px;backdrop-filter:blur(12px);box-shadow:0 12px 50px rgba(0,0,0,0.5);position:relative;z-index:2;}
+  .header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:1px solid rgba(26,188,156,0.2);padding-bottom:14px;margin-bottom:20px;}
+  .header-title{font-size:14px;color:var(--text-soft);font-style:italic;}
+  h1{font-size:clamp(20px,2.8vw,26px);color:var(--mint);letter-spacing:1.5px;text-align:center;margin-bottom:6px;}
+  .subtitle{text-align:center;font-size:14px;color:var(--text-soft);font-style:italic;margin-bottom:20px;}
+  .name-block{background:linear-gradient(135deg,rgba(244,211,94,0.12),rgba(26,188,156,0.08));border:1.5px solid var(--gold);border-radius:14px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .name-block label{font-size:15px;color:var(--gold-light);font-weight:700;white-space:nowrap;}
+  .name-block input{flex:1;min-width:200px;padding:10px 14px;border-radius:10px;border:2px solid rgba(244,211,94,0.4);background:rgba(0,0,0,0.3);color:#fff;font-family:Georgia,serif;font-size:16px;outline:none;transition:0.2s;}
+  .name-block input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(244,211,94,0.25);}
+  .name-block input::placeholder{color:#a89a6a;font-style:italic;}
+  .intro-block{background:rgba(255,255,255,0.03);border-radius:16px;padding:18px 22px;margin-bottom:20px;border-left:4px solid var(--teal);font-size:15px;line-height:1.75;color:var(--text);}
+  .intro-block b{color:var(--mint);}
+  .intro-block .frm{font-family:'Cambria Math',serif;color:var(--mint);font-style:italic;font-size:17px;}
+  .intro-block .signature{display:block;text-align:right;font-size:13px;color:var(--text-soft);font-style:italic;margin-top:10px;}
+  /* ЗАДАНИЕ */
+  .task-block{background:rgba(0,0,0,0.2);border-radius:16px;padding:18px 22px;margin-bottom:18px;border-left:4px solid var(--mint);}
+  .task-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+  .task-num{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;background:linear-gradient(135deg,var(--gold),#c9a32b);color:#2a1f00;border-radius:10px;font-family:'Courier New',monospace;font-weight:700;font-size:15px;}
+  .task-title{font-size:14px;color:var(--mint);font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+  .graph-wrap{background:#f7fcfa;border-radius:14px;border:1.5px solid rgba(26,188,156,0.3);padding:10px;margin-bottom:14px;}
+  .graph-wrap canvas{display:block;width:100%;max-width:420px;height:auto;aspect-ratio:1/1;margin:0 auto;background:#f7fcfa;border-radius:10px;}
+  .task-question{font-size:16px;color:var(--text);margin-bottom:12px;line-height:1.6;font-family:'Cambria Math',serif;}
+  .task-question b{color:var(--mint);}
+  .answers-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+  @media(max-width:600px){.answers-row{grid-template-columns:1fr 1fr;}}
+  .ans-cell{display:flex;flex-direction:column;gap:6px;}
+  .ans-cell label{font-size:14px;color:var(--gold-light);font-weight:700;font-family:'Cambria Math',serif;letter-spacing:0.5px;}
+  .ans-cell label .var{color:var(--mint);font-style:italic;font-size:16px;}
+  .ans-cell input{padding:11px 14px;border-radius:10px;border:1.5px solid var(--glass-brd);background:rgba(0,0,0,0.3);color:#fff;font-family:'Cambria Math',serif;font-size:16px;outline:none;transition:0.2s;text-align:center;}
+  .ans-cell input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+  .ans-cell input::placeholder{color:var(--text-soft);opacity:0.5;font-size:14px;}
+  .btn-send{width:100%;padding:16px 32px;font-size:18px;font-weight:700;font-family:inherit;letter-spacing:1px;border:none;border-radius:16px;background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;cursor:pointer;transition:0.3s;box-shadow:0 6px 24px rgba(26,188,156,0.4);margin-top:10px;}
+  .btn-send:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(26,188,156,0.5);}
+  .result-area{margin-top:16px;display:none;}
+  .result-area.show{display:block;animation:fade 0.4s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .result-text{background:rgba(0,0,0,0.35);border:1.5px solid var(--mint);border-radius:12px;padding:16px 18px;font-family:'Courier New',monospace;font-size:13px;color:var(--text);white-space:pre-wrap;line-height:1.7;user-select:all;cursor:text;}
+  .result-hint{text-align:center;font-size:13px;color:var(--gold-light);font-style:italic;margin-top:10px;}
+  .btn-copy{display:block;width:100%;margin-top:12px;padding:13px 24px;font-size:15px;font-weight:700;font-family:inherit;border:2px solid var(--glass-brd);border-radius:12px;background:transparent;color:var(--mint);cursor:pointer;transition:0.25s;letter-spacing:1px;}
+  .btn-copy:hover{background:rgba(26,188,156,0.15);}
+  .btn-copy.copied{background:linear-gradient(135deg,#2ecc71,#27ae60);color:#fff;border-color:var(--ok);}
+  .btn-max{display:block;width:100%;margin-top:12px;padding:14px 24px;font-size:16px;font-weight:700;font-family:inherit;border:none;border-radius:12px;background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;cursor:pointer;text-decoration:none;text-align:center;letter-spacing:1px;box-shadow:0 6px 20px rgba(26,188,156,0.4);transition:0.2s;}
+  .btn-max:hover{transform:translateY(-2px);}
+  @media(max-width:600px){
+    .app{padding:18px 14px;}
+    .name-block{flex-direction:column;align-items:stretch;gap:8px;}
+    .name-block label{text-align:center;}
+    .task-block{padding:14px 16px;}
+    .answers-row{gap:8px;}
+    .ans-cell input{font-size:15px;padding:9px 10px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div><div class="glow g2"></div>
+
+<div class="corner-logo">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+</div>
+
+<div class="top-right">
+  <div class="date-badge" id="dateDisplay">📅 00.00.0000</div>
+</div>
+
+<div class="app">
+
+  <div class="header">
+    <div class="header-title">ДЗ · Графики линейной функции</div>
+    <div style="font-size:13px;color:var(--text-soft);">Найди k, b и ответ</div>
+  </div>
+
+  <h1>По графику найди уравнение</h1>
+  <div class="subtitle">Определи k и b · Ответь на дополнительный вопрос</div>
+
+  <div class="name-block">
+    <label for="studentName">👤 Имя ученика:</label>
+    <input type="text" id="studentName" placeholder="Введи своё имя и фамилию..." maxlength="60" autocomplete="off">
+  </div>
+
+  <div class="intro-block">
+    <b>📐 Как решать:</b><br>
+    1. Найди на прямой <b>две «хорошие» точки</b> с целыми координатами.<br>
+    2. Определи <b>k</b> — угловой коэффициент (по формуле <span class="frm">k = Δy/Δx</span>, «подъём/шаг»).<br>
+    3. Найди <b>b</b> — где прямая пересекает ось OY (точка <span class="frm">(0; b)</span>).<br>
+    4. Ответь на вопрос: подставь в уравнение <span class="frm">y = kx + b</span> известное значение и найди неизвестное.
+    <span class="signature">ΤΕΤΡΑΚΤΥΣ · Школа математики Елены Михалевой</span>
+  </div>
+
+  <div id="taskList"></div>
+
+  <button class="btn-send" id="btnSend">📩 Сформировать ответ для учителя</button>
+
+  <div class="result-area" id="resultArea">
+    <div class="result-text" id="resultText"></div>
+    <div class="result-hint">👇 Скопируй текст и отправь учителю</div>
+    <button class="btn-copy" id="btnCopy">📋 Скопировать ответы</button>
+    <a class="btn-max" href="https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes" target="_blank" rel="noopener">💬 Отправить учителю в Макс</a>
+  </div>
+
+</div>
+
+<script>
+/* ===== ДАТА ===== */
+(function(){
+  const el=document.getElementById('dateDisplay');
+  function upd(){
+    const d=new Date();
+    el.textContent='📅 '+d.toLocaleDateString('ru-RU',{day:'2-digit',month:'long',year:'numeric'});
+  }
+  upd();
+})();
+
+/* ===== ЗАДАНИЯ ===== */
+const TASKS=[
+  {k:2,b:1,question:'Найди <b>x</b>, если <b>y = 7</b>',ansVal:3,ansLabel:'x ='},
+  {k:-1,b:3,question:'Найди <b>y</b>, если <b>x = 5</b>',ansVal:-2,ansLabel:'y ='},
+  {k:3,b:-2,question:'Найди <b>x</b>, если <b>y = 4</b>',ansVal:2,ansLabel:'x ='},
+  {k:-2,b:4,question:'Найди <b>y</b>, если <b>x = 3</b>',ansVal:-2,ansLabel:'y ='},
+  {k:0.5,b:2,question:'Найди <b>x</b>, если <b>y = 5</b>',ansVal:6,ansLabel:'x ='},
+  {k:-0.5,b:1,question:'Найди <b>y</b>, если <b>x = 6</b>',ansVal:-2,ansLabel:'y ='}
+];
+
+/* ===== РИСОВАНИЕ ГРАФИКА ===== */
+function drawGraph(canvas,k,b){
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height;
+  const pad=40,size=W-2*pad;
+  ctx.fillStyle='#f7fcfa';ctx.fillRect(0,0,W,H);
+  /* сетка */
+  ctx.strokeStyle='#e0f0ea';ctx.lineWidth=1;
+  for(let i=-5;i<=5;i++){
+    const x=pad+(i+5)*size/10,y=pad+(5-i)*size/10;
+    ctx.beginPath();ctx.moveTo(x,pad);ctx.lineTo(x,pad+size);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(pad+size,y);ctx.stroke();
+  }
+  /* оси */
+  ctx.strokeStyle='#0e7c66';ctx.lineWidth=2;
+  const xZero=pad+5*size/10,yZero=pad+5*size/10;
+  ctx.beginPath();ctx.moveTo(pad,yZero);ctx.lineTo(pad+size,yZero);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(xZero,pad);ctx.lineTo(xZero,pad+size);ctx.stroke();
+  /* стрелки */
+  ctx.fillStyle='#0e7c66';
+  ctx.beginPath();ctx.moveTo(pad+size-4,yZero-6);ctx.lineTo(pad+size,yZero);ctx.lineTo(pad+size-4,yZero+6);ctx.fill();
+  ctx.beginPath();ctx.moveTo(xZero-6,pad+4);ctx.lineTo(xZero,pad);ctx.lineTo(xZero+6,pad+4);ctx.fill();
+  /* подписи осей */
+  ctx.fillStyle='#0e7c66';ctx.font='bold 14px Times New Roman';
+  ctx.textAlign='center';ctx.textBaseline='top';
+  ctx.fillText('x',pad+size-10,yZero+10);
+  ctx.textBaseline='bottom';ctx.fillText('y',xZero+10,pad+6);
+  /* числа */
+  ctx.font='11px Times New Roman';
+  for(let i=-4;i<=4;i++){
+    if(i===0)continue;
+    const x=pad+(i+5)*size/10,y=pad+(5-i)*size/10;
+    ctx.fillStyle='#6a8a84';
+    ctx.textBaseline='top';ctx.textAlign='center';
+    ctx.fillText(i,x,yZero+4);
+    ctx.textBaseline='middle';ctx.textAlign='right';
+    ctx.fillText(i,xZero-6,y);
+  }
+  ctx.fillStyle='#6a8a84';ctx.textBaseline='top';ctx.textAlign='center';
+  ctx.fillText('0',xZero,yZero+4);
+  /* график */
+  ctx.strokeStyle='#0e7c66';ctx.lineWidth=3;
+  ctx.shadowColor='rgba(14,124,102,0.4)';ctx.shadowBlur=8;
+  ctx.beginPath();
+  const range=5,steps=200;let first=true;
+  for(let i=0;i<=steps;i++){
+    const x=-range+(i/steps)*2*range;
+    const y=k*x+b;
+    const px=pad+(x+range)/(2*range)*size;
+    const py=pad+(range-y)/(2*range)*size;
+    if(py<pad-20||py>pad+size+20){first=true;continue;}
+    if(first){ctx.moveTo(px,py);first=false;}else ctx.lineTo(px,py);
+  }
+  ctx.stroke();ctx.shadowBlur=0;
+}
+
+/* ===== РЕНДЕР ЗАДАНИЙ ===== */
+(function renderTasks(){
+  const box=document.getElementById('taskList');
+  TASKS.forEach((t,i)=>{
+    const el=document.createElement('div');
+    el.className='task-block';
+    el.innerHTML=`
+      <div class="task-header">
+        <span class="task-num">${i+1}</span>
+        <span class="task-title">Задание ${i+1}</span>
+      </div>
+      <div class="graph-wrap"><canvas id="g-${i}" width="500" height="500"></canvas></div>
+      <div class="task-question">${t.question}</div>
+      <div class="answers-row">
+        <div class="ans-cell">
+          <label><span class="var">k</span> =</label>
+          <input type="text" id="k-${i}" inputmode="decimal" placeholder="число" autocomplete="off">
+        </div>
+        <div class="ans-cell">
+          <label><span class="var">b</span> =</label>
+          <input type="text" id="b-${i}" inputmode="decimal" placeholder="число" autocomplete="off">
+        </div>
+        <div class="ans-cell">
+          <label>${t.ansLabel}</label>
+          <input type="text" id="a-${i}" inputmode="decimal" placeholder="число" autocomplete="off">
+        </div>
+      </div>
+    `;
+    box.appendChild(el);
+    /* рисуем график после вставки в DOM */
+    drawGraph(document.getElementById('g-'+i), t.k, t.b);
+  });
+})();
+
+/* ===== СОХРАНЕНИЕ ИМЕНИ ===== */
+const nameInput=document.getElementById('studentName');
+const savedName=localStorage.getItem('dz_grafik_1_name');
+if(savedName)nameInput.value=savedName;
+nameInput.addEventListener('input',()=>{
+  localStorage.setItem('dz_grafik_1_name', nameInput.value.trim());
+});
+
+/* ===== ФОРМИРОВАНИЕ ОТВЕТА ===== */
+document.getElementById('btnSend').addEventListener('click',function(){
+  const name=nameInput.value.trim();
+  if(!name){
+    alert('Введи имя ученика!');
+    nameInput.focus();
+    return;
+  }
+  /* проверяем, что все поля заполнены */
+  const answers=[];
+  for(let i=0;i<TASKS.length;i++){
+    const k=document.getElementById('k-'+i).value.trim();
+    const b=document.getElementById('b-'+i).value.trim();
+    const a=document.getElementById('a-'+i).value.trim();
+    if(!k||!b||!a){
+      alert('Заполни все поля в задании '+(i+1)+'!');
+      return;
+    }
+    answers.push({k,b,a});
+  }
+  /* собираем текст */
+  const now=new Date();
+  const dateStr=now.toLocaleDateString('ru-RU')+' '+now.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+
+  let text='📊 ОТВЕТЫ · ДЗ · Графики\n';
+  text+='Дата: '+dateStr+'\n';
+  text+='Ученик: '+name+'\n\n';
+
+  TASKS.forEach((t,i)=>{
+    const a=answers[i];
+    const questionPlain=t.question.replace(/<[^>]*>/g,'');
+    text+='Задание '+(i+1)+'. '+questionPlain+'\n';
+    text+='  k = '+a.k+'\n';
+    text+='  b = '+a.b+'\n';
+    text+='  '+t.ansLabel+' '+a.a+'\n\n';
+  });
+
+  document.getElementById('resultText').textContent=text;
+  document.getElementById('resultArea').classList.add('show');
+  document.getElementById('resultArea').scrollIntoView({behavior:'smooth',block:'nearest'});
+});
+
+/* ===== КОПИРОВАНИЕ ===== */
+document.getElementById('btnCopy').addEventListener('click',async function(){
+  const text=document.getElementById('resultText').textContent;
+  try{
+    await navigator.clipboard.writeText(text);
+    this.textContent='✓ Скопировано!';
+    this.classList.add('copied');
+    setTimeout(()=>{this.textContent='📋 Скопировать ответы';this.classList.remove('copied');},2500);
+  }catch(e){
+    const ta=document.createElement('textarea');
+    ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();
+    this.textContent='✓ Скопировано!';
+    this.classList.add('copied');
+    setTimeout(()=>{this.textContent='📋 Скопировать ответы';this.classList.remove('copied');},2500);
+  }
+});
+</script>
+</body>
+</html>
