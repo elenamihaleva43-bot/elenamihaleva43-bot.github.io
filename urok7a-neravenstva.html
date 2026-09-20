@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Урок №7а · Линейные неравенства · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--mint-soft:#a8f0dc;
+    --coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass:rgba(255,255,255,0.04);--glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{min-height:100vh;font-family:Georgia,'Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.06),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;padding:20px;overflow-x:hidden;}
+  .corner-logo{position:fixed;top:14px;left:16px;z-index:50;font-family:'Times New Roman',serif;text-align:center;line-height:1;padding:10px 18px 12px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(26,188,156,0.45);border-radius:14px;backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(0,0,0,0.35);}
+  .corner-logo .dots{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:16px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:4px;}
+  .corner-logo .ru{font-size:10px;letter-spacing:3px;color:var(--text-soft);margin-top:2px;}
+  .top-right{position:fixed;top:14px;right:16px;z-index:50;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+  .date-badge,.timer-box,.sound-btn{display:flex;align-items:center;justify-content:center;height:46px;border-radius:14px;backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;font-size:16px;}
+  .date-badge{padding:0 16px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(127,255,212,0.45);color:var(--mint);font-family:'Courier New',monospace;}
+  .timer-box{padding:0 16px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(244,211,94,0.55);color:var(--gold);cursor:pointer;min-width:96px;font-family:'Courier New',monospace;}
+  .sound-btn{width:46px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(26,188,156,0.45);color:var(--teal);cursor:pointer;font-size:20px;transition:.2s;}
+  .sound-btn:hover{transform:translateY(-2px);border-color:var(--mint);color:var(--mint);}
+  .sound-btn.muted{color:#8aa8a0;opacity:0.65;}
+  .wrap{position:relative;z-index:10;max-width:1100px;margin:80px auto 40px;}
+  .card{background:var(--glass);border:1.5px solid var(--glass-brd);border-radius:20px;padding:26px 28px;backdrop-filter:blur(10px);box-shadow:0 8px 30px rgba(0,0,0,0.3);margin-bottom:20px;}
+  h1{font-family:'Times New Roman',serif;font-size:clamp(22px,3.2vw,30px);color:var(--teal);letter-spacing:1px;margin-bottom:8px;}
+  h1 .num{color:var(--gold);margin-right:10px;}
+  .subtitle{color:var(--text-soft);font-style:italic;font-size:15px;}
+  h2{font-family:'Times New Roman',serif;font-size:21px;color:var(--mint);letter-spacing:1px;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+  h2::before{content:'';width:6px;height:22px;background:linear-gradient(180deg,var(--teal),var(--mint));border-radius:3px;}
+  h3{font-family:'Times New Roman',serif;font-size:17px;color:var(--gold);letter-spacing:.5px;margin:18px 0 10px;}
+  p{line-height:1.75;color:var(--text);margin-bottom:12px;font-size:15px;}
+  .soft{color:var(--text-soft);}
+  .frm{font-family:'Cambria Math','Times New Roman',serif;color:var(--mint);font-style:italic;font-size:16px;background:rgba(26,188,156,0.08);padding:1px 7px;border-radius:6px;}
+  .frm-block{font-family:'Cambria Math','Times New Roman',serif;font-size:17px;color:var(--mint);font-style:italic;background:rgba(26,188,156,0.08);border-left:3px solid var(--teal);padding:12px 18px;border-radius:0 10px 10px 0;margin:12px 0;line-height:1.9;}
+  .algo-list{display:flex;flex-direction:column;gap:8px;margin:14px 0;}
+  .algo-step{display:flex;gap:12px;align-items:flex-start;padding:12px 16px;background:rgba(10,42,51,0.5);border-radius:12px;border-left:4px solid var(--teal);}
+  .algo-step .num{display:flex;align-items:center;justify-content:center;width:26px;height:26px;background:var(--teal);color:#04231d;border-radius:50%;font-family:'Courier New',monospace;font-weight:700;font-size:13px;flex-shrink:0;}
+  .algo-step .text{font-size:15px;line-height:1.6;color:var(--text);}
+  .algo-step .text b{color:var(--mint);}
+  .rule-sign{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0;}
+  @media(max-width:700px){.rule-sign{grid-template-columns:1fr;}}
+  .sign-box{border-radius:14px;padding:16px 18px;border:1.5px solid;}
+  .sign-box.plus{background:rgba(46,204,113,0.1);border-color:var(--ok);}
+  .sign-box.minus{background:rgba(255,107,107,0.1);border-color:var(--err);}
+  .sign-box .head{font-family:'Times New Roman',serif;font-size:14px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:8px;}
+  .sign-box.plus .head{color:var(--ok);}
+  .sign-box.minus .head{color:var(--err);}
+  .sign-box .desc{font-size:15px;line-height:1.65;color:var(--text);}
+  .sign-box .desc b{color:var(--mint);}
+  .method-block{background:rgba(10,42,51,0.5);border:1px solid var(--glass-brd);border-radius:16px;padding:18px 20px;margin:16px 0;}
+  .method-block .method-title{font-size:15px;color:var(--mint);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;}
+  .method-block .step{padding:10px 0;border-bottom:1px dashed rgba(127,255,212,0.15);font-size:15px;line-height:1.7;}
+  .method-block .step:last-child{border-bottom:none;}
+  .method-block .step b{color:var(--mint);}
+  .method-block .step .num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;background:var(--teal);color:#04231d;border-radius:50%;font-family:'Courier New',monospace;font-weight:700;font-size:12px;margin-right:10px;}
+  .method-block .answer{margin-top:12px;padding:12px 16px;background:rgba(46,204,113,0.1);border-left:3px solid var(--ok);border-radius:0 8px 8px 0;font-family:'Cambria Math',serif;color:var(--ok);font-size:16px;font-style:italic;}
+  /* Анимация */
+  .anim-block{background:rgba(10,42,51,0.5);border:1px solid var(--glass-brd);border-radius:16px;padding:18px 20px;margin:16px 0;}
+  .anim-block .anim-title{font-size:15px;color:var(--mint);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;}
+  .graph-canvas-wrap{background:#f7fcfa;border-radius:14px;border:1.5px solid rgba(26,188,156,0.3);padding:10px;margin-bottom:12px;}
+  .graph-canvas-wrap canvas{display:block;width:100%;max-width:520px;height:auto;aspect-ratio:1/1;margin:0 auto;background:#f7fcfa;border-radius:10px;}
+  .step-comment{background:rgba(26,188,156,0.1);border-left:4px solid var(--teal);border-radius:0 12px 12px 0;padding:14px 18px;margin-bottom:12px;font-size:15px;line-height:1.65;min-height:80px;color:var(--text);}
+  .step-comment .step-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;background:var(--teal);color:#04231d;border-radius:50%;font-family:'Courier New',monospace;font-weight:700;font-size:12px;margin-right:10px;vertical-align:middle;}
+  .step-comment .formula-inline{font-family:'Cambria Math',serif;color:var(--mint);font-style:italic;font-size:16px;background:rgba(26,188,156,0.15);padding:2px 8px;border-radius:6px;display:inline-block;margin:2px 0;}
+  .step-comment b{color:var(--mint);}
+  .step-controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .step-controls .btn{padding:10px 24px;font-size:14px;}
+  .step-progress{text-align:center;font-size:12px;color:var(--text-soft);margin-top:8px;font-family:'Courier New',monospace;letter-spacing:1px;}
+  /* ПРАКТИКА — новая схема */
+  .practice-layout{display:grid;grid-template-columns:minmax(280px,340px) minmax(400px,1fr);gap:20px;align-items:start;margin-top:14px;}
+  @media(max-width:1000px){.practice-layout{grid-template-columns:1fr;}}
+  .tasks-list{display:flex;flex-direction:column;gap:8px;max-height:calc(100vh - 220px);overflow-y:auto;padding-right:6px;}
+  .tasks-list::-webkit-scrollbar{width:6px;}
+  .tasks-list::-webkit-scrollbar-track{background:rgba(255,255,255,0.05);border-radius:3px;}
+  .tasks-list::-webkit-scrollbar-thumb{background:rgba(26,188,156,0.4);border-radius:3px;}
+  .task-card{padding:12px 14px;border-radius:12px;background:rgba(255,255,255,0.03);border:1.5px solid rgba(255,255,255,0.08);cursor:pointer;transition:all 0.2s;flex-shrink:0;display:flex;gap:10px;align-items:center;}
+  .task-card:hover{border-color:rgba(26,188,156,0.4);background:rgba(26,188,156,0.05);}
+  .task-card.active{border-color:var(--teal);background:rgba(26,188,156,0.12);box-shadow:0 0 0 2px rgba(26,188,156,0.2);}
+  .task-card.solved-correct{border-color:var(--ok);background:rgba(46,204,113,0.08);}
+  .task-card.solved-wrong{border-color:var(--err);background:rgba(255,107,107,0.08);}
+  .task-card .task-num{font-family:'Courier New',monospace;font-size:12px;color:var(--mint);letter-spacing:1px;font-weight:700;flex-shrink:0;min-width:44px;}
+  .task-card .task-q{font-family:'Cambria Math',serif;font-size:14px;color:var(--text);line-height:1.4;flex:1;}
+  .task-card .mark{font-size:15px;font-weight:700;flex-shrink:0;min-width:20px;text-align:center;}
+  .task-card .mark.ok{color:var(--ok);}
+  .task-card .mark.err{color:var(--err);}
+  .active-task-panel{background:rgba(26,188,156,0.1);border:1.5px solid var(--teal);border-radius:14px;padding:16px 20px;margin-bottom:14px;}
+  .active-task-panel.empty{background:rgba(255,255,255,0.03);border-color:rgba(255,255,255,0.1);}
+  .active-task-panel .atp-head{font-size:12px;letter-spacing:1.5px;color:var(--gold);text-transform:uppercase;font-weight:700;margin-bottom:10px;}
+  .active-task-panel .atp-q{font-family:'Cambria Math',serif;font-size:clamp(18px,2.2vw,22px);color:var(--text);line-height:1.5;margin-bottom:14px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;}
+  .active-task-panel .atp-q.empty{color:var(--text-soft);font-style:italic;font-size:15px;}
+  .active-task-panel .atp-input{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .active-task-panel .atp-input input{flex:1;min-width:160px;padding:11px 14px;border-radius:10px;border:1.5px solid var(--glass-brd);background:rgba(10,42,51,0.5);color:var(--text);font-family:'Cambria Math',serif;font-size:16px;outline:none;transition:.2s;}
+  .active-task-panel .atp-input input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+  .active-task-panel .atp-input input.ok{border-color:var(--ok);background:rgba(46,204,113,0.12);color:var(--ok);}
+  .active-task-panel .atp-input input.err{border-color:var(--err);background:rgba(255,107,107,0.12);color:var(--err);}
+  .active-task-panel .atp-input input::placeholder{color:var(--text-soft);opacity:0.5;font-style:italic;font-size:14px;}
+  .active-task-panel .atp-input button{padding:11px 22px;border-radius:10px;border:none;background:var(--teal);color:#04231d;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:0.5px;transition:.2s;}
+  .active-task-panel .atp-input button:hover:not(:disabled){filter:brightness(1.1);transform:translateY(-1px);}
+  .active-task-panel .atp-input button:disabled{opacity:0.5;cursor:not-allowed;}
+  .active-task-panel .atp-feedback{font-size:14px;font-weight:700;font-style:italic;margin-top:10px;min-height:20px;}
+  .active-task-panel .atp-feedback.ok{color:var(--ok);}
+  .active-task-panel .atp-feedback.err{color:var(--err);}
+  .active-task-panel .atp-feedback .formula{color:var(--mint);font-family:'Cambria Math',serif;font-style:italic;}
+  /* Canvas для записи */
+  .canvas-block{background:rgba(10,42,51,0.5);border:1px solid var(--glass-brd);border-radius:14px;padding:14px;}
+  .canvas-block .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:12px;color:var(--text-soft);letter-spacing:1.5px;text-transform:uppercase;}
+  .canvas-block .head button{font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;border:1px solid rgba(26,188,156,0.3);border-radius:8px;padding:5px 12px;background:rgba(212,240,234,0.15);color:var(--mint-soft);transition:.2s;}
+  .canvas-block .head button:hover{background:rgba(26,188,156,0.25);}
+  .write-area{position:relative;background:#f7fcfa;border-radius:12px;overflow:hidden;touch-action:none;height:400px;}
+  .write-area canvas{display:block;width:100%;height:100%;touch-action:none;background:#f7fcfa;cursor:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke-linecap="round"><circle cx="12" cy="12" r="8" stroke="%23ffffff" stroke-width="3"/><circle cx="12" cy="12" r="8" stroke="%230e7c66" stroke-width="1.5"/><line x1="12" y1="2" x2="12" y2="9" stroke="%23ffffff" stroke-width="3"/><line x1="12" y1="2" x2="12" y2="9" stroke="%230e7c66" stroke-width="1.5"/><line x1="12" y1="15" x2="12" y2="22" stroke="%23ffffff" stroke-width="3"/><line x1="12" y1="15" x2="12" y2="22" stroke="%230e7c66" stroke-width="1.5"/><line x1="2" y1="12" x2="9" y2="12" stroke="%23ffffff" stroke-width="3"/><line x1="2" y1="12" x2="9" y2="12" stroke="%230e7c66" stroke-width="1.5"/><line x1="15" y1="12" x2="22" y2="12" stroke="%23ffffff" stroke-width="3"/><line x1="15" y1="12" x2="22" y2="12" stroke="%230e7c66" stroke-width="1.5"/><circle cx="12" cy="12" r="1.5" fill="%230e7c66"/></g></svg>') 12 12, crosshair;}
+  .progress-bar{padding:14px 20px;border-radius:16px;background:rgba(10,42,51,0.9);border:1px solid var(--glass-brd);backdrop-filter:blur(12px);margin-bottom:20px;}
+  .progress-bar .row1{display:flex;flex-wrap:wrap;gap:14px;align-items:center;font-size:14px;color:var(--text-soft);margin-bottom:10px;}
+  .progress-bar .row1 .num{font-family:'Courier New',monospace;font-weight:700;color:var(--mint);font-size:16px;}
+  .progress-bar .row1 .count-ok{color:var(--ok);font-weight:700;}
+  .progress-bar .row1 .count-err{color:var(--err);font-weight:700;}
+  .progress-bar .row1 .percent{margin-left:auto;color:var(--mint);font-family:'Courier New',monospace;font-weight:700;}
+  .progress-bar .bar{height:8px;border-radius:6px;background:rgba(255,255,255,0.08);overflow:hidden;}
+  .progress-bar .bar .fill{height:100%;width:0%;background:linear-gradient(90deg,#1abc9c,#7fffd4);border-radius:6px;transition:0.4s;}
+  .btn{padding:12px 28px;font-size:15px;font-weight:700;border:none;border-radius:12px;background:linear-gradient(135deg,#f4d35e,#c9a32b);color:#4a3800;cursor:pointer;font-family:inherit;letter-spacing:1px;box-shadow:0 6px 20px rgba(244,211,94,0.4);transition:.2s;text-decoration:none;display:inline-block;}
+  .btn:hover:not(:disabled){transform:translateY(-2px);}
+  .btn:disabled{opacity:0.4;cursor:not-allowed;}
+  .btn.ghost{background:transparent;color:var(--mint);border:1.5px solid var(--glass-brd);box-shadow:none;}
+  .btn.ghost:hover:not(:disabled){background:rgba(26,188,156,0.12);}
+  .btn.teal{background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;}
+  .nav-row{display:flex;justify-content:space-between;gap:12px;margin-top:26px;flex-wrap:wrap;}
+  .footer{text-align:center;padding:30px 20px 20px;color:var(--text-soft);font-size:13px;font-family:'Times New Roman',serif;letter-spacing:2px;}
+  .footer .f-logo{color:var(--teal);font-size:15px;margin-bottom:6px;}
+  .footer .f-sub{font-style:italic;opacity:.75;}
+  @media(max-width:700px){
+    .wrap{margin-top:150px;}
+    .top-right{gap:6px;}
+    .date-badge,.timer-box{padding:0 12px;font-size:14px;height:40px;}
+    .sound-btn{width:40px;height:40px;font-size:17px;}
+    .card{padding:20px 18px;}
+    .write-area{height:300px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="corner-logo">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+</div>
+
+<div class="top-right">
+  <div class="date-badge" id="dateBadge">--.--.----</div>
+  <div class="timer-box" id="timerBox">00:00</div>
+  <button class="sound-btn" id="soundBtn" title="Звук">🔊</button>
+</div>
+
+<div class="wrap">
+
+  <!-- ЗАГОЛОВОК -->
+  <div class="card">
+    <h1><span class="num">№7а.</span>Линейные неравенства</h1>
+    <p class="subtitle">Подготовка к ЕГЭ · ΤΕΤΡΑΚΤΥΣ · Школа математики Елены Михалевой</p>
+  </div>
+
+  <!-- ТЕОРИЯ -->
+  <div class="card">
+    <h2>Что такое линейное неравенство</h2>
+    <p><b>Линейное неравенство</b> — это неравенство вида:</p>
+    <div class="frm-block">ax + b &gt; 0 &nbsp;(или &lt;, ≥, ≤)</div>
+    <p>где <span class="frm">a ≠ 0</span>, <span class="frm">x</span> — переменная, <span class="frm">a</span> и <span class="frm">b</span> — числа.</p>
+    <p class="soft">Примеры: <span class="frm">2x − 5 &gt; 0</span> · <span class="frm">−3x + 7 ≤ 4</span> · <span class="frm">x/2 + 1 ≥ 3</span></p>
+  </div>
+
+  <!-- АЛГОРИТМ -->
+  <div class="card">
+    <h2>Алгоритм решения</h2>
+    <div class="algo-list">
+      <div class="algo-step">
+        <div class="num">1</div>
+        <div class="text"><b>Перенести</b> все члены с <span class="frm">x</span> в одну сторону, числа — в другую. <b>Знак меняем</b> при переносе — как в уравнении.</div>
+      </div>
+      <div class="algo-step">
+        <div class="num">2</div>
+        <div class="text"><b>Привести подобные</b> — упростить левую и правую части, привести к виду <span class="frm">ax ⋛ b</span>.</div>
+      </div>
+      <div class="algo-step">
+        <div class="num">3</div>
+        <div class="text"><b>Разделить на коэффициент</b> при <span class="frm">x</span> — <b>следи за знаком!</b></div>
+      </div>
+    </div>
+    <h3>⚠ Главное правило</h3>
+    <div class="rule-sign">
+      <div class="sign-box plus">
+        <div class="head">a &gt; 0 (положительный)</div>
+        <div class="desc">Делим как обычно. <b>Знак неравенства НЕ меняется.</b></div>
+      </div>
+      <div class="sign-box minus">
+        <div class="head">a &lt; 0 (отрицательный)</div>
+        <div class="desc">Делим на отрицательное. <b>Знак неравенства МЕНЯЕТСЯ</b> на противоположный!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ПРИМЕР 1 -->
+  <div class="card">
+    <h2>Пример 1 · Знак не меняется (a &gt; 0)</h2>
+    <div class="frm-block">2x − 5 &gt; 0</div>
+    <div class="method-block">
+      <div class="method-title">Пошаговое решение</div>
+      <div class="step"><span class="num">1</span>Переносим: <b>2x &gt; 5</b>.</div>
+      <div class="step"><span class="num">2</span>Коэффициент при x равен <b>2 &gt; 0</b> — знак <b>не меняется</b>.</div>
+      <div class="step"><span class="num">3</span>Делим: <b>x &gt; 5/2</b> → <b>x &gt; 2,5</b>.</div>
+      <div class="answer">Ответ: x &gt; 2,5 или (2,5; +∞)</div>
+    </div>
+  </div>
+
+  <!-- ПРИМЕР 2 -->
+  <div class="card">
+    <h2>Пример 2 · Знак меняется (a &lt; 0)</h2>
+    <div class="frm-block">−3x + 7 ≤ 4</div>
+    <div class="method-block">
+      <div class="method-title">Пошаговое решение</div>
+      <div class="step"><span class="num">1</span>Переносим: <b>−3x ≤ 4 − 7</b>.</div>
+      <div class="step"><span class="num">2</span>Приводим: <b>−3x ≤ −3</b>.</div>
+      <div class="step"><span class="num">3</span>Делим на <b>−3 &lt; 0</b> — знак <b>МЕНЯЕТСЯ</b>! Получаем <b>x ≥ 1</b>.</div>
+      <div class="answer">Ответ: x ≥ 1 или [1; +∞)</div>
+    </div>
+  </div>
+
+  <!-- ГРАФИЧЕСКАЯ ИНТЕРПРЕТАЦИЯ -->
+  <div class="card">
+    <h2>Графическая интерпретация</h2>
+    <p>Рассмотрим <span class="frm">2x − 4 &lt; −4x + 2</span>. Построим две прямые:</p>
+    <div class="frm-block">y₁ = 2x − 4 &nbsp;&nbsp;и&nbsp;&nbsp; y₂ = −4x + 2</div>
+    <p>Решение — те <span class="frm">x</span>, где <b>первая прямая ниже второй</b>.</p>
+    <div class="anim-block">
+      <div class="graph-canvas-wrap"><canvas id="canvasIneq" width="500" height="500"></canvas></div>
+      <div class="step-comment" id="commentIneq"><span class="step-num">0</span>Нажми <b>«▶ Дальше»</b>, чтобы построить графики.</div>
+      <div class="step-controls">
+        <button class="btn ghost" data-ctrl="reset" data-demo="ineq">↺ Сначала</button>
+        <button class="btn teal" data-ctrl="next" data-demo="ineq">▶ Дальше</button>
+      </div>
+      <div class="step-progress" id="progressIneq">Шаг 0 из 4</div>
+    </div>
+  </div>
+
+  <!-- ПРАКТИКА -->
+  <div class="card">
+    <h2>Практика · 10 неравенств</h2>
+    <p class="soft">Кликни задание слева — оно появится над canvas. Впиши ответ и нажми «Проверить».</p>
+
+    <div class="progress-bar">
+      <div class="row1">
+        <span>📊 Прогресс:</span>
+        <span class="num" id="prNum">0 / 10</span>
+        <span class="count-ok" id="prOk">✓ 0</span>
+        <span class="count-err" id="prErr">✗ 0</span>
+        <span class="percent" id="prPct">0%</span>
+      </div>
+      <div class="bar"><div class="fill" id="prFill"></div></div>
+    </div>
+
+    <div class="practice-layout">
+      <div class="tasks-list" id="taskList"></div>
+      <div>
+        <div class="active-task-panel empty" id="activePanel">
+          <div class="atp-head"><span id="activeNum">— задание не выбрано —</span></div>
+          <div class="atp-q empty" id="activeQ">👈 Кликни на задание слева</div>
+          <div class="atp-input" id="activeInput" style="display:none;">
+            <input type="text" id="activeAnswer" placeholder="например: x > 2  или  (2; +∞)" autocomplete="off">
+            <button id="activeCheck">Проверить</button>
+          </div>
+          <div class="atp-feedback" id="activeFeedback"></div>
+        </div>
+        <div class="canvas-block">
+          <div class="head"><span>📝 Решение</span><button onclick="clearById('cv-practice')">🧹 Очистить</button></div>
+          <div class="write-area"><canvas class="write-canvas" id="cv-practice"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <a class="btn ghost" href="lessons.html">← К заданиям</a>
+    <a class="btn teal" href="urok7b-sistemy.html">К системам →</a>
+  </div>
+
+</div>
+
+<div class="footer">
+  <div class="f-logo">ΤΕΤΡΑΚΤΥΣ · ТЕТРАКТИС</div>
+  <div class="f-sub">где математика превращается в приключение</div>
+</div>
+
+<script>
+/* ===== ДАТА ===== */
+(function(){
+  const el=document.getElementById('dateBadge');
+  function upd(){
+    const d=new Date();
+    el.textContent=String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();
+  }
+  upd();setInterval(upd,60000);
+})();
+
+/* ===== ТАЙМЕР ===== */
+(function(){
+  const el=document.getElementById('timerBox');
+  let s=0,run=true;
+  setInterval(()=>{
+    if(!run)return;
+    const m=Math.floor(s/60),ss=s%60;
+    el.textContent=String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0');
+    s++;
+  },1000);
+  el.addEventListener('click',()=>{run=!run;el.style.opacity=run?'1':'0.5';});
+})();
+
+/* ===== ЗВУК ===== */
+let soundEnabled=true;
+const soundBtn=document.getElementById('soundBtn');
+soundBtn.addEventListener('click',()=>{
+  soundEnabled=!soundEnabled;
+  soundBtn.textContent=soundEnabled?'🔊':'🔇';
+  soundBtn.classList.toggle('muted',!soundEnabled);
+});
+
+/* ===== БАЗОВАЯ РИСОВАЛКА ===== */
+function drawBase(canvas){
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height;
+  const pad=40,size=W-2*pad;
+  ctx.fillStyle='#f7fcfa';ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='#e0f0ea';ctx.lineWidth=1;
+  for(let i=-5;i<=5;i++){
+    const x=pad+(i+5)*size/10,y=pad+(5-i)*size/10;
+    ctx.beginPath();ctx.moveTo(x,pad);ctx.lineTo(x,pad+size);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(pad+size,y);ctx.stroke();
+  }
+  ctx.strokeStyle='#0e7c66';ctx.lineWidth=2;
+  const xZero=pad+5*size/10,yZero=pad+5*size/10;
+  ctx.beginPath();ctx.moveTo(pad,yZero);ctx.lineTo(pad+size,yZero);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(xZero,pad);ctx.lineTo(xZero,pad+size);ctx.stroke();
+  ctx.fillStyle='#0e7c66';
+  ctx.beginPath();ctx.moveTo(pad+size-4,yZero-6);ctx.lineTo(pad+size,yZero);ctx.lineTo(pad+size-4,yZero+6);ctx.fill();
+  ctx.beginPath();ctx.moveTo(xZero-6,pad+4);ctx.lineTo(xZero,pad);ctx.lineTo(xZero+6,pad+4);ctx.fill();
+  ctx.fillStyle='#0e7c66';ctx.font='bold 14px Times New Roman';
+  ctx.textAlign='center';ctx.textBaseline='top';
+  ctx.fillText('x',pad+size-10,yZero+10);
+  ctx.textBaseline='bottom';ctx.fillText('y',xZero+10,pad+6);
+  ctx.font='11px Times New Roman';
+  for(let i=-4;i<=4;i++){
+    if(i===0)continue;
+    const x=pad+(i+5)*size/10,y=pad+(5-i)*size/10;
+    ctx.fillStyle='#6a8a84';
+    ctx.textBaseline='top';ctx.textAlign='center';
+    ctx.fillText(i,x,yZero+4);
+    ctx.textBaseline='middle';ctx.textAlign='right';
+    ctx.fillText(i,xZero-6,y);
+  }
+  ctx.fillStyle='#6a8a84';ctx.textBaseline='top';ctx.textAlign='center';
+  ctx.fillText('0',xZero,yZero+4);
+  return {
+    ctx,pad,size,
+    toScreen:function(x,y){return{px:pad+(x+5)/(2*5)*size,py:pad+(5-y)/(2*5)*size};}
+  };
+}
+
+function drawLine(base,k,b,color){
+  const ctx=base.ctx;
+  ctx.strokeStyle=color;ctx.lineWidth=3;
+  ctx.shadowColor=color;ctx.shadowBlur=6;
+  ctx.beginPath();
+  const range=5,steps=200;let first=true;
+  for(let i=0;i<=steps;i++){
+    const x=-range+(i/steps)*2*range;
+    const y=k*x+b;
+    const p=base.toScreen(x,y);
+    if(p.py<base.pad-20||p.py>base.pad+base.size+20){first=true;continue;}
+    if(first){ctx.moveTo(p.px,p.py);first=false;}else ctx.lineTo(p.px,p.py);
+  }
+  ctx.stroke();ctx.shadowBlur=0;
+}
+
+function drawPoint(ctx,px,py,color,r){
+  r=r||8;
+  ctx.beginPath();ctx.arc(px,py,r,0,Math.PI*2);
+  ctx.fillStyle=color;ctx.strokeStyle='#0e7c66';ctx.lineWidth=2;
+  ctx.fill();ctx.stroke();
+  ctx.beginPath();ctx.arc(px,py,2.5,0,Math.PI*2);
+  ctx.fillStyle='#fff';ctx.fill();
+}
+
+/* ===== АНИМАЦИЯ НЕРАВЕНСТВА ===== */
+const INEQ={step:0,totalSteps:4};
+function renderIneq(){
+  const canvas=document.getElementById('canvasIneq');
+  const base=drawBase(canvas);
+  const step=INEQ.step;
+  if(step>=1)drawLine(base,2,-4,'#1abc9c');
+  if(step>=2)drawLine(base,-4,2,'#f4d35e');
+  if(step>=3){
+    const p=base.toScreen(1,-2);
+    drawPoint(base.ctx,p.px,p.py,'#ff6b6b',9);
+    base.ctx.font='bold 13px Courier New';
+    base.ctx.fillStyle='#ff6b6b';base.ctx.textAlign='left';base.ctx.textBaseline='bottom';
+    base.ctx.fillText('(1; −2)',p.px+12,p.py-10);
+  }
+  if(step>=4){
+    const xOne=base.toScreen(1,0).px,yZero=base.toScreen(0,0).py;
+    base.ctx.fillStyle='rgba(46,204,113,0.25)';
+    base.ctx.fillRect(base.pad,yZero-40,xOne-base.pad,80);
+    base.ctx.strokeStyle='#2ecc71';base.ctx.lineWidth=2;base.ctx.setLineDash([6,4]);
+    base.ctx.beginPath();base.ctx.moveTo(xOne,base.pad);base.ctx.lineTo(xOne,base.pad+base.size);base.ctx.stroke();
+    base.ctx.setLineDash([]);
+    base.ctx.font='bold 15px Georgia';base.ctx.fillStyle='#2ecc71';
+    base.ctx.textAlign='center';base.ctx.textBaseline='top';
+    base.ctx.fillText('x < 1',(base.pad+xOne)/2,base.pad+8);
+  }
+  const el=document.getElementById('commentIneq');
+  let html='';
+  if(step===0)html='<span class="step-num">0</span>Неравенство: <span class="formula-inline">2x − 4 &lt; −4x + 2</span>. Построим две прямые и найдём, где первая <b>ниже</b> второй.';
+  else if(step===1)html='<span class="step-num">1</span>Строим первую прямую: <span class="formula-inline">y₁ = 2x − 4</span> (бирюзовая).';
+  else if(step===2)html='<span class="step-num">2</span>Строим вторую прямую: <span class="formula-inline">y₂ = −4x + 2</span> (золотая).';
+  else if(step===3)html='<span class="step-num">3</span>Прямые пересекаются в точке <span class="formula-inline">(1; −2)</span>. Из уравнения <b>2x − 4 = −4x + 2</b> получаем <b>x = 1</b>.';
+  else if(step===4)html='<span class="step-num">4</span>Бирюзовая прямая ниже золотой при <span class="formula-inline">x &lt; 1</span>. <b>Ответ: x &lt; 1 или (−∞; 1)</b>.';
+  el.innerHTML=html;
+  document.getElementById('progressIneq').textContent='Шаг '+step+' из '+INEQ.totalSteps;
+  const nextBtn=document.querySelector('[data-ctrl="next"][data-demo="ineq"]');
+  if(nextBtn)nextBtn.disabled=step>=INEQ.totalSteps;
+}
+
+document.querySelectorAll('[data-ctrl]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const demo=btn.dataset.demo,action=btn.dataset.ctrl;
+    if(demo==='ineq'){
+      if(action==='next'&&INEQ.step<INEQ.totalSteps){INEQ.step++;renderIneq();}
+      else if(action==='reset'){INEQ.step=0;renderIneq();}
+    }
+  });
+});
+
+/* ===== ПРАКТИКА · 10 НЕРАВЕНСТВ ===== */
+const TASKS=[
+  {num:'1',q:'5x − 3 > 7',ans:['x>2','(2;+∞)','x>2.0'],display:'x > 2'},
+  {num:'2',q:'−2x + 5 ≤ 11',ans:['x>=-3','[-3;+∞)','x≥-3'],display:'x ≥ −3'},
+  {num:'3',q:'4x + 2 < x − 7',ans:['x<-3','(-∞;-3)'],display:'x < −3'},
+  {num:'4',q:'3x − 8 ≥ 1',ans:['x>=3','[3;+∞)','x≥3'],display:'x ≥ 3'},
+  {num:'5',q:'−5x > 15',ans:['x<-3','(-∞;-3)'],display:'x < −3'},
+  {num:'6',q:'7x + 4 ≤ 2x − 1',ans:['x<=-1','(-∞;-1]','x≤-1'],display:'x ≤ −1'},
+  {num:'7',q:'2(x + 3) > 10',ans:['x>2','(2;+∞)'],display:'x > 2'},
+  {num:'8',q:'−3(x − 2) ≤ 9',ans:['x>=-1','[-1;+∞)','x≥-1'],display:'x ≥ −1'},
+  {num:'9',q:'0,5x + 1 > 2,5',ans:['x>3','(3;+∞)'],display:'x > 3'},
+  {num:'10',q:'−x/2 + 3 ≥ 1',ans:['x<=4','(-∞;4]','x≤4'],display:'x ≤ 4'}
+];
+
+function normAns(s){
+  return String(s||'').trim().toLowerCase()
+    .replace(/\s+/g,'')
+    .replace(/[−–—]/g,'-')
+    .replace(/[≥]/g,'>=')
+    .replace(/[≤]/g,'<=')
+    .replace(/х/g,'x')
+    .replace(/,/g,'.');
+}
+function checkAns(user,list){
+  const u=normAns(user);
+  if(!u)return false;
+  return list.some(a=>normAns(a)===u);
+}
+
+const state=TASKS.map(()=>({solved:false,correct:false,attempts:0}));
+let activeIdx=-1;
+
+function renderList(){
+  const box=document.getElementById('taskList');
+  box.innerHTML='';
+  TASKS.forEach((t,i)=>{
+    const el=document.createElement('div');
+    el.className='task-card';
+    el.id='tc-'+i;
+    el.innerHTML=`<span class="task-num">№${t.num}</span><span class="task-q">${t.q}</span><span class="mark" id="m-${i}"></span>`;
+    el.addEventListener('click',()=>selectTask(i));
+    box.appendChild(el);
+  });
+}
+
+function selectTask(i){
+  activeIdx=i;
+  document.querySelectorAll('#taskList .task-card').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tc-'+i).classList.add('active');
+  const panel=document.getElementById('activePanel');
+  panel.classList.remove('empty');
+  document.getElementById('activeNum').textContent='№'+TASKS[i].num;
+  const q=document.getElementById('activeQ');
+  q.classList.remove('empty');
+  q.textContent=TASKS[i].q;
+  document.getElementById('activeInput').style.display='flex';
+  const inp=document.getElementById('activeAnswer');
+  inp.value='';inp.classList.remove('ok','err');
+  inp.disabled=state[i].solved;
+  document.getElementById('activeCheck').disabled=state[i].solved;
+  const fb=document.getElementById('activeFeedback');
+  fb.textContent='';fb.className='atp-feedback';
+  if(state[i].solved){
+    fb.textContent=state[i].correct?'✓ Верно!':'✗ Неверно. Правильно: '+TASKS[i].display;
+    fb.className='atp-feedback '+(state[i].correct?'ok':'err');
+  }
+  inp.focus();
+}
+
+function checkActive(){
+  if(activeIdx<0)return;
+  const st=state[activeIdx];
+  if(st.solved)return;
+  const inp=document.getElementById('activeAnswer');
+  const val=inp.value.trim();
+  if(!val){document.getElementById('activeFeedback').textContent='⚠ Введи ответ!';return;}
+  const t=TASKS[activeIdx];
+  const ok=checkAns(val,t.ans);
+  st.solved=true;st.correct=ok;
+  inp.classList.add(ok?'ok':'err');
+  inp.disabled=true;
+  document.getElementById('activeCheck').disabled=true;
+  document.getElementById('m-'+activeIdx).textContent=ok?'✓':'✗';
+  document.getElementById('m-'+activeIdx).className='mark '+(ok?'ok':'err');
+  document.getElementById('tc-'+activeIdx).classList.add(ok?'solved-correct':'solved-wrong');
+  const fb=document.getElementById('activeFeedback');
+  fb.textContent=ok?'✓ Верно!':'✗ Неверно. Правильно: '+t.display;
+  fb.className='atp-feedback '+(ok?'ok':'err');
+  updateProgress();
+}
+
+function updateProgress(){
+  let total=TASKS.length,done=0,ok=0,err=0;
+  state.forEach(s=>{if(s.solved){done++;if(s.correct)ok++;else err++;}});
+  document.getElementById('prNum').textContent=done+' / '+total;
+  document.getElementById('prOk').textContent='✓ '+ok;
+  document.getElementById('prErr').textContent='✗ '+err;
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('prPct').textContent=pct+'%';
+  document.getElementById('prFill').style.width=pct+'%';
+}
+
+document.getElementById('activeCheck').addEventListener('click',checkActive);
+document.getElementById('activeAnswer').addEventListener('keydown',e=>{
+  if(e.key==='Enter')checkActive();
+});
+
+/* ===== CANVAS ===== */
+const cvStates={};
+function initCv(cv){
+  if(cvStates[cv.id])return;
+  const dpr=window.devicePixelRatio||1;
+  cv.style.width='100%';cv.style.height='100%';
+  void cv.offsetWidth;
+  const rect0=cv.getBoundingClientRect();
+  const cssW=Math.max(300,rect0.width),cssH=Math.max(200,rect0.height);
+  cv.width=Math.round(cssW*dpr);cv.height=Math.round(cssH*dpr);
+  const ctx=cv.getContext('2d',{desynchronized:true});
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  drawGrid(ctx,cssW,cssH);
+  ctx.lineWidth=0.9;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#0e7c66';
+  let cachedRect=null;
+  function refreshRect(){cachedRect=cv.getBoundingClientRect();}
+  void cv.offsetWidth;refreshRect();
+  const state={cv,ctx,cssW,cssH,dpr,drawing:false,refreshRect};
+  cvStates[cv.id]=state;
+  function toCanvas(cx,cy){if(!cachedRect)refreshRect();return{x:cx-cachedRect.left,y:cy-cachedRect.top};}
+  function strokeLine(from,to){
+    const dx=to.x-from.x,dy=to.y-from.y,dist=Math.hypot(dx,dy);
+    if(dist<0.3)return;
+    const n=Math.max(1,Math.ceil(dist/1.2));
+    ctx.beginPath();ctx.moveTo(from.x,from.y);
+    for(let i=1;i<=n;i++){const t=i/n;ctx.lineTo(from.x+dx*t,from.y+dy*t);}
+    ctx.stroke();
+  }
+  let lastPt=null,rafPending=false,pending=[];
+  function flush(){rafPending=false;if(!pending.length)return;for(const pt of pending){if(lastPt)strokeLine(lastPt,pt);lastPt=pt;}pending=[];}
+  function hm(cx,cy){const pt=toCanvas(cx,cy);pending.push(pt);if(!rafPending){rafPending=true;requestAnimationFrame(flush);}}
+  cv.addEventListener('pointerdown',e=>{
+    e.preventDefault();refreshRect();state.drawing=true;
+    try{cv.setPointerCapture(e.pointerId);}catch(_){}
+    lastPt=toCanvas(e.clientX,e.clientY);
+    ctx.beginPath();ctx.arc(lastPt.x,lastPt.y,0.6,0,Math.PI*2);
+    ctx.fillStyle='#0e7c66';ctx.fill();ctx.beginPath();ctx.moveTo(lastPt.x,lastPt.y);
+  },{passive:false});
+  const mv=('onpointerrawupdate'in window)?'pointerrawupdate':'pointermove';
+  cv.addEventListener(mv,e=>{
+    if(!state.drawing)return;e.preventDefault();
+    let events=[e];
+    if(typeof e.getCoalescedEvents==='function'){const co=e.getCoalescedEvents();if(co&&co.length)events=co;}
+    for(const ev of events)hm(ev.clientX,ev.clientY);
+  },{passive:false});
+  if(mv==='pointerrawupdate'){
+    cv.addEventListener('pointermove',e=>{
+      if(!state.drawing)return;
+      if(typeof e.getCoalescedEvents!=='function'){e.preventDefault();hm(e.clientX,e.clientY);}
+    },{passive:false});
+  }
+  const stop=e=>{
+    state.drawing=false;flush();lastPt=null;
+    try{if(e)cv.releasePointerCapture(e.pointerId);}catch(_){}
+  };
+  cv.addEventListener('pointerup',stop);
+  cv.addEventListener('pointercancel',stop);
+  cv.addEventListener('pointerleave',stop);
+  cv.addEventListener('contextmenu',e=>e.preventDefault());
+  window.addEventListener('scroll',refreshRect,{passive:true});
+  window.addEventListener('resize',()=>refreshRect(),{passive:true});
+  if('ResizeObserver'in window){const ro=new ResizeObserver(()=>refreshRect());ro.observe(cv);}
+}
+
+function drawGrid(ctx,W,H){
+  ctx.fillStyle='#f7fcfa';ctx.fillRect(0,0,W,H);
+  const cell=20;ctx.strokeStyle='#cfe8e0';ctx.lineWidth=0.5;
+  for(let x=0;x<=W+cell;x+=cell){const px=Math.round(x)+0.5;ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,H);ctx.stroke();}
+  for(let y=0;y<=H+cell;y+=cell){const py=Math.round(y)+0.5;ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(W,py);ctx.stroke();}
+}
+window.clearById=function(id){
+  const st=cvStates[id];if(!st)return;
+  st.ctx.setTransform(1,0,0,1,0,0);st.ctx.clearRect(0,0,st.cv.width,st.cv.height);
+  st.ctx.setTransform(st.dpr,0,0,st.dpr,0,0);
+  drawGrid(st.ctx,st.cssW,st.cssH);
+  st.ctx.lineWidth=0.9;st.ctx.lineCap='round';st.ctx.lineJoin='round';st.ctx.strokeStyle='#0e7c66';
+};
+
+function initAll(){
+  document.querySelectorAll('.write-canvas').forEach(c=>initCv(c));
+  renderIneq();
+  renderList();
+  updateProgress();
+}
+if(document.readyState==='complete')initAll();
+else window.addEventListener('load',initAll);
+setTimeout(initAll,300);
+</script>
+</body>
+</html>
