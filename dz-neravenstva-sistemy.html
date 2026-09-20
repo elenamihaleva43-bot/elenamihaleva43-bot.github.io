@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>ДЗ · Неравенства и системы · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{min-height:100vh;font-family:Georgia,'Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.06),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;padding:20px;overflow-x:hidden;display:flex;justify-content:center;}
+  .glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.5;}
+  .glow.g1{width:520px;height:520px;top:-120px;left:-120px;background:radial-gradient(circle,rgba(26,188,156,0.55),transparent 70%);}
+  .glow.g2{width:600px;height:600px;bottom:-200px;right:-180px;background:radial-gradient(circle,rgba(127,255,212,0.4),transparent 70%);}
+  .corner-logo{position:fixed;top:14px;left:16px;z-index:50;font-family:'Times New Roman',serif;text-align:center;line-height:1;padding:10px 18px 12px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(26,188,156,0.45);border-radius:14px;backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(0,0,0,0.35);}
+  .corner-logo .dots{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:16px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:4px;}
+  .corner-logo .ru{font-size:10px;letter-spacing:3px;color:var(--text-soft);margin-top:2px;}
+  .top-right{position:fixed;top:14px;right:16px;z-index:50;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+  .date-badge{display:flex;align-items:center;justify-content:center;height:46px;padding:0 16px;border-radius:14px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(127,255,212,0.45);color:var(--mint);backdrop-filter:blur(10px);font-weight:700;font-family:'Courier New',monospace;font-size:15px;}
+  .app{max-width:900px;width:100%;background:rgba(255,255,255,0.04);border:1.5px solid var(--glass-brd);border-radius:24px;padding:28px 30px;backdrop-filter:blur(12px);box-shadow:0 12px 50px rgba(0,0,0,0.5);position:relative;z-index:2;}
+  .header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:1px solid rgba(26,188,156,0.2);padding-bottom:14px;margin-bottom:20px;}
+  .header-title{font-size:14px;color:var(--text-soft);font-style:italic;}
+  h1{font-size:clamp(20px,2.8vw,26px);color:var(--mint);letter-spacing:1.5px;text-align:center;margin-bottom:6px;}
+  .subtitle{text-align:center;font-size:14px;color:var(--text-soft);font-style:italic;margin-bottom:20px;}
+  .name-block{background:linear-gradient(135deg,rgba(244,211,94,0.12),rgba(26,188,156,0.08));border:1.5px solid var(--gold);border-radius:14px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .name-block label{font-size:15px;color:var(--gold-light);font-weight:700;white-space:nowrap;}
+  .name-block input{flex:1;min-width:200px;padding:10px 14px;border-radius:10px;border:2px solid rgba(244,211,94,0.4);background:rgba(0,0,0,0.3);color:#fff;font-family:Georgia,serif;font-size:16px;outline:none;transition:0.2s;}
+  .name-block input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(244,211,94,0.25);}
+  .name-block input::placeholder{color:#a89a6a;font-style:italic;}
+  .intro-block{background:rgba(255,255,255,0.03);border-radius:16px;padding:18px 22px;margin-bottom:20px;border-left:4px solid var(--teal);font-size:15px;line-height:1.75;color:var(--text);}
+  .intro-block b{color:var(--mint);}
+  .intro-block .frm{font-family:'Cambria Math',serif;color:var(--mint);font-style:italic;font-size:17px;}
+  .intro-block .signature{display:block;text-align:right;font-size:13px;color:var(--text-soft);font-style:italic;margin-top:10px;}
+  .section-title{font-size:16px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin:24px 0 12px;padding-left:6px;border-left:4px solid var(--gold);}
+  .task-block{background:rgba(0,0,0,0.2);border-radius:16px;padding:18px 22px;margin-bottom:14px;border-left:4px solid var(--mint);}
+  .task-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
+  .task-num{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;background:linear-gradient(135deg,var(--gold),#c9a32b);color:#2a1f00;border-radius:10px;font-family:'Courier New',monospace;font-weight:700;font-size:15px;flex-shrink:0;}
+  .task-eq{font-family:'Cambria Math','Times New Roman',serif;font-size:clamp(17px,2.2vw,21px);color:var(--mint);line-height:1.6;flex:1;font-style:italic;}
+  .pow{font-size:0.75em;vertical-align:super;line-height:0;}
+  .sys-inline{display:flex;align-items:center;gap:10px;}
+  .sys-brace{font-size:48px;line-height:0.9;color:var(--mint);font-family:'Times New Roman',serif;font-weight:300;user-select:none;flex-shrink:0;}
+  .sys-eqs{display:flex;flex-direction:column;gap:4px;line-height:1.4;}
+  .ans-cell{display:flex;flex-direction:column;gap:6px;margin-top:10px;}
+  .ans-cell label{font-size:14px;color:var(--gold-light);font-weight:700;font-family:'Cambria Math',serif;}
+  .ans-cell input{padding:12px 16px;border-radius:10px;border:1.5px solid var(--glass-brd);background:rgba(0,0,0,0.3);color:#fff;font-family:'Cambria Math',serif;font-size:16px;outline:none;transition:0.2s;}
+  .ans-cell input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+  .ans-cell input::placeholder{color:var(--text-soft);opacity:0.5;font-size:14px;font-style:italic;}
+  .btn-send{width:100%;padding:16px 32px;font-size:18px;font-weight:700;font-family:inherit;letter-spacing:1px;border:none;border-radius:16px;background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;cursor:pointer;transition:0.3s;box-shadow:0 6px 24px rgba(26,188,156,0.4);margin-top:16px;}
+  .btn-send:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(26,188,156,0.5);}
+  .result-area{margin-top:16px;display:none;}
+  .result-area.show{display:block;animation:fade 0.4s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .result-text{background:rgba(0,0,0,0.35);border:1.5px solid var(--mint);border-radius:12px;padding:16px 18px;font-family:'Courier New',monospace;font-size:13px;color:var(--text);white-space:pre-wrap;line-height:1.7;user-select:all;cursor:text;}
+  .result-hint{text-align:center;font-size:13px;color:var(--gold-light);font-style:italic;margin-top:10px;}
+  .btn-copy{display:block;width:100%;margin-top:12px;padding:13px 24px;font-size:15px;font-weight:700;font-family:inherit;border:2px solid var(--glass-brd);border-radius:12px;background:transparent;color:var(--mint);cursor:pointer;transition:0.25s;letter-spacing:1px;}
+  .btn-copy:hover{background:rgba(26,188,156,0.15);}
+  .btn-copy.copied{background:linear-gradient(135deg,#2ecc71,#27ae60);color:#fff;border-color:var(--ok);}
+  .btn-max{display:block;width:100%;margin-top:12px;padding:14px 24px;font-size:16px;font-weight:700;font-family:inherit;border:none;border-radius:12px;background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;cursor:pointer;text-decoration:none;text-align:center;letter-spacing:1px;box-shadow:0 6px 20px rgba(26,188,156,0.4);transition:0.2s;}
+  .btn-max:hover{transform:translateY(-2px);}
+  @media(max-width:600px){
+    .app{padding:18px 14px;}
+    .name-block{flex-direction:column;align-items:stretch;gap:8px;}
+    .name-block label{text-align:center;}
+    .task-block{padding:14px 16px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div><div class="glow g2"></div>
+
+<div class="corner-logo">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+</div>
+
+<div class="top-right">
+  <div class="date-badge" id="dateDisplay">📅 00.00.0000</div>
+</div>
+
+<div class="app">
+
+  <div class="header">
+    <div class="header-title">ДЗ · Неравенства и системы</div>
+    <div style="font-size:13px;color:var(--text-soft);">8 заданий</div>
+  </div>
+
+  <h1>Неравенства и системы уравнений</h1>
+  <div class="subtitle">4 неравенства · 4 системы · найди решение</div>
+
+  <div class="name-block">
+    <label for="studentName">👤 Имя ученика:</label>
+    <input type="text" id="studentName" placeholder="Введи своё имя и фамилию..." maxlength="60" autocomplete="off">
+  </div>
+
+  <div class="intro-block">
+    <b>📐 Как записывать ответ:</b><br>
+    • <b>Неравенство</b> — пиши <span class="frm">x &gt; 4</span>, <span class="frm">x ≤ −1</span> или интервал <span class="frm">(4; +∞)</span><br>
+    • Если нет решений — пиши <span class="frm">нет</span><br>
+    • <b>Система</b> — пиши <span class="frm">(4; 3)</span> или <span class="frm">x=4, y=3</span><br>
+    • Если нет решений — <span class="frm">нет</span> · если много решений — <span class="frm">много</span>
+    <span class="signature">ΤΕΤΡΑΚΤΥΣ · Школа математики Елены Михалевой</span>
+  </div>
+
+  <div class="section-title">📗 Неравенства</div>
+  <div id="groupIneq"></div>
+
+  <div class="section-title">📘 Системы уравнений</div>
+  <div id="groupSys"></div>
+
+  <button class="btn-send" id="btnSend">📩 Сформировать ответ для учителя</button>
+
+  <div class="result-area" id="resultArea">
+    <div class="result-text" id="resultText"></div>
+    <div class="result-hint">👇 Скопируй текст и отправь учителю</div>
+    <button class="btn-copy" id="btnCopy">📋 Скопировать ответы</button>
+    <a class="btn-max" href="https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes" target="_blank" rel="noopener">💬 Отправить учителю в Макс</a>
+  </div>
+
+</div>
+
+<script>
+/* ===== ДАТА ===== */
+(function(){
+  const el=document.getElementById('dateDisplay');
+  const d=new Date();
+  el.textContent='📅 '+d.toLocaleDateString('ru-RU',{day:'2-digit',month:'long',year:'numeric'});
+})();
+
+/* ===== ЗАДАНИЯ ===== */
+const INEQ = [
+  { html:'3x − 5 &gt; 7' },
+  { html:'−2x + 1 ≤ 9' },
+  { html:'5(x − 2) ≥ 3x + 4' },
+  { html:'2x + 3 &gt; 2x + 7' }
+];
+
+const SYS = [
+  { eqs:['x + y = 7','x − y = 1'] },
+  { eqs:['2x + y = 8','x − y = 1'] },
+  { eqs:['x + y = 5','x + y = 8'] },
+  { eqs:['x + y = 4','2x + 2y = 8'] }
+];
+
+/* Рендер неравенств */
+(function(){
+  const box=document.getElementById('groupIneq');
+  INEQ.forEach((t,i)=>{
+    const el=document.createElement('div');
+    el.className='task-block';
+    el.innerHTML=`
+      <div class="task-header">
+        <span class="task-num">${i+1}</span>
+        <span class="task-eq">${t.html}</span>
+      </div>
+      <div class="ans-cell">
+        <label>Ответ:</label>
+        <input type="text" id="ans-${i}" placeholder="введи ответ" autocomplete="off">
+      </div>
+    `;
+    box.appendChild(el);
+  });
+})();
+
+/* Рендер систем */
+(function(){
+  const box=document.getElementById('groupSys');
+  SYS.forEach((t,i)=>{
+    const el=document.createElement('div');
+    el.className='task-block';
+    el.innerHTML=`
+      <div class="task-header">
+        <span class="task-num">${i+5}</span>
+        <span class="task-eq">
+          <div class="sys-inline">
+            <div class="sys-brace">{</div>
+            <div class="sys-eqs">
+              <div>${t.eqs[0]}</div>
+              <div>${t.eqs[1]}</div>
+            </div>
+          </div>
+        </span>
+      </div>
+      <div class="ans-cell">
+        <label>Ответ:</label>
+        <input type="text" id="ans-${i+4}" placeholder="введи ответ" autocomplete="off">
+      </div>
+    `;
+    box.appendChild(el);
+  });
+})();
+
+/* ===== СОХРАНЕНИЕ ИМЕНИ ===== */
+const nameInput=document.getElementById('studentName');
+const savedName=localStorage.getItem('dz_neravenstva_sistemy_name');
+if(savedName)nameInput.value=savedName;
+nameInput.addEventListener('input',()=>{
+  localStorage.setItem('dz_neravenstva_sistemy_name', nameInput.value.trim());
+});
+
+/* ===== ФОРМИРОВАНИЕ ОТВЕТА ===== */
+document.getElementById('btnSend').addEventListener('click',function(){
+  const name=nameInput.value.trim();
+  if(!name){
+    alert('Введи имя ученика!');
+    nameInput.focus();
+    return;
+  }
+
+  const all=INEQ.length + SYS.length;
+  const answers=[];
+  for(let i=0;i<all;i++){
+    const v=document.getElementById('ans-'+i).value.trim();
+    if(!v){
+      alert('Заполни все поля! Не хватает ответа для задания '+(i+1));
+      return;
+    }
+    answers.push(v);
+  }
+
+  const now=new Date();
+  const dateStr=now.toLocaleDateString('ru-RU')+' '+now.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+
+  let text='📐 ОТВЕТЫ · ДЗ · Неравенства и системы\n';
+  text+='Дата: '+dateStr+'\n';
+  text+='Ученик: '+name+'\n\n';
+  text+='── НЕРАВЕНСТВА ──\n\n';
+  INEQ.forEach((t,i)=>{
+    const plain=t.html.replace(/&gt;/g,'>').replace(/&lt;/g,'<').replace(/&ge;/g,'≥').replace(/&le;/g,'≤').replace(/<[^>]*>/g,'');
+    text+='Задание '+(i+1)+'. '+plain+'\n';
+    text+='  Ответ: '+answers[i]+'\n\n';
+  });
+  text+='── СИСТЕМЫ ──\n\n';
+  SYS.forEach((t,i)=>{
+    text+='Задание '+(i+5)+'. Система:\n';
+    text+='  '+t.eqs[0]+'\n';
+    text+='  '+t.eqs[1]+'\n';
+    text+='  Ответ: '+answers[i+4]+'\n\n';
+  });
+
+  document.getElementById('resultText').textContent=text;
+  document.getElementById('resultArea').classList.add('show');
+  document.getElementById('resultArea').scrollIntoView({behavior:'smooth',block:'nearest'});
+});
+
+/* ===== КОПИРОВАНИЕ ===== */
+document.getElementById('btnCopy').addEventListener('click',async function(){
+  const text=document.getElementById('resultText').textContent;
+  try{
+    await navigator.clipboard.writeText(text);
+    this.textContent='✓ Скопировано!';
+    this.classList.add('copied');
+    setTimeout(()=>{this.textContent='📋 Скопировать ответы';this.classList.remove('copied');},2500);
+  }catch(e){
+    const ta=document.createElement('textarea');
+    ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();
+    this.textContent='✓ Скопировано!';
+    this.classList.add('copied');
+    setTimeout(()=>{this.textContent='📋 Скопировать ответы';this.classList.remove('copied');},2500);
+  }
+});
+</script>
+</body>
+</html>
