@@ -1,0 +1,1793 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Параллельность прямой и плоскости · ΤΕΤΡΑΚΤΥΣ</title>
+
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(', '\\)'], ['$', '$']], displayMath: [['\\[', '\\]'], ['$$', '$$']] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;--mint:#7fffd4;
+    --gold:#f4d35e;--gold-light:#ffe89a;--coral:#ff6b6b;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{min-height:100%;font-family:'Georgia','Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.06),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;overflow-x:hidden;padding:20px 12px 60px;}
+
+  .corner-logo{position:fixed;top:14px;left:16px;z-index:50;font-family:'Times New Roman',serif;text-align:center;line-height:1;padding:8px 14px 10px;background:rgba(10,42,51,0.6);border:1px solid rgba(26,188,156,0.4);border-radius:12px;backdrop-filter:blur(8px);}
+  .corner-logo .dots{font-size:9px;letter-spacing:2px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:13px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:4px;}
+  .corner-logo .ru{font-size:9px;letter-spacing:2px;color:var(--text-soft);margin-top:2px;}
+
+  .top-right{position:fixed;top:14px;right:16px;z-index:50;}
+  .header-date{display:flex;align-items:center;justify-content:center;height:44px;background:rgba(10,42,51,0.75);border:1px solid rgba(26,188,156,0.4);border-radius:12px;backdrop-filter:blur(8px);color:var(--mint);font-size:13px;padding:0 16px;font-family:'Courier New',monospace;}
+
+  .app{position:relative;z-index:10;max-width:1100px;margin:0 auto;padding:80px 0 20px;}
+
+  .page-head{text-align:center;margin-bottom:28px;}
+  .page-head h1{font-size:clamp(22px,3.2vw,30px);color:var(--mint);letter-spacing:1.3px;font-weight:700;}
+  .page-head .sub{font-style:italic;color:var(--text-soft);font-size:clamp(13px,1.6vw,15px);margin-top:6px;}
+  .page-head .line{width:80px;height:2px;background:linear-gradient(90deg,transparent,var(--teal),transparent);margin:14px auto 0;}
+
+  .nav-back{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;margin-bottom:18px;border:1.5px solid var(--glass-brd);border-radius:12px;background:rgba(255,255,255,0.05);color:var(--text-soft);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;transition:0.2s;}
+  .nav-back:hover{border-color:var(--mint);color:var(--mint);background:rgba(26,188,156,0.1);}
+
+  .block{margin-bottom:24px;border:1.5px solid var(--glass-brd);border-radius:20px;overflow:hidden;background:rgba(255,255,255,0.04);backdrop-filter:blur(10px);box-shadow:0 8px 30px rgba(0,0,0,0.3);}
+  .block-head{display:flex;align-items:center;gap:14px;padding:14px 20px;background:linear-gradient(135deg,rgba(26,188,156,0.22),rgba(22,160,133,0.12));border-bottom:1px solid var(--glass-brd);}
+  .block-tag{display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:32px;padding:0 12px;background:var(--teal);color:#04231d;border-radius:16px;font-size:13px;font-weight:800;font-family:'Courier New',monospace;letter-spacing:0.5px;}
+  .block-tag.def{background:linear-gradient(135deg,#2ecc71,#27ae60);}
+  .block-tag.th{background:linear-gradient(135deg,#f4d35e,#d9a72a);color:#3a2a00;}
+  .block-name{font-size:clamp(15px,2vw,18px);color:var(--mint);font-weight:700;letter-spacing:0.4px;}
+
+  .block-body{padding:20px 24px;}
+  .block-body.two-col{display:grid;grid-template-columns:1fr 360px;gap:22px;align-items:start;}
+  @media(max-width:820px){.block-body.two-col{grid-template-columns:1fr;}}
+
+  .theorem-text{font-size:15.5px;line-height:1.7;color:var(--text);}
+  .theorem-text b{color:var(--mint);}
+  .theorem-text .hl-gold{color:var(--gold-light);font-weight:700;}
+  .theorem-text .hl-teal{color:var(--teal);font-weight:700;}
+  .theorem-text .formula{display:block;margin-top:10px;text-align:center;font-family:'Cambria Math',serif;font-size:20px;color:#fff;font-weight:600;text-shadow:0 0 14px rgba(127,255,212,0.4);}
+
+  .scene-wrap{position:relative;width:100%;height:300px;border:1.5px solid rgba(26,188,156,0.35);border-radius:14px;background:radial-gradient(ellipse at 50% 40%,rgba(26,188,156,0.12),transparent 70%),rgba(8,25,32,0.55);overflow:hidden;}
+  .scene-wrap canvas{display:block;width:100%;height:100%;cursor:grab;touch-action:none;}
+  .scene-wrap canvas:active{cursor:grabbing;}
+  .scene-hint{position:absolute;left:10px;bottom:10px;background:rgba(10,42,51,0.85);border:1px solid rgba(26,188,156,0.35);border-radius:8px;padding:4px 10px;font-size:11px;color:var(--text-soft);font-style:italic;pointer-events:none;}
+
+  /* СЦЕНЫ 3 СЛУЧАЯ */
+  .cases-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:16px;}
+  @media(max-width:820px){.cases-row{grid-template-columns:1fr;}}
+  .case-cell{display:flex;flex-direction:column;gap:8px;}
+  .case-cell .cc-title{font-size:13.5px;color:var(--mint);font-weight:700;text-align:center;letter-spacing:0.5px;}
+  .case-cell .scene-wrap{height:220px;}
+  .case-cell .cc-formula{text-align:center;font-family:'Cambria Math',serif;font-size:16px;color:#fff;font-weight:600;}
+
+  /* ПРИЗНАК */
+  .sign-block{margin-top:16px;padding:16px 20px;border-radius:14px;background:rgba(244,211,94,0.08);border-left:4px solid var(--gold);font-size:15.5px;line-height:1.7;color:var(--text);}
+  .sign-block b{color:var(--gold-light);}
+  .sign-block .cond{display:block;margin-top:12px;padding:12px 18px;background:rgba(10,42,51,0.4);border-radius:10px;font-family:'Cambria Math',serif;font-size:16.5px;color:#fff;text-align:center;border:1px solid rgba(127,255,212,0.25);}
+
+  /* ЗАДАЧИ */
+  .tasks-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media(max-width:640px){.tasks-list{grid-template-columns:1fr;}}
+  .task-card{padding:12px 16px;border-radius:14px;border:1.5px solid rgba(26,188,156,0.3);background:rgba(255,255,255,0.04);cursor:pointer;transition:0.2s;}
+  .task-card:hover{border-color:var(--mint);background:rgba(26,188,156,0.1);transform:translateY(-2px);}
+  .task-card.active{border-color:var(--teal);background:linear-gradient(135deg,rgba(26,188,156,0.2),rgba(22,160,133,0.1));box-shadow:0 0 20px rgba(26,188,156,0.25);}
+  .task-card .tc-num{display:inline-block;width:26px;height:26px;line-height:26px;text-align:center;border-radius:8px;background:var(--teal);color:#04231d;font-weight:800;font-size:13px;margin-right:8px;}
+  .task-card .tc-title{display:inline;font-size:14.5px;font-weight:700;color:var(--mint);}
+  .task-card .tc-preview{margin-top:8px;font-size:13px;color:var(--text-soft);line-height:1.5;}
+
+  .task-active{padding:16px 20px;border-radius:14px;border:1.5px solid var(--teal);background:rgba(26,188,156,0.08);min-height:64px;display:flex;align-items:center;justify-content:center;margin-top:14px;}
+  .task-active .ta-placeholder{color:var(--text-soft);font-style:italic;font-size:14px;}
+  .task-active .ta-content{font-size:15.5px;line-height:1.85;color:var(--text);width:100%;}
+  .task-active .ta-content .tag{display:inline-block;padding:2px 10px;border-radius:6px;background:rgba(244,211,94,0.18);color:var(--gold-light);font-size:13px;font-weight:700;margin-right:6px;}
+
+  /* КАНВАС */
+  .work-block{margin-top:14px;}
+  .work-toolbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:10px 12px;background:rgba(26,188,156,0.1);border:1.5px solid rgba(26,188,156,0.3);border-bottom:none;border-radius:14px 14px 0 0;}
+  .work-toolbar .tb-label{font-size:12.5px;color:var(--text-soft);font-weight:600;margin-right:4px;}
+  .tb-sep{display:inline-block;width:1px;height:22px;background:rgba(26,188,156,0.3);margin:0 4px;}
+  .tool-btn{font-family:inherit;font-size:12.5px;padding:7px 12px;border:1.5px solid rgba(26,188,156,0.4);border-radius:10px;cursor:pointer;font-weight:600;background:rgba(255,255,255,0.04);color:var(--text-soft);transition:0.15s;}
+  .tool-btn:hover{background:rgba(26,188,156,0.18);border-color:var(--mint);color:var(--mint);}
+  .tool-btn.active{background:var(--teal);border-color:var(--teal);color:#04231d;}
+  .tool-btn.danger{color:var(--err);border-color:rgba(255,107,107,0.4);}
+  .tool-btn.danger:hover{background:rgba(255,107,107,0.15);border-color:var(--err);color:var(--err);}
+  .shape-btn{color:var(--gold-light);border-color:rgba(244,211,94,0.5);}
+  .shape-btn:hover{background:rgba(244,211,94,0.15);border-color:var(--gold);color:var(--gold-light);}
+  .line-btn{color:#a8d8ea;border-color:rgba(168,216,234,0.5);}
+  .line-btn:hover{background:rgba(168,216,234,0.15);border-color:#a8d8ea;color:#d6ecf5;}
+  .hand-btn{color:var(--mint);border-color:rgba(127,255,212,0.55);}
+  .hand-btn:hover{background:rgba(127,255,212,0.18);border-color:var(--mint);}
+  .hand-btn.active{background:linear-gradient(135deg,#7fffd4,#1abc9c);color:#04231d;border-color:var(--mint);}
+
+  .work-space{position:relative;border:1.5px solid rgba(26,188,156,0.3);border-radius:0 0 14px 14px;background:#f7fcfa;min-height:420px;overflow:hidden;touch-action:none;
+    background-image:linear-gradient(to right,rgba(14,124,102,0.1) 1px,transparent 1px),linear-gradient(to bottom,rgba(14,124,102,0.1) 1px,transparent 1px);
+    background-size:22px 22px;}
+  .work-space canvas{display:block;width:100%;height:100%;position:absolute;top:0;left:0;touch-action:none;cursor:crosshair;}
+
+  .footer{margin-top:34px;padding-top:16px;border-top:1px solid rgba(26,188,156,0.25);text-align:center;font-size:12px;color:var(--text-soft);}
+
+  @media(max-width:700px){.app{padding:80px 8px 20px;}.block-body{padding:16px;}}
+</style>
+</head>
+<body>
+
+<div class="corner-logo">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+</div>
+
+<div class="top-right">
+  <div class="header-date" id="dateDisplay">📅 00.00.0000</div>
+</div>
+
+<div class="app">
+
+  <a href="parallel.html" class="nav-back">← На главную</a>
+
+  <div class="page-head">
+    <h1>Параллельность прямой и плоскости</h1>
+    <div class="sub">§ 4 · определение · три случая · признак · свойства</div>
+    <div class="line"></div>
+  </div>
+
+  <!-- ОПРЕДЕЛЕНИЕ + 3 СЛУЧАЯ -->
+  <div class="block">
+    <div class="block-head">
+      <span class="block-tag def">ОПР</span>
+      <span class="block-name">Определение. Три случая взаимного расположения</span>
+    </div>
+    <div class="block-body">
+      <div class="theorem-text">
+        <b>Прямая и плоскость называются параллельными</b>, если они <span class="hl-teal">не имеют общих точек</span>.
+        <span class="formula">\(a \parallel \alpha\)</span>
+      </div>
+
+      <div style="margin-top:18px;font-size:15px;color:var(--text);">
+        Возможны <b>три случая</b> взаимного расположения прямой и плоскости:
+      </div>
+
+      <div class="cases-row">
+        <div class="case-cell">
+          <div class="cc-title">Прямая лежит в плоскости</div>
+          <div class="scene-wrap"><canvas id="case1"></canvas><div class="scene-hint">🖱 вращать</div></div>
+          <div class="cc-formula">\(a \subset \alpha\)</div>
+        </div>
+        <div class="case-cell">
+          <div class="cc-title">Прямая пересекает плоскость</div>
+          <div class="scene-wrap"><canvas id="case2"></canvas><div class="scene-hint">🖱 вращать</div></div>
+          <div class="cc-formula">\(a \cap \alpha = A\)</div>
+        </div>
+        <div class="case-cell">
+          <div class="cc-title">Прямая параллельна плоскости</div>
+          <div class="scene-wrap"><canvas id="case3"></canvas><div class="scene-hint">🖱 вращать</div></div>
+          <div class="cc-formula">\(a \parallel \alpha\)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ПРИЗНАК -->
+  <div class="block">
+    <div class="block-head">
+      <span class="block-tag th">ТЕОР</span>
+      <span class="block-name">Признак параллельности прямой и плоскости</span>
+    </div>
+    <div class="block-body two-col">
+      <div class="sign-block" style="margin-top:0;">
+        <b>Теорема (признак).</b> Если прямая, <b>не лежащая в данной плоскости</b>, параллельна какой-нибудь прямой, лежащей в этой плоскости, то она <b>параллельна данной плоскости</b>.
+        <div class="cond">
+          \(a \not\subset \alpha, \quad b \subset \alpha, \quad a \parallel b \quad \Rightarrow \quad a \parallel \alpha\)
+        </div>
+      </div>
+      <div class="scene-wrap"><canvas id="sign-scene"></canvas><div class="scene-hint">🖱 вращать · колесо — зум</div></div>
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЕ 22 · 1-4 -->
+  <div class="block">
+    <div class="block-head">
+      <span class="block-tag" style="background:linear-gradient(135deg,#7c3aed,#6a2bd1);color:#fff;">ЗАДАЧИ</span>
+      <span class="block-name">Задание 22 · задачи 1–4</span>
+    </div>
+    <div class="block-body">
+
+      <div class="tasks-list" id="tasksList22">
+        <div class="task-card" data-idx="0">
+          <div class="tc-num">1</div>
+          <div class="tc-title">Два параллелограмма</div>
+          <div class="tc-preview">ABCD и AEFD — параллелограммы, ABCD ⊂ α, E ∉ α, F ∉ α. Доказать: EF ∥ α.</div>
+        </div>
+        <div class="task-card" data-idx="1">
+          <div class="tc-num">2</div>
+          <div class="tc-title">Средняя линия Δ</div>
+          <div class="tc-preview">MN — средняя линия ΔABC, AC ⊂ α, B ∉ α. Доказать: MN ∥ α.</div>
+        </div>
+        <div class="task-card" data-idx="2">
+          <div class="tc-num">3</div>
+          <div class="tc-title">Трапеция</div>
+          <div class="tc-preview">ABCD — трапеция, AD и BC — основания, AD ⊂ α, BC ⊄ α. Доказать: BC ∥ α.</div>
+        </div>
+        <div class="task-card" data-idx="3">
+          <div class="tc-num">4</div>
+          <div class="tc-title">Средняя линия ΔADC</div>
+          <div class="tc-preview">MN — средняя линия ΔADC, D ∉ ABC. Доказать: MN ∥ ABC.</div>
+        </div>
+      </div>
+
+      <div class="task-active" id="taskActive22">
+        <div class="ta-placeholder">👆 Выбери задачу — условие появится здесь</div>
+      </div>
+
+      <div class="work-block">
+        <div class="work-toolbar">
+          <span class="tb-label">Инструменты:</span>
+          <button class="tool-btn active" data-tool="pen">✏️ Перо</button>
+          <button class="tool-btn" data-tool="eraser">🧽 Ластик</button>
+          <button class="tool-btn hand-btn" data-tool="hand">✋ Рука</button>
+          <span class="tb-sep"></span>
+          <button class="tool-btn line-btn" data-line="solid">─ Прямая</button>
+          <button class="tool-btn line-btn" data-line="dashed">┄ Пунктирная</button>
+          <span class="tb-sep"></span>
+          <button class="tool-btn shape-btn" data-shape="parallelogram">▱ Параллелограмм</button>
+          <button class="tool-btn shape-btn" data-shape="triangle">△ Треугольник</button>
+          <button class="tool-btn shape-btn" data-shape="trapezoid">⏢ Трапеция</button>
+          <span class="tb-sep"></span>
+          <button class="tool-btn" data-tool="undo">↶ Отменить</button>
+          <button class="tool-btn danger" data-tool="clear">🗑 Очистить</button>
+        </div>
+        <div class="work-space grid" id="workSpace22"></div>
+      </div>
+
+    </div>
+  </div>
+  <!-- КУБ + ЗАДАЧИ 5–12 -->
+  <div class="block">
+    <div class="block-head">
+      <span class="block-tag" style="background:linear-gradient(135deg,#7c3aed,#6a2bd1);color:#fff;">КУБ</span>
+      <span class="block-name">Задание 22 · задачи 5–12 · интерактивный куб</span>
+    </div>
+    <div class="block-body">
+
+      <!-- ВЕРХ: 3D-куб слева + управление справа -->
+      <div class="cube-top">
+        <div class="scene-wrap" id="cube-wrap" style="height:420px;">
+          <canvas id="cube-canvas"></canvas>
+          <div class="scene-hint">🖱 вращать · колесо — зум</div>
+        </div>
+
+        <div class="cube-controls">
+          <div class="ctrl-group">
+            <label class="ctrl-label">Выбрать ребро:</label>
+            <select class="cube-select" id="select-edge">
+              <option value="">— выбери ребро —</option>
+              <option value="AB">AB</option>
+              <option value="BC">BC</option>
+              <option value="CD">CD</option>
+              <option value="DA">DA</option>
+              <option value="A1B1">A₁B₁</option>
+              <option value="B1C1">B₁C₁</option>
+              <option value="C1D1">C₁D₁</option>
+              <option value="D1A1">D₁A₁</option>
+              <option value="AA1">AA₁</option>
+              <option value="BB1">BB₁</option>
+              <option value="CC1">CC₁</option>
+              <option value="DD1">DD₁</option>
+            </select>
+            <button class="tool-btn" id="btn-add-edge" style="margin-top:6px;">+ Подсветить ребро</button>
+          </div>
+
+          <div class="ctrl-group">
+            <label class="ctrl-label">Выбрать грань:</label>
+            <select class="cube-select" id="select-face">
+              <option value="">— выбери грань —</option>
+              <option value="ABC">(ABC) — нижняя</option>
+              <option value="A1B1C1">(A₁B₁C₁) — верхняя</option>
+              <option value="ABB1">(ABB₁) — передняя левая</option>
+              <option value="BCC1">(BCC₁) — передняя правая</option>
+              <option value="CDD1">(CDD₁) — задняя правая</option>
+              <option value="DAA1">(DAA₁) — задняя левая</option>
+            </select>
+            <button class="tool-btn" id="btn-add-face" style="margin-top:6px;">+ Подсветить грань</button>
+          </div>
+
+          <button class="tool-btn danger" id="cube-reset" style="margin-top:6px;">↺ Сбросить все подсветки</button>
+          <div class="cube-hint" id="cube-hint">Выбирай рёбра и грани — подсветки накапливаются разными цветами.</div>
+        </div>
+      </div>
+
+      <!-- НИЗ: задачи 5–12 слева + канвас справа -->
+      <div class="cube-bottom">
+        <div class="cube-tasks-col">
+          <div class="tasks-list" id="tasksList22b">
+            <div class="task-card" data-idx="0"><div class="tc-num">5</div><div class="tc-title">A₁B₁ ∥ (ABC)</div><div class="tc-preview">Куб. Доказать: A₁B₁ ∥ (ABC).</div></div>
+            <div class="task-card" data-idx="1"><div class="tc-num">6</div><div class="tc-title">BC ∥ (A₁B₁C₁)</div><div class="tc-preview">Куб. Доказать: BC ∥ (A₁B₁C₁).</div></div>
+            <div class="task-card" data-idx="2"><div class="tc-num">7</div><div class="tc-title">CC₁ ∥ (AA₁D)</div><div class="tc-preview">Куб. Доказать: CC₁ ∥ (AA₁D).</div></div>
+            <div class="task-card" data-idx="3"><div class="tc-num">8</div><div class="tc-title">CC₁ ∥ (ABB₁)</div><div class="tc-preview">Куб. Доказать: CC₁ ∥ (ABB₁).</div></div>
+            <div class="task-card" data-idx="4"><div class="tc-num">9</div><div class="tc-title">D₁B₁ ∥ (ABC)</div><div class="tc-preview">Куб. Доказать: D₁B₁ ∥ (ABC).</div></div>
+            <div class="task-card" data-idx="5"><div class="tc-num">10</div><div class="tc-title">AC ∥ (A₁B₁C₁)</div><div class="tc-preview">Куб. Доказать: AC ∥ (A₁B₁C₁).</div></div>
+            <div class="task-card" data-idx="6"><div class="tc-num">11</div><div class="tc-title">DC₁ ∥ (AA₁B₁)</div><div class="tc-preview">Куб. Доказать: DC₁ ∥ (AA₁B₁).</div></div>
+            <div class="task-card" data-idx="7"><div class="tc-num">12</div><div class="tc-title">B₁C ∥ (ADD₁)</div><div class="tc-preview">Куб. Доказать: B₁C ∥ (ADD₁).</div></div>
+          </div>
+
+          <div class="task-active" id="taskActive22b">
+            <div class="ta-placeholder">👆 Выбери задачу — условие появится здесь</div>
+          </div>
+        </div>
+
+        <div class="cube-canvas-col">
+          <div class="work-block" style="margin-top:0;">
+            <div class="work-toolbar">
+              <span class="tb-label">Инструменты:</span>
+              <button class="tool-btn active" data-tool="pen">✏️ Перо</button>
+              <button class="tool-btn" data-tool="eraser">🧽 Ластик</button>
+              <span class="tb-sep"></span>
+              <button class="tool-btn" data-tool="undo">↶ Отменить</button>
+              <button class="tool-btn danger" data-tool="clear">🗑 Очистить</button>
+            </div>
+            <div class="work-space grid" id="workSpace22b" style="min-height:520px;"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ТЕОРИЯ 2 · СВОЙСТВА ПРЯМОЙ, ПАРАЛЛЕЛЬНОЙ ПЛОСКОСТИ -->
+  <div class="block">
+    <div class="block-head">
+      <span class="block-tag th">ТЕОР</span>
+      <span class="block-name">Свойства прямой, параллельной плоскости</span>
+    </div>
+    <div class="block-body">
+      <div class="two-props">
+        <div class="prop-card">
+          <div class="pc-title">Свойство 1</div>
+          <div class="pc-body">
+            Если плоскость проходит через данную прямую, параллельную другой плоскости, и пересекает эту плоскость, то <b>линия пересечения плоскостей параллельна данной прямой</b>.
+          </div>
+          <div class="pc-formula">
+            \(a \parallel \alpha, \ a \subset \beta, \ \beta \cap \alpha = b \ \Rightarrow \ a \parallel b\)
+          </div>
+          <div class="scene-wrap" style="height:260px;margin-top:12px;"><canvas id="prop1-scene"></canvas><div class="scene-hint">🖱 вращать · колесо — зум</div></div>
+        </div>
+
+        <div class="prop-card">
+          <div class="pc-title">Свойство 2</div>
+          <div class="pc-body">
+            Если одна из двух параллельных прямых параллельна данной плоскости, то <b>другая прямая либо также параллельна данной плоскости, либо лежит в этой плоскости</b>.
+          </div>
+          <div class="pc-formula">
+            \(a \parallel \alpha, \ a \parallel b \ \Rightarrow \ b \parallel \alpha \ \text{или} \ b \subset \alpha\)
+          </div>
+          <div class="scene-wrap" style="height:260px;margin-top:12px;"><canvas id="prop2-scene"></canvas><div class="scene-hint">🖱 вращать · колесо — зум</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ЗАДАНИЕ 23 -->
+  <div class="block">
+    <div class="block-head">
+      <span class="block-tag" style="background:linear-gradient(135deg,#7c3aed,#6a2bd1);color:#fff;">ЗАДАЧИ</span>
+      <span class="block-name">Задание 23 · 6 задач · свойства прямой и плоскости</span>
+    </div>
+    <div class="block-body">
+
+      <div class="tasks-list" id="tasksList23">
+        <div class="task-card" data-idx="0">
+          <div class="tc-num">1</div>
+          <div class="tc-title">Плоскости α, β</div>
+          <div class="tc-preview">a ⊂ β, a ∥ α, b ⊂ α, b ∥ α. Доказать: a ∥ b.</div>
+        </div>
+        <div class="task-card" data-idx="1">
+          <div class="tc-num">2</div>
+          <div class="tc-title">Параллелограмм и плоскость</div>
+          <div class="tc-preview">ABCD — параллелограмм, DC ∥ α, AD ∩ α = K, BC ∩ α = P. Доказать: DCKP — параллелограмм.</div>
+        </div>
+        <div class="task-card" data-idx="2">
+          <div class="tc-num">3</div>
+          <div class="tc-title">ΔABC ∥ α</div>
+          <div class="tc-preview">ΔABC, AC ∥ α, AB ∩ α = M, BC ∩ α = N. Доказать: MN ∥ AC.</div>
+        </div>
+        <div class="task-card" data-idx="3">
+          <div class="tc-num">4</div>
+          <div class="tc-title">Трапеция DCFE</div>
+          <div class="tc-preview">ABCD — трапеция, AB ∥ α, AD ∩ α = E, CB ∩ α = F. Доказать: DCFE — трапеция.</div>
+        </div>
+        <div class="task-card" data-idx="4">
+          <div class="tc-num">5</div>
+          <div class="tc-title">Середина BC</div>
+          <div class="tc-preview">ΔABC, AC ∥ α, AB ∩ α = M, BC ∩ α = N, M — середина AB. Доказать: N — середина BC.</div>
+        </div>
+        <div class="task-card" data-idx="5">
+          <div class="tc-num">6</div>
+          <div class="tc-title">Подобие Δ</div>
+          <div class="tc-preview">ΔABC, AC ∥ α, AB ∩ α = M, BC ∩ α = N, M — середина AB. Доказать: ΔABC ~ ΔNBM.</div>
+        </div>
+      </div>
+
+      <div class="task-active" id="taskActive23">
+        <div class="ta-placeholder">👆 Выбери задачу — условие появится здесь</div>
+      </div>
+
+      <div class="work-block">
+        <div class="work-toolbar">
+          <span class="tb-label">Инструменты:</span>
+          <button class="tool-btn active" data-tool="pen">✏️ Перо</button>
+          <button class="tool-btn" data-tool="eraser">🧽 Ластик</button>
+          <button class="tool-btn hand-btn" data-tool="hand">✋ Рука</button>
+          <span class="tb-sep"></span>
+          <button class="tool-btn line-btn" data-line="solid">─ Прямая</button>
+          <button class="tool-btn line-btn" data-line="dashed">┄ Пунктирная</button>
+          <span class="tb-sep"></span>
+          <button class="tool-btn shape-btn" data-shape="parallelogram">▱ Параллелограмм</button>
+          <button class="tool-btn shape-btn" data-shape="triangle">△ Треугольник</button>
+          <button class="tool-btn shape-btn" data-shape="trapezoid">⏢ Трапеция</button>
+          <span class="tb-sep"></span>
+          <button class="tool-btn" data-tool="undo">↶ Отменить</button>
+          <button class="tool-btn danger" data-tool="clear">🗑 Очистить</button>
+        </div>
+        <div class="work-space grid" id="workSpace23"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ТЕСТ ПРОВЕРЬТЕ СЕБЯ -->
+  <div class="block">
+    <div class="block-head">
+      <span class="block-tag" style="background:linear-gradient(135deg,#f4d35e,#d9a72a);color:#3a2a00;">ТЕСТ</span>
+      <span class="block-name">Проверьте себя · 13 заданий</span>
+    </div>
+    <div class="block-body">
+
+      <div class="test-intro">Вставь пропущенное слово/фразу, ответь «Да/Нет» или выполни задание 13 на канвасе.</div>
+
+      <div class="test-list" id="testList">
+        <!-- 1-8: поле ввода -->
+        <div class="test-item" data-type="text" data-idx="0">
+          <div class="ti-num">1</div>
+          <div class="ti-body">
+            <div class="ti-question">Две прямые в пространстве называются параллельными, если они лежат в <input class="ti-input" data-answer="одной плоскости|в одной плоскости" type="text" placeholder="..."> плоскости и не <input class="ti-input" data-answer="пересекаются" type="text" placeholder="...">.</div>
+            <div class="ti-feedback"></div>
+          </div>
+        </div>
+
+        <div class="test-item" data-type="text" data-idx="1">
+          <div class="ti-num">2</div>
+          <div class="ti-body">
+            <div class="ti-question">Через любую точку пространства, не <input class="ti-input" data-answer="лежащую|принадлежащую" type="text" placeholder="..."> на данной прямой, проходит прямая, параллельная данной, и притом <input class="ti-input" data-answer="только одна|единственная|одна" type="text" placeholder="...">.</div>
+            <div class="ti-feedback"></div>
+          </div>
+        </div>
+
+        <div class="test-item" data-type="text" data-idx="2">
+          <div class="ti-num">3</div>
+          <div class="ti-body">
+            <div class="ti-question">Если одна из двух параллельных прямых пересекает данную плоскость, то и другая прямая <input class="ti-input" data-answer="пересекает эту плоскость|пересекает её|пересекает данную плоскость|тоже пересекает" type="text" placeholder="...">.</div>
+            <div class="ti-feedback"></div>
+          </div>
+        </div>
+
+        <div class="test-item" data-type="text" data-idx="3">
+          <div class="ti-num">4</div>
+          <div class="ti-body">
+            <div class="ti-question">Если две прямые параллельны третьей прямой, то они <input class="ti-input" data-answer="параллельны|параллельны друг другу" type="text" placeholder="...">.</div>
+            <div class="ti-feedback"></div>
+          </div>
+        </div>
+
+        <div class="test-item" data-type="text" data-idx="4">
+          <div class="ti-num">5</div>
+          <div class="ti-body">
+            <div class="ti-question">Прямая и плоскость называются параллельными, если они не имеют <input class="ti-input" data-answer="общих точек" type="text" placeholder="...">.</div>
+            <div class="ti-feedback"></div>
+          </div>
+        </div>
+
+        <div class="test-item" data-type="text" data-idx="5">
+          <div class="ti-num">6</div>
+          <div class="ti-body">
+            <div class="ti-question">Если прямая, <input class="ti-input" data-answer="не лежащая|не принадлежащая" type="text" placeholder="..."> в данной плоскости, параллельна какой-нибудь прямой, <input class="ti-input" data-answer="лежащей|принадлежащей" type="text" placeholder="..."> в этой плоскости, то она параллельна данной плоскости.</div>
+            <div class="ti-feedback"></div>
+          </div>
+        </div>
+
+        <div class="test-item" data-type="text" data-idx="6">
+          <div class="ti-num">7</div>
+          <div class="ti-body">
+            <div class="ti-question">Если плоскость проходит через данную прямую, параллельную другой плоскости, и пересекает эту плоскость, то линия пересечения плоскостей <input class="ti-input" data-answer="параллельна данной прямой|параллельна этой прямой|параллельна прямой" type="text" placeholder="...">.</div>
+            <div class="ti-feedback"></div>
+          </div>
+        </div>
+
+        <div class="test-item" data-type="text" data-idx="7">
+          <div class="ti-num">8</div>
+          <div class="ti-body">
+            <div class="ti-question">Если одна из двух параллельных прямых параллельна данной плоскости, то другая прямая либо также <input class="ti-input" data-answer="параллельна|параллельна данной плоскости|параллельна плоскости" type="text" placeholder="..."> данной плоскости, либо <input class="ti-input" data-answer="лежит|лежит в этой плоскости" type="text" placeholder="..."> в этой плоскости.</div>
+            <div class="ti-feedback"></div>
+          </div>
+        </div>
+
+        <!-- 9-12: Да/Нет -->
+        <div class="test-item" data-type="yesno" data-idx="8">
+          <div class="ti-num">9</div>
+          <div class="ti-body">
+            <div class="ti-question">Через любую точку пространства можно провести прямую параллельную данной.</div>
+            <div class="ti-yn" data-answer="да">
+              <button class="yn-btn" data-val="да">Да</button>
+              <button class="yn-btn" data-val="нет">Нет</button>
+            </div>
+            <div class="ti-feedback"></div>
+          </div>
+        </div>
+
+        <div class="test-item" data-type="yesno" data-idx="9">
+          <div class="ti-num">10</div>
+          <div class="ti-body">
+            <div class="ti-question">Если две прямые не лежат в плоскости α, то они могут быть параллельными.</div>
+            <div class="ti-yn" data-answer="да">
+              <button class="yn-btn" data-val="да">Да</button>
+              <button class="yn-btn" data-val="нет">Нет</button>
+            </div>
+            <div class="ti-feedback"></div>
+          </div>
+        </div>
+
+        <div class="test-item" data-type="yesno" data-idx="10">
+          <div class="ti-num">11</div>
+          <div class="ti-body">
+            <div class="ti-question">Если две точки прямой a не лежат в плоскости α, то прямая a параллельна плоскости α.</div>
+            <div class="ti-yn" data-answer="нет">
+              <button class="yn-btn" data-val="да">Да</button>
+              <button class="yn-btn" data-val="нет">Нет</button>
+            </div>
+            <div class="ti-feedback"></div>
+          </div>
+        </div>
+
+        <div class="test-item" data-type="yesno" data-idx="11">
+          <div class="ti-num">12</div>
+          <div class="ti-body">
+            <div class="ti-question">Прямая a параллельна прямой b, которая лежит в плоскости α. Прямая a может не быть параллельной плоскости α.</div>
+            <div class="ti-yn" data-answer="да">
+              <button class="yn-btn" data-val="да">Да</button>
+              <button class="yn-btn" data-val="нет">Нет</button>
+            </div>
+            <div class="ti-feedback"></div>
+          </div>
+        </div>
+
+        <!-- 13: канвас -->
+        <div class="test-item" data-type="canvas" data-idx="12">
+          <div class="ti-num">13</div>
+          <div class="ti-body">
+            <div class="ti-question">Докажите, что прямая KM параллельна плоскости ABC. Используй кнопку «Вставить тетраэдр» и построй чертёж.</div>
+            <div class="work-block" style="margin-top:10px;">
+              <div class="work-toolbar">
+                <span class="tb-label">Инструменты:</span>
+                <button class="tool-btn active" data-tool="pen">✏️ Перо</button>
+                <button class="tool-btn" data-tool="eraser">🧽 Ластик</button>
+                <button class="tool-btn hand-btn" data-tool="hand">✋ Рука</button>
+                <span class="tb-sep"></span>
+                <button class="tool-btn" data-tool="tetra">🔺 Вставить тетраэдр</button>
+                <span class="tb-sep"></span>
+                <button class="tool-btn" data-tool="undo">↶ Отменить</button>
+                <button class="tool-btn danger" data-tool="clear">🗑 Очистить</button>
+              </div>
+              <div class="work-space grid" id="workSpaceTest" style="min-height:400px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;justify-content:center;">
+        <button class="tool-btn" id="test-check" style="padding:12px 28px;font-size:15px;background:var(--teal);color:#04231d;border-color:var(--teal);">✓ Проверить все ответы</button>
+        <button class="tool-btn" id="test-reveal" style="padding:12px 28px;font-size:15px;">👁 Показать ответы</button>
+        <button class="tool-btn danger" id="test-reset" style="padding:12px 28px;font-size:15px;">↺ Сбросить тест</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ТРЕНАЖЁР -->
+  <div class="block">
+    <div class="block-head">
+      <span class="block-tag" style="background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;">🎮</span>
+      <span class="block-name">3D-тренажёр · Куб и тетраэдр</span>
+    </div>
+    <div class="block-body" style="padding:0;">
+      <iframe src="trener-3d.html" style="width:100%;height:820px;border:none;display:block;" loading="lazy"></iframe>
+    </div>
+  </div>
+
+  <div class="footer">© 2026 · Τετρακτύς · Елена Михалева</div>
+</div>
+
+<style>
+  /* КУБ */
+  .cube-top{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-bottom:18px;}
+  @media(max-width:820px){.cube-top{grid-template-columns:1fr;}}
+  .cube-controls{padding:14px 16px;background:rgba(26,188,156,0.08);border:1.5px solid rgba(26,188,156,0.3);border-radius:14px;display:flex;flex-direction:column;gap:12px;}
+  .ctrl-group{display:flex;flex-direction:column;gap:6px;}
+  .ctrl-label{font-size:12.5px;color:var(--text-soft);font-weight:600;}
+  .cube-select{width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid rgba(26,188,156,0.4);background:rgba(10,42,51,0.85);color:var(--text);font-family:'Cambria Math','Times New Roman',serif;font-size:15px;font-weight:600;cursor:pointer;outline:none;}
+  .cube-select:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.2);}
+  .cube-select option{background:#0d3b47;color:#e8f8f5;}
+  .cube-hint{font-size:12px;color:var(--text-soft);font-style:italic;line-height:1.4;padding-top:4px;}
+
+  /* КУБ НИЗ */
+  .cube-bottom{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
+  @media(max-width:900px){.cube-bottom{grid-template-columns:1fr;}}
+  .cube-tasks-col{display:flex;flex-direction:column;gap:10px;}
+  .cube-canvas-col{position:sticky;top:80px;}
+  @media(max-width:900px){.cube-canvas-col{position:static;}}
+
+  /* СВОЙСТВА */
+  .two-props{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:820px){.two-props{grid-template-columns:1fr;}}
+  .prop-card{padding:16px 18px;border-radius:14px;border:1.5px solid rgba(26,188,156,0.3);background:rgba(255,255,255,0.03);}
+  .pc-title{font-size:14px;font-weight:700;color:var(--gold-light);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;}
+  .pc-body{font-size:15px;line-height:1.65;color:var(--text);}
+  .pc-body b{color:var(--mint);}
+  .pc-formula{margin-top:12px;padding:12px 14px;background:rgba(10,42,51,0.4);border-radius:10px;font-family:'Cambria Math',serif;font-size:16px;color:#fff;text-align:center;border:1px solid rgba(127,255,212,0.25);}
+
+  /* ТЕСТ */
+  .test-intro{font-size:14.5px;color:var(--text-soft);font-style:italic;margin-bottom:16px;padding:10px 14px;background:rgba(26,188,156,0.06);border-radius:10px;border-left:3px solid var(--teal);}
+  .test-list{display:flex;flex-direction:column;gap:12px;}
+  .test-item{display:grid;grid-template-columns:36px 1fr;gap:12px;padding:14px 16px;border-radius:14px;border:1.5px solid rgba(26,188,156,0.25);background:rgba(255,255,255,0.03);}
+  .test-item .ti-num{width:32px;height:32px;line-height:32px;text-align:center;border-radius:9px;background:var(--teal);color:#04231d;font-weight:800;font-size:14px;font-family:'Courier New',monospace;}
+  .test-item .ti-question{font-size:15px;line-height:1.9;color:var(--text);}
+  .test-item .ti-input{background:transparent;border:none;border-bottom:1.5px solid rgba(127,255,212,0.5);color:#fff;font-family:inherit;font-size:15px;padding:2px 8px;min-width:140px;outline:none;text-align:center;transition:0.15s;}
+  .test-item .ti-input:focus{border-bottom-color:var(--mint);background:rgba(127,255,212,0.08);}
+  .test-item .ti-input.ok{border-bottom-color:var(--ok);background:rgba(46,204,113,0.12);color:var(--ok);font-weight:700;}
+  .test-item .ti-input.err{border-bottom-color:var(--err);background:rgba(255,107,107,0.12);color:var(--err);font-weight:700;text-decoration:line-through wavy var(--err);}
+
+  .ti-yn{display:flex;gap:8px;margin-top:8px;}
+  .yn-btn{padding:8px 22px;border-radius:10px;border:1.5px solid rgba(26,188,156,0.4);background:rgba(255,255,255,0.04);color:var(--text-soft);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:0.15s;}
+  .yn-btn:hover{border-color:var(--mint);color:var(--mint);background:rgba(26,188,156,0.15);}
+  .yn-btn.active{background:var(--teal);border-color:var(--teal);color:#04231d;}
+  .yn-btn.ok{background:var(--ok);border-color:var(--ok);color:#fff;}
+  .yn-btn.err{background:var(--err);border-color:var(--err);color:#fff;}
+
+  .ti-feedback{font-size:13px;font-weight:700;font-style:italic;margin-top:8px;min-height:18px;}
+  .ti-feedback.ok{color:var(--ok);}
+  .ti-feedback.err{color:var(--err);}
+</style>
+
+<script>
+  document.getElementById('dateDisplay').textContent =
+    '📅 ' + new Date().toLocaleDateString('ru-RU', { day:'2-digit', month:'2-digit', year:'numeric' });
+</script>
+
+<script>
+/* ДАННЫЕ ЗАДАЧ */
+const TASKS22 = [
+  { body: '<span class="tag">Дано:</span> \\(ABCD\\) и \\(AEFD\\) — параллелограммы, \\(ABCD \\subset \\alpha\\), \\(E \\notin \\alpha\\), \\(F \\notin \\alpha\\).<br><span class="tag">Доказать:</span> \\(EF \\parallel \\alpha\\).' },
+  { body: '<span class="tag">Дано:</span> \\(MN\\) — средняя линия \\(\\triangle ABC\\), \\(AC \\subset \\alpha\\), \\(B \\notin \\alpha\\).<br><span class="tag">Доказать:</span> \\(MN \\parallel \\alpha\\).' },
+  { body: '<span class="tag">Дано:</span> \\(ABCD\\) — трапеция, \\(AD\\) и \\(BC\\) — основания, \\(AD \\subset \\alpha\\), \\(BC \\not\\subset \\alpha\\).<br><span class="tag">Доказать:</span> \\(BC \\parallel \\alpha\\).' },
+  { body: '<span class="tag">Дано:</span> \\(MN\\) — средняя линия \\(\\triangle ADC\\), \\(D \\notin (ABC)\\).<br><span class="tag">Доказать:</span> \\(MN \\parallel (ABC)\\).' }
+];
+
+const TASKS22B = [
+  { body: '<span class="tag">Дано:</span> \\(ABCDA_1B_1C_1D_1\\) — куб.<br><span class="tag">Доказать:</span> \\(A_1B_1 \\parallel (ABC)\\).' },
+  { body: '<span class="tag">Дано:</span> \\(ABCDA_1B_1C_1D_1\\) — куб.<br><span class="tag">Доказать:</span> \\(BC \\parallel (A_1B_1C_1)\\).' },
+  { body: '<span class="tag">Дано:</span> \\(ABCDA_1B_1C_1D_1\\) — куб.<br><span class="tag">Доказать:</span> \\(CC_1 \\parallel (AA_1D)\\).' },
+  { body: '<span class="tag">Дано:</span> \\(ABCDA_1B_1C_1D_1\\) — куб.<br><span class="tag">Доказать:</span> \\(CC_1 \\parallel (ABB_1)\\).' },
+  { body: '<span class="tag">Дано:</span> \\(ABCDA_1B_1C_1D_1\\) — куб.<br><span class="tag">Доказать:</span> \\(D_1B_1 \\parallel (ABC)\\).' },
+  { body: '<span class="tag">Дано:</span> \\(ABCDA_1B_1C_1D_1\\) — куб.<br><span class="tag">Доказать:</span> \\(AC \\parallel (A_1B_1C_1)\\).' },
+  { body: '<span class="tag">Дано:</span> \\(ABCDA_1B_1C_1D_1\\) — куб.<br><span class="tag">Доказать:</span> \\(DC_1 \\parallel (AA_1B_1)\\).' },
+  { body: '<span class="tag">Дано:</span> \\(ABCDA_1B_1C_1D_1\\) — куб.<br><span class="tag">Доказать:</span> \\(B_1C \\parallel (ADD_1)\\).' }
+];
+
+const TASKS23 = [
+  { body: '<span class="tag">Дано:</span> \\(a \\subset \\beta\\), \\(a \\parallel \\alpha\\), \\(b \\subset \\alpha\\), \\(b \\parallel \\alpha\\).<br><span class="tag">Доказать:</span> \\(a \\parallel b\\).' },
+  { body: '<span class="tag">Дано:</span> \\(ABCD\\) — параллелограмм, \\(DC \\parallel \\alpha\\), \\(AD \\cap \\alpha = K\\), \\(BC \\cap \\alpha = P\\).<br><span class="tag">Доказать:</span> \\(DCKP\\) — параллелограмм.' },
+  { body: '<span class="tag">Дано:</span> \\(\\triangle ABC\\), \\(AC \\parallel \\alpha\\), \\(AB \\cap \\alpha = M\\), \\(BC \\cap \\alpha = N\\).<br><span class="tag">Доказать:</span> \\(MN \\parallel AC\\).' },
+  { body: '<span class="tag">Дано:</span> \\(ABCD\\) — трапеция, \\(AB \\parallel \\alpha\\), \\(AD \\cap \\alpha = E\\), \\(CB \\cap \\alpha = F\\).<br><span class="tag">Доказать:</span> \\(DCFE\\) — трапеция.' },
+  { body: '<span class="tag">Дано:</span> \\(\\triangle ABC\\), \\(AC \\parallel \\alpha\\), \\(AB \\cap \\alpha = M\\), \\(BC \\cap \\alpha = N\\), \\(M\\) — середина \\(AB\\).<br><span class="tag">Доказать:</span> \\(N\\) — середина \\(BC\\).' },
+  { body: '<span class="tag">Дано:</span> \\(\\triangle ABC\\), \\(AC \\parallel \\alpha\\), \\(AB \\cap \\alpha = M\\), \\(BC \\cap \\alpha = N\\), \\(M\\) — середина \\(AB\\).<br><span class="tag">Доказать:</span> \\(\\triangle ABC \\sim \\triangle NBM\\).' }
+];
+
+function initTasks(listId, activeId, tasks){
+  const list = document.getElementById(listId);
+  const active = document.getElementById(activeId);
+  if(!list || !active) return;
+  list.querySelectorAll('.task-card').forEach(card => {
+    card.addEventListener('click', () => {
+      list.querySelectorAll('.task-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      const idx = parseInt(card.dataset.idx);
+      active.innerHTML = '<div class="ta-content">' + tasks[idx].body + '</div>';
+      if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([active]);
+    });
+  });
+}
+initTasks('tasksList22', 'taskActive22', TASKS22);
+initTasks('tasksList22b', 'taskActive22b', TASKS22B);
+initTasks('tasksList23', 'taskActive23', TASKS23);
+</script>
+
+<script>
+/* ПОЛНЫЙ КАНВАС (перо, ластик, рука, линии, фигуры) */
+function setupFullCanvas(wrapId){
+  const wrap = document.getElementById(wrapId);
+  if(!wrap) return;
+  const canvas = document.createElement('canvas');
+  wrap.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+
+  const state = {
+    tool: 'pen', strokes: [], lines: [], shapes: [],
+    drawing: false, currentStroke: null, previewLine: null,
+    draggingShape: null, dragOffset: {x:0,y:0},
+    rotatingShape: null, rotateStartAngle: 0, shapeStartAngle: 0,
+    hoverShape: null, hoverHandle: false,
+  };
+  const HANDLE_DIST = 22, HANDLE_RADIUS = 4, ERASER_RADIUS = 14;
+
+  function resize(){
+    const r = wrap.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.floor(r.width * dpr);
+    canvas.height = Math.floor(r.height * dpr);
+    canvas.style.width = r.width + 'px';
+    canvas.style.height = r.height + 'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    redraw();
+  }
+  requestAnimationFrame(resize);
+  window.addEventListener('resize', resize);
+
+  function getPos(e){
+    const r = canvas.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+
+  function shapePath(shape, ctx2){
+    const {cx, cy, w, h, rot} = shape;
+    ctx2.save();
+    ctx2.translate(cx, cy);
+    ctx2.rotate(rot || 0);
+    if(shape.type === 'parallelogram'){
+      const dx = w * 0.18;
+      ctx2.beginPath();
+      ctx2.moveTo(-w/2, h/2); ctx2.lineTo(w/2, h/2);
+      ctx2.lineTo(w/2 - dx, -h/2); ctx2.lineTo(-w/2 - dx, -h/2);
+      ctx2.closePath();
+    } else if(shape.type === 'triangle'){
+      ctx2.beginPath();
+      ctx2.moveTo(0, -h/2); ctx2.lineTo(w/2, h/2); ctx2.lineTo(-w/2, h/2);
+      ctx2.closePath();
+    } else if(shape.type === 'trapezoid'){
+      const dx = w * 0.22;
+      ctx2.beginPath();
+      ctx2.moveTo(-w/2 - dx, h/2); ctx2.lineTo(w/2 + dx, h/2);
+      ctx2.lineTo(w/2 - dx, -h/2); ctx2.lineTo(-w/2 + dx, -h/2);
+      ctx2.closePath();
+    }
+    ctx2.restore();
+  }
+
+  function getRotHandlePos(shape){
+    const {cx, cy, h, rot} = shape;
+    const angle = rot || 0;
+    const localX = 0, localY = -h/2 - HANDLE_DIST;
+    return {
+      x: cx + localX * Math.cos(angle) - localY * Math.sin(angle),
+      y: cy + localX * Math.sin(angle) + localY * Math.cos(angle)
+    };
+  }
+
+  function drawShape(shape, isActive){
+    ctx.save();
+    shapePath(shape, ctx);
+    ctx.fillStyle = 'rgba(127,255,212,0.28)';
+    ctx.fill();
+    ctx.strokeStyle = isActive ? '#ffd700' : '#0e7c66';
+    ctx.lineWidth = 2.2; ctx.lineJoin = 'round';
+    ctx.stroke();
+    ctx.restore();
+    const hPos = getRotHandlePos(shape);
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(hPos.x, hPos.y, HANDLE_RADIUS, 0, Math.PI*2);
+    ctx.fillStyle = isActive ? 'rgba(255,215,0,0.30)' : 'rgba(14,124,102,0.15)';
+    ctx.fill();
+    ctx.strokeStyle = isActive ? 'rgba(255,215,0,0.5)' : 'rgba(14,124,102,0.25)';
+    ctx.lineWidth = 0.8; ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawStroke(s){
+    if(!s.points || s.points.length < 2) return;
+    ctx.save();
+    ctx.strokeStyle = s.color; ctx.lineWidth = s.width || 1.6;
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(s.points[0].x, s.points[0].y);
+    for(let i=1;i<s.points.length;i++) ctx.lineTo(s.points[i].x, s.points[i].y);
+    ctx.stroke(); ctx.restore();
+  }
+
+  function drawLine(l){
+    ctx.save();
+    ctx.strokeStyle = '#0e7c66'; ctx.lineWidth = l.dashed ? 1.8 : 1.6;
+    ctx.lineCap = 'round';
+    if(l.dashed) ctx.setLineDash([9, 7]);
+    ctx.beginPath(); ctx.moveTo(l.x1, l.y1); ctx.lineTo(l.x2, l.y2);
+    ctx.stroke(); ctx.restore();
+  }
+
+  function redraw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    state.shapes.forEach(s => drawShape(s, s === state.draggingShape || s === state.rotatingShape || s === state.hoverShape));
+    state.strokes.forEach(drawStroke);
+    state.lines.forEach(drawLine);
+    if(state.previewLine) drawLine(state.previewLine);
+  }
+
+  function hitTestShape(x, y){
+    for(let i=state.shapes.length-1; i>=0; i--){
+      const s = state.shapes[i];
+      const hp = getRotHandlePos(s);
+      if(Math.hypot(x - hp.x, y - hp.y) <= 12) return { shape: s, handle: true };
+    }
+    for(let i=state.shapes.length-1; i>=0; i--){
+      const s = state.shapes[i];
+      if(x >= s.cx - s.w && x <= s.cx + s.w && y >= s.cy - s.h && y <= s.cy + s.h) return { shape: s, handle: false };
+    }
+    return null;
+  }
+
+  function distToSegment(p, a, b){
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const len2 = dx*dx + dy*dy;
+    if(len2 === 0) return Math.hypot(p.x - a.x, p.y - a.y);
+    let t = ((p.x - a.x) * dx + (p.y - a.y) * dy) / len2;
+    t = Math.max(0, Math.min(1, t));
+    return Math.hypot(p.x - (a.x + t*dx), p.y - (a.y + t*dy));
+  }
+
+  canvas.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    const p = getPos(e);
+    try{ canvas.setPointerCapture(e.pointerId); }catch(_){}
+
+    if(state.tool === 'hand'){
+      const hit = hitTestShape(p.x, p.y);
+      if(hit){
+        if(hit.handle){
+          state.rotatingShape = hit.shape;
+          state.rotateStartAngle = Math.atan2(p.y - hit.shape.cy, p.x - hit.shape.cx);
+          state.shapeStartAngle = hit.shape.rot || 0;
+        } else {
+          state.draggingShape = hit.shape;
+          state.dragOffset = { x: p.x - hit.shape.cx, y: p.y - hit.shape.cy };
+        }
+        redraw();
+      }
+      return;
+    }
+    if(state.tool === 'line-solid' || state.tool === 'line-dashed'){
+      state.drawing = true;
+      state.previewLine = { x1:p.x, y1:p.y, x2:p.x, y2:p.y, dashed: state.tool === 'line-dashed' };
+      redraw(); return;
+    }
+    if(state.tool === 'pen'){
+      state.drawing = true;
+      state.currentStroke = { points: [{x:p.x,y:p.y}], color:'#0e7c66', width:1.6 };
+      state.strokes.push(state.currentStroke);
+      redraw(); return;
+    }
+    if(state.tool === 'eraser'){
+      state.drawing = true;
+      state.strokes = state.strokes.map(s => ({...s, points: s.points.filter(pt => Math.hypot(pt.x-p.x, pt.y-p.y) > ERASER_RADIUS)})).filter(s => s.points.length > 0);
+      state.lines = state.lines.filter(l => distToSegment(p, {x:l.x1,y:l.y1}, {x:l.x2,y:l.y2}) > ERASER_RADIUS);
+      redraw(); return;
+    }
+  });
+
+  canvas.addEventListener('pointermove', e => {
+    const p = getPos(e);
+    if(state.rotatingShape){
+      const s = state.rotatingShape;
+      const curAngle = Math.atan2(p.y - s.cy, p.x - s.cx);
+      s.rot = state.shapeStartAngle + (curAngle - state.rotateStartAngle);
+      redraw(); return;
+    }
+    if(state.draggingShape){
+      state.draggingShape.cx = p.x - state.dragOffset.x;
+      state.draggingShape.cy = p.y - state.dragOffset.y;
+      redraw(); return;
+    }
+    if(state.drawing && state.previewLine){
+      state.previewLine.x2 = p.x; state.previewLine.y2 = p.y;
+      redraw(); return;
+    }
+    if(state.tool === 'eraser' && state.drawing){
+      state.strokes = state.strokes.map(s => ({...s, points: s.points.filter(pt => Math.hypot(pt.x-p.x, pt.y-p.y) > ERASER_RADIUS)})).filter(s => s.points.length > 0);
+      state.lines = state.lines.filter(l => distToSegment(p, {x:l.x1,y:l.y1}, {x:l.x2,y:l.y2}) > ERASER_RADIUS);
+      redraw(); return;
+    }
+    if(state.drawing && state.currentStroke){
+      state.currentStroke.points.push({x:p.x,y:p.y});
+      redraw(); return;
+    }
+    if(state.tool === 'hand'){
+      const hit = hitTestShape(p.x, p.y);
+      const newHover = hit ? hit.shape : null;
+      const newHandle = hit ? hit.handle : false;
+      if(newHover !== state.hoverShape || newHandle !== state.hoverHandle){
+        state.hoverShape = newHover; state.hoverHandle = newHandle;
+        canvas.style.cursor = newHandle ? 'grab' : (newHover ? 'move' : 'default');
+        redraw();
+      }
+    }
+  });
+
+  function stop(e){
+    if(state.previewLine){
+      const l = state.previewLine;
+      if(Math.hypot(l.x2-l.x1, l.y2-l.y1) > 8){
+        state.lines.push({ x1:l.x1, y1:l.y1, x2:l.x2, y2:l.y2, dashed:l.dashed });
+      }
+      state.previewLine = null;
+    }
+    state.drawing = false; state.currentStroke = null;
+    state.draggingShape = null; state.rotatingShape = null;
+    try{ if(e) canvas.releasePointerCapture(e.pointerId); }catch(_){}
+    redraw();
+  }
+  canvas.addEventListener('pointerup', stop);
+  canvas.addEventListener('pointercancel', stop);
+  canvas.addEventListener('pointerleave', e => { if(!state.draggingShape && !state.rotatingShape) stop(e); });
+  canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+  wrap.parentElement.querySelectorAll('.work-toolbar .tool-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tool = btn.dataset.tool;
+      const shape = btn.dataset.shape;
+      const line = btn.dataset.line;
+
+      if(shape){
+        const r = wrap.getBoundingClientRect();
+        const baseW = (shape === 'parallelogram' || shape === 'trapezoid') ? 200 : 160;
+        state.shapes.push({
+          type: shape,
+          cx: r.width/2 + (Math.random()*80 - 40),
+          cy: r.height/3 + (Math.random()*60 - 30),
+          w: baseW, h: 130, rot: 0
+        });
+        state.tool = 'hand';
+        wrap.parentElement.querySelectorAll('.work-toolbar .tool-btn').forEach(b => {
+          if(b.dataset.tool || b.dataset.line) b.classList.remove('active');
+        });
+        const hb = wrap.parentElement.querySelector('.tool-btn[data-tool="hand"]');
+        if(hb) hb.classList.add('active');
+        canvas.style.cursor = 'default';
+        redraw(); return;
+      }
+      if(line){
+        state.tool = line === 'solid' ? 'line-solid' : 'line-dashed';
+        wrap.parentElement.querySelectorAll('.work-toolbar .tool-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        canvas.style.cursor = 'crosshair';
+        return;
+      }
+      if(tool === 'undo'){
+        if(state.lines.length > 0){ state.lines.pop(); redraw(); return; }
+        if(state.shapes.length > 0){ state.shapes.pop(); redraw(); return; }
+        if(state.strokes.length > 0){ state.strokes.pop(); redraw(); return; }
+        return;
+      }
+      if(tool === 'clear'){
+        state.strokes = []; state.shapes = []; state.lines = []; state.previewLine = null;
+        redraw(); return;
+      }
+      state.tool = tool;
+      wrap.parentElement.querySelectorAll('.work-toolbar .tool-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      canvas.style.cursor = tool === 'eraser' ? 'cell' : (tool === 'hand' ? 'default' : 'crosshair');
+    });
+  });
+
+  resize();
+}
+setupFullCanvas('workSpace22');
+setupFullCanvas('workSpace23');
+</script>
+
+<script>
+/* ПРОСТОЙ КАНВАС (перо/ластик) — для блока с кубом */
+function setupSimpleCanvas(wrapId){
+  const wrap = document.getElementById(wrapId);
+  if(!wrap) return;
+  const canvas = document.createElement('canvas');
+  wrap.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  const state = { tool: 'pen', strokes: [], drawing: false, currentStroke: null };
+  const ERASER_RADIUS = 14;
+
+  function resize(){
+    const r = wrap.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.floor(r.width * dpr);
+    canvas.height = Math.floor(r.height * dpr);
+    canvas.style.width = r.width + 'px';
+    canvas.style.height = r.height + 'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    redraw();
+  }
+  requestAnimationFrame(resize);
+  window.addEventListener('resize', resize);
+
+  function getPos(e){
+    const r = canvas.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+  function drawStroke(s){
+    if(!s.points || s.points.length < 2) return;
+    ctx.save();
+    ctx.strokeStyle = s.color; ctx.lineWidth = s.width || 1.6;
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(s.points[0].x, s.points[0].y);
+    for(let i=1;i<s.points.length;i++) ctx.lineTo(s.points[i].x, s.points[i].y);
+    ctx.stroke(); ctx.restore();
+  }
+  function redraw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    state.strokes.forEach(drawStroke);
+  }
+  canvas.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    const p = getPos(e);
+    try{ canvas.setPointerCapture(e.pointerId); }catch(_){}
+    if(state.tool === 'pen'){
+      state.drawing = true;
+      state.currentStroke = { points: [{x:p.x,y:p.y}], color:'#0e7c66', width:1.6 };
+      state.strokes.push(state.currentStroke);
+      redraw(); return;
+    }
+    if(state.tool === 'eraser'){
+      state.drawing = true;
+      state.strokes = state.strokes.map(s => ({...s, points: s.points.filter(pt => Math.hypot(pt.x-p.x, pt.y-p.y) > ERASER_RADIUS)})).filter(s => s.points.length > 0);
+      redraw(); return;
+    }
+  });
+  canvas.addEventListener('pointermove', e => {
+    if(!state.drawing) return;
+    const p = getPos(e);
+    e.preventDefault();
+    if(state.tool === 'eraser'){
+      state.strokes = state.strokes.map(s => ({...s, points: s.points.filter(pt => Math.hypot(pt.x-p.x, pt.y-p.y) > ERASER_RADIUS)})).filter(s => s.points.length > 0);
+      redraw(); return;
+    }
+    if(state.currentStroke){
+      state.currentStroke.points.push({x:p.x,y:p.y});
+      redraw();
+    }
+  });
+  function stop(e){
+    state.drawing = false; state.currentStroke = null;
+    try{ if(e) canvas.releasePointerCapture(e.pointerId); }catch(_){}
+  }
+  canvas.addEventListener('pointerup', stop);
+  canvas.addEventListener('pointercancel', stop);
+  canvas.addEventListener('pointerleave', stop);
+  canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+  wrap.parentElement.querySelectorAll('.work-toolbar .tool-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tool = btn.dataset.tool;
+      if(tool === 'undo'){ if(state.strokes.length > 0){ state.strokes.pop(); redraw(); } return; }
+      if(tool === 'clear'){ state.strokes = []; redraw(); return; }
+      state.tool = tool;
+      wrap.parentElement.querySelectorAll('.work-toolbar .tool-btn[data-tool="pen"], .work-toolbar .tool-btn[data-tool="eraser"]')
+        .forEach(b => b.classList.toggle('active', b.dataset.tool === tool));
+      canvas.style.cursor = tool === 'eraser' ? 'cell' : 'crosshair';
+    });
+  });
+  resize();
+}
+setupSimpleCanvas('workSpace22b');
+</script>
+
+<script>
+/* КАНВАС ТЕСТА: перо, ластик, рука, тетраэдр */
+(function(){
+  const wrap = document.getElementById('workSpaceTest');
+  if(!wrap) return;
+  const canvas = document.createElement('canvas');
+  wrap.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+
+  const state = {
+    tool: 'pen', strokes: [], shapes: [], drawing: false, currentStroke: null,
+    draggingShape: null, dragOffset: {x:0,y:0},
+    rotatingShape: null, rotateStartAngle: 0, shapeStartAngle: 0,
+    hoverShape: null, hoverHandle: false,
+  };
+  const HANDLE_DIST = 22, HANDLE_RADIUS = 4, ERASER_RADIUS = 14;
+
+  function resize(){
+    const r = wrap.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.floor(r.width * dpr);
+    canvas.height = Math.floor(r.height * dpr);
+    canvas.style.width = r.width + 'px';
+    canvas.style.height = r.height + 'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    redraw();
+  }
+  requestAnimationFrame(resize);
+  window.addEventListener('resize', resize);
+
+  function getPos(e){
+    const r = canvas.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+
+  function tetraPath(shape){
+    const {cx, cy, w, h, rot} = shape;
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rot || 0);
+    // Тетраэдр: 4 вершины (D сверху, A B C снизу)
+    const D = { x: 0, y: -h/2 };
+    const A = { x: -w/2, y: h/2 };
+    const B = { x: w/2 - w*0.15, y: h/2 };
+    const C = { x: w/2, y: h*0.15 };
+    // задние рёбра (пунктир)
+    ctx.strokeStyle = 'rgba(14,124,102,0.55)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([6, 5]);
+    // A-C задняя
+    ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(C.x, C.y); ctx.stroke();
+    ctx.setLineDash([]);
+    // Передние рёбра
+    ctx.strokeStyle = '#0e7c66';
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    ctx.moveTo(D.x, D.y); ctx.lineTo(A.x, A.y);
+    ctx.moveTo(D.x, D.y); ctx.lineTo(B.x, B.y);
+    ctx.moveTo(D.x, D.y); ctx.lineTo(C.x, C.y);
+    ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y);
+    ctx.moveTo(B.x, B.y); ctx.lineTo(C.x, C.y);
+    ctx.stroke();
+    // Заливка
+    ctx.fillStyle = 'rgba(127,255,212,0.10)';
+    ctx.beginPath();
+    ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.lineTo(C.x, C.y);
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+
+  function getRotHandlePos(shape){
+    const {cx, cy, h, rot} = shape;
+    const angle = rot || 0;
+    const localX = 0, localY = -h/2 - HANDLE_DIST;
+    return {
+      x: cx + localX * Math.cos(angle) - localY * Math.sin(angle),
+      y: cy + localX * Math.sin(angle) + localY * Math.cos(angle)
+    };
+  }
+
+  function drawShape(shape, isActive){
+    tetraPath(shape);
+    const hPos = getRotHandlePos(shape);
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(hPos.x, hPos.y, HANDLE_RADIUS, 0, Math.PI*2);
+    ctx.fillStyle = isActive ? 'rgba(255,215,0,0.30)' : 'rgba(14,124,102,0.15)';
+    ctx.fill();
+    ctx.strokeStyle = isActive ? 'rgba(255,215,0,0.5)' : 'rgba(14,124,102,0.25)';
+    ctx.lineWidth = 0.8; ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawStroke(s){
+    if(!s.points || s.points.length < 2) return;
+    ctx.save();
+    ctx.strokeStyle = s.color; ctx.lineWidth = s.width || 1.6;
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(s.points[0].x, s.points[0].y);
+    for(let i=1;i<s.points.length;i++) ctx.lineTo(s.points[i].x, s.points[i].y);
+    ctx.stroke(); ctx.restore();
+  }
+
+  function redraw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    state.shapes.forEach(s => drawShape(s, s === state.draggingShape || s === state.rotatingShape || s === state.hoverShape));
+    state.strokes.forEach(drawStroke);
+  }
+
+  function hitTestShape(x, y){
+    for(let i=state.shapes.length-1; i>=0; i--){
+      const s = state.shapes[i];
+      const hp = getRotHandlePos(s);
+      if(Math.hypot(x - hp.x, y - hp.y) <= 12) return { shape: s, handle: true };
+    }
+    for(let i=state.shapes.length-1; i>=0; i--){
+      const s = state.shapes[i];
+      if(x >= s.cx - s.w && x <= s.cx + s.w && y >= s.cy - s.h && y <= s.cy + s.h) return { shape: s, handle: false };
+    }
+    return null;
+  }
+
+  canvas.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    const p = getPos(e);
+    try{ canvas.setPointerCapture(e.pointerId); }catch(_){}
+
+    if(state.tool === 'hand'){
+      const hit = hitTestShape(p.x, p.y);
+      if(hit){
+        if(hit.handle){
+          state.rotatingShape = hit.shape;
+          state.rotateStartAngle = Math.atan2(p.y - hit.shape.cy, p.x - hit.shape.cx);
+          state.shapeStartAngle = hit.shape.rot || 0;
+        } else {
+          state.draggingShape = hit.shape;
+          state.dragOffset = { x: p.x - hit.shape.cx, y: p.y - hit.shape.cy };
+        }
+        redraw();
+      }
+      return;
+    }
+    if(state.tool === 'pen'){
+      state.drawing = true;
+      state.currentStroke = { points: [{x:p.x,y:p.y}], color:'#0e7c66', width:1.6 };
+      state.strokes.push(state.currentStroke);
+      redraw(); return;
+    }
+    if(state.tool === 'eraser'){
+      state.drawing = true;
+      state.strokes = state.strokes.map(s => ({...s, points: s.points.filter(pt => Math.hypot(pt.x-p.x, pt.y-p.y) > ERASER_RADIUS)})).filter(s => s.points.length > 0);
+      redraw(); return;
+    }
+  });
+
+  canvas.addEventListener('pointermove', e => {
+    const p = getPos(e);
+    if(state.rotatingShape){
+      const s = state.rotatingShape;
+      const curAngle = Math.atan2(p.y - s.cy, p.x - s.cx);
+      s.rot = state.shapeStartAngle + (curAngle - state.rotateStartAngle);
+      redraw(); return;
+    }
+    if(state.draggingShape){
+      state.draggingShape.cx = p.x - state.dragOffset.x;
+      state.draggingShape.cy = p.y - state.dragOffset.y;
+      redraw(); return;
+    }
+    if(state.tool === 'eraser' && state.drawing){
+      state.strokes = state.strokes.map(s => ({...s, points: s.points.filter(pt => Math.hypot(pt.x-p.x, pt.y-p.y) > ERASER_RADIUS)})).filter(s => s.points.length > 0);
+      redraw(); return;
+    }
+    if(state.drawing && state.currentStroke){
+      state.currentStroke.points.push({x:p.x,y:p.y});
+      redraw(); return;
+    }
+    if(state.tool === 'hand'){
+      const hit = hitTestShape(p.x, p.y);
+      const newHover = hit ? hit.shape : null;
+      const newHandle = hit ? hit.handle : false;
+      if(newHover !== state.hoverShape || newHandle !== state.hoverHandle){
+        state.hoverShape = newHover; state.hoverHandle = newHandle;
+        canvas.style.cursor = newHandle ? 'grab' : (newHover ? 'move' : 'default');
+        redraw();
+      }
+    }
+  });
+
+  function stop(e){
+    state.drawing = false; state.currentStroke = null;
+    state.draggingShape = null; state.rotatingShape = null;
+    try{ if(e) canvas.releasePointerCapture(e.pointerId); }catch(_){}
+    redraw();
+  }
+  canvas.addEventListener('pointerup', stop);
+  canvas.addEventListener('pointercancel', stop);
+  canvas.addEventListener('pointerleave', e => { if(!state.draggingShape && !state.rotatingShape) stop(e); });
+  canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+  wrap.parentElement.querySelectorAll('.work-toolbar .tool-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tool = btn.dataset.tool;
+      if(tool === 'tetra'){
+        const r = wrap.getBoundingClientRect();
+        // если тетраэдр уже есть — не добавляем
+        if(state.shapes.filter(s => s.type === 'tetra').length === 0){
+          state.shapes.push({
+            type: 'tetra',
+            cx: r.width/2,
+            cy: r.height/2,
+            w: 180,
+            h: 220,
+            rot: 0
+          });
+        }
+        state.tool = 'hand';
+        wrap.parentElement.querySelectorAll('.work-toolbar .tool-btn').forEach(b => b.classList.remove('active'));
+        const hb = wrap.parentElement.querySelector('.tool-btn[data-tool="hand"]');
+        if(hb) hb.classList.add('active');
+        canvas.style.cursor = 'default';
+        redraw(); return;
+      }
+      if(tool === 'undo'){
+        if(state.shapes.length > 0){ state.shapes.pop(); redraw(); return; }
+        if(state.strokes.length > 0){ state.strokes.pop(); redraw(); return; }
+        return;
+      }
+      if(tool === 'clear'){
+        state.strokes = []; state.shapes = [];
+        redraw(); return;
+      }
+      state.tool = tool;
+      wrap.parentElement.querySelectorAll('.work-toolbar .tool-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      canvas.style.cursor = tool === 'eraser' ? 'cell' : (tool === 'hand' ? 'default' : 'crosshair');
+    });
+  });
+
+  resize();
+})();
+</script>
+
+<script>
+/* ТЕСТ — АВТОПРОВЕРКА */
+const TEST_ANSWERS_YESNO = {
+  8: 'да',
+  9: 'да',
+  10: 'нет',
+  11: 'да'
+};
+
+function normalizeTest(s){
+  if(!s) return '';
+  return String(s).toLowerCase().trim()
+    .replace(/\s+/g,' ')
+    .replace(/ё/g,'е');
+}
+
+document.querySelectorAll('.yn-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const parent = btn.parentElement;
+    parent.querySelectorAll('.yn-btn').forEach(b => b.classList.remove('active','ok','err'));
+    btn.classList.add('active');
+  });
+});
+
+document.getElementById('test-check').addEventListener('click', () => {
+  let correct = 0, total = 0;
+
+  // 1-8 — текстовые поля
+  document.querySelectorAll('.test-item[data-type="text"]').forEach(item => {
+    const inputs = item.querySelectorAll('.ti-input');
+    const fb = item.querySelector('.ti-feedback');
+    let allOk = true;
+    let hasInput = false;
+    inputs.forEach(inp => {
+      const userVal = normalizeTest(inp.value);
+      if(userVal === '') return;
+      hasInput = true;
+      const variants = inp.dataset.answer.split('|').map(normalizeTest);
+      const ok = variants.includes(userVal);
+      inp.classList.remove('ok','err');
+      inp.classList.add(ok ? 'ok' : 'err');
+      if(!ok) allOk = false;
+    });
+    if(hasInput){
+      total++;
+      if(allOk) correct++;
+      fb.textContent = allOk ? '✓ Верно' : '✗ Есть ошибки';
+      fb.className = 'ti-feedback ' + (allOk ? 'ok' : 'err');
+    }
+  });
+
+  // 9-12 — Да/Нет
+  document.querySelectorAll('.test-item[data-type="yesno"]').forEach(item => {
+    const idx = parseInt(item.dataset.idx);
+    const fb = item.querySelector('.ti-feedback');
+    const chosen = item.querySelector('.yn-btn.active');
+    if(!chosen) return;
+    total++;
+    const correctVal = TEST_ANSWERS_YESNO[idx];
+    const ok = chosen.dataset.val === correctVal;
+    chosen.classList.remove('ok','err');
+    chosen.classList.add(ok ? 'ok' : 'err');
+    fb.textContent = ok ? '✓ Верно' : '✗ Неверно. Правильно: ' + correctVal;
+    fb.className = 'ti-feedback ' + (ok ? 'ok' : 'err');
+    if(ok) correct++;
+  });
+
+  alert('Проверено: ' + correct + ' из ' + total + ' (задание 13 — на канвасе, проверяется учителем)');
+});
+
+document.getElementById('test-reveal').addEventListener('click', () => {
+  // Текстовые
+  document.querySelectorAll('.test-item[data-type="text"]').forEach(item => {
+    const inputs = item.querySelectorAll('.ti-input');
+    inputs.forEach(inp => {
+      inp.value = inp.dataset.answer.split('|')[0];
+      inp.classList.remove('ok','err','err');
+      inp.classList.add('ok');
+    });
+    const fb = item.querySelector('.ti-feedback');
+    fb.textContent = '👁 Показан ответ';
+    fb.className = 'ti-feedback ok';
+  });
+  // Да/Нет
+  document.querySelectorAll('.test-item[data-type="yesno"]').forEach(item => {
+    const idx = parseInt(item.dataset.idx);
+    const correctVal = TEST_ANSWERS_YESNO[idx];
+    const btns = item.querySelectorAll('.yn-btn');
+    btns.forEach(b => {
+      b.classList.remove('active','ok','err');
+      if(b.dataset.val === correctVal) b.classList.add('ok');
+    });
+  });
+});
+
+document.getElementById('test-reset').addEventListener('click', () => {
+  document.querySelectorAll('.ti-input').forEach(inp => {
+    inp.value = '';
+    inp.classList.remove('ok','err');
+  });
+  document.querySelectorAll('.yn-btn').forEach(b => b.classList.remove('active','ok','err'));
+  document.querySelectorAll('.ti-feedback').forEach(fb => { fb.textContent = ''; fb.className = 'ti-feedback'; });
+});
+</script>
+
+<script>
+/* КУБ 3D + ПОДСВЕТКИ */
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const PALETTE = [
+  0x7fffd4, 0xffd700, 0xff6b6b, 0x5dade2,
+  0xc39bd3, 0xf4d35e, 0x48c9b0, 0xe67e22,
+];
+
+const canvas = document.getElementById('cube-canvas');
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(20, 1, 0.1, 100); // маленький fov = почти без искажений
+camera.position.set(6, 5, 7);
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.dampingFactor = 0.08;
+controls.target.set(0, 0, 0);
+controls.minDistance = 4;
+controls.maxDistance = 20;
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+const d1 = new THREE.DirectionalLight(0xffffff, 0.7); d1.position.set(5, 8, 6); scene.add(d1);
+const d2 = new THREE.DirectionalLight(0x7fffd4, 0.4); d2.position.set(-5, -3, -4); scene.add(d2);
+
+const h = 1;
+const V = {
+  A:  new THREE.Vector3(-h, -h,  h),
+  B:  new THREE.Vector3( h, -h,  h),
+  C:  new THREE.Vector3( h, -h, -h),
+  D:  new THREE.Vector3(-h, -h, -h),
+  A1: new THREE.Vector3(-h,  h,  h),
+  B1: new THREE.Vector3( h,  h,  h),
+  C1: new THREE.Vector3( h,  h, -h),
+  D1: new THREE.Vector3(-h,  h, -h),
+};
+
+const EDGES = {
+  'AB':[V.A,V.B],'BC':[V.B,V.C],'CD':[V.C,V.D],'DA':[V.D,V.A],
+  'A1B1':[V.A1,V.B1],'B1C1':[V.B1,V.C1],'C1D1':[V.C1,V.D1],'D1A1':[V.D1,V.A1],
+  'AA1':[V.A,V.A1],'BB1':[V.B,V.B1],'CC1':[V.C,V.C1],'DD1':[V.D,V.D1],
+};
+
+const FACES = {
+  'ABC':   [V.A, V.B, V.C, V.D],
+  'A1B1C1':[V.A1, V.B1, V.C1, V.D1],
+  'ABB1':  [V.A, V.B, V.B1, V.A1],
+  'BCC1':  [V.B, V.C, V.C1, V.B1],
+  'CDD1':  [V.C, V.D, V.D1, V.C1],
+  'DAA1':  [V.D, V.A, V.A1, V.D1],
+};
+
+const COLOR_DEFAULT_EDGE = 0xe8f8f5;
+const COLOR_DEFAULT_FACE = 0x1abc9c;
+
+const edgeLines = {};
+Object.entries(EDGES).forEach(([name, [p, q]]) => {
+  const geo = new THREE.BufferGeometry().setFromPoints([p, q]);
+  const mat = new THREE.LineBasicMaterial({ color: COLOR_DEFAULT_EDGE, transparent: true, opacity: 0.85, linewidth: 2 });
+  const line = new THREE.Line(geo, mat);
+  line.userData.edgeName = name;
+  line.userData.defaultColor = COLOR_DEFAULT_EDGE;
+  scene.add(line);
+  edgeLines[name] = line;
+});
+
+const faceMeshes = {};
+Object.entries(FACES).forEach(([name, verts]) => {
+  const geo = new THREE.BufferGeometry().setFromPoints(verts);
+  geo.setIndex([0,1,2, 0,2,3]);
+  geo.computeVertexNormals();
+  const mat = new THREE.MeshBasicMaterial({ color: COLOR_DEFAULT_FACE, transparent: true, opacity: 0.06, side: THREE.DoubleSide, depthWrite: false });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.userData.faceName = name;
+  mesh.userData.defaultColor = COLOR_DEFAULT_FACE;
+  scene.add(mesh);
+  faceMeshes[name] = mesh;
+});
+
+function makeLabel(text, position) {
+  const cv = document.createElement('canvas'); cv.width = 128; cv.height = 128;
+  const ctx = cv.getContext('2d');
+  ctx.font = 'italic 80px "Times New Roman", serif';
+  ctx.fillStyle = '#7fffd4';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.shadowColor = 'rgba(127,255,212,0.8)';
+  ctx.shadowBlur = 18;
+  ctx.fillText(text, 64, 72);
+  const tex = new THREE.CanvasTexture(cv);
+  const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
+  const sprite = new THREE.Sprite(mat);
+  sprite.position.copy(position);
+  sprite.scale.set(0.55, 0.55, 0.55);
+  return sprite;
+}
+Object.entries(V).forEach(([name, p]) => {
+  const dir = p.clone().normalize().multiplyScalar(0.35);
+  scene.add(makeLabel(name, p.clone().add(dir)));
+});
+
+let highlightCount = 0;
+const edgeHighlights = {};
+const faceHighlights = {};
+
+function applyHighlights(){
+  Object.values(edgeLines).forEach(l => {
+    l.material.color.setHex(l.userData.defaultColor);
+    l.material.opacity = 0.85;
+  });
+  Object.values(faceMeshes).forEach(m => {
+    m.material.color.setHex(m.userData.defaultColor);
+    m.material.opacity = 0.06;
+  });
+  Object.entries(edgeHighlights).forEach(([name, info]) => {
+    const line = edgeLines[name];
+    if(line){ line.material.color.setHex(info.colorHex); line.material.opacity = 1; }
+  });
+  Object.entries(faceHighlights).forEach(([name, info]) => {
+    const mesh = faceMeshes[name];
+    if(mesh){ mesh.material.color.setHex(info.colorHex); mesh.material.opacity = 0.35; }
+  });
+}
+
+function addHighlight(kind, name){
+  const colorHex = PALETTE[highlightCount % PALETTE.length];
+  highlightCount++;
+  if(kind === 'edge') edgeHighlights[name] = { colorHex };
+  else if(kind === 'face') faceHighlights[name] = { colorHex };
+  applyHighlights();
+}
+
+function resetHighlights(){
+  highlightCount = 0;
+  Object.keys(edgeHighlights).forEach(k => delete edgeHighlights[k]);
+  Object.keys(faceHighlights).forEach(k => delete faceHighlights[k]);
+  applyHighlights();
+}
+
+const selectEdge = document.getElementById('select-edge');
+const selectFace = document.getElementById('select-face');
+const btnAddEdge = document.getElementById('btn-add-edge');
+const btnAddFace = document.getElementById('btn-add-face');
+const cubeReset = document.getElementById('cube-reset');
+const cubeHint = document.getElementById('cube-hint');
+
+btnAddEdge.addEventListener('click', () => {
+  const v = selectEdge.value;
+  if(!v){ cubeHint.textContent = '⚠ Сначала выбери ребро.'; return; }
+  addHighlight('edge', v);
+  cubeHint.textContent = '✅ Подсвечено ребро: ' + v;
+});
+
+btnAddFace.addEventListener('click', () => {
+  const v = selectFace.value;
+  if(!v){ cubeHint.textContent = '⚠ Сначала выбери грань.'; return; }
+  addHighlight('face', v);
+  cubeHint.textContent = '✅ Подсвечена грань: (' + v + ')';
+});
+
+cubeReset.addEventListener('click', () => {
+  resetHighlights();
+  cubeHint.textContent = '↺ Все подсветки сброшены.';
+});
+
+function resize(){
+  const wrap = document.getElementById('cube-wrap');
+  const w = wrap.clientWidth, hh = wrap.clientHeight;
+  renderer.setSize(w, hh, false);
+  camera.aspect = w / hh;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', resize);
+new ResizeObserver(resize).observe(document.getElementById('cube-wrap'));
+setTimeout(resize, 100);
+
+(function animate(){
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+})();
+
+/* ---- 3D-СЦЕНЫ ТЕОРИИ ---- */
+function makeMiniScene(canvasId, camPos, target){
+  const cv = document.getElementById(canvasId);
+  if(!cv) return null;
+  const sc = new THREE.Scene();
+  const cam = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
+  cam.position.set(...camPos);
+  const rnd = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true });
+  rnd.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  const ctrl = new OrbitControls(cam, rnd.domElement);
+  ctrl.enableDamping = true; ctrl.dampingFactor = 0.08;
+  ctrl.target.set(...(target || [0,0,0]));
+  sc.add(new THREE.AmbientLight(0xffffff, 0.9));
+  const l1 = new THREE.DirectionalLight(0xffffff, 0.7); l1.position.set(5, 8, 6); sc.add(l1);
+  const l2 = new THREE.DirectionalLight(0x7fffd4, 0.4); l2.position.set(-5, -3, -4); sc.add(l2);
+
+  function resizeMini(){
+    const wrap = rnd.domElement.parentElement;
+    const w = wrap.clientWidth, hh = wrap.clientHeight;
+    rnd.setSize(w, hh, false);
+    cam.aspect = w / hh; cam.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', resizeMini);
+  new ResizeObserver(resizeMini).observe(rnd.domElement.parentElement);
+  setTimeout(resizeMini, 80);
+
+  (function animateMini(){
+    requestAnimationFrame(animateMini);
+    ctrl.update();
+    rnd.render(sc, cam);
+  })();
+
+  return sc;
+}
+
+function planeMesh(w=4, d=2.6){
+  const geo = new THREE.PlaneGeometry(w, d);
+  const mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0x1abc9c, transparent: true, opacity: 0.16, side: THREE.DoubleSide, depthWrite: false }));
+  mesh.rotation.x = -Math.PI/2;
+  const group = new THREE.Group();
+  group.add(mesh);
+  const border = new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({ color: 0x1abc9c }));
+  border.rotation.x = -Math.PI/2;
+  group.add(border);
+  return group;
+}
+
+/* Сцена 1: прямая в плоскости */
+(function(){
+  const sc = makeMiniScene('case1', [4, 3.5, 5], [0,0,0]); if(!sc) return;
+  sc.add(planeMesh());
+  const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-1.5, 0.02, 0), new THREE.Vector3(1.5, 0.02, 0)]);
+  sc.add(new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0x7fffd4, linewidth: 3 })));
+  sc.add(makeLabel('a', new THREE.Vector3(1.6, 0.2, 0)));
+  sc.add(makeLabel('α', new THREE.Vector3(-1.6, 0.2, 1)));
+})();
+
+/* Сцена 2: пересекает */
+(function(){
+  const sc = makeMiniScene('case2', [4, 3.5, 5], [0,0,0]); if(!sc) return;
+  sc.add(planeMesh());
+  const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-1, 1.4, 0), new THREE.Vector3(1, -1.4, 0)]);
+  sc.add(new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0x7fffd4, linewidth: 3 })));
+  const dot = new THREE.Mesh(new THREE.SphereGeometry(0.09, 20, 20), new THREE.MeshBasicMaterial({ color: 0xffd700 }));
+  sc.add(dot);
+  sc.add(makeLabel('a', new THREE.Vector3(-1.2, 1.6, 0)));
+  sc.add(makeLabel('A', new THREE.Vector3(0.25, 0.15, 0), '#ffd700'));
+  sc.add(makeLabel('α', new THREE.Vector3(-1.6, 0.2, 1)));
+})();
+
+/* Сцена 3: параллельны */
+(function(){
+  const sc = makeMiniScene('case3', [4, 3.5, 5], [0,0,0]); if(!sc) return;
+  sc.add(planeMesh());
+  const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-1.5, 1.1, 0), new THREE.Vector3(1.5, 1.1, 0)]);
+  sc.add(new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0x7fffd4, linewidth: 3 })));
+  sc.add(makeLabel('a', new THREE.Vector3(1.6, 1.25, 0)));
+  sc.add(makeLabel('α', new THREE.Vector3(-1.6, 0.2, 1)));
+})();
+
+/* Признак: a ∥ b в плоскости, a вне плоскости */
+(function(){
+  const sc = makeMiniScene('sign-scene', [4.5, 3.5, 5.5], [0,0,0]); if(!sc) return;
+  sc.add(planeMesh(4.4, 2.8));
+  // b — в плоскости
+  const geoB = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-1.6, 0.02, 0.4), new THREE.Vector3(1.6, 0.02, 0.4)]);
+  sc.add(new THREE.Line(geoB, new THREE.LineBasicMaterial({ color: 0xffd700, linewidth: 3 })));
+  sc.add(makeLabel('b', new THREE.Vector3(1.7, 0.2, 0.4), '#ffd700'));
+  // a — параллельна, вне плоскости (выше)
+  const geoA = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-1.6, 1.0, 0.4), new THREE.Vector3(1.6, 1.0, 0.4)]);
+  sc.add(new THREE.Line(geoA, new THREE.LineBasicMaterial({ color: 0x7fffd4, linewidth: 3 })));
+  sc.add(makeLabel('a', new THREE.Vector3(1.7, 1.15, 0.4)));
+  sc.add(makeLabel('α', new THREE.Vector3(-1.8, 0.2, 1.1)));
+})();
+
+/* Свойство 1 */
+(function(){
+  const sc = makeMiniScene('prop1-scene', [4.5, 3.8, 5.5], [0,0,0]); if(!sc) return;
+  // плоскость α (нижняя)
+  sc.add(planeMesh(4.4, 2.4));
+  // β — наклонная, проходит через a
+  const geoB = new THREE.PlaneGeometry(4.4, 2.4);
+  const beta = new THREE.Mesh(geoB, new THREE.MeshBasicMaterial({ color: 0x5dade2, transparent: true, opacity: 0.13, side: THREE.DoubleSide, depthWrite: false }));
+  beta.rotation.x = -Math.PI/2;
+  beta.position.set(0, 0.9, -0.3);
+  beta.rotation.z = 0.15;
+  sc.add(beta);
+  const borderB = new THREE.LineSegments(new THREE.EdgesGeometry(geoB), new THREE.LineBasicMaterial({ color: 0x5dade2 }));
+  borderB.rotation.x = -Math.PI/2;
+  borderB.position.copy(beta.position);
+  borderB.rotation.z = 0.15;
+  sc.add(borderB);
+  // a — в β
+  const geoA = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-1.6, 0.9, -0.3), new THREE.Vector3(1.6, 0.9, -0.3)]);
+  sc.add(new THREE.Line(geoA, new THREE.LineBasicMaterial({ color: 0x7fffd4, linewidth: 3 })));
+  sc.add(makeLabel('a', new THREE.Vector3(1.7, 1.05, -0.3)));
+  // b — линия пересечения (в плоскости y=0)
+  const geoB2 = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-1.6, 0.02, 0), new THREE.Vector3(1.6, 0.02, 0)]);
+  sc.add(new THREE.Line(geoB2, new THREE.LineBasicMaterial({ color: 0xffd700, linewidth: 3 })));
+  sc.add(makeLabel('b', new THREE.Vector3(1.7, 0.2, 0), '#ffd700'));
+  sc.add(makeLabel('α', new THREE.Vector3(-1.8, 0.2, 1)));
+  sc.add(makeLabel('β', new THREE.Vector3(-1.8, 1.2, 0.6), '#5dade2'));
+})();
+
+/* Свойство 2 */
+(function(){
+  const sc = makeMiniScene('prop2-scene', [4.5, 3.5, 5.5], [0,0,0]); if(!sc) return;
+  sc.add(planeMesh(4.4, 2.4));
+  // a — вне плоскости, параллельна ей
+  const geoA = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-1.6, 1.0, 0), new THREE.Vector3(1.6, 1.0, 0)]);
+  sc.add(new THREE.Line(geoA, new THREE.LineBasicMaterial({ color: 0x7fffd4, linewidth: 3 })));
+  sc.add(makeLabel('a', new THREE.Vector3(1.7, 1.15, 0)));
+  // b — параллельна a, лежит в плоскости
+  const geoB = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-1.6, 0.02, 0.5), new THREE.Vector3(1.6, 0.02, 0.5)]);
+  sc.add(new THREE.Line(geoB, new THREE.LineBasicMaterial({ color: 0xffd700, linewidth: 3 })));
+  sc.add(makeLabel('b', new THREE.Vector3(1.7, 0.2, 0.5), '#ffd700'));
+  sc.add(makeLabel('α', new THREE.Vector3(-1.8, 0.2, 1)));
+})();
+</script>
+</body>
+</html>
