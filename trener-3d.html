@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Тренажёр · Куб и тетраэдр · ΤΕΤΡΑΚΤΥΣ</title>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--mint:#7fffd4;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;--coral:#ff6b6b;
+  }
+  html,body{min-height:100%;font-family:'Georgia','Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;overflow-x:hidden;padding:14px 12px 30px;}
+
+  .corner-logo{position:fixed;top:10px;left:12px;z-index:50;font-family:'Times New Roman',serif;text-align:center;line-height:1;padding:5px 10px 7px;background:rgba(10,42,51,0.65);border:1px solid rgba(26,188,156,0.4);border-radius:10px;backdrop-filter:blur(8px);}
+  .corner-logo .dots{font-size:7px;letter-spacing:1.5px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:11px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:2px;}
+  .corner-logo .ru{font-size:7px;letter-spacing:2px;color:var(--text-soft);margin-top:1px;}
+
+  .app{position:relative;z-index:10;max-width:1100px;margin:0 auto;padding:52px 0 10px;}
+
+  .page-head{text-align:center;margin-bottom:14px;}
+  .page-head h1{font-size:clamp(18px,2.6vw,24px);color:var(--mint);letter-spacing:1.2px;font-weight:700;}
+  .page-head .sub{font-style:italic;color:var(--text-soft);font-size:12px;margin-top:3px;}
+
+  .switch{display:flex;justify-content:center;gap:8px;margin-bottom:12px;}
+  .switch button{padding:8px 22px;border-radius:12px;border:1.5px solid rgba(26,188,156,0.4);background:rgba(255,255,255,0.05);color:var(--text-soft);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:0.2s;}
+  .switch button:hover{border-color:var(--mint);color:var(--mint);}
+  .switch button.active{background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;border-color:var(--teal);box-shadow:0 4px 16px rgba(26,188,156,0.4);}
+
+  .layout{display:grid;grid-template-columns:1fr 300px;gap:14px;}
+  @media(max-width:820px){.layout{grid-template-columns:1fr;}}
+
+  .viewer{position:relative;height:min(72vh,600px);border-radius:16px;overflow:hidden;border:1.5px solid rgba(26,188,156,0.4);background:radial-gradient(ellipse at 50% 30%,rgba(26,188,156,0.12),transparent 65%),rgba(8,25,32,0.55);box-shadow:inset 0 0 60px rgba(0,0,0,0.4);}
+  .viewer canvas{display:block;width:100%;height:100%;cursor:grab;touch-action:none;}
+  .viewer canvas:active{cursor:grabbing;}
+  .viewer .hint{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--text-soft);font-style:italic;background:rgba(10,42,51,0.7);padding:4px 12px;border-radius:10px;pointer-events:none;}
+
+  .panel{display:flex;flex-direction:column;gap:10px;}
+  .panel-card{padding:14px 16px;border-radius:14px;border:1.5px solid rgba(26,188,156,0.35);background:rgba(255,255,255,0.04);backdrop-filter:blur(10px);}
+  .panel-card h3{font-size:12px;letter-spacing:1.5px;color:var(--gold-light);text-transform:uppercase;margin-bottom:10px;font-weight:700;}
+
+  select.edge-select{width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid rgba(26,188,156,0.4);background:rgba(10,42,51,0.8);color:var(--text);font-family:'Cambria Math','Times New Roman',serif;font-size:16px;font-weight:600;cursor:pointer;outline:none;transition:0.2s;}
+  select.edge-select:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.2);}
+  select.edge-select option{background:#0d3b47;color:#e8f8f5;}
+
+  .mode-btn{display:block;width:100%;padding:10px 14px;margin-bottom:6px;border-radius:10px;border:1.5px solid rgba(26,188,156,0.4);background:rgba(255,255,255,0.04);color:var(--text);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:0.2s;text-align:left;}
+  .mode-btn:hover:not(:disabled){border-color:var(--mint);background:rgba(26,188,156,0.1);}
+  .mode-btn.active{background:linear-gradient(135deg,rgba(26,188,156,0.35),rgba(22,160,133,0.2));border-color:var(--mint);color:var(--mint);box-shadow:0 0 16px rgba(26,188,156,0.25);}
+  .mode-btn:disabled{opacity:0.4;cursor:not-allowed;}
+
+  .info{font-size:13px;line-height:1.5;color:var(--text-soft);min-height:40px;}
+  .info b{color:var(--mint);}
+  .info .pair{font-family:'Cambria Math','Times New Roman',serif;color:#fff;font-weight:600;}
+
+  .legend{display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text-soft);}
+  .legend .li{display:flex;align-items:center;gap:8px;}
+  .legend .dot{width:22px;height:3px;border-radius:2px;}
+  .legend .dot.dim{background:rgba(80,120,120,0.55);}
+  .legend .dot.mint{background:#7fffd4;box-shadow:0 0 10px #7fffd4;}
+  .legend .dot.gold{background:#ffd700;box-shadow:0 0 10px #ffd700;}
+
+  .footer{margin-top:16px;padding-top:10px;border-top:1px solid rgba(26,188,156,0.25);text-align:center;font-size:11px;color:var(--text-soft);}
+</style>
+</head>
+<body>
+
+<div class="corner-logo">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+</div>
+
+<div class="app">
+
+  <div class="page-head">
+    <h1>Взаимное расположение прямых · 3D</h1>
+    <div class="sub">Выбери ребро → нажми режим → увидишь результат</div>
+  </div>
+
+  <div class="switch">
+    <button class="active" data-shape="cube">🧊 Куб</button>
+    <button data-shape="tetra">🔺 Тетраэдр</button>
+  </div>
+
+  <div class="layout">
+    <div class="viewer">
+      <canvas id="scene"></canvas>
+      <div class="hint">🖱 Вращай · колесо — приблизить</div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-card">
+        <h3>1. Выбери ребро</h3>
+        <select class="edge-select" id="edgeSelect"></select>
+      </div>
+
+      <div class="panel-card">
+        <h3>2. Режим</h3>
+        <button class="mode-btn active" data-mode="none">🔘 Без подсветки</button>
+        <button class="mode-btn" data-mode="parallel" disabled>▬ Параллельные</button>
+        <button class="mode-btn" data-mode="cross" disabled>✕ Скрещивающиеся</button>
+        <button class="mode-btn" data-mode="inter" disabled>◆ Пересекающиеся</button>
+      </div>
+
+      <div class="panel-card">
+        <h3>Пояснение</h3>
+        <div class="info" id="info">Сначала выбери ребро в списке выше.</div>
+      </div>
+
+      <div class="panel-card">
+        <h3>Легенда</h3>
+        <div class="legend">
+          <div class="li"><span class="dot dim"></span> обычное ребро</div>
+          <div class="li"><span class="dot mint"></span> выбранное ребро</div>
+          <div class="li"><span class="dot gold"></span> результат режима</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">© 2026 · Τετρακτύς · Елена Михалева</div>
+</div>
+
+<script>
+/* ============================================================
+   THREE.JS
+   ============================================================ */
+const canvas = document.getElementById('scene');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+camera.position.set(4.5, 3.2, 5.5);
+camera.lookAt(0, 0, 0);
+
+const root = new THREE.Group();
+scene.add(root);
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+const l1 = new THREE.DirectionalLight(0xffffff, 0.8); l1.position.set(5,8,6); scene.add(l1);
+const l2 = new THREE.DirectionalLight(0x7fffd4, 0.4); l2.position.set(-6,-3,-5); scene.add(l2);
+
+/* ============================================================
+   ФИГУРЫ
+   ============================================================ */
+const CUBE = {
+  verts: {
+    A:[-1,-1, 1], B:[ 1,-1, 1], C:[ 1,-1,-1], D:[-1,-1,-1],
+    'A₁':[-1, 1, 1], 'B₁':[ 1, 1, 1], 'C₁':[ 1, 1,-1], 'D₁':[-1, 1,-1]
+  },
+  edges: [
+    ['A','B'],['B','C'],['C','D'],['D','A'],
+    ['A₁','B₁'],['B₁','C₁'],['C₁','D₁'],['D₁','A₁'],
+    ['A','A₁'],['B','B₁'],['C','C₁'],['D','D₁']
+  ]
+};
+
+const TETRA = {
+  verts: {
+    D:[ 0, 1.25, 0],
+    A:[-1.1,-0.7, 0.9],
+    B:[ 1.2,-0.7, 0.6],
+    C:[ 0.1,-0.7,-1.25]
+  },
+  edges: [
+    ['A','B'],['B','C'],['C','A'],
+    ['D','A'],['D','B'],['D','C']
+  ]
+};
+
+/* ============================================================
+   КОНТРАСТНАЯ ПАЛИТРА
+   ============================================================ */
+const COLOR_DEFAULT  = 0x4a6b6b;   // тёмно-серо-бирюзовый, тусклый
+const COLOR_SELECTED = 0x7fffd4;   // ярко-мятный
+const COLOR_MATCH    = 0xffd700;   // насыщенный золотой
+
+const OPACITY_DEFAULT = 0.55;
+const OPACITY_ACTIVE  = 1.0;
+
+/* ============================================================
+   СОСТОЯНИЕ
+   ============================================================ */
+let currentShape = 'cube';
+let currentMode = 'none';
+let selectedEdgeKey = null;
+let edgeMeshes = [];
+
+function edgeKey(a, b){ return a + '|' + b; }
+function edgeLabel(a, b){ return a + b; }
+
+/* ============================================================
+   ПОДПИСИ
+   ============================================================ */
+function makeLabel(text, pos){
+  const c = document.createElement('canvas');
+  const ctx = c.getContext('2d');
+  c.width = 160; c.height = 160;
+  ctx.font = 'italic 88px "Times New Roman", serif';
+  ctx.fillStyle = '#7fffd4';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.shadowColor = 'rgba(127,255,212,0.85)';
+  ctx.shadowBlur = 22;
+  ctx.fillText(text, 80, 88);
+  const tex = new THREE.CanvasTexture(c);
+  const mat = new THREE.SpriteMaterial({ map: tex, transparent:true, depthTest:false });
+  const sp = new THREE.Sprite(mat);
+  sp.scale.set(0.62, 0.62, 0.62);
+  sp.position.set(pos[0]*1.16, pos[1]*1.16, pos[2]*1.16);
+  return sp;
+}
+
+function disposeGroup(g){
+  while(g.children.length){
+    const c = g.children.pop();
+    if(c.geometry) c.geometry.dispose();
+    if(c.material){
+      if(c.material.map) c.material.map.dispose();
+      c.material.dispose();
+    }
+  }
+}
+
+/* ============================================================
+   ПОСТРОЕНИЕ МОДЕЛИ
+   ============================================================ */
+function buildShape(shape){
+  disposeGroup(root);
+  edgeMeshes = [];
+  selectedEdgeKey = null;
+  currentMode = 'none';
+
+  const data = shape === 'cube' ? CUBE : TETRA;
+  const verts = data.verts;
+  const edges = data.edges;
+
+  /* грани */
+  const positions = [];
+  if(shape === 'cube'){
+    const faces = [
+      ['A','B','C','D'], ['A₁','B₁','C₁','D₁'],
+      ['A','B','B₁','A₁'], ['B','C','C₁','B₁'],
+      ['C','D','D₁','C₁'], ['D','A','A₁','D₁']
+    ];
+    faces.forEach(f => {
+      const p0=verts[f[0]], p1=verts[f[1]], p2=verts[f[2]], p3=verts[f[3]];
+      positions.push(...p0,...p1,...p2, ...p0,...p2,...p3);
+    });
+  } else {
+    const faces = [['A','B','C'],['D','A','B'],['D','B','C'],['D','C','A']];
+    faces.forEach(f => {
+      const p0=verts[f[0]], p1=verts[f[1]], p2=verts[f[2]];
+      positions.push(...p0,...p1,...p2);
+    });
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  geo.computeVertexNormals();
+  const faceMat = new THREE.MeshPhongMaterial({
+    color:0x1abc9c, transparent:true, opacity:0.10,
+    side:THREE.DoubleSide, depthWrite:false, shininess:20
+  });
+  root.add(new THREE.Mesh(geo, faceMat));
+
+  /* рёбра */
+  edges.forEach(([a,b]) => {
+    const p1 = new THREE.Vector3(...verts[a]);
+    const p2 = new THREE.Vector3(...verts[b]);
+    const g = new THREE.BufferGeometry().setFromPoints([p1,p2]);
+    const m = new THREE.LineBasicMaterial({
+      color: COLOR_DEFAULT,
+      transparent: true,
+      opacity: OPACITY_DEFAULT,
+      linewidth: 2
+    });
+    const line = new THREE.Line(g, m);
+    line.userData = { from:a, to:b, key: edgeKey(a,b) };
+    root.add(line);
+    edgeMeshes.push(line);
+  });
+
+  /* подписи */
+  Object.entries(verts).forEach(([name, pos]) => root.add(makeLabel(name, pos)));
+
+  populateSelect(edges);
+  updateModeButtons();
+}
+
+function populateSelect(edges){
+  const sel = document.getElementById('edgeSelect');
+  sel.innerHTML = '<option value="">— выбери ребро —</option>';
+  edges.forEach(([a,b]) => {
+    const opt = document.createElement('option');
+    opt.value = edgeKey(a,b);
+    opt.textContent = edgeLabel(a,b);
+    sel.appendChild(opt);
+  });
+  sel.disabled = false;
+}
+
+function updateModeButtons(){
+  const has = !!selectedEdgeKey;
+  document.querySelectorAll('.mode-btn').forEach(b => {
+    if(b.dataset.mode === 'none'){ b.disabled = false; return; }
+    b.disabled = !has;
+  });
+}
+
+/* ============================================================
+   АНАЛИЗ
+   ============================================================ */
+function getVerts(){ return (currentShape === 'cube' ? CUBE : TETRA).verts; }
+function getEdges(){ return (currentShape === 'cube' ? CUBE : TETRA).edges; }
+function findEdge(key){ return getEdges().find(([a,b]) => edgeKey(a,b) === key); }
+
+function edgeVec(e){
+  const verts = getVerts();
+  const va = new THREE.Vector3(...verts[e[0]]);
+  const vb = new THREE.Vector3(...verts[e[1]]);
+  return { va, vb, dir: vb.clone().sub(va) };
+}
+function shareVertex(e1, e2){
+  return e1[0]===e2[0] || e1[0]===e2[1] || e1[1]===e2[0] || e1[1]===e2[1];
+}
+function isParallel(e1, e2){
+  const v1 = edgeVec(e1).dir;
+  const v2 = edgeVec(e2).dir;
+  const cr = new THREE.Vector3().crossVectors(v1, v2);
+  return cr.length() < 1e-6;
+}
+function classify(edge){
+  const edges = getEdges();
+  const parallel = [], cross = [], inter = [];
+  edges.forEach(e => {
+    const same = (e[0]===edge[0] && e[1]===edge[1]) || (e[0]===edge[1] && e[1]===edge[0]);
+    if(same) return;
+    if(shareVertex(e, edge)){ inter.push(e); return; }
+    if(isParallel(e, edge)){ parallel.push(e); return; }
+    cross.push(e);
+  });
+  return { parallel, cross, inter };
+}
+
+/* ============================================================
+   ПОДСВЕТКА
+   ============================================================ */
+function resetColors(){
+  edgeMeshes.forEach(m => {
+    m.material.color.setHex(COLOR_DEFAULT);
+    m.material.opacity = OPACITY_DEFAULT;
+  });
+}
+
+function setEdgeColor(mesh, hex, opacity){
+  mesh.material.color.setHex(hex);
+  mesh.material.opacity = opacity;
+}
+
+function applyHighlight(){
+  resetColors();
+  const info = document.getElementById('info');
+
+  if(!selectedEdgeKey){
+    info.textContent = 'Сначала выбери ребро в списке выше.';
+    return;
+  }
+
+  const edge = findEdge(selectedEdgeKey);
+  if(!edge) return;
+
+  /* выбранное — ярко-мятное */
+  edgeMeshes.forEach(m => {
+    const u = m.userData;
+    if((u.from===edge[0] && u.to===edge[1]) || (u.from===edge[1] && u.to===edge[0])){
+      setEdgeColor(m, COLOR_SELECTED, OPACITY_ACTIVE);
+    }
+  });
+
+  const [a,b] = edge;
+  const label = edgeLabel(a,b);
+
+  if(currentMode === 'none'){
+    info.innerHTML = `Выбрано ребро <b>${label}</b>. Нажми режим — увидишь результат.`;
+    return;
+  }
+
+  const cls = classify(edge);
+  const list = cls[currentMode];
+
+  if(list.length === 0){
+    if(currentMode === 'parallel'){
+      info.innerHTML = `У ребра <b>${label}</b> <b>нет параллельных</b> рёбер.`;
+    } else if(currentMode === 'cross'){
+      info.innerHTML = `У ребра <b>${label}</b> <b>нет скрещивающихся</b> рёбер.`;
+    } else {
+      info.innerHTML = `У ребра <b>${label}</b> <b>нет пересекающихся</b> рёбер.`;
+    }
+    return;
+  }
+
+  /* результаты — ярко-золотые */
+  const targetKeys = new Set();
+  list.forEach(([x,y]) => {
+    targetKeys.add(edgeKey(x,y));
+    targetKeys.add(edgeKey(y,x));
+  });
+
+  edgeMeshes.forEach(m => {
+    const u = m.userData;
+    if(targetKeys.has(edgeKey(u.from, u.to))){
+      setEdgeColor(m, COLOR_MATCH, OPACITY_ACTIVE);
+    }
+  });
+
+  const names = list.map(([x,y]) => edgeLabel(x,y)).join(', ');
+  if(currentMode === 'parallel'){
+    info.innerHTML = `Параллельные ребру <b>${label}</b>: <span class="pair">${names}</span>`;
+  } else if(currentMode === 'cross'){
+    info.innerHTML = `Скрещивающиеся с <b>${label}</b>: <span class="pair">${names}</span>`;
+  } else {
+    info.innerHTML = `Пересекающиеся с <b>${label}</b>: <span class="pair">${names}</span>`;
+  }
+}
+
+/* ============================================================
+   UI
+   ============================================================ */
+document.querySelectorAll('.switch button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.switch button').forEach(x => x.classList.remove('active'));
+    btn.classList.add('active');
+    currentShape = btn.dataset.shape;
+    buildShape(currentShape);
+    document.getElementById('edgeSelect').value = '';
+    document.querySelectorAll('.mode-btn').forEach(x => x.classList.remove('active'));
+    document.querySelector('.mode-btn[data-mode="none"]').classList.add('active');
+    currentMode = 'none';
+    selectedEdgeKey = null;
+    resetColors();
+    document.getElementById('info').textContent = 'Сначала выбери ребро в списке выше.';
+    dragState.rx = 0; dragState.ry = 0;
+    root.rotation.set(0,0,0);
+  });
+});
+
+document.getElementById('edgeSelect').addEventListener('change', e => {
+  selectedEdgeKey = e.target.value || null;
+  currentMode = 'none';
+  document.querySelectorAll('.mode-btn').forEach(x => x.classList.remove('active'));
+  document.querySelector('.mode-btn[data-mode="none"]').classList.add('active');
+  updateModeButtons();
+  applyHighlight();
+});
+
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if(btn.disabled) return;
+    document.querySelectorAll('.mode-btn').forEach(x => x.classList.remove('active'));
+    btn.classList.add('active');
+    currentMode = btn.dataset.mode;
+    applyHighlight();
+  });
+});
+
+/* ============================================================
+   ВРАЩЕНИЕ
+   ============================================================ */
+const dragState = { active:false, x:0, y:0, rx:0, ry:0 };
+canvas.addEventListener('pointerdown', e => {
+  dragState.active = true;
+  dragState.x = e.clientX; dragState.y = e.clientY;
+  try{ canvas.setPointerCapture(e.pointerId); }catch(_){}
+});
+canvas.addEventListener('pointermove', e => {
+  if(!dragState.active) return;
+  const dx = e.clientX - dragState.x;
+  const dy = e.clientY - dragState.y;
+  dragState.x = e.clientX; dragState.y = e.clientY;
+  dragState.ry += dx * 0.008;
+  dragState.rx += dy * 0.008;
+  dragState.rx = Math.max(-Math.PI/2, Math.min(Math.PI/2, dragState.rx));
+  root.rotation.x = dragState.rx;
+  root.rotation.y = dragState.ry;
+});
+function stopDrag(e){
+  dragState.active = false;
+  try{ if(e) canvas.releasePointerCapture(e.pointerId); }catch(_){}
+}
+canvas.addEventListener('pointerup', stopDrag);
+canvas.addEventListener('pointercancel', stopDrag);
+canvas.addEventListener('pointerleave', stopDrag);
+canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  const f = e.deltaY > 0 ? 1.08 : 0.93;
+  const d = camera.position.length();
+  const nd = Math.max(3.5, Math.min(14, d * f));
+  camera.position.multiplyScalar(nd / d);
+  camera.lookAt(0,0,0);
+}, { passive:false });
+
+/* ============================================================
+   РАЗМЕР / АНИМАЦИЯ
+   ============================================================ */
+function resize(){
+  const r = canvas.parentElement.getBoundingClientRect();
+  const w = Math.max(1, Math.floor(r.width));
+  const h = Math.max(1, Math.floor(r.height));
+  renderer.setSize(w, h, false);
+  camera.aspect = w/h;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', resize);
+new ResizeObserver(resize).observe(canvas.parentElement);
+
+function animate(){
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
+}
+
+/* ============================================================
+   СТАРТ
+   ============================================================ */
+buildShape('cube');
+resize();
+animate();
+</script>
+</body>
+</html>
