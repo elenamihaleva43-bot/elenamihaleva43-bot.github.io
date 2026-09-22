@@ -1,0 +1,2363 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Измерение углов · Геометрия 7 · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+    :root {
+        --teal: #1abc9c;
+        --teal-dark: #16a085;
+        --teal-deep: #0e7c66;
+        --mint: #7fffd4;
+        --gold: #f4d35e;
+        --gold-light: #ffe89a;
+        --coral: #ff6b6b;
+        --text: #e8f8f5;
+        --text-soft: #b8d8d0;
+        --ok: #2ecc71;
+        --err: #ff6b6b;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        font-family: Georgia, 'Times New Roman', serif;
+        background:
+            radial-gradient(ellipse at 15% 10%, rgba(26,188,156,0.22), transparent 55%),
+            radial-gradient(ellipse at 85% 90%, rgba(127,255,212,0.15), transparent 55%),
+            radial-gradient(ellipse at 50% 50%, rgba(244,211,94,0.06), transparent 70%),
+            linear-gradient(160deg, #0a2a33 0%, #0d3b47 50%, #134e5e 100%);
+        background-attachment: fixed;
+        color: var(--text);
+        min-height: 100vh;
+        padding: 0 12px 20px;
+    }
+
+    /* ===== ЛИПКАЯ ШАПКА ===== */
+    .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 14px;
+        margin: 0 -12px 14px;
+        background: rgba(10, 42, 51, 0.92);
+        border-bottom: 2px solid var(--teal-dark);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        flex-wrap: wrap;
+    }
+    .logo-mini {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(26,188,156,0.10);
+        border: 1.5px solid rgba(26,188,156,0.35);
+        border-radius: 10px;
+        padding: 5px 12px;
+    }
+    .logo-dots {
+        font-size: 11px;
+        line-height: 1.1;
+        letter-spacing: 4px;
+        color: var(--mint);
+        font-family: 'Courier New', monospace;
+    }
+    .logo-text { display: flex; flex-direction: column; }
+    .logo-greek {
+        font-size: 15px;
+        letter-spacing: 3px;
+        font-weight: 700;
+        color: var(--gold);
+        font-family: Georgia, serif;
+        line-height: 1.1;
+    }
+    .logo-rus {
+        font-size: 9px;
+        letter-spacing: 2px;
+        color: var(--text-soft);
+        font-weight: 600;
+    }
+    .topbar-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        font-family: 'Courier New', monospace;
+    }
+    .topbar-chip {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 12px;
+        background: rgba(26,188,156,0.12);
+        border: 1.5px solid rgba(26,188,156,0.4);
+        border-radius: 10px;
+        font-size: 13px;
+        color: var(--text);
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+    }
+    .topbar-chip .lbl { font-size: 10px; color: var(--text-soft); letter-spacing: 1.5px; }
+    .topbar-chip .val { color: var(--gold); font-weight: 700; font-size: 14px; }
+    .topbar-chip .val.timer { color: var(--mint); font-size: 16px; letter-spacing: 2px; }
+    .topbar-chip.hidden { display: none; }
+
+    .container {
+        max-width: 1000px;
+        width: 100%;
+        margin: 0 auto;
+        background: rgba(10, 42, 51, 0.72);
+        border: 2px solid var(--teal-dark);
+        border-radius: 24px;
+        padding: 22px 26px 18px;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.45), inset 0 0 60px rgba(26,188,156,0.06);
+        backdrop-filter: blur(6px);
+    }
+
+    .page { display: none; animation: fadeIn 0.45s ease; }
+    .page.active { display: block; }
+    @keyframes fadeIn {
+        0% { opacity: 0; transform: translateY(8px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-title {
+        font-size: 26px;
+        font-weight: 700;
+        color: var(--text);
+        text-align: center;
+        margin-bottom: 4px;
+        letter-spacing: 0.5px;
+    }
+    .section-title span { color: var(--gold); }
+    .section-sub {
+        text-align: center;
+        font-size: 14px;
+        color: var(--text-soft);
+        margin-bottom: 14px;
+        font-style: italic;
+    }
+
+    /* ===== КНОПКИ НАВИГАЦИИ ===== */
+    .nav-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 18px;
+        flex-wrap: wrap;
+    }
+    .btn-next {
+        padding: 11px 34px;
+        border: 2px solid var(--teal);
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--teal), var(--teal-deep));
+        color: #04262b;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-family: Georgia, serif;
+        box-shadow: 0 4px 16px rgba(26,188,156,0.35);
+        letter-spacing: 0.5px;
+    }
+    .btn-next:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 8px 28px rgba(26,188,156,0.5);
+        background: linear-gradient(135deg, var(--mint), var(--teal));
+    }
+    .btn-back {
+        padding: 11px 28px;
+        border: 2px solid var(--text-soft);
+        border-radius: 14px;
+        background: rgba(10,42,51,0.6);
+        color: var(--text-soft);
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-family: Georgia, serif;
+        letter-spacing: 0.5px;
+    }
+    .btn-back:hover {
+        background: rgba(26,188,156,0.15);
+        border-color: var(--mint);
+        color: var(--mint);
+        transform: translateY(-2px);
+    }
+
+    /* ===== ПРИВЕТСТВИЕ ===== */
+    .welcome { text-align: center; padding: 18px 0 8px; }
+    .welcome .emoji {
+        font-size: 54px;
+        display: block;
+        animation: bounce 2.4s ease-in-out infinite;
+    }
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+    }
+    .welcome h1 { font-size: 30px; color: var(--text); margin: 6px 0 4px; }
+    .welcome h1 span { color: var(--gold); }
+    .welcome p { font-size: 15px; color: var(--text-soft); margin-bottom: 16px; }
+    .form-row {
+        display: flex;
+        justify-content: center;
+        gap: 22px;
+        flex-wrap: wrap;
+        margin: 8px 0 14px;
+    }
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+    }
+    .form-group label {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--mint);
+        letter-spacing: 1px;
+    }
+    .form-group input {
+        padding: 9px 14px;
+        font-size: 16px;
+        width: 240px;
+        border: 2px solid var(--teal);
+        border-radius: 12px;
+        background: rgba(10,42,51,0.7);
+        color: var(--text);
+        text-align: center;
+        font-family: Georgia, serif;
+        outline: none;
+        transition: all 0.3s;
+    }
+    .form-group input::placeholder { color: rgba(184,216,208,0.5); }
+    .form-group input:focus {
+        border-color: var(--mint);
+        box-shadow: 0 0 0 4px rgba(26,188,156,0.2);
+    }
+    .btn-start {
+        padding: 11px 42px;
+        border: 2px solid var(--gold);
+        border-radius: 16px;
+        background: linear-gradient(135deg, var(--gold), #d4a91e);
+        color: #04262b;
+        font-size: 17px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-family: Georgia, serif;
+        margin-top: 8px;
+        box-shadow: 0 4px 18px rgba(244,211,94,0.35);
+        letter-spacing: 0.5px;
+    }
+    .btn-start:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 8px 28px rgba(244,211,94,0.55);
+    }
+    .btn-start:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    /* ===== ТЕОРИЯ ===== */
+    .theory-box {
+        background: rgba(26,188,156,0.10);
+        border-radius: 14px;
+        padding: 14px 18px;
+        margin: 10px 0;
+        border-left: 4px solid var(--teal);
+    }
+    .theory-box h3 { color: var(--gold); font-size: 17px; margin-bottom: 6px; }
+    .theory-box p { color: var(--text); font-size: 15px; line-height: 1.7; }
+    .theory-box .hl { color: var(--coral); font-weight: 700; }
+    .theory-box .hl-blue { color: var(--mint); font-weight: 700; }
+    .theory-box .hl-green { color: var(--ok); font-weight: 700; }
+
+    /* ===== ТРЕНАЖЁРЫ ===== */
+    .trainer-block {
+        margin-bottom: 22px;
+        padding: 16px 18px 14px;
+        background: rgba(26,188,156,0.08);
+        border-radius: 16px;
+        border: 1.5px solid rgba(26,188,156,0.4);
+    }
+    .trainer-title {
+        font-size: 19px;
+        font-weight: 700;
+        color: var(--gold);
+        margin-bottom: 6px;
+        text-align: center;
+    }
+    .task-text {
+        text-align: center;
+        font-size: 15px;
+        color: var(--text);
+        margin-bottom: 10px;
+        line-height: 1.6;
+    }
+    .task-text .hl-red { color: var(--coral); font-weight: 700; }
+    .task-text .hl-blue { color: var(--mint); font-weight: 700; }
+    .task-text .hl-green { color: var(--ok); font-weight: 700; }
+
+    .canvas-wrapper {
+        background: #f7fcfa;
+        border-radius: 12px;
+        border: 2px solid var(--teal-dark);
+        padding: 8px;
+        text-align: center;
+    }
+    .canvas-wrapper canvas {
+        display: block;
+        width: 100%;
+        max-width: 760px;
+        height: auto;
+        margin: 0 auto;
+        background: #f7fcfa;
+        border-radius: 10px;
+        touch-action: none;
+        cursor: crosshair;
+    }
+
+    /* Мини-канвас для записи в тренажёре */
+    .mini-canvas-block {
+        margin-top: 12px;
+        background: rgba(10,42,51,0.5);
+        border-radius: 10px;
+        border: 1px solid rgba(26,188,156,0.3);
+        padding: 8px;
+    }
+    .mini-canvas-label {
+        font-size: 12px;
+        color: var(--text-soft);
+        text-align: center;
+        margin-bottom: 6px;
+        font-style: italic;
+        letter-spacing: 0.5px;
+    }
+    .mini-canvas-label span {
+        color: var(--mint);
+        font-weight: 700;
+        font-style: normal;
+    }
+
+    .legend {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        margin-top: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-soft);
+        flex-wrap: wrap;
+        font-family: 'Courier New', monospace;
+    }
+    .legend .dot {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 5px;
+        vertical-align: middle;
+    }
+    .legend .dot.red { background: var(--coral); }
+    .legend .dot.green { background: var(--ok); }
+    .legend .dot.blue { background: var(--teal); }
+    .legend .dot.gold { background: var(--gold); }
+
+    .info {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+        justify-content: center;
+        margin-top: 14px;
+        padding: 10px 16px;
+        background: rgba(10,42,51,0.6);
+        border-radius: 12px;
+        border: 1.5px solid rgba(26,188,156,0.4);
+        font-family: 'Courier New', monospace;
+    }
+    .info .label {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text);
+        letter-spacing: 0.5px;
+    }
+    .info .label .val { font-size: 19px; color: var(--mint); }
+    .info .label .red { color: var(--coral); }
+    .info .label .green { color: var(--ok); }
+    .info .label .blue { color: var(--mint); }
+
+    .input-area {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+    }
+    .input-area input {
+        width: 120px;
+        padding: 7px 10px;
+        font-size: 17px;
+        text-align: center;
+        border: 2px solid var(--teal);
+        border-radius: 10px;
+        font-family: 'Courier New', monospace;
+        outline: none;
+        transition: all 0.3s;
+        background: rgba(10,42,51,0.7);
+        color: var(--text);
+        font-weight: 700;
+    }
+    .input-area input::placeholder { color: rgba(184,216,208,0.5); }
+    .input-area input:focus {
+        border-color: var(--mint);
+        box-shadow: 0 0 0 4px rgba(26,188,156,0.2);
+    }
+    .input-area input.correct {
+        border-color: var(--ok);
+        background: rgba(46,204,113,0.18);
+    }
+    .input-area input.wrong {
+        border-color: var(--err);
+        background: rgba(255,107,107,0.18);
+    }
+    .input-area .btn {
+        padding: 7px 24px;
+        border: 2px solid var(--ok);
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-family: Georgia, serif;
+        color: #04262b;
+        background: linear-gradient(135deg, var(--ok), #1e8449);
+        letter-spacing: 0.5px;
+    }
+    .input-area .btn:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 6px 18px rgba(46,204,113,0.4);
+    }
+    .input-area .btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+    .feedback {
+        text-align: center;
+        font-size: 16px;
+        font-weight: 700;
+        margin-top: 8px;
+        min-height: 24px;
+        font-family: 'Courier New', monospace;
+    }
+    .feedback.correct { color: var(--ok); }
+    .feedback.wrong { color: var(--err); }
+
+    .controls {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        margin-top: 10px;
+        flex-wrap: wrap;
+    }
+    .controls .btn-sm {
+        padding: 5px 14px;
+        border: 1.5px solid var(--teal);
+        border-radius: 9px;
+        background: rgba(10,42,51,0.6);
+        color: var(--mint);
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-family: Georgia, serif;
+    }
+    .controls .btn-sm:hover {
+        background: var(--teal-dark);
+        color: #04262b;
+        border-color: var(--mint);
+    }
+    .hint {
+        text-align: center;
+        font-size: 13px;
+        color: var(--text-soft);
+        margin-top: 10px;
+        padding: 8px;
+        background: rgba(10,42,51,0.5);
+        border-radius: 8px;
+        border: 1px solid rgba(26,188,156,0.25);
+        font-style: italic;
+    }
+    .hint span { color: var(--mint); font-weight: 700; font-style: normal; }
+
+    /* ===== КАНВАС-ПАНЕЛЬ ===== */
+    .draw-panel {
+        margin-top: 10px;
+        padding: 10px;
+        background: rgba(10,42,51,0.7);
+        border-radius: 12px;
+        border: 1.5px solid var(--teal-dark);
+    }
+    .draw-toolbar {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-bottom: 8px;
+        padding: 6px;
+        background: rgba(26,188,156,0.08);
+        border-radius: 8px;
+        border: 1px solid rgba(26,188,156,0.25);
+    }
+    .draw-toolbar .tool {
+        padding: 5px 11px;
+        border: 1.5px solid var(--teal);
+        border-radius: 8px;
+        background: rgba(10,42,51,0.6);
+        color: var(--mint);
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.25s;
+        font-family: Georgia, serif;
+        white-space: nowrap;
+    }
+    .draw-toolbar .tool:hover {
+        background: var(--teal-dark);
+        color: #04262b;
+    }
+    .draw-toolbar .tool.active {
+        background: var(--teal);
+        color: #04262b;
+        border-color: var(--mint);
+        box-shadow: 0 2px 10px rgba(26,188,156,0.4);
+    }
+    .draw-toolbar .tool.color-blue { border-color: var(--teal); color: var(--mint); }
+    .draw-toolbar .tool.color-blue.active { background: var(--teal); color: #04262b; }
+    .draw-toolbar .tool.color-red { border-color: var(--coral); color: var(--coral); }
+    .draw-toolbar .tool.color-red.active { background: var(--coral); color: #04262b; }
+    .draw-toolbar .tool.line-tool { border-color: var(--gold); color: var(--gold); }
+    .draw-toolbar .tool.line-tool.active { background: var(--gold); color: #04262b; }
+
+    .draw-canvas-wrap {
+        background: #f7fcfa;
+        border-radius: 10px;
+        border: 2px solid var(--teal-dark);
+        padding: 5px;
+        text-align: center;
+    }
+    .draw-canvas-wrap canvas {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        margin: 0 auto;
+        background: #f7fcfa;
+        border-radius: 8px;
+        touch-action: none;
+        cursor: crosshair;
+    }
+    .draw-hint {
+        text-align: center;
+        font-size: 12px;
+        color: var(--text-soft);
+        margin-top: 6px;
+        font-style: italic;
+    }
+    .draw-hint span { color: var(--mint); font-weight: 700; font-style: normal; }
+
+    /* ===== ОБРАЗЦЫ ===== */
+    .sample-block {
+        background: rgba(10,42,51,0.6);
+        border: 1.5px solid rgba(26,188,156,0.4);
+        border-radius: 16px;
+        padding: 16px 20px;
+        margin-bottom: 14px;
+    }
+    .sample-title {
+        font-size: 17px;
+        font-weight: 700;
+        color: var(--gold);
+        margin-bottom: 8px;
+    }
+    .sample-task {
+        font-size: 15px;
+        color: var(--text);
+        margin-bottom: 10px;
+        line-height: 1.7;
+    }
+    .sample-task .hl { color: var(--coral); font-weight: 700; }
+    .sample-task .hl-blue { color: var(--mint); font-weight: 700; }
+    .sample-task .hl-green { color: var(--ok); font-weight: 700; }
+
+    /* ===== УРОВНИ ===== */
+    .level-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+    }
+    .level-btn {
+        padding: 8px 24px;
+        border: 2px solid rgba(184,216,208,0.4);
+        border-radius: 12px;
+        background: rgba(10,42,51,0.6);
+        color: var(--text-soft);
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-family: Georgia, serif;
+    }
+    .level-btn:hover { transform: translateY(-2px); }
+    .level-btn.easy { border-color: var(--ok); color: var(--ok); }
+    .level-btn.easy.active {
+        background: rgba(46,204,113,0.18);
+        box-shadow: 0 4px 16px rgba(46,204,113,0.3);
+    }
+    .level-btn.medium { border-color: var(--gold); color: var(--gold); }
+    .level-btn.medium.active {
+        background: rgba(244,211,94,0.18);
+        box-shadow: 0 4px 16px rgba(244,211,94,0.3);
+    }
+    .level-btn.hard { border-color: var(--coral); color: var(--coral); }
+    .level-btn.hard.active {
+        background: rgba(255,107,107,0.18);
+        box-shadow: 0 4px 16px rgba(255,107,107,0.3);
+    }
+    .progress-text {
+        text-align: center;
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text);
+        margin: 8px 0 14px;
+        padding: 9px;
+        background: rgba(26,188,156,0.12);
+        border-radius: 10px;
+        border: 1.5px solid rgba(26,188,156,0.4);
+        font-family: 'Courier New', monospace;
+        letter-spacing: 0.5px;
+    }
+    .progress-text span { color: var(--gold); font-size: 17px; }
+
+    /* ===== ЗАДАЧИ ===== */
+    .task-item {
+        background: rgba(26,188,156,0.08);
+        border: 1.5px solid rgba(26,188,156,0.4);
+        border-radius: 12px;
+        padding: 14px 16px;
+        margin-bottom: 12px;
+        transition: all 0.3s;
+    }
+    .task-item:hover {
+        border-color: var(--teal);
+        box-shadow: 0 2px 16px rgba(26,188,156,0.15);
+    }
+    .task-item .question {
+        font-size: 15px;
+        color: var(--text);
+        font-weight: 600;
+        line-height: 1.6;
+        margin-bottom: 10px;
+    }
+    .task-item .question .hl { color: var(--coral); font-weight: 700; }
+    .task-item .question .hl-blue { color: var(--mint); font-weight: 700; }
+    .task-item .question .hl-orange { color: var(--gold); font-weight: 700; }
+
+    .task-item .controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+    .task-item .controls input {
+        width: 85px;
+        padding: 6px 8px;
+        font-size: 15px;
+        text-align: center;
+        border: 2px solid var(--teal);
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+        outline: none;
+        transition: all 0.3s;
+        background: rgba(10,42,51,0.7);
+        color: var(--text);
+        font-weight: 700;
+    }
+    .task-item .controls input::placeholder { color: rgba(184,216,208,0.4); }
+    .task-item .controls input:focus {
+        border-color: var(--mint);
+        box-shadow: 0 0 0 3px rgba(26,188,156,0.2);
+    }
+    .task-item .controls input.correct {
+        border-color: var(--ok);
+        background: rgba(46,204,113,0.18);
+    }
+    .task-item .controls input.wrong {
+        border-color: var(--err);
+        background: rgba(255,107,107,0.18);
+    }
+    .task-item .controls .btn {
+        padding: 5px 14px;
+        border: 1.5px solid var(--teal);
+        border-radius: 8px;
+        background: rgba(10,42,51,0.6);
+        color: var(--mint);
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-family: Georgia, serif;
+        white-space: nowrap;
+    }
+    .task-item .controls .btn:hover {
+        background: var(--teal-dark);
+        color: #04262b;
+    }
+    .task-item .controls .btn-check-green {
+        border-color: var(--ok);
+        color: var(--ok);
+    }
+    .task-item .controls .btn-check-green:hover {
+        background: var(--ok);
+        color: #04262b;
+    }
+    .task-item .controls .btn-draw {
+        border-color: var(--gold);
+        color: var(--gold);
+    }
+    .task-item .controls .btn-draw:hover {
+        background: var(--gold);
+        color: #04262b;
+    }
+    .task-item .task-status {
+        font-size: 18px;
+        min-width: 24px;
+        text-align: center;
+    }
+    .task-item .task-answer {
+        font-size: 14px;
+        font-weight: 700;
+        color: #04262b;
+        background: linear-gradient(135deg, var(--mint), var(--teal));
+        padding: 4px 12px;
+        border-radius: 6px;
+        border: 2px dashed var(--gold);
+        opacity: 0;
+        transition: opacity 0.4s;
+        display: inline-block;
+        margin-top: 6px;
+        font-family: 'Courier New', monospace;
+    }
+    .task-item .task-answer.visible { opacity: 1; }
+    .task-item .draw-panel-holder { margin-top: 10px; }
+    .task-item .draw-panel-holder .draw-panel { display: none; }
+    .task-item .draw-panel-holder.show-panel .draw-panel { display: block; }
+
+    /* ===== ДЗ ===== */
+    .hw-item {
+        background: rgba(26,188,156,0.08);
+        border: 1.5px solid rgba(26,188,156,0.4);
+        border-radius: 12px;
+        padding: 14px 16px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        transition: all 0.3s;
+    }
+    .hw-item:hover { border-color: var(--teal); }
+    .hw-item .question {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text);
+        flex: 1;
+        min-width: 220px;
+        line-height: 1.6;
+    }
+    .hw-item .question .hl { color: var(--coral); font-weight: 700; }
+    .hw-item .question .hl-blue { color: var(--mint); font-weight: 700; }
+    .hw-item .question .hl-orange { color: var(--gold); font-weight: 700; }
+    .hw-item .hw-answer {
+        font-size: 14px;
+        font-weight: 700;
+        color: #04262b;
+        background: linear-gradient(135deg, var(--mint), var(--teal));
+        padding: 5px 14px;
+        border-radius: 6px;
+        border: 2px dashed var(--gold);
+        opacity: 0;
+        transition: opacity 0.4s;
+        font-family: 'Courier New', monospace;
+    }
+    .hw-item .hw-answer.visible { opacity: 1; }
+    .btn-show-hw {
+        padding: 5px 14px;
+        border: 1.5px solid var(--gold);
+        border-radius: 8px;
+        background: rgba(10,42,51,0.6);
+        color: var(--gold);
+        font-family: Georgia, serif;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        white-space: nowrap;
+    }
+    .btn-show-hw:hover {
+        background: var(--gold);
+        color: #04262b;
+    }
+
+    /* ===== ФУТЕР ===== */
+    .footer {
+        margin-top: 20px;
+        padding-top: 12px;
+        border-top: 2px solid var(--teal-dark);
+        text-align: center;
+        font-size: 11px;
+        color: var(--text-soft);
+    }
+    .footer .school {
+        font-weight: 700;
+        color: var(--gold);
+        font-size: 13px;
+        letter-spacing: 1px;
+    }
+
+    @media (max-width: 700px) {
+        .container { padding: 14px 12px 16px; }
+        .section-title { font-size: 21px; }
+        .topbar { padding: 6px 10px; }
+        .logo-mini { padding: 4px 9px; }
+        .logo-greek { font-size: 13px; letter-spacing: 2px; }
+        .topbar-chip { font-size: 11px; padding: 4px 9px; }
+        .topbar-chip .val { font-size: 12px; }
+        .topbar-chip .val.timer { font-size: 13px; }
+        .trainer-block { padding: 12px 12px 14px; }
+        .info .label { font-size: 13px; }
+        .info .label .val { font-size: 16px; }
+        .input-area input { width: 95px; font-size: 15px; }
+        .sample-block { padding: 12px 14px; }
+        .task-item .controls { justify-content: center; }
+        .hw-item { flex-direction: column; align-items: stretch; }
+        .hw-item .question { text-align: center; }
+        .draw-toolbar .tool { padding: 4px 9px; font-size: 11px; }
+        .form-group input { width: 100%; }
+        .nav-row { justify-content: center; }
+        .btn-next, .btn-back { padding: 9px 22px; font-size: 14px; }
+    }
+
+    @media (max-width: 400px) {
+        .topbar-info { gap: 5px; }
+        .topbar-chip { font-size: 10px; padding: 3px 7px; }
+        .topbar-chip .val.timer { font-size: 12px; letter-spacing: 1px; }
+        .input-area input { width: 75px; font-size: 14px; }
+        .task-text { font-size: 13px; }
+        .task-item .question { font-size: 13px; }
+        .draw-toolbar .tool { padding: 4px 7px; font-size: 10px; }
+        .btn-next, .btn-back { padding: 8px 16px; font-size: 13px; }
+    }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+    <div class="logo-mini">
+        <div class="logo-dots">● ● ● ●<br>● ● ●<br>● ●<br>●</div>
+        <div class="logo-text">
+            <div class="logo-greek">ΤΕΤΡΑΚΤΥΣ</div>
+            <div class="logo-rus">ГЕОМЕТРИЯ 7 · УГЛЫ</div>
+        </div>
+    </div>
+    <div class="topbar-info">
+        <div class="topbar-chip">
+            <span class="lbl">📅</span>
+            <span class="val" id="topDate">—</span>
+        </div>
+        <div class="topbar-chip hidden" id="topNameChip">
+            <span class="lbl">👤</span>
+            <span class="val" id="topName">—</span>
+        </div>
+        <div class="topbar-chip hidden" id="topTimerChip">
+            <span class="lbl">⏱️</span>
+            <span class="val timer" id="topTimer">00:00</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- ===== СТР 1: ПРИВЕТСТВИЕ ===== -->
+    <div class="page active" id="pageWelcome">
+        <div class="welcome">
+            <span class="emoji">📐</span>
+            <h1>Добро пожаловать на <span>урок!</span></h1>
+            <p>Измерение углов · Геометрия 7</p>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="studentName">👤 ИМЯ</label>
+                    <input type="text" id="studentName" placeholder="Введи имя..." maxlength="25">
+                </div>
+            </div>
+            <button class="btn-start" id="startBtn" disabled>🚀 Начать урок!</button>
+        </div>
+    </div>
+
+    <!-- ===== СТР 2: ОПРЕДЕЛЕНИЯ ===== -->
+    <div class="page" id="pageDefinitions">
+        <div class="section-title">📖 <span>Определения</span></div>
+        <div class="section-sub">Что такое угол и его градусная мера</div>
+
+        <div class="theory-box">
+            <h3>📌 Что такое угол?</h3>
+            <p>
+                <b>Угол</b> — это фигура, образованная двумя лучами,<br>
+                выходящими из одной точки.<br>
+                Точка называется <span class="hl">вершиной угла</span>,<br>
+                лучи — <span class="hl-blue">сторонами угла</span>.
+            </p>
+        </div>
+
+        <div class="theory-box">
+            <h3>📌 Градусная мера угла</h3>
+            <p>
+                <b>Градусная мера</b> — это число, показывающее,<br>
+                сколько раз градус и его части укладываются в угле.<br>
+                Обозначается: <span class="hl-blue">∠AOB = 60°</span>.
+            </p>
+        </div>
+
+        <div class="theory-box">
+            <h3>📌 Виды углов</h3>
+            <p>
+                <span class="hl-blue">Острый</span> — меньше 90°<br>
+                <span class="hl">Прямой</span> — равен 90°<br>
+                <span class="hl-green">Тупой</span> — больше 90°, но меньше 180°<br>
+                <b>Развёрнутый</b> — равен 180°
+            </p>
+        </div>
+
+        <div class="theory-box">
+            <h3>📌 Свойство измерения углов</h3>
+            <p>
+                Если луч <span class="hl-blue">OC</span> делит угол <span class="hl-blue">AOB</span> на два угла, то<br>
+                <span class="hl-blue">∠AOB</span> = <span class="hl">∠AOC</span> + <span class="hl-green">∠COB</span>.
+            </p>
+        </div>
+
+        <div class="trainer-block">
+            <div class="trainer-title">🎯 Попробуй! Измерь угол</div>
+            <div class="task-text">
+                Двигай <b>жёлтую точку B</b> — транспортир покажет градусную меру угла <b>AOB</b>.
+            </div>
+            <div class="canvas-wrapper">
+                <canvas id="defCanvas" width="760" height="420"></canvas>
+            </div>
+            <div class="legend">
+                <span><span class="dot red"></span> Луч OA (0°)</span>
+                <span><span class="dot gold"></span> Точка B (двигай)</span>
+            </div>
+            <div class="info">
+                <span class="label">📐 ∠AOB = <span class="val" id="defAngle">60</span>°</span>
+                <span class="label">🔷 Тип: <span class="val" id="defType">острый</span></span>
+            </div>
+            <div class="hint">
+                💡 Тяни <span>жёлтую точку B</span>: влево — угол растёт, вправо — уменьшается, вверх — 90°
+            </div>
+        </div>
+
+        <div class="nav-row">
+            <button class="btn-back" onclick="showPage('pageWelcome')">← Назад</button>
+            <button class="btn-next" onclick="goTo('pageTrainers')">🏋️ К тренажёрам →</button>
+        </div>
+    </div>
+
+    <!-- ===== СТР 3: ТРЕНАЖЁРЫ ===== -->
+    <div class="page" id="pageTrainers">
+        <div class="section-title">🏋️ <span>Тренажёры</span></div>
+        <div class="section-sub">Три интерактивных упражнения · с полем для записи</div>
+
+        <!-- Т1 -->
+        <div class="trainer-block">
+            <div class="trainer-title">📌 Тренажёр 1. Градусная мера</div>
+            <div class="task-text">
+                Двигай <b>жёлтую точку B</b> — смотри, как меняется <span class="hl-blue">∠AOB</span>.
+            </div>
+            <div class="canvas-wrapper">
+                <canvas id="canvas1" width="760" height="420"></canvas>
+            </div>
+            <div class="legend">
+                <span><span class="dot red"></span> Луч OA (0°)</span>
+                <span><span class="dot gold"></span> Точка B (двигай)</span>
+            </div>
+            <div class="info">
+                <span class="label">📐 ∠AOB = <span class="val" id="t1angle">60</span>°</span>
+                <span class="label">🔷 Тип: <span class="val" id="t1type">острый</span></span>
+            </div>
+            <div class="controls">
+                <button class="btn-sm" onclick="setT1(30)">30°</button>
+                <button class="btn-sm" onclick="setT1(60)">60°</button>
+                <button class="btn-sm" onclick="setT1(90)">90°</button>
+                <button class="btn-sm" onclick="setT1(120)">120°</button>
+                <button class="btn-sm" onclick="setT1(150)">150°</button>
+                <button class="btn-sm" onclick="randomT1()">🎲 Случайный</button>
+            </div>
+            <!-- МИНИ-КАНВАС ДЛЯ ЗАПИСИ -->
+            <div class="mini-canvas-block">
+                <div class="mini-canvas-label">✏️ <span>Запись решения</span></div>
+                <div id="drawT1"></div>
+            </div>
+        </div>
+
+        <!-- Т2 -->
+        <div class="trainer-block">
+            <div class="trainer-title">📌 Тренажёр 2. Найди весь угол</div>
+            <div class="task-text">
+                Луч <b>OC</b> делит угол <b>AOB</b> на два угла.<br>
+                <span class="hl-red">∠AOC</span> и <span class="hl-green">∠COB</span> — известны.<br>
+                Найди <span class="hl-blue">∠AOB</span>.
+            </div>
+            <div class="canvas-wrapper">
+                <canvas id="canvas2" width="760" height="420"></canvas>
+            </div>
+            <div class="legend">
+                <span><span class="dot red"></span> Луч OA</span>
+                <span><span class="dot green"></span> Точка C (двигай)</span>
+                <span><span class="dot blue"></span> Точка B (двигай)</span>
+            </div>
+            <div class="info">
+                <span class="label">∠AOC = <span class="val red" id="t2a">40</span>°</span>
+                <span class="label">∠COB = <span class="val green" id="t2b">50</span>°</span>
+                <span class="label">∠AOB = <span class="val blue" id="t2c">?</span></span>
+            </div>
+            <div class="input-area">
+                <input type="number" id="t2Input" placeholder="∠AOB = ?" min="0" max="180">
+                <button class="btn" onclick="checkT2()">✅ Проверить</button>
+            </div>
+            <div class="feedback" id="t2Feedback"></div>
+            <div class="controls">
+                <button class="btn-sm" onclick="setT2(40, 50)">40° и 50°</button>
+                <button class="btn-sm" onclick="setT2(30, 60)">30° и 60°</button>
+                <button class="btn-sm" onclick="setT2(70, 50)">70° и 50°</button>
+                <button class="btn-sm" onclick="randomT2()">🎲 Случайные</button>
+            </div>
+            <!-- МИНИ-КАНВАС ДЛЯ ЗАПИСИ -->
+            <div class="mini-canvas-block">
+                <div class="mini-canvas-label">✏️ <span>Запись решения</span> (∠AOB = ∠AOC + ∠COB)</div>
+                <div id="drawT2"></div>
+            </div>
+        </div>
+
+        <!-- Т3 -->
+        <div class="trainer-block">
+            <div class="trainer-title">📌 Тренажёр 3. Найди часть угла</div>
+            <div class="task-text">
+                Луч <b>OC</b> делит угол <b>AOB</b> на два угла.<br>
+                <span class="hl-red">∠AOC</span> — известен, <span class="hl-blue">∠AOB</span> — известен.<br>
+                Найди <span class="hl-green">∠COB</span>.
+            </div>
+            <div class="canvas-wrapper">
+                <canvas id="canvas3" width="760" height="420"></canvas>
+            </div>
+            <div class="legend">
+                <span><span class="dot red"></span> Луч OA</span>
+                <span><span class="dot green"></span> Точка C (двигай)</span>
+                <span><span class="dot blue"></span> Точка B (двигай)</span>
+            </div>
+            <div class="info">
+                <span class="label">∠AOC = <span class="val red" id="t3a">40</span>°</span>
+                <span class="label">∠AOB = <span class="val blue" id="t3b">90</span>°</span>
+                <span class="label">∠COB = <span class="val green" id="t3c">?</span></span>
+            </div>
+            <div class="input-area">
+                <input type="number" id="t3Input" placeholder="∠COB = ?" min="0" max="180">
+                <button class="btn" onclick="checkT3()">✅ Проверить</button>
+            </div>
+            <div class="feedback" id="t3Feedback"></div>
+            <div class="controls">
+                <button class="btn-sm" onclick="setT3(40, 90)">40° и 90°</button>
+                <button class="btn-sm" onclick="setT3(30, 100)">30° и 100°</button>
+                <button class="btn-sm" onclick="setT3(50, 120)">50° и 120°</button>
+                <button class="btn-sm" onclick="randomT3()">🎲 Случайные</button>
+            </div>
+            <!-- МИНИ-КАНВАС ДЛЯ ЗАПИСИ -->
+            <div class="mini-canvas-block">
+                <div class="mini-canvas-label">✏️ <span>Запись решения</span> (∠COB = ∠AOB − ∠AOC)</div>
+                <div id="drawT3"></div>
+            </div>
+        </div>
+
+        <div class="nav-row">
+            <button class="btn-back" onclick="showPage('pageDefinitions')">← Назад</button>
+            <button class="btn-next" onclick="goTo('pageSamples')">📖 К образцам →</button>
+        </div>
+    </div>
+
+    <!-- ===== СТР 4: ОБРАЗЦЫ ===== -->
+    <div class="page" id="pageSamples">
+        <div class="section-title">📖 <span>Образцы решения</span></div>
+        <div class="section-sub">Условие задачи · реши на канвасе</div>
+
+        <div class="sample-block">
+            <div class="sample-title">📌 Задача 1. «В … раз больше»</div>
+            <div class="sample-task">
+                Луч <b>OC</b> делит угол <b>AOB</b> на два угла.<br>
+                <b>∠AOC</b> в <span class="hl">2 раза</span> больше <b>∠COB</b>.<br>
+                <b>∠AOB</b> = <span class="hl">120°</span>.<br>
+                Найдите <b>∠AOC</b> и <b>∠COB</b>.
+            </div>
+            <div id="drawSample1"></div>
+        </div>
+
+        <div class="sample-block">
+            <div class="sample-title">📌 Задача 2. «Отношение»</div>
+            <div class="sample-task">
+                Луч <b>OC</b> делит угол <b>AOB</b> на два угла.<br>
+                <b>∠AOC</b> : <b>∠COB</b> = <span class="hl">2 : 3</span>.<br>
+                <b>∠AOB</b> = <span class="hl">150°</span>.<br>
+                Найдите <b>∠AOC</b> и <b>∠COB</b>.
+            </div>
+            <div id="drawSample2"></div>
+        </div>
+
+        <div class="sample-block">
+            <div class="sample-title">📌 Задача 3. «На больше / на меньше»</div>
+            <div class="sample-task">
+                Луч <b>OC</b> делит угол <b>AOB</b> на два угла.<br>
+                <b>∠AOC</b> на <span class="hl">20°</span> меньше <b>∠COB</b>.<br>
+                <b>∠AOB</b> = <span class="hl">100°</span>.<br>
+                Найдите <b>∠AOC</b> и <b>∠COB</b>.
+            </div>
+            <div id="drawSample3"></div>
+        </div>
+
+        <div class="nav-row">
+            <button class="btn-back" onclick="showPage('pageTrainers')">← Назад</button>
+            <button class="btn-next" onclick="goTo('pageTasks')">✏️ К задачам →</button>
+        </div>
+    </div>
+
+    <!-- ===== СТР 5: ЗАДАЧИ ===== -->
+    <div class="page" id="pageTasks">
+        <div class="section-title">✏️ <span>Задачи</span></div>
+        <div class="section-sub">3 уровня сложности · с полем для решения</div>
+
+        <div class="level-buttons">
+            <button class="level-btn easy active" data-level="easy" onclick="switchLevel('easy')">🟢 Лёгкий</button>
+            <button class="level-btn medium" data-level="medium" onclick="switchLevel('medium')">🟡 Средний</button>
+            <button class="level-btn hard" data-level="hard" onclick="switchLevel('hard')">🔴 Сложный</button>
+        </div>
+
+        <div class="progress-text">✅ Решено: <span id="tasksCount">0</span> из <span id="tasksTotal">0</span></div>
+
+        <div id="tasksContainer"></div>
+
+        <div class="nav-row">
+            <button class="btn-back" onclick="showPage('pageSamples')">← Назад</button>
+            <button class="btn-next" onclick="goTo('pageHW')">🏠 К ДЗ →</button>
+        </div>
+    </div>
+
+    <!-- ===== СТР 6: ДЗ ===== -->
+    <div class="page" id="pageHW">
+        <div class="section-title">🏠 <span>Домашнее</span> задание</div>
+        <div class="section-sub">Реши задачи и проверь себя</div>
+
+        <div id="hwContainer"></div>
+
+        <div class="nav-row">
+            <button class="btn-back" onclick="showPage('pageTasks')">← Назад</button>
+            <button class="btn-next" onclick="finishLesson()">🏁 Завершить занятие</button>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="school">🏛️ ΤΕΤΡΑΚΤΥΣ · Школа математики Елены Михалевой</div>
+        <div style="margin-top:3px;">Интерактивная геометрия · Измерение углов</div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+//  ДАТА
+// ============================================================
+(function() {
+    const d = new Date();
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yyyy = d.getFullYear();
+    document.getElementById('topDate').textContent = dd + '.' + mm + '.' + yyyy;
+})();
+
+// ============================================================
+//  ТАЙМЕР
+// ============================================================
+let timerSeconds = 0;
+let timerInterval = null;
+let timerStarted = false;
+
+function startTimer() {
+    if (timerStarted) return;
+    timerStarted = true;
+    timerInterval = setInterval(() => {
+        timerSeconds++;
+        const m = Math.floor(timerSeconds / 60);
+        const s = timerSeconds % 60;
+        document.getElementById('topTimer').textContent =
+            String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    }, 1000);
+}
+function stopTimer() {
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+}
+
+// ============================================================
+//  СТРАНИЦЫ
+// ============================================================
+let studentName = '', studentDate = '';
+
+function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goTo(id) {
+    showPage(id);
+    if (id === 'pageTrainers') {
+        setTimeout(() => { drawT1(); drawT2(); drawT3(); }, 50);
+    }
+    if (id === 'pageDefinitions') {
+        setTimeout(() => drawDefCanvas(), 50);
+    }
+    if (id === 'pageSamples') {
+        setTimeout(() => initSampleCanvases(), 50);
+    }
+    if (id === 'pageTasks') {
+        setTimeout(() => renderTasks(currentLevel), 50);
+    }
+    if (id === 'pageHW') {
+        setTimeout(() => renderHW(), 50);
+    }
+}
+
+const nameInput = document.getElementById('studentName');
+const startBtn = document.getElementById('startBtn');
+function checkStart() { startBtn.disabled = nameInput.value.trim().length === 0; }
+nameInput.addEventListener('input', checkStart);
+setTimeout(checkStart, 100);
+
+startBtn.addEventListener('click', () => {
+    studentName = nameInput.value.trim();
+    studentDate = new Date().toLocaleDateString('ru-RU');
+    document.getElementById('topName').textContent = studentName;
+    document.getElementById('topNameChip').classList.remove('hidden');
+    document.getElementById('topTimerChip').classList.remove('hidden');
+    startTimer();
+    showPage('pageDefinitions');
+    setTimeout(() => {
+        initDefCanvas();
+        initAllTrainers();
+        initTrainerMiniCanvases();
+        initSampleCanvases();
+        renderTasks('easy');
+        renderHW();
+    }, 50);
+});
+
+nameInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !startBtn.disabled) startBtn.click();
+});
+
+function finishLesson() {
+    stopTimer();
+    const m = Math.floor(timerSeconds / 60);
+    const s = timerSeconds % 60;
+    const timeStr = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    alert('🎉 Поздравляю, ' + studentName + '!\nТы успешно завершил занятие!\n\n📅 ' + studentDate +
+          '\n⏱️ Время: ' + timeStr +
+          '\n🏛️ ΤΕΤΡΑΚΤΥΣ · Школа математики Елены Михалевой');
+}
+
+// ============================================================
+//  ОБЩИЕ ПАРАМЕТРЫ ТРАНСПОРТИРА
+// ============================================================
+const O = { x: 340, y: 380 };
+const R = 300;
+const RULER_R = 320;
+const D2R = Math.PI / 180;
+
+// ============================================================
+//  УНИВЕРСАЛЬНАЯ ОТРИСОВКА УГЛА
+//  ШКАЛА: 0° справа (луч OA), 180° слева
+// ============================================================
+function drawAngle(ctx, canvas, angleC, angleB, showC, showAOB, showCOB) {
+    const w = canvas.width, h = canvas.height;
+
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = '#f7fcfa';
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.strokeStyle = 'rgba(14,124,102,0.08)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x <= w; x += 20) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+    }
+    for (let y = 0; y <= h; y += 20) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+    }
+
+    // Полукруг шкалы
+    ctx.beginPath();
+    ctx.arc(O.x, O.y, RULER_R, Math.PI, 2 * Math.PI);
+    ctx.strokeStyle = 'rgba(14,124,102,0.30)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Деления
+    // ВАЖНО: 0° справа, 180° слева → rad = a * D2R
+    for (let a = 0; a <= 180; a += 5) {
+        const rad = a * D2R;
+        const x1 = O.x + RULER_R * Math.cos(rad);
+        const y1 = O.y - RULER_R * Math.sin(rad);
+        const big = (a % 30 === 0);
+        const medium = (a % 10 === 0);
+        const len = big ? 16 : (medium ? 10 : 6);
+        const x2 = O.x + (RULER_R - len) * Math.cos(rad);
+        const y2 = O.y - (RULER_R - len) * Math.sin(rad);
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = big ? '#0e7c66' : 'rgba(14,124,102,0.55)';
+        ctx.lineWidth = big ? 2 : (medium ? 1.3 : 1);
+        ctx.stroke();
+
+        if (big) {
+            const tx = O.x + (RULER_R + 18) * Math.cos(rad);
+            const ty = O.y - (RULER_R + 18) * Math.sin(rad);
+            ctx.fillStyle = '#0e7c66';
+            ctx.font = 'bold 13px Courier New';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(a + '°', tx, ty);
+        }
+    }
+
+    // Луч OA — 0° вправо
+    const ax = O.x + R;
+    const ay = O.y;
+
+    ctx.beginPath();
+    ctx.moveTo(O.x, O.y);
+    ctx.lineTo(ax, ay);
+    ctx.strokeStyle = '#ff6b6b';
+    ctx.lineWidth = 4;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+
+    // Луч OB
+    const bRad = angleB * D2R;
+    const bx = O.x + R * Math.cos(bRad);
+    const by = O.y - R * Math.sin(bRad);
+
+    ctx.beginPath();
+    ctx.moveTo(O.x, O.y);
+    ctx.lineTo(bx, by);
+    ctx.strokeStyle = '#1abc9c';
+    ctx.lineWidth = 4;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+
+    // Луч OC
+    let ccx, ccy;
+    if (showC) {
+        const cRad = angleC * D2R;
+        ccx = O.x + R * Math.cos(cRad);
+        ccy = O.y - R * Math.sin(cRad);
+
+        ctx.beginPath();
+        ctx.moveTo(O.x, O.y);
+        ctx.lineTo(ccx, ccy);
+        ctx.strokeStyle = '#2ecc71';
+        ctx.lineWidth = 4;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+    }
+
+    // Дуги
+    if (showC) {
+        ctx.beginPath();
+        ctx.arc(O.x, O.y, 90, -angleC * D2R, 0, false);
+        ctx.strokeStyle = '#ff6b6b';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(O.x, O.y, 110, -angleB * D2R, -angleC * D2R, false);
+        ctx.strokeStyle = '#2ecc71';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(O.x, O.y, 130, -angleB * D2R, 0, false);
+        ctx.strokeStyle = 'rgba(26,188,156,0.5)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    } else {
+        ctx.beginPath();
+        ctx.arc(O.x, O.y, 90, -bRad, 0, false);
+        ctx.strokeStyle = '#f4d35e';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+    }
+
+    // Вершина O
+    ctx.beginPath();
+    ctx.arc(O.x, O.y, 10, 0, 2 * Math.PI);
+    ctx.fillStyle = '#f4d35e';
+    ctx.fill();
+    ctx.strokeStyle = '#0e7c66';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    ctx.fillStyle = '#0e7c66';
+    ctx.font = 'bold 16px Georgia';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText('O', O.x, O.y + 14);
+
+    // Точка A
+    ctx.beginPath();
+    ctx.arc(ax, ay, 8, 0, 2 * Math.PI);
+    ctx.fillStyle = '#ff6b6b';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = '#ff6b6b';
+    ctx.font = 'bold 16px Georgia';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('A', ax + 14, ay);
+
+    // Точка B
+    ctx.beginPath();
+    ctx.arc(bx, by, 14, 0, 2 * Math.PI);
+    ctx.fillStyle = '#f4d35e';
+    ctx.fill();
+    ctx.strokeStyle = '#0e7c66';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(bx - 4, by - 4, 4, 0, 2 * Math.PI);
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.fill();
+    ctx.fillStyle = '#0e7c66';
+    ctx.font = 'bold 15px Georgia';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('B', bx, by + 1);
+
+    // Точка C
+    if (showC) {
+        ctx.beginPath();
+        ctx.arc(ccx, ccy, 14, 0, 2 * Math.PI);
+        ctx.fillStyle = '#2ecc71';
+        ctx.fill();
+        ctx.strokeStyle = '#0e7c66';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(ccx - 4, ccy - 4, 4, 0, 2 * Math.PI);
+        ctx.fillStyle = 'rgba(255,255,255,0.7)';
+        ctx.fill();
+        ctx.fillStyle = '#0e7c66';
+        ctx.font = 'bold 15px Georgia';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('C', ccx, ccy + 1);
+    }
+
+    // Подписи
+    ctx.font = 'bold 20px Georgia';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    if (showC) {
+        const midAOC = (angleC / 2) * D2R;
+        ctx.fillStyle = '#ff6b6b';
+        ctx.fillText(angleC + '°', O.x + 70 * Math.cos(midAOC), O.y - 70 * Math.sin(midAOC));
+
+        const midCOB = ((angleC + angleB) / 2) * D2R;
+        ctx.fillStyle = '#2ecc71';
+        ctx.fillText(showCOB ? (angleB - angleC) + '°' : '?',
+                     O.x + 90 * Math.cos(midCOB), O.y - 90 * Math.sin(midCOB));
+
+        if (showAOB) {
+            const midAOB = (angleB / 2) * D2R;
+            ctx.fillStyle = '#1abc9c';
+            ctx.fillText(angleB + '°', O.x + 155 * Math.cos(midAOB), O.y - 155 * Math.sin(midAOB));
+        }
+    } else {
+        const mid = (angleB / 2) * D2R;
+        ctx.fillStyle = '#0e7c66';
+        ctx.fillText(angleB + '°', O.x + 130 * Math.cos(mid), O.y - 130 * Math.sin(mid));
+    }
+}
+
+function angleType(a) {
+    if (a < 90) return 'острый';
+    if (a === 90) return 'прямой';
+    if (a < 180) return 'тупой';
+    return 'развёрнутый';
+}
+
+// ============================================================
+//  ПЕРЕТАСКИВАНИЕ ЛУЧЕЙ
+// ============================================================
+function setupAngleDrag(canvasId, config) {
+    const canvas = document.getElementById(canvasId);
+    let dragging = null;
+
+    function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const sx = canvas.width / rect.width;
+        const sy = canvas.height / rect.height;
+        let cx, cy;
+        if (e.touches) { cx = e.touches[0].clientX; cy = e.touches[0].clientY; }
+        else { cx = e.clientX; cy = e.clientY; }
+        return { x: (cx - rect.left) * sx, y: (cy - rect.top) * sy };
+    }
+
+    function getPoints() {
+        const pts = {};
+        const bRad = config.getB() * D2R;
+        pts.B = {
+            x: O.x + R * Math.cos(bRad),
+            y: O.y - R * Math.sin(bRad)
+        };
+        if (config.hasC) {
+            const cRad = config.getC() * D2R;
+            pts.C = {
+                x: O.x + R * Math.cos(cRad),
+                y: O.y - R * Math.sin(cRad)
+            };
+        }
+        return pts;
+    }
+
+    function angleFromPos(pos) {
+        const dx = pos.x - O.x;
+        const dy = O.y - pos.y;
+        let a = Math.atan2(dy, dx) * 180 / Math.PI;
+        if (a < 0) a = 0;
+        if (a > 180) a = 180;
+        return Math.round(a);
+    }
+
+    function onDown(e) {
+        e.preventDefault();
+        const pos = getPos(e);
+        const pts = getPoints();
+        let best = null, bestDist = Infinity;
+        for (const [key, pt] of Object.entries(pts)) {
+            const d = Math.sqrt((pos.x - pt.x) ** 2 + (pos.y - pt.y) ** 2);
+            if (d < 45 && d < bestDist) {
+                best = key;
+                bestDist = d;
+            }
+        }
+        if (best) {
+            dragging = best;
+            canvas.style.cursor = 'grabbing';
+            if (config.onReset) config.onReset();
+        }
+    }
+
+    function onMove(e) {
+        const pos = getPos(e);
+        if (dragging) {
+            const newAngle = angleFromPos(pos);
+            if (dragging === 'B') config.setB(newAngle);
+            else if (dragging === 'C') config.setC(newAngle);
+            config.redraw();
+            e.preventDefault && e.preventDefault();
+            return;
+        }
+        const pts = getPoints();
+        let near = false;
+        for (const pt of Object.values(pts)) {
+            if (Math.sqrt((pos.x - pt.x) ** 2 + (pos.y - pt.y) ** 2) < 45) { near = true; break; }
+        }
+        canvas.style.cursor = near ? 'grab' : 'crosshair';
+    }
+
+    function onUp() {
+        dragging = null;
+        canvas.style.cursor = 'crosshair';
+    }
+
+    canvas.addEventListener('mousedown', onDown);
+    canvas.addEventListener('mousemove', onMove);
+    canvas.addEventListener('mouseup', onUp);
+    canvas.addEventListener('mouseleave', onUp);
+    canvas.addEventListener('touchstart', onDown, { passive: false });
+    canvas.addEventListener('touchmove', onMove, { passive: false });
+    canvas.addEventListener('touchend', onUp, { passive: false });
+}
+
+// ============================================================
+//  КАНВАС-ПАНЕЛЬ (КАРАНДАШ + ПРЯМАЯ + ЛАСТИК)
+// ============================================================
+function createDrawPanel(containerId, compact) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const panel = document.createElement('div');
+    panel.className = 'draw-panel';
+    if (compact) panel.style.padding = '6px';
+    if (compact) panel.style.marginTop = '0';
+
+    const state = {
+        mode: 'pen',
+        color: '#1abc9c',
+        history: [],
+        lineStart: null,
+        linePreview: null
+    };
+
+    const toolbar = document.createElement('div');
+    toolbar.className = 'draw-toolbar';
+    if (compact) toolbar.style.marginBottom = '4px';
+    if (compact) toolbar.style.padding = '3px';
+
+    function makeTool(text, cls, onClick, active) {
+        const b = document.createElement('button');
+        b.className = 'tool ' + cls + (active ? ' active' : '');
+        b.textContent = text;
+        if (compact) { b.style.padding = '3px 8px'; b.style.fontSize = '11px'; }
+        b.onclick = function() {
+            toolbar.querySelectorAll('.tool').forEach(t => t.classList.remove('active'));
+            b.classList.add('active');
+            onClick();
+            redraw();
+        };
+        return b;
+    }
+
+    toolbar.appendChild(makeTool('✏️', 'pen-tool', () => { state.mode = 'pen'; }, true));
+    toolbar.appendChild(makeTool('🔵', 'color-blue', () => { state.color = '#1abc9c'; state.mode = 'pen'; }, true));
+    toolbar.appendChild(makeTool('🔴', 'color-red', () => { state.color = '#ff6b6b'; state.mode = 'pen'; }, false));
+    toolbar.appendChild(makeTool('📏', 'line-tool', () => { state.mode = 'line'; state.lineStart = null; state.linePreview = null; }, false));
+    toolbar.appendChild(makeTool('🧽', 'eraser-tool', () => { state.mode = 'eraser'; }, false));
+    toolbar.appendChild(makeTool('↩️', 'undo-tool', () => { undo(); }, false));
+    toolbar.appendChild(makeTool('🗑️', 'clear-tool', () => { state.history = []; state.lineStart = null; state.linePreview = null; redraw(); }, false));
+
+    panel.appendChild(toolbar);
+
+    const wrap = document.createElement('div');
+    wrap.className = 'draw-canvas-wrap';
+    const canvas = document.createElement('canvas');
+    canvas.width = compact ? 800 : 800;
+    canvas.height = compact ? 160 : 260;
+    wrap.appendChild(canvas);
+    panel.appendChild(wrap);
+
+    if (!compact) {
+        const hint = document.createElement('div');
+        hint.className = 'draw-hint';
+        hint.innerHTML = '✏️ Пиши: <span>карандаш синий / красный</span> · <span>📏 Прямая</span> — клик в начале, клик в конце';
+        panel.appendChild(hint);
+    }
+
+    container.appendChild(panel);
+
+    const ctx = canvas.getContext('2d');
+
+    function drawBackground() {
+        ctx.fillStyle = '#f7fcfa';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = 'rgba(14,124,102,0.10)';
+        ctx.lineWidth = 1;
+        for (let x = 0; x <= canvas.width; x += 20) {
+            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+        }
+        for (let y = 0; y <= canvas.height; y += 20) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+        }
+    }
+
+    function drawStroke(stroke) {
+        if (stroke.type === 'eraser') {
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(stroke.x, stroke.y, stroke.size, 0, 2 * Math.PI);
+            ctx.clip();
+            drawBackground();
+            ctx.restore();
+            return;
+        }
+        if (stroke.type === 'line') {
+            ctx.beginPath();
+            ctx.strokeStyle = stroke.color;
+            ctx.lineWidth = 2.2;
+            ctx.lineCap = 'round';
+            ctx.moveTo(stroke.x1, stroke.y1);
+            ctx.lineTo(stroke.x2, stroke.y2);
+            ctx.stroke();
+            return;
+        }
+        ctx.beginPath();
+        ctx.strokeStyle = stroke.color;
+        ctx.lineWidth = stroke.size;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        if (stroke.points.length === 1) {
+            ctx.arc(stroke.points[0].x, stroke.points[0].y, stroke.size / 2, 0, 2 * Math.PI);
+            ctx.fillStyle = stroke.color;
+            ctx.fill();
+        } else {
+            ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
+            for (let i = 1; i < stroke.points.length; i++) {
+                ctx.lineTo(stroke.points[i].x, stroke.points[i].y);
+            }
+            ctx.stroke();
+        }
+    }
+
+    function redraw() {
+        drawBackground();
+        state.history.forEach(drawStroke);
+        if (state.mode === 'line' && state.linePreview) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.setLineDash([6, 5]);
+            ctx.strokeStyle = state.color;
+            ctx.lineWidth = 2;
+            ctx.moveTo(state.linePreview.x1, state.linePreview.y1);
+            ctx.lineTo(state.linePreview.x2, state.linePreview.y2);
+            ctx.stroke();
+            ctx.restore();
+        }
+        if (state.mode === 'line' && state.lineStart) {
+            ctx.beginPath();
+            ctx.arc(state.lineStart.x, state.lineStart.y, 5, 0, 2 * Math.PI);
+            ctx.fillStyle = state.color;
+            ctx.fill();
+        }
+    }
+
+    function undo() {
+        if (state.history.length > 0) {
+            state.history.pop();
+            redraw();
+        }
+    }
+
+    function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const sx = canvas.width / rect.width;
+        const sy = canvas.height / rect.height;
+        let cx, cy;
+        if (e.touches) { cx = e.touches[0].clientX; cy = e.touches[0].clientY; }
+        else { cx = e.clientX; cy = e.clientY; }
+        return { x: (cx - rect.left) * sx, y: (cy - rect.top) * sy };
+    }
+
+    let drawing = false;
+    let currentStroke = null;
+
+    function onDown(e) {
+        e.preventDefault();
+        const pos = getPos(e);
+
+        if (state.mode === 'line') {
+            if (!state.lineStart) {
+                state.lineStart = { x: pos.x, y: pos.y };
+                state.linePreview = null;
+            } else {
+                state.history.push({
+                    type: 'line',
+                    color: state.color,
+                    x1: state.lineStart.x,
+                    y1: state.lineStart.y,
+                    x2: pos.x,
+                    y2: pos.y
+                });
+                state.lineStart = null;
+                state.linePreview = null;
+            }
+            redraw();
+            return;
+        }
+
+        if (state.mode === 'eraser') {
+            drawing = true;
+            const stroke = { type: 'eraser', size: 18, x: pos.x, y: pos.y };
+            state.history.push(stroke);
+            redraw();
+            return;
+        }
+
+        drawing = true;
+        currentStroke = {
+            type: 'pen',
+            color: state.color,
+            size: 2.2,
+            points: [{ x: pos.x, y: pos.y }]
+        };
+        state.history.push(currentStroke);
+        redraw();
+    }
+
+    function onMove(e) {
+        const pos = getPos(e);
+
+        if (state.mode === 'line' && state.lineStart) {
+            state.linePreview = {
+                x1: state.lineStart.x,
+                y1: state.lineStart.y,
+                x2: pos.x,
+                y2: pos.y
+            };
+            redraw();
+            e.preventDefault && e.preventDefault();
+            return;
+        }
+
+        if (!drawing) return;
+
+        if (state.mode === 'eraser') {
+            const last = state.history[state.history.length - 1];
+            const stroke = { type: 'eraser', size: 18, x: pos.x, y: pos.y };
+            state.history.push(stroke);
+            if (last) {
+                const steps = 4;
+                for (let i = 1; i <= steps; i++) {
+                    const ix = last.x + (pos.x - last.x) * (i / steps);
+                    const iy = last.y + (pos.y - last.y) * (i / steps);
+                    state.history.push({ type: 'eraser', size: 18, x: ix, y: iy });
+                }
+            }
+            redraw();
+            e.preventDefault && e.preventDefault();
+            return;
+        }
+
+        if (currentStroke) {
+            currentStroke.points.push({ x: pos.x, y: pos.y });
+            const pts = currentStroke.points;
+            if (pts.length >= 2) {
+                const a = pts[pts.length - 2];
+                const b = pts[pts.length - 1];
+                ctx.beginPath();
+                ctx.strokeStyle = currentStroke.color;
+                ctx.lineWidth = currentStroke.size;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.moveTo(a.x, a.y);
+                ctx.lineTo(b.x, b.y);
+                ctx.stroke();
+            }
+        }
+        e.preventDefault && e.preventDefault();
+    }
+
+    function onUp() {
+        if (drawing && currentStroke && currentStroke.type === 'pen' && currentStroke.points.length === 1) {
+            ctx.beginPath();
+            ctx.arc(currentStroke.points[0].x, currentStroke.points[0].y, currentStroke.size / 2, 0, 2 * Math.PI);
+            ctx.fillStyle = currentStroke.color;
+            ctx.fill();
+        }
+        drawing = false;
+        currentStroke = null;
+    }
+
+    canvas.addEventListener('mousedown', onDown);
+    canvas.addEventListener('mousemove', onMove);
+    canvas.addEventListener('mouseup', onUp);
+    canvas.addEventListener('mouseleave', onUp);
+    canvas.addEventListener('touchstart', onDown, { passive: false });
+    canvas.addEventListener('touchmove', onMove, { passive: false });
+    canvas.addEventListener('touchend', onUp, { passive: false });
+
+    redraw();
+}
+
+// ============================================================
+//  КАНВАС ОПРЕДЕЛЕНИЙ
+// ============================================================
+const defCanvas = document.getElementById('defCanvas');
+const defCtx = defCanvas.getContext('2d');
+let defAngle = 60;
+
+function drawDefCanvas() {
+    drawAngle(defCtx, defCanvas, 0, defAngle, false, false, false);
+    document.getElementById('defAngle').textContent = defAngle;
+    document.getElementById('defType').textContent = angleType(defAngle);
+}
+
+function initDefCanvas() {
+    drawDefCanvas();
+}
+
+setupAngleDrag('defCanvas', {
+    hasC: false,
+    getB: () => defAngle,
+    setB: (v) => {
+        defAngle = Math.max(5, Math.min(175, v));
+        document.getElementById('defAngle').textContent = defAngle;
+        document.getElementById('defType').textContent = angleType(defAngle);
+    },
+    redraw: drawDefCanvas
+});
+
+// ============================================================
+//  ТРЕНАЖЁР 1
+// ============================================================
+const c1 = document.getElementById('canvas1');
+const ctx1 = c1.getContext('2d');
+let t1Angle = 60;
+
+function drawT1() {
+    drawAngle(ctx1, c1, 0, t1Angle, false, false, false);
+    document.getElementById('t1angle').textContent = t1Angle;
+    document.getElementById('t1type').textContent = angleType(t1Angle);
+}
+function setT1(v) { t1Angle = Math.max(5, Math.min(175, v)); drawT1(); }
+function randomT1() { t1Angle = Math.round(15 + Math.random() * 150); drawT1(); }
+
+setupAngleDrag('canvas1', {
+    hasC: false,
+    getB: () => t1Angle,
+    setB: (v) => { t1Angle = Math.max(5, Math.min(175, v)); },
+    redraw: drawT1
+});
+
+// ============================================================
+//  ТРЕНАЖЁР 2
+// ============================================================
+const c2 = document.getElementById('canvas2');
+const ctx2 = c2.getContext('2d');
+let t2AOC = 40, t2COB = 50, t2Answered = false;
+
+function drawT2() {
+    const total = t2AOC + t2COB;
+    drawAngle(ctx2, c2, t2AOC, total, true, t2Answered, true);
+    document.getElementById('t2a').textContent = t2AOC;
+    document.getElementById('t2b').textContent = t2COB;
+    document.getElementById('t2c').textContent = t2Answered ? total : '?';
+}
+function setT2(aoc, cob) {
+    t2Answered = false;
+    const inp = document.getElementById('t2Input');
+    inp.value = ''; inp.className = ''; inp.disabled = false;
+    const fb = document.getElementById('t2Feedback');
+    fb.textContent = ''; fb.className = 'feedback';
+    t2AOC = Math.max(5, Math.min(160, Math.round(aoc)));
+    t2COB = Math.max(5, Math.min(160, Math.round(cob)));
+    if (t2AOC + t2COB > 175) t2COB = 175 - t2AOC;
+    drawT2();
+}
+function randomT2() {
+    t2Answered = false;
+    const inp = document.getElementById('t2Input');
+    inp.value = ''; inp.className = ''; inp.disabled = false;
+    const fb = document.getElementById('t2Feedback');
+    fb.textContent = ''; fb.className = 'feedback';
+    t2AOC = Math.round(20 + Math.random() * 60);
+    t2COB = Math.round(20 + Math.random() * 60);
+    if (t2AOC + t2COB > 170) t2COB = 170 - t2AOC;
+    drawT2();
+}
+function resetT2() {
+    if (t2Answered) {
+        t2Answered = false;
+        const inp = document.getElementById('t2Input');
+        inp.value = ''; inp.className = ''; inp.disabled = false;
+        const fb = document.getElementById('t2Feedback');
+        fb.textContent = ''; fb.className = 'feedback';
+    }
+}
+function checkT2() {
+    if (t2Answered) return;
+    const input = document.getElementById('t2Input');
+    const fb = document.getElementById('t2Feedback');
+    const val = parseFloat(input.value);
+    const total = t2AOC + t2COB;
+    if (isNaN(val)) {
+        fb.textContent = '❌ Введи число!';
+        fb.className = 'feedback wrong';
+        return;
+    }
+    if (Math.abs(val - total) < 1) {
+        t2Answered = true;
+        input.className = 'correct';
+        input.disabled = true;
+        fb.textContent = '🎉 Правильно! ∠AOB = ' + total + '°';
+        fb.className = 'feedback correct';
+        drawT2();
+    } else {
+        input.className = 'wrong';
+        fb.textContent = '❌ Неправильно. Попробуй ещё!';
+        fb.className = 'feedback wrong';
+        setTimeout(() => { input.className = ''; }, 600);
+    }
+}
+
+setupAngleDrag('canvas2', {
+    hasC: true,
+    getB: () => t2AOC + t2COB,
+    setB: (v) => {
+        const total = t2AOC + t2COB;
+        const ratio = total > 0 ? t2AOC / total : 0.5;
+        let newTotal = Math.max(10, Math.min(175, v));
+        let ac = Math.round(newTotal * ratio);
+        ac = Math.max(5, Math.min(newTotal - 5, ac));
+        t2AOC = ac;
+        t2COB = newTotal - ac;
+    },
+    getC: () => t2AOC,
+    setC: (v) => {
+        const total = t2AOC + t2COB;
+        let newAC = Math.max(5, Math.min(total - 5, v));
+        t2AOC = newAC;
+        t2COB = total - newAC;
+    },
+    onReset: resetT2,
+    redraw: drawT2
+});
+
+// ============================================================
+//  ТРЕНАЖЁР 3
+// ============================================================
+const c3 = document.getElementById('canvas3');
+const ctx3 = c3.getContext('2d');
+let t3AOC = 40, t3AOB = 90, t3Answered = false;
+
+function drawT3() {
+    drawAngle(ctx3, c3, t3AOC, t3AOB, true, true, t3Answered);
+    document.getElementById('t3a').textContent = t3AOC;
+    document.getElementById('t3b').textContent = t3AOB;
+    document.getElementById('t3c').textContent = t3Answered ? (t3AOB - t3AOC) : '?';
+}
+function setT3(aoc, aob) {
+    t3Answered = false;
+    const inp = document.getElementById('t3Input');
+    inp.value = ''; inp.className = ''; inp.disabled = false;
+    const fb = document.getElementById('t3Feedback');
+    fb.textContent = ''; fb.className = 'feedback';
+    t3AOC = Math.max(5, Math.min(160, Math.round(aoc)));
+    t3AOB = Math.max(t3AOC + 5, Math.min(175, Math.round(aob)));
+    drawT3();
+}
+function randomT3() {
+    t3Answered = false;
+    const inp = document.getElementById('t3Input');
+    inp.value = ''; inp.className = ''; inp.disabled = false;
+    const fb = document.getElementById('t3Feedback');
+    fb.textContent = ''; fb.className = 'feedback';
+    t3AOB = Math.round(50 + Math.random() * 110);
+    t3AOC = Math.round(10 + Math.random() * (t3AOB - 20));
+    drawT3();
+}
+function resetT3() {
+    if (t3Answered) {
+        t3Answered = false;
+        const inp = document.getElementById('t3Input');
+        inp.value = ''; inp.className = ''; inp.disabled = false;
+        const fb = document.getElementById('t3Feedback');
+        fb.textContent = ''; fb.className = 'feedback';
+    }
+}
+function checkT3() {
+    if (t3Answered) return;
+    const input = document.getElementById('t3Input');
+    const fb = document.getElementById('t3Feedback');
+    const val = parseFloat(input.value);
+    const cob = t3AOB - t3AOC;
+    if (isNaN(val)) {
+        fb.textContent = '❌ Введи число!';
+        fb.className = 'feedback wrong';
+        return;
+    }
+    if (Math.abs(val - cob) < 1) {
+        t3Answered = true;
+        input.className = 'correct';
+        input.disabled = true;
+        fb.textContent = '🎉 Правильно! ∠COB = ' + cob + '°';
+        fb.className = 'feedback correct';
+        drawT3();
+    } else {
+        input.className = 'wrong';
+        fb.textContent = '❌ Неправильно. Попробуй ещё!';
+        fb.className = 'feedback wrong';
+        setTimeout(() => { input.className = ''; }, 600);
+    }
+}
+
+setupAngleDrag('canvas3', {
+    hasC: true,
+    getB: () => t3AOB,
+    setB: (v) => { t3AOB = Math.max(t3AOC + 5, Math.min(175, v)); },
+    getC: () => t3AOC,
+    setC: (v) => { t3AOC = Math.max(5, Math.min(t3AOB - 5, v)); },
+    onReset: resetT3,
+    redraw: drawT3
+});
+
+function initAllTrainers() {
+    drawT1();
+    drawT2();
+    drawT3();
+}
+
+// ============================================================
+//  МИНИ-КАНВАСЫ ДЛЯ ТРЕНАЖЁРОВ
+// ============================================================
+function initTrainerMiniCanvases() {
+    ['drawT1', 'drawT2', 'drawT3'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = '';
+    });
+    createDrawPanel('drawT1', true);
+    createDrawPanel('drawT2', true);
+    createDrawPanel('drawT3', true);
+}
+
+// ============================================================
+//  ОБРАЗЦЫ
+// ============================================================
+function initSampleCanvases() {
+    ['drawSample1', 'drawSample2', 'drawSample3'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = '';
+    });
+    createDrawPanel('drawSample1');
+    createDrawPanel('drawSample2');
+    createDrawPanel('drawSample3');
+}
+
+// ============================================================
+//  БАНК ЗАДАЧ
+// ============================================================
+const taskBank = {
+    easy: [
+        { id: 1, question: 'Луч OC делит ∠AOB на два угла. ∠AOC = <span class="hl">30°</span>, ∠COB = <span class="hl-blue">40°</span>. Найдите ∠AOB.', answer: 70 },
+        { id: 2, question: 'Луч OC делит ∠AOB на два угла. ∠AOB = <span class="hl">90°</span>, ∠AOC = <span class="hl-blue">35°</span>. Найдите ∠COB.', answer: 55 },
+        { id: 3, question: 'Луч OC делит ∠AOB на два угла. ∠AOC = <span class="hl">45°</span>, ∠AOB = <span class="hl-blue">120°</span>. Найдите ∠COB.', answer: 75 },
+        { id: 4, question: 'Луч OC делит ∠AOB на два угла. ∠AOB = <span class="hl">140°</span>, ∠COB = <span class="hl-blue">80°</span>. Найдите ∠AOC.', answer: 60 }
+    ],
+    medium: [
+        { id: 5, question: 'Луч OC делит ∠AOB на два угла. ∠AOC в <span class="hl-orange">2 раза</span> больше ∠COB. ∠AOB = <span class="hl">120°</span>. Найдите ∠COB.', answer: 40 },
+        { id: 6, question: 'Луч OC делит ∠AOB на два угла. ∠AOC на <span class="hl-orange">30°</span> больше ∠COB. ∠AOB = <span class="hl">130°</span>. Найдите ∠AOC.', answer: 80 },
+        { id: 7, question: 'Луч OC делит ∠AOB на два угла. ∠AOC в <span class="hl-orange">3 раза</span> меньше ∠COB. ∠AOB = <span class="hl">160°</span>. Найдите ∠AOC.', answer: 40 },
+        { id: 8, question: 'Луч OC делит ∠AOB на два угла. ∠AOC на <span class="hl-orange">40°</span> меньше ∠COB. ∠AOB = <span class="hl">120°</span>. Найдите ∠COB.', answer: 80 }
+    ],
+    hard: [
+        { id: 9, question: 'Луч OC делит ∠AOB на два угла. ∠AOC : ∠COB = <span class="hl-orange">1 : 4</span>. ∠AOB = <span class="hl">150°</span>. Найдите ∠AOC.', answer: 30 },
+        { id: 10, question: 'Луч OC делит ∠AOB на два угла. ∠AOC : ∠COB = <span class="hl-orange">2 : 3</span>. ∠AOB = <span class="hl">150°</span>. Найдите ∠COB.', answer: 90 },
+        { id: 11, question: 'Луч OC делит ∠AOB на два угла. ∠AOC : ∠COB = <span class="hl-orange">3 : 5</span>. ∠AOB = <span class="hl">160°</span>. Найдите ∠AOC и ∠COB.', answer: [60, 100] },
+        { id: 12, question: 'Луч OC делит ∠AOB на два угла. ∠AOC : ∠COB = <span class="hl-orange">7 : 8</span>. ∠AOB = <span class="hl">150°</span>. Найдите ∠AOC и ∠COB.', answer: [70, 80] }
+    ]
+};
+
+let currentLevel = 'easy';
+let tasksDone = {};
+
+function switchLevel(level) {
+    currentLevel = level;
+    document.querySelectorAll('.level-btn').forEach(b => {
+        b.classList.remove('active');
+        if (b.dataset.level === level) b.classList.add('active');
+    });
+    renderTasks(level);
+}
+
+function renderTasks(level) {
+    const container = document.getElementById('tasksContainer');
+    container.innerHTML = '';
+    const tasks = taskBank[level];
+    tasksDone[level] = new Array(tasks.length).fill(false);
+
+    tasks.forEach((task, index) => {
+        const div = document.createElement('div');
+        div.className = 'task-item';
+
+        const q = document.createElement('div');
+        q.className = 'question';
+        q.innerHTML = task.question;
+        div.appendChild(q);
+
+        const controls = document.createElement('div');
+        controls.className = 'controls';
+
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.id = 'taskInput-' + level + '-' + index;
+        input.placeholder = '°';
+        input.min = 0;
+        input.max = 180;
+        controls.appendChild(input);
+
+        const checkBtn = document.createElement('button');
+        checkBtn.className = 'btn btn-check-green';
+        checkBtn.textContent = '✅ Проверить';
+        checkBtn.onclick = () => checkTask(level, index, task.answer);
+        controls.appendChild(checkBtn);
+
+        const drawBtn = document.createElement('button');
+        drawBtn.className = 'btn btn-draw';
+        drawBtn.textContent = '📐 Решение';
+        drawBtn.onclick = () => {
+            const p = document.getElementById('drawPanel-' + level + '-' + index);
+            p.classList.toggle('show-panel');
+        };
+        controls.appendChild(drawBtn);
+
+        const showAnsBtn = document.createElement('button');
+        showAnsBtn.className = 'btn';
+        showAnsBtn.textContent = '👁️ Ответ';
+        showAnsBtn.onclick = () => {
+            document.getElementById('taskAnswer-' + level + '-' + index).classList.toggle('visible');
+        };
+        controls.appendChild(showAnsBtn);
+
+        const status = document.createElement('span');
+        status.className = 'task-status';
+        status.id = 'taskStatus-' + level + '-' + index;
+        controls.appendChild(status);
+
+        div.appendChild(controls);
+
+        const answerDiv = document.createElement('div');
+        answerDiv.className = 'task-answer';
+        answerDiv.id = 'taskAnswer-' + level + '-' + index;
+        answerDiv.textContent = Array.isArray(task.answer) ?
+            task.answer.join('° и ') + '°' : task.answer + '°';
+        div.appendChild(answerDiv);
+
+        const panelHolder = document.createElement('div');
+        panelHolder.id = 'drawPanel-' + level + '-' + index;
+        panelHolder.className = 'draw-panel-holder';
+        div.appendChild(panelHolder);
+
+        container.appendChild(div);
+
+        createDrawPanel('drawPanel-' + level + '-' + index);
+    });
+
+    updateTaskProgress(level);
+}
+
+function checkTask(level, index, correct) {
+    if (tasksDone[level][index]) return;
+    const input = document.getElementById('taskInput-' + level + '-' + index);
+    const status = document.getElementById('taskStatus-' + level + '-' + index);
+    const val = parseFloat(input.value);
+
+    if (isNaN(val)) {
+        input.className = 'wrong';
+        status.textContent = '❌';
+        setTimeout(() => { input.className = ''; status.textContent = ''; }, 700);
+        return;
+    }
+
+    let isCorrect = false;
+    if (Array.isArray(correct)) {
+        isCorrect = Math.abs(val - correct[0]) < 1 || Math.abs(val - correct[1]) < 1;
+    } else {
+        isCorrect = Math.abs(val - correct) < 1;
+    }
+
+    if (isCorrect) {
+        tasksDone[level][index] = true;
+        input.className = 'correct';
+        input.disabled = true;
+        status.textContent = '✅';
+        status.style.color = '#2ecc71';
+        updateTaskProgress(level);
+    } else {
+        input.className = 'wrong';
+        status.textContent = '❌';
+        status.style.color = '#ff6b6b';
+        setTimeout(() => { input.className = ''; status.textContent = ''; }, 700);
+    }
+}
+
+function updateTaskProgress(level) {
+    const done = tasksDone[level] ? tasksDone[level].filter(Boolean).length : 0;
+    const total = taskBank[level] ? taskBank[level].length : 0;
+    document.getElementById('tasksCount').textContent = done;
+    document.getElementById('tasksTotal').textContent = total;
+}
+
+// ============================================================
+//  ДЗ
+// ============================================================
+const hwData = [
+    { q: 'Луч OC делит ∠AOB на два угла. ∠AOC = <span class="hl">50°</span>, ∠COB = <span class="hl-blue">70°</span>. Найдите ∠AOB.', a: '∠AOB = 120°' },
+    { q: 'Луч OC делит ∠AOB на два угла. ∠AOB = <span class="hl">160°</span>, ∠AOC = <span class="hl-blue">90°</span>. Найдите ∠COB.', a: '∠COB = 70°' },
+    { q: 'Луч OC делит ∠AOB на два угла. ∠AOC в <span class="hl-orange">3 раза</span> больше ∠COB. ∠AOB = <span class="hl">160°</span>. Найдите ∠AOC и ∠COB.', a: '∠AOC = 120°, ∠COB = 40°' },
+    { q: 'Луч OC делит ∠AOB на два угла. ∠AOC : ∠COB = <span class="hl-orange">2 : 3</span>. ∠AOB = <span class="hl">150°</span>. Найдите ∠AOC и ∠COB.', a: '∠AOC = 60°, ∠COB = 90°' }
+];
+
+function renderHW() {
+    const container = document.getElementById('hwContainer');
+    container.innerHTML = '';
+    hwData.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'hw-item';
+
+        const q = document.createElement('span');
+        q.className = 'question';
+        q.innerHTML = item.q;
+        div.appendChild(q);
+
+        const btn = document.createElement('button');
+        btn.className = 'btn-show-hw';
+        btn.textContent = '👁️ Ответ';
+        btn.onclick = () => {
+            document.getElementById('hwAnswer' + index).classList.toggle('visible');
+        };
+        div.appendChild(btn);
+
+        const ans = document.createElement('div');
+        ans.className = 'hw-answer';
+        ans.id = 'hwAnswer' + index;
+        ans.textContent = item.a;
+        div.appendChild(ans);
+
+        container.appendChild(div);
+    });
+}
+
+// ============================================================
+//  СТАРТ
+// ============================================================
+initAllTrainers();
+initTrainerMiniCanvases();
+
+console.log('✅ ΤΕΤΡΑΚΤΥΣ · Измерение углов — финальный урок загружен!');
+console.log('📐 6 страниц + кнопки Назад');
+console.log('🎯 Тренажёры с мини-канвасами для записи');
+</script>
+
+</body>
+</html>
