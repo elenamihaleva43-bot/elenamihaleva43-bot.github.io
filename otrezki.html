@@ -1,0 +1,2308 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Измерение отрезков · Геометрия 7 · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+    :root {
+        --teal:        #1abc9c;
+        --teal-dark:   #16a085;
+        --teal-deep:   #0e7c66;
+        --mint:        #7fffd4;
+        --gold:        #f4d35e;
+        --gold-light:  #ffe89a;
+        --coral:       #ff6b6b;
+        --text:        #e8f8f5;
+        --text-soft:   #b8d8d0;
+        --ok:          #2ecc71;
+        --err:         #ff6b6b;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        font-family: Georgia, 'Times New Roman', serif;
+        background:
+            radial-gradient(ellipse at 15% 10%, rgba(26,188,156,0.22), transparent 55%),
+            radial-gradient(ellipse at 85% 90%, rgba(127,255,212,0.15), transparent 55%),
+            radial-gradient(ellipse at 50% 50%, rgba(244,211,94,0.06), transparent 70%),
+            linear-gradient(160deg, #0a2a33 0%, #0d3b47 50%, #134e5e 100%);
+        background-attachment: fixed;
+        color: var(--text);
+        min-height: 100vh;
+        padding: 0 12px 20px;
+    }
+
+    .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 14px;
+        margin: 0 -12px 14px;
+        background: rgba(10, 42, 51, 0.92);
+        border-bottom: 2px solid var(--teal-dark);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        flex-wrap: wrap;
+    }
+
+    .logo-mini {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(26,188,156,0.10);
+        border: 1.5px solid rgba(26,188,156,0.35);
+        border-radius: 10px;
+        padding: 5px 12px;
+    }
+    .logo-dots {
+        font-size: 11px;
+        line-height: 1.1;
+        letter-spacing: 4px;
+        color: var(--mint);
+        font-family: 'Courier New', monospace;
+    }
+    .logo-text { display: flex; flex-direction: column; }
+    .logo-greek {
+        font-size: 15px;
+        letter-spacing: 3px;
+        font-weight: 700;
+        color: var(--gold);
+        font-family: Georgia, serif;
+        line-height: 1.1;
+    }
+    .logo-rus {
+        font-size: 9px;
+        letter-spacing: 2px;
+        color: var(--text-soft);
+        font-weight: 600;
+    }
+
+    .topbar-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        font-family: 'Courier New', monospace;
+    }
+    .topbar-chip {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 12px;
+        background: rgba(26,188,156,0.12);
+        border: 1.5px solid rgba(26,188,156,0.4);
+        border-radius: 10px;
+        font-size: 13px;
+        color: var(--text);
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+    }
+    .topbar-chip .lbl { font-size: 10px; color: var(--text-soft); letter-spacing: 1.5px; }
+    .topbar-chip .val { color: var(--gold); font-weight: 700; font-size: 14px; }
+    .topbar-chip .val.timer { color: var(--mint); font-size: 16px; letter-spacing: 2px; }
+    .topbar-chip.hidden { display: none; }
+
+    .container {
+        max-width: 1000px;
+        width: 100%;
+        margin: 0 auto;
+        background: rgba(10, 42, 51, 0.72);
+        border: 2px solid var(--teal-dark);
+        border-radius: 24px;
+        padding: 22px 26px 18px;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.45), inset 0 0 60px rgba(26,188,156,0.06);
+        backdrop-filter: blur(6px);
+    }
+
+    .page { display: none; animation: fadeIn 0.45s ease; }
+    .page.active { display: block; }
+
+    @keyframes fadeIn {
+        0% { opacity: 0; transform: translateY(8px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-title {
+        font-size: 26px;
+        font-weight: 700;
+        color: var(--text);
+        text-align: center;
+        margin-bottom: 4px;
+        letter-spacing: 0.5px;
+    }
+    .section-title span { color: var(--gold); }
+
+    .section-sub {
+        text-align: center;
+        font-size: 14px;
+        color: var(--text-soft);
+        margin-bottom: 14px;
+        font-style: italic;
+    }
+
+    .btn-next {
+        padding: 11px 34px;
+        border: 2px solid var(--teal);
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--teal), var(--teal-deep));
+        color: #04262b;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-family: Georgia, serif;
+        display: block;
+        margin: 16px auto 0;
+        box-shadow: 0 4px 16px rgba(26,188,156,0.35);
+        letter-spacing: 0.5px;
+    }
+    .btn-next:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 8px 28px rgba(26,188,156,0.5);
+        background: linear-gradient(135deg, var(--mint), var(--teal));
+    }
+
+    .welcome { text-align: center; padding: 18px 0 8px; }
+    .welcome .emoji {
+        font-size: 54px;
+        display: block;
+        animation: bounce 2.4s ease-in-out infinite;
+    }
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+    }
+    .welcome h1 { font-size: 30px; color: var(--text); margin: 6px 0 4px; }
+    .welcome h1 span { color: var(--gold); }
+    .welcome p { font-size: 15px; color: var(--text-soft); margin-bottom: 16px; }
+
+    .form-row {
+        display: flex;
+        justify-content: center;
+        gap: 22px;
+        flex-wrap: wrap;
+        margin: 8px 0 14px;
+    }
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+    }
+    .form-group label {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--mint);
+        letter-spacing: 1px;
+    }
+    .form-group input {
+        padding: 9px 14px;
+        font-size: 16px;
+        width: 240px;
+        border: 2px solid var(--teal);
+        border-radius: 12px;
+        background: rgba(10,42,51,0.7);
+        color: var(--text);
+        text-align: center;
+        font-family: Georgia, serif;
+        outline: none;
+        transition: all 0.3s;
+    }
+    .form-group input::placeholder { color: rgba(184,216,208,0.5); }
+    .form-group input:focus {
+        border-color: var(--mint);
+        box-shadow: 0 0 0 4px rgba(26,188,156,0.2);
+        background: rgba(10,42,51,0.9);
+    }
+
+    .btn-start {
+        padding: 11px 42px;
+        border: 2px solid var(--gold);
+        border-radius: 16px;
+        background: linear-gradient(135deg, var(--gold), #d4a91e);
+        color: #04262b;
+        font-size: 17px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-family: Georgia, serif;
+        margin-top: 8px;
+        box-shadow: 0 4px 18px rgba(244,211,94,0.35);
+        letter-spacing: 0.5px;
+    }
+    .btn-start:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 8px 28px rgba(244,211,94,0.55);
+    }
+    .btn-start:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .theory-box {
+        background: rgba(26,188,156,0.10);
+        border-radius: 14px;
+        padding: 14px 18px;
+        margin: 10px 0;
+        border-left: 4px solid var(--teal);
+    }
+    .theory-box h3 { color: var(--gold); font-size: 17px; margin-bottom: 6px; }
+    .theory-box p { color: var(--text); font-size: 15px; line-height: 1.7; }
+    .theory-box .hl { color: var(--coral); font-weight: 700; }
+    .theory-box .hl-blue { color: var(--mint); font-weight: 700; }
+    .theory-box .hl-green { color: var(--ok); font-weight: 700; }
+
+    .trainer-block {
+        margin-bottom: 22px;
+        padding: 16px 18px 14px;
+        background: rgba(26,188,156,0.08);
+        border-radius: 16px;
+        border: 1.5px solid rgba(26,188,156,0.4);
+    }
+    .trainer-block .trainer-title {
+        font-size: 19px;
+        font-weight: 700;
+        color: var(--gold);
+        margin-bottom: 6px;
+        text-align: center;
+    }
+    .trainer-block .task-text {
+        text-align: center;
+        font-size: 15px;
+        color: var(--text);
+        margin-bottom: 10px;
+        line-height: 1.6;
+    }
+    .trainer-block .task-text .hl-red { color: var(--coral); font-weight: 700; }
+    .trainer-block .task-text .hl-blue { color: var(--mint); font-weight: 700; }
+    .trainer-block .task-text .hl-green { color: var(--ok); font-weight: 700; }
+
+    .canvas-wrapper {
+        background: #f7fcfa;
+        border-radius: 12px;
+        border: 2px solid var(--teal-dark);
+        padding: 8px;
+        text-align: center;
+    }
+    .canvas-wrapper canvas {
+        display: block;
+        width: 100%;
+        max-width: 650px;
+        height: auto;
+        margin: 0 auto;
+        background: #f7fcfa;
+        border-radius: 10px;
+        touch-action: none;
+    }
+
+    .trainer-block .info {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+        align-items: center;
+        margin-top: 12px;
+        padding: 8px 16px;
+        background: rgba(10,42,51,0.6);
+        border-radius: 10px;
+        border: 1.5px solid rgba(26,188,156,0.4);
+        font-family: 'Courier New', monospace;
+    }
+    .trainer-block .info .label {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text);
+        letter-spacing: 0.5px;
+    }
+    .trainer-block .info .label .val { font-size: 18px; }
+    .trainer-block .info .label .red { color: var(--coral); }
+    .trainer-block .info .label .green { color: var(--ok); }
+    .trainer-block .info .label .blue { color: var(--mint); }
+
+    .trainer-block .input-area {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+    }
+    .trainer-block .input-area input {
+        width: 110px;
+        padding: 7px 10px;
+        font-size: 17px;
+        text-align: center;
+        border: 2px solid var(--teal);
+        border-radius: 10px;
+        font-family: 'Courier New', monospace;
+        outline: none;
+        transition: all 0.3s;
+        background: rgba(10,42,51,0.7);
+        color: var(--text);
+        font-weight: 700;
+    }
+    .trainer-block .input-area input::placeholder { color: rgba(184,216,208,0.5); }
+    .trainer-block .input-area input:focus {
+        border-color: var(--mint);
+        box-shadow: 0 0 0 4px rgba(26,188,156,0.2);
+    }
+    .trainer-block .input-area input.correct {
+        border-color: var(--ok);
+        background: rgba(46,204,113,0.18);
+    }
+    .trainer-block .input-area input.wrong {
+        border-color: var(--err);
+        background: rgba(255,107,107,0.18);
+    }
+
+    .trainer-block .input-area .btn {
+        padding: 7px 24px;
+        border: 2px solid var(--ok);
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-family: Georgia, serif;
+        color: #04262b;
+        background: linear-gradient(135deg, var(--ok), #1e8449);
+        letter-spacing: 0.5px;
+    }
+    .trainer-block .input-area .btn:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 6px 18px rgba(46,204,113,0.4);
+    }
+    .trainer-block .input-area .btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .trainer-block .feedback {
+        text-align: center;
+        font-size: 16px;
+        font-weight: 700;
+        margin-top: 8px;
+        min-height: 24px;
+        font-family: 'Courier New', monospace;
+    }
+    .trainer-block .feedback.correct { color: var(--ok); }
+    .trainer-block .feedback.wrong { color: var(--err); }
+
+    .trainer-block .controls {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        margin-top: 10px;
+        flex-wrap: wrap;
+    }
+    .trainer-block .controls .btn-sm {
+        padding: 5px 14px;
+        border: 1.5px solid var(--teal);
+        border-radius: 9px;
+        background: rgba(10,42,51,0.6);
+        color: var(--mint);
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-family: Georgia, serif;
+    }
+    .trainer-block .controls .btn-sm:hover {
+        background: var(--teal-dark);
+        color: #04262b;
+        border-color: var(--mint);
+    }
+
+    .trainer-block .hint {
+        text-align: center;
+        font-size: 13px;
+        color: var(--text-soft);
+        margin-top: 8px;
+        padding: 7px;
+        background: rgba(10,42,51,0.5);
+        border-radius: 8px;
+        border: 1px solid rgba(26,188,156,0.25);
+        font-style: italic;
+    }
+    .trainer-block .hint span { color: var(--mint); font-weight: 700; font-style: normal; }
+
+    .trainer-block .legend {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        margin-top: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-soft);
+        flex-wrap: wrap;
+        font-family: 'Courier New', monospace;
+    }
+    .trainer-block .legend .dot {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 5px;
+        vertical-align: middle;
+    }
+    .trainer-block .legend .dot.red { background: var(--coral); }
+    .trainer-block .legend .dot.blue { background: var(--teal); }
+    .trainer-block .legend .dot.green { background: var(--ok); }
+
+    .draw-panel {
+        margin-top: 10px;
+        padding: 10px;
+        background: rgba(10,42,51,0.7);
+        border-radius: 12px;
+        border: 1.5px solid var(--teal-dark);
+    }
+
+    .draw-toolbar {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-bottom: 8px;
+        padding: 6px;
+        background: rgba(26,188,156,0.08);
+        border-radius: 8px;
+        border: 1px solid rgba(26,188,156,0.25);
+    }
+    .draw-toolbar .tool {
+        padding: 5px 11px;
+        border: 1.5px solid var(--teal);
+        border-radius: 8px;
+        background: rgba(10,42,51,0.6);
+        color: var(--mint);
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.25s;
+        font-family: Georgia, serif;
+        white-space: nowrap;
+    }
+    .draw-toolbar .tool:hover {
+        background: var(--teal-dark);
+        color: #04262b;
+    }
+    .draw-toolbar .tool.active {
+        background: var(--teal);
+        color: #04262b;
+        border-color: var(--mint);
+        box-shadow: 0 2px 10px rgba(26,188,156,0.4);
+    }
+    .draw-toolbar .tool.color-blue { border-color: var(--teal); color: var(--mint); }
+    .draw-toolbar .tool.color-blue.active {
+        background: var(--teal);
+        color: #04262b;
+    }
+    .draw-toolbar .tool.color-red { border-color: var(--coral); color: var(--coral); }
+    .draw-toolbar .tool.color-red.active {
+        background: var(--coral);
+        color: #04262b;
+    }
+    .draw-toolbar .tool.line-tool { border-color: var(--gold); color: var(--gold); }
+    .draw-toolbar .tool.line-tool.active {
+        background: var(--gold);
+        color: #04262b;
+    }
+
+    .draw-canvas-wrap {
+        background: #f7fcfa;
+        border-radius: 10px;
+        border: 2px solid var(--teal-dark);
+        padding: 5px;
+        text-align: center;
+    }
+    .draw-canvas-wrap canvas {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        margin: 0 auto;
+        background: #f7fcfa;
+        border-radius: 8px;
+        touch-action: none;
+        cursor: crosshair;
+    }
+
+    .draw-hint {
+        text-align: center;
+        font-size: 12px;
+        color: var(--text-soft);
+        margin-top: 6px;
+        font-style: italic;
+    }
+    .draw-hint span { color: var(--mint); font-weight: 700; font-style: normal; }
+
+    .sample-block {
+        background: rgba(10,42,51,0.6);
+        border: 1.5px solid rgba(26,188,156,0.4);
+        border-radius: 16px;
+        padding: 16px 20px;
+        margin-bottom: 14px;
+    }
+    .sample-block .sample-title {
+        font-size: 17px;
+        font-weight: 700;
+        color: var(--gold);
+        margin-bottom: 8px;
+    }
+    .sample-block .sample-task {
+        font-size: 15px;
+        color: var(--text);
+        margin-bottom: 10px;
+        line-height: 1.7;
+    }
+    .sample-block .sample-task .hl { color: var(--coral); font-weight: 700; }
+    .sample-block .sample-task .hl-blue { color: var(--mint); font-weight: 700; }
+    .sample-block .sample-task .hl-green { color: var(--ok); font-weight: 700; }
+
+    .level-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+    }
+    .level-btn {
+        padding: 8px 24px;
+        border: 2px solid rgba(184,216,208,0.4);
+        border-radius: 12px;
+        background: rgba(10,42,51,0.6);
+        color: var(--text-soft);
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-family: Georgia, serif;
+    }
+    .level-btn:hover { transform: translateY(-2px); }
+    .level-btn.easy { border-color: var(--ok); color: var(--ok); }
+    .level-btn.easy.active {
+        background: rgba(46,204,113,0.18);
+        box-shadow: 0 4px 16px rgba(46,204,113,0.3);
+    }
+    .level-btn.medium { border-color: var(--gold); color: var(--gold); }
+    .level-btn.medium.active {
+        background: rgba(244,211,94,0.18);
+        box-shadow: 0 4px 16px rgba(244,211,94,0.3);
+    }
+    .level-btn.hard { border-color: var(--coral); color: var(--coral); }
+    .level-btn.hard.active {
+        background: rgba(255,107,107,0.18);
+        box-shadow: 0 4px 16px rgba(255,107,107,0.3);
+    }
+
+    .progress-text {
+        text-align: center;
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text);
+        margin: 8px 0 14px;
+        padding: 9px;
+        background: rgba(26,188,156,0.12);
+        border-radius: 10px;
+        border: 1.5px solid rgba(26,188,156,0.4);
+        font-family: 'Courier New', monospace;
+        letter-spacing: 0.5px;
+    }
+    .progress-text span { color: var(--gold); font-size: 17px; }
+
+    .task-item {
+        background: rgba(26,188,156,0.08);
+        border: 1.5px solid rgba(26,188,156,0.4);
+        border-radius: 12px;
+        padding: 14px 16px;
+        margin-bottom: 12px;
+        transition: all 0.3s;
+    }
+    .task-item:hover {
+        border-color: var(--teal);
+        box-shadow: 0 2px 16px rgba(26,188,156,0.15);
+    }
+    .task-item .question {
+        font-size: 15px;
+        color: var(--text);
+        font-weight: 600;
+        line-height: 1.6;
+        margin-bottom: 10px;
+    }
+    .task-item .question .hl { color: var(--coral); font-weight: 700; }
+    .task-item .question .hl-blue { color: var(--mint); font-weight: 700; }
+    .task-item .question .hl-orange { color: var(--gold); font-weight: 700; }
+
+    .task-item .controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+    .task-item .controls input {
+        width: 75px;
+        padding: 6px 8px;
+        font-size: 15px;
+        text-align: center;
+        border: 2px solid var(--teal);
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+        outline: none;
+        transition: all 0.3s;
+        background: rgba(10,42,51,0.7);
+        color: var(--text);
+        font-weight: 700;
+    }
+    .task-item .controls input::placeholder { color: rgba(184,216,208,0.4); }
+    .task-item .controls input:focus {
+        border-color: var(--mint);
+        box-shadow: 0 0 0 3px rgba(26,188,156,0.2);
+    }
+    .task-item .controls input.correct {
+        border-color: var(--ok);
+        background: rgba(46,204,113,0.18);
+    }
+    .task-item .controls input.wrong {
+        border-color: var(--err);
+        background: rgba(255,107,107,0.18);
+    }
+
+    .task-item .controls .btn {
+        padding: 5px 14px;
+        border: 1.5px solid var(--teal);
+        border-radius: 8px;
+        background: rgba(10,42,51,0.6);
+        color: var(--mint);
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-family: Georgia, serif;
+        white-space: nowrap;
+    }
+    .task-item .controls .btn:hover {
+        background: var(--teal-dark);
+        color: #04262b;
+    }
+    .task-item .controls .btn-check-green {
+        border-color: var(--ok);
+        color: var(--ok);
+    }
+    .task-item .controls .btn-check-green:hover {
+        background: var(--ok);
+        color: #04262b;
+    }
+    .task-item .controls .btn-draw {
+        border-color: var(--gold);
+        color: var(--gold);
+    }
+    .task-item .controls .btn-draw:hover {
+        background: var(--gold);
+        color: #04262b;
+    }
+
+    .task-item .task-status {
+        font-size: 18px;
+        min-width: 24px;
+        text-align: center;
+    }
+
+    .task-item .task-answer {
+        font-size: 14px;
+        font-weight: 700;
+        color: #04262b;
+        background: linear-gradient(135deg, var(--mint), var(--teal));
+        padding: 4px 12px;
+        border-radius: 6px;
+        border: 2px dashed var(--gold);
+        opacity: 0;
+        transition: opacity 0.4s;
+        display: inline-block;
+        margin-top: 6px;
+        font-family: 'Courier New', monospace;
+    }
+    .task-item .task-answer.visible { opacity: 1; }
+
+    /* Панель решения скрыта по умолчанию */
+    .task-item .draw-panel-holder { margin-top: 10px; }
+    .task-item .draw-panel-holder .draw-panel { display: none; }
+    .task-item .draw-panel-holder.show-panel .draw-panel { display: block; }
+
+    .hw-item {
+        background: rgba(26,188,156,0.08);
+        border: 1.5px solid rgba(26,188,156,0.4);
+        border-radius: 12px;
+        padding: 14px 16px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        transition: all 0.3s;
+    }
+    .hw-item:hover { border-color: var(--teal); }
+    .hw-item .question {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text);
+        flex: 1;
+        min-width: 220px;
+        line-height: 1.6;
+    }
+    .hw-item .question .hl { color: var(--coral); font-weight: 700; }
+    .hw-item .question .hl-blue { color: var(--mint); font-weight: 700; }
+    .hw-item .question .hl-orange { color: var(--gold); font-weight: 700; }
+
+    .hw-item .hw-answer {
+        font-size: 14px;
+        font-weight: 700;
+        color: #04262b;
+        background: linear-gradient(135deg, var(--mint), var(--teal));
+        padding: 5px 14px;
+        border-radius: 6px;
+        border: 2px dashed var(--gold);
+        opacity: 0;
+        transition: opacity 0.4s;
+        font-family: 'Courier New', monospace;
+    }
+    .hw-item .hw-answer.visible { opacity: 1; }
+
+    .btn-show-hw {
+        padding: 5px 14px;
+        border: 1.5px solid var(--gold);
+        border-radius: 8px;
+        background: rgba(10,42,51,0.6);
+        color: var(--gold);
+        font-family: Georgia, serif;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        white-space: nowrap;
+    }
+    .btn-show-hw:hover {
+        background: var(--gold);
+        color: #04262b;
+    }
+
+    .footer {
+        margin-top: 20px;
+        padding-top: 12px;
+        border-top: 2px solid var(--teal-dark);
+        text-align: center;
+        font-size: 11px;
+        color: var(--text-soft);
+    }
+    .footer .school {
+        font-weight: 700;
+        color: var(--gold);
+        font-size: 13px;
+        letter-spacing: 1px;
+    }
+
+    @media (max-width: 700px) {
+        .container { padding: 14px 12px 16px; }
+        .section-title { font-size: 21px; }
+        .topbar { padding: 6px 10px; }
+        .logo-mini { padding: 4px 9px; }
+        .logo-greek { font-size: 13px; letter-spacing: 2px; }
+        .topbar-chip { font-size: 11px; padding: 4px 9px; }
+        .topbar-chip .val { font-size: 12px; }
+        .topbar-chip .val.timer { font-size: 13px; }
+        .trainer-block { padding: 12px 12px 14px; }
+        .trainer-block .info .label { font-size: 13px; }
+        .trainer-block .info .label .val { font-size: 16px; }
+        .trainer-block .input-area input { width: 85px; font-size: 15px; }
+        .sample-block { padding: 12px 14px; }
+        .task-item .controls { justify-content: center; }
+        .hw-item { flex-direction: column; align-items: stretch; }
+        .hw-item .question { text-align: center; }
+        .draw-toolbar .tool { padding: 4px 9px; font-size: 11px; }
+        .form-group input { width: 100%; }
+    }
+
+    @media (max-width: 400px) {
+        .topbar-info { gap: 5px; }
+        .topbar-chip { font-size: 10px; padding: 3px 7px; }
+        .topbar-chip .val.timer { font-size: 12px; letter-spacing: 1px; }
+        .trainer-block .input-area input { width: 65px; font-size: 14px; }
+        .trainer-block .task-text { font-size: 13px; }
+        .task-item .question { font-size: 13px; }
+        .draw-toolbar .tool { padding: 4px 7px; font-size: 10px; }
+    }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+    <div class="logo-mini">
+        <div class="logo-dots">● ● ● ●<br>● ● ●<br>● ●<br>●</div>
+        <div class="logo-text">
+            <div class="logo-greek">ΤΕΤΡΑΚΤΥΣ</div>
+            <div class="logo-rus">ГЕОМЕТРИЯ 7</div>
+        </div>
+    </div>
+
+    <div class="topbar-info">
+        <div class="topbar-chip">
+            <span class="lbl">📅</span>
+            <span class="val" id="topDate">—</span>
+        </div>
+        <div class="topbar-chip hidden" id="topNameChip">
+            <span class="lbl">👤</span>
+            <span class="val" id="topName">—</span>
+        </div>
+        <div class="topbar-chip hidden" id="topTimerChip">
+            <span class="lbl">⏱️</span>
+            <span class="val timer" id="topTimer">00:00</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- СТРАНИЦА 1: ПРИВЕТСТВИЕ -->
+    <div class="page active" id="pageWelcome">
+        <div class="welcome">
+            <span class="emoji">📏</span>
+            <h1>Добро пожаловать на <span>урок!</span></h1>
+            <p>Измерение отрезков · Геометрия 7</p>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="studentName">👤 ИМЯ</label>
+                    <input type="text" id="studentName" placeholder="Введи имя..." maxlength="25">
+                </div>
+            </div>
+
+            <button class="btn-start" id="startBtn" disabled>🚀 Начать урок!</button>
+        </div>
+    </div>
+
+    <!-- СТРАНИЦА 2: ОПРЕДЕЛЕНИЯ + МИНИ-ТРЕНАЖЁР -->
+    <div class="page" id="pageDefinitions">
+        <div class="section-title">📖 <span>Определения</span></div>
+        <div class="section-sub">Что такое отрезок и его длина</div>
+
+        <div class="theory-box">
+            <h3>📌 Что такое отрезок?</h3>
+            <p>
+                <b>Отрезок</b> — это часть прямой, ограниченная двумя точками.<br>
+                Точки называются <span class="hl">концами отрезка</span>.
+            </p>
+        </div>
+
+        <div class="theory-box">
+            <h3>📌 Длина отрезка</h3>
+            <p>
+                <b>Длина отрезка</b> — это расстояние между его концами.<br>
+                Обозначается: <span class="hl-blue">AB</span>.
+            </p>
+        </div>
+
+        <div class="theory-box">
+            <h3>📌 Свойство длины</h3>
+            <p>
+                Если точка <span class="hl-blue">C</span> лежит на отрезке <span class="hl-blue">AB</span>, то<br>
+                <span class="hl-blue">AB</span> = <span class="hl">AC</span> + <span class="hl-green">CB</span>.
+            </p>
+        </div>
+
+        <div class="trainer-block" id="trainerDef">
+            <div class="trainer-title">🎯 Попробуй! Измерь длину отрезка</div>
+            <div class="task-text">
+                Двигай точку <b>B</b> — линейка покажет длину отрезка <b>AB</b>.
+            </div>
+
+            <div class="canvas-wrapper">
+                <canvas id="defCanvas" width="650" height="160"></canvas>
+            </div>
+
+            <div class="legend">
+                <span><span class="dot red"></span> Точка A (начало)</span>
+                <span><span class="dot blue"></span> Точка B (конец)</span>
+            </div>
+
+            <div class="info">
+                <span class="label">📍 A = <span class="val red" id="defA">0</span></span>
+                <span class="label">📍 B = <span class="val blue" id="defB">5.0</span></span>
+                <span class="label">📏 AB = <span class="val blue" id="defLen">5.0</span></span>
+            </div>
+
+            <div class="hint">
+                💡 <span>Потяни за синюю точку</span> (B), чтобы изменить длину отрезка.
+            </div>
+        </div>
+
+        <button class="btn-next" id="nextToTrainers">🏋️ Перейти к тренажёрам →</button>
+    </div>
+
+    <!-- СТРАНИЦА 3: ТРЕНАЖЁРЫ -->
+    <div class="page" id="pageTrainers">
+        <div class="section-title">🏋️ <span>Тренажёры</span></div>
+        <div class="section-sub">Три интерактивных упражнения</div>
+
+        <!-- Т1: ДЛИНА ОТРЕЗКА -->
+        <div class="trainer-block" id="trainer1">
+            <div class="trainer-title">📌 Тренажёр 1. Длина отрезка</div>
+            <div class="task-text">
+                Двигай точку <b>B</b> — смотри, как меняется <span class="hl-blue">длина AB</span>.
+            </div>
+
+            <div class="canvas-wrapper">
+                <canvas id="trainer1Canvas" width="650" height="160"></canvas>
+            </div>
+
+            <div class="legend">
+                <span><span class="dot red"></span> Точка A</span>
+                <span><span class="dot blue"></span> Точка B (двигай)</span>
+            </div>
+
+            <div class="info">
+                <span class="label">📍 A = <span class="val red" id="t1a">0</span></span>
+                <span class="label">📍 B = <span class="val blue" id="t1b">5.0</span></span>
+                <span class="label">📏 AB = <span class="val blue" id="t1len">5.0</span></span>
+            </div>
+
+            <div class="controls">
+                <button class="btn-sm" onclick="setT1(2)">📐 2 см</button>
+                <button class="btn-sm" onclick="setT1(5)">📐 5 см</button>
+                <button class="btn-sm" onclick="setT1(8)">📐 8 см</button>
+                <button class="btn-sm" onclick="randomT1()">🎲 Случайный</button>
+            </div>
+        </div>
+
+        <!-- Т2: НАЙДИ ВЕСЬ ОТРЕЗОК -->
+        <div class="trainer-block" id="trainer2">
+            <div class="trainer-title">📌 Тренажёр 2. Найди весь отрезок</div>
+            <div class="task-text">
+                Точка <b>C</b> лежит на отрезке <b>AB</b>.<br>
+                <span class="hl-red">AC</span> и <span class="hl-green">CB</span> — известны.<br>
+                Найди <span class="hl-blue">AB</span>.
+            </div>
+
+            <div class="canvas-wrapper">
+                <canvas id="trainer2Canvas" width="650" height="180"></canvas>
+            </div>
+
+            <div class="legend">
+                <span><span class="dot red"></span> Точка A</span>
+                <span><span class="dot green"></span> Точка C (двигай)</span>
+                <span><span class="dot blue"></span> Точка B (двигай)</span>
+            </div>
+
+            <div class="info">
+                <span class="label">AC = <span class="val red" id="t2a">3</span></span>
+                <span class="label">CB = <span class="val green" id="t2b">5</span></span>
+                <span class="label">AB = <span class="val blue" id="t2c">?</span></span>
+            </div>
+
+            <div class="input-area">
+                <input type="number" id="t2Input" placeholder="AB = ?" min="0" max="40">
+                <button class="btn" onclick="checkT2()">✅ Проверить</button>
+            </div>
+
+            <div class="feedback" id="t2Feedback"></div>
+
+            <div class="controls">
+                <button class="btn-sm" onclick="setT2(3, 5)">📐 3 и 5</button>
+                <button class="btn-sm" onclick="setT2(4, 6)">📐 4 и 6</button>
+                <button class="btn-sm" onclick="setT2(7, 3)">📐 7 и 3</button>
+                <button class="btn-sm" onclick="randomT2()">🎲 Случайные</button>
+            </div>
+        </div>
+
+        <!-- Т3: НАЙДИ ЧАСТЬ -->
+        <div class="trainer-block" id="trainer3">
+            <div class="trainer-title">📌 Тренажёр 3. Найди часть отрезка</div>
+            <div class="task-text">
+                Точка <b>C</b> лежит на отрезке <b>AB</b>.<br>
+                <span class="hl-red">AC</span> — известен, <span class="hl-blue">AB</span> — известен.<br>
+                Найди <span class="hl-green">CB</span>.
+            </div>
+
+            <div class="canvas-wrapper">
+                <canvas id="trainer3Canvas" width="650" height="180"></canvas>
+            </div>
+
+            <div class="legend">
+                <span><span class="dot red"></span> Точка A</span>
+                <span><span class="dot green"></span> Точка C (двигай)</span>
+                <span><span class="dot blue"></span> Точка B (двигай)</span>
+            </div>
+
+            <div class="info">
+                <span class="label">AC = <span class="val red" id="t3a">3</span></span>
+                <span class="label">AB = <span class="val blue" id="t3b">8</span></span>
+                <span class="label">CB = <span class="val green" id="t3c">?</span></span>
+            </div>
+
+            <div class="input-area">
+                <input type="number" id="t3Input" placeholder="CB = ?" min="0" max="40">
+                <button class="btn" onclick="checkT3()">✅ Проверить</button>
+            </div>
+
+            <div class="feedback" id="t3Feedback"></div>
+
+            <div class="controls">
+                <button class="btn-sm" onclick="setT3(3, 8)">📐 3 и 8</button>
+                <button class="btn-sm" onclick="setT3(4, 10)">📐 4 и 10</button>
+                <button class="btn-sm" onclick="setT3(5, 12)">📐 5 и 12</button>
+                <button class="btn-sm" onclick="randomT3()">🎲 Случайные</button>
+            </div>
+        </div>
+
+        <button class="btn-next" id="nextToSamples">📖 Перейти к образцам решения →</button>
+    </div>
+
+    <!-- СТРАНИЦА 4: ОБРАЗЦЫ РЕШЕНИЯ -->
+    <div class="page" id="pageSamples">
+        <div class="section-title">📖 <span>Образцы решения</span></div>
+        <div class="section-sub">Условие задачи · реши на канвасе</div>
+
+        <div class="sample-block">
+            <div class="sample-title">📌 Задача 1. «В … раз больше»</div>
+            <div class="sample-task">
+                Точка <b>C</b> лежит на отрезке <b>AB</b>.<br>
+                <b>AC</b> в <span class="hl">3 раза</span> больше <b>CB</b>.<br>
+                <b>AB</b> = <span class="hl">12 см</span>.<br>
+                Найдите <b>AC</b> и <b>CB</b>.
+            </div>
+            <div id="drawSample1"></div>
+        </div>
+
+        <div class="sample-block">
+            <div class="sample-title">📌 Задача 2. «Отношение»</div>
+            <div class="sample-task">
+                Точка <b>C</b> лежит на отрезке <b>AB</b>.<br>
+                <b>AC</b> : <b>CB</b> = <span class="hl">2 : 3</span>.<br>
+                <b>AB</b> = <span class="hl">15 см</span>.<br>
+                Найдите <b>AC</b> и <b>CB</b>.
+            </div>
+            <div id="drawSample2"></div>
+        </div>
+
+        <div class="sample-block">
+            <div class="sample-title">📌 Задача 3. «На больше / на меньше»</div>
+            <div class="sample-task">
+                Точка <b>C</b> лежит на отрезке <b>AB</b>.<br>
+                <b>AC</b> на <span class="hl">4 см</span> меньше <b>CB</b>.<br>
+                <b>AB</b> = <span class="hl">18 см</span>.<br>
+                Найдите <b>AC</b> и <b>CB</b>.
+            </div>
+            <div id="drawSample3"></div>
+        </div>
+
+        <button class="btn-next" id="nextToTasks">✏️ Перейти к задачам →</button>
+    </div>
+
+    <!-- СТРАНИЦА 5: ЗАДАЧИ 3 УРОВНЯ -->
+    <div class="page" id="pageTasks">
+        <div class="section-title">✏️ <span>Задачи</span></div>
+        <div class="section-sub">3 уровня сложности · с полем для решения</div>
+
+        <div class="level-buttons">
+            <button class="level-btn easy active" data-level="easy" onclick="switchLevel('easy')">🟢 Лёгкий</button>
+            <button class="level-btn medium" data-level="medium" onclick="switchLevel('medium')">🟡 Средний</button>
+            <button class="level-btn hard" data-level="hard" onclick="switchLevel('hard')">🔴 Сложный</button>
+        </div>
+
+        <div class="progress-text">✅ Решено: <span id="tasksCount">0</span> из <span id="tasksTotal">0</span></div>
+
+        <div id="tasksContainer"></div>
+
+        <button class="btn-next" id="nextToHW">🏠 Перейти к домашнему заданию →</button>
+    </div>
+
+    <!-- СТРАНИЦА 6: ДЗ -->
+    <div class="page" id="pageHW">
+        <div class="section-title">🏠 <span>Домашнее</span> задание</div>
+        <div class="section-sub">Реши задачи и проверь себя</div>
+
+        <div id="hwContainer"></div>
+
+        <button class="btn-next" id="finishLesson">🏁 Завершить занятие</button>
+    </div>
+
+    <div class="footer">
+        <div class="school">🏛️ ΤΕΤΡΑΚΤΥΣ · Школа математики Елены Михалевой</div>
+        <div style="margin-top:3px;">Интерактивная геометрия · Измерение отрезков</div>
+    </div>
+</div>
+
+<script>
+// ===== ДАТА =====
+(function() {
+    const d = new Date();
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yyyy = d.getFullYear();
+    document.getElementById('topDate').textContent = dd + '.' + mm + '.' + yyyy;
+})();
+
+// ===== ТАЙМЕР =====
+let timerSeconds = 0;
+let timerInterval = null;
+let timerStarted = false;
+function startTimer() {
+    if (timerStarted) return;
+    timerStarted = true;
+    timerInterval = setInterval(() => {
+        timerSeconds++;
+        const m = Math.floor(timerSeconds / 60);
+        const s = timerSeconds % 60;
+        document.getElementById('topTimer').textContent =
+            String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    }, 1000);
+}
+function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
+
+// ===== СТРАНИЦЫ =====
+let studentName = '', studentDate = '';
+function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ===== СТАРТ =====
+const nameInput = document.getElementById('studentName');
+const startBtn = document.getElementById('startBtn');
+function checkStart() { startBtn.disabled = nameInput.value.trim().length === 0; }
+nameInput.addEventListener('input', checkStart);
+setTimeout(checkStart, 100);
+
+startBtn.addEventListener('click', () => {
+    studentName = nameInput.value.trim();
+    studentDate = new Date().toLocaleDateString('ru-RU');
+    document.getElementById('topName').textContent = studentName;
+    document.getElementById('topNameChip').classList.remove('hidden');
+    document.getElementById('topTimerChip').classList.remove('hidden');
+    startTimer();
+    showPage('pageDefinitions');
+    initDefCanvas();
+    initAllTrainers();
+    initSampleCanvases();
+    renderTasks('easy');
+    renderHW();
+});
+
+nameInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !startBtn.disabled) startBtn.click();
+});
+
+document.getElementById('nextToTrainers').addEventListener('click', () => { showPage('pageTrainers'); initAllTrainers(); });
+document.getElementById('nextToSamples').addEventListener('click', () => { showPage('pageSamples'); initSampleCanvases(); });
+document.getElementById('nextToTasks').addEventListener('click', () => { showPage('pageTasks'); renderTasks(currentLevel); });
+document.getElementById('nextToHW').addEventListener('click', () => { showPage('pageHW'); renderHW(); });
+
+document.getElementById('finishLesson').addEventListener('click', () => {
+    stopTimer();
+    const m = Math.floor(timerSeconds / 60);
+    const s = timerSeconds % 60;
+    const timeStr = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    alert('🎉 Поздравляю, ' + studentName + '!\nТы успешно завершил занятие!\n\n📅 ' + studentDate +
+          '\n⏱️ Время: ' + timeStr +
+          '\n🏛️ ΤΕΤΡΑΚΤΥΣ · Школа математики Елены Михалевой');
+});
+
+// ===== ОБЩАЯ ОТРИСОВКА ОТРЕЗКА =====
+function drawSegmentOnCanvas(ctx, canvas, ac, cb, revealAB, revealCB, showC) {
+    const w = canvas.width, h = canvas.height;
+    const margin = 80;
+    const minX = margin, maxX = w - margin;
+    const total = ac + cb;
+    const scale = (maxX - minX) / Math.max(total, 1);
+    const yLine = h / 2 + 10;
+
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = '#f7fcfa';
+    ctx.fillRect(0, 0, w, h);
+
+    const ax = minX;
+    const cx = minX + ac * scale;
+    const bx = minX + total * scale;
+
+    ctx.beginPath();
+    ctx.moveTo(ax, yLine);
+    ctx.lineTo(bx, yLine);
+    ctx.strokeStyle = '#0e7c66';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    if (showC) {
+        ctx.beginPath();
+        ctx.arc(cx, yLine, 9, 0, 2 * Math.PI);
+        ctx.fillStyle = '#2ecc71';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fillStyle = '#2ecc71';
+        ctx.font = 'bold 14px Georgia';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText('C', cx, yLine - 14);
+    }
+
+    ctx.beginPath();
+    ctx.arc(ax, yLine, 8, 0, 2 * Math.PI);
+    ctx.fillStyle = '#ff6b6b';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = '#ff6b6b';
+    ctx.font = 'bold 14px Georgia';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText('A', ax, yLine - 12);
+
+    ctx.beginPath();
+    ctx.arc(bx, yLine, 8, 0, 2 * Math.PI);
+    ctx.fillStyle = '#1abc9c';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = '#1abc9c';
+    ctx.font = 'bold 14px Georgia';
+    ctx.fillText('B', bx, yLine - 12);
+
+    ctx.font = 'bold 14px Georgia';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+
+    if (showC) {
+        ctx.fillStyle = '#ff6b6b';
+        ctx.fillText(ac + ' см', (ax + cx) / 2, yLine + 14);
+        ctx.fillStyle = '#2ecc71';
+        ctx.fillText(revealCB ? cb + ' см' : '?', (cx + bx) / 2, yLine + 14);
+    } else {
+        ctx.fillStyle = '#ff6b6b';
+        ctx.fillText(ac + ' см', (ax + bx) / 2, yLine + 14);
+    }
+
+    if (revealAB) {
+        ctx.fillStyle = '#1abc9c';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(total + ' см', (ax + bx) / 2, yLine - 28);
+    }
+}
+
+// ===== КАНВАС ОПРЕДЕЛЕНИЙ =====
+const defCanvas = document.getElementById('defCanvas');
+const defCtx = defCanvas.getContext('2d');
+let defB = 5;
+
+function drawDefCanvas() {
+    const w = defCanvas.width, h = defCanvas.height;
+    const margin = 60;
+    const minX = margin, maxX = w - margin;
+    const scale = (maxX - minX) / 10;
+    const yLine = h / 2 + 10;
+
+    defCtx.clearRect(0, 0, w, h);
+    defCtx.fillStyle = '#f7fcfa';
+    defCtx.fillRect(0, 0, w, h);
+
+    defCtx.beginPath();
+    defCtx.moveTo(minX - 10, yLine);
+    defCtx.lineTo(maxX + 10, yLine);
+    defCtx.strokeStyle = '#0e7c66';
+    defCtx.lineWidth = 2;
+    defCtx.stroke();
+
+    for (let i = 0; i <= 10; i++) {
+        const x = minX + i * scale;
+        defCtx.beginPath();
+        defCtx.moveTo(x, yLine - 7);
+        defCtx.lineTo(x, yLine + 7);
+        defCtx.strokeStyle = '#0e7c66';
+        defCtx.lineWidth = 2;
+        defCtx.stroke();
+        defCtx.fillStyle = '#0e7c66';
+        defCtx.font = '12px Courier New';
+        defCtx.textAlign = 'center';
+        defCtx.textBaseline = 'top';
+        defCtx.fillText(i, x, yLine + 10);
+    }
+
+    const ax = minX, ay = yLine;
+    const bx = minX + defB * scale, by = yLine;
+
+    defCtx.beginPath();
+    defCtx.arc(ax, ay, 8, 0, 2 * Math.PI);
+    defCtx.fillStyle = '#ff6b6b';
+    defCtx.fill();
+    defCtx.strokeStyle = '#fff';
+    defCtx.lineWidth = 2;
+    defCtx.stroke();
+    defCtx.fillStyle = '#ff6b6b';
+    defCtx.font = 'bold 14px Georgia';
+    defCtx.textAlign = 'center';
+    defCtx.textBaseline = 'bottom';
+    defCtx.fillText('A', ax, ay - 12);
+
+    defCtx.beginPath();
+    defCtx.arc(bx, by, 10, 0, 2 * Math.PI);
+    defCtx.fillStyle = '#1abc9c';
+    defCtx.fill();
+    defCtx.strokeStyle = '#fff';
+    defCtx.lineWidth = 2;
+    defCtx.stroke();
+    defCtx.fillStyle = '#1abc9c';
+    defCtx.font = 'bold 14px Georgia';
+    defCtx.fillText('B', bx, by - 14);
+
+    defCtx.fillStyle = '#1abc9c';
+    defCtx.font = 'bold 16px Georgia';
+    defCtx.textAlign = 'center';
+    defCtx.textBaseline = 'top';
+    defCtx.fillText(defB.toFixed(1) + ' см', (ax + bx) / 2, yLine + 30);
+
+    document.getElementById('defA').textContent = '0';
+    document.getElementById('defB').textContent = defB.toFixed(1);
+    document.getElementById('defLen').textContent = defB.toFixed(1);
+}
+
+function initDefCanvas() {
+    drawDefCanvas();
+    let dragging = false;
+    function getPos(e) {
+        const rect = defCanvas.getBoundingClientRect();
+        const sx = defCanvas.width / rect.width;
+        const sy = defCanvas.height / rect.height;
+        let cx, cy;
+        if (e.touches) { cx = e.touches[0].clientX; cy = e.touches[0].clientY; e.preventDefault(); }
+        else { cx = e.clientX; cy = e.clientY; }
+        return { x: (cx - rect.left) * sx, y: (cy - rect.top) * sy };
+    }
+    function onDown(e) {
+        const pos = getPos(e);
+        const margin = 60;
+        const minX = margin, maxX = defCanvas.width - margin;
+        const scale = (maxX - minX) / 10;
+        const bx = minX + defB * scale;
+        const by = defCanvas.height / 2 + 10;
+        if (Math.sqrt((pos.x - bx) ** 2 + (pos.y - by) ** 2) < 35) {
+            dragging = true;
+            defCanvas.style.cursor = 'grabbing';
+        }
+    }
+    function onMove(e) {
+        const pos = getPos(e);
+        if (dragging) {
+            const margin = 60;
+            const minX = margin, maxX = defCanvas.width - margin;
+            const scale = (maxX - minX) / 10;
+            let val = (pos.x - minX) / scale;
+            val = Math.max(0.5, Math.min(10, val));
+            defB = Math.round(val * 10) / 10;
+            drawDefCanvas();
+        } else {
+            const margin = 60;
+            const minX = margin, maxX = defCanvas.width - margin;
+            const scale = (maxX - minX) / 10;
+            const bx = minX + defB * scale;
+            const by = defCanvas.height / 2 + 10;
+            defCanvas.style.cursor = Math.sqrt((pos.x - bx) ** 2 + (pos.y - by) ** 2) < 35 ? 'grab' : 'default';
+        }
+    }
+    function onUp() { dragging = false; defCanvas.style.cursor = 'default'; }
+    defCanvas.addEventListener('mousedown', onDown);
+    defCanvas.addEventListener('mousemove', onMove);
+    defCanvas.addEventListener('mouseup', onUp);
+    defCanvas.addEventListener('mouseleave', onUp);
+    defCanvas.addEventListener('touchstart', onDown, { passive: false });
+    defCanvas.addEventListener('touchmove', onMove, { passive: false });
+    defCanvas.addEventListener('touchend', onUp, { passive: false });
+}
+
+// ===== ТРЕНАЖЁР 1: ДЛИНА =====
+const canvas1 = document.getElementById('trainer1Canvas');
+const ctx1 = canvas1.getContext('2d');
+let t1B = 5;
+function drawT1() {
+    const w = canvas1.width, h = canvas1.height;
+    const margin = 60;
+    const minX = margin, maxX = w - margin;
+    const scale = (maxX - minX) / 10;
+    const yLine = h / 2 + 10;
+
+    ctx1.clearRect(0, 0, w, h);
+    ctx1.fillStyle = '#f7fcfa';
+    ctx1.fillRect(0, 0, w, h);
+
+    ctx1.beginPath();
+    ctx1.moveTo(minX - 10, yLine);
+    ctx1.lineTo(maxX + 10, yLine);
+    ctx1.strokeStyle = '#0e7c66';
+    ctx1.lineWidth = 2;
+    ctx1.stroke();
+
+    for (let i = 0; i <= 10; i++) {
+        const x = minX + i * scale;
+        ctx1.beginPath();
+        ctx1.moveTo(x, yLine - 7);
+        ctx1.lineTo(x, yLine + 7);
+        ctx1.strokeStyle = '#0e7c66';
+        ctx1.lineWidth = 2;
+        ctx1.stroke();
+        ctx1.fillStyle = '#0e7c66';
+        ctx1.font = '12px Courier New';
+        ctx1.textAlign = 'center';
+        ctx1.textBaseline = 'top';
+        ctx1.fillText(i, x, yLine + 10);
+    }
+
+    const ax = minX, ay = yLine;
+    const bx = minX + t1B * scale, by = yLine;
+
+    ctx1.beginPath();
+    ctx1.arc(ax, ay, 8, 0, 2 * Math.PI);
+    ctx1.fillStyle = '#ff6b6b';
+    ctx1.fill();
+    ctx1.strokeStyle = '#fff';
+    ctx1.lineWidth = 2;
+    ctx1.stroke();
+    ctx1.fillStyle = '#ff6b6b';
+    ctx1.font = 'bold 14px Georgia';
+    ctx1.textAlign = 'center';
+    ctx1.textBaseline = 'bottom';
+    ctx1.fillText('A', ax, ay - 12);
+
+    ctx1.beginPath();
+    ctx1.arc(bx, by, 10, 0, 2 * Math.PI);
+    ctx1.fillStyle = '#1abc9c';
+    ctx1.fill();
+    ctx1.strokeStyle = '#fff';
+    ctx1.lineWidth = 2;
+    ctx1.stroke();
+    ctx1.fillStyle = '#1abc9c';
+    ctx1.font = 'bold 14px Georgia';
+    ctx1.fillText('B', bx, by - 14);
+
+    ctx1.fillStyle = '#1abc9c';
+    ctx1.font = 'bold 16px Georgia';
+    ctx1.textAlign = 'center';
+    ctx1.textBaseline = 'top';
+    ctx1.fillText(t1B.toFixed(1) + ' см', (ax + bx) / 2, yLine + 30);
+
+    document.getElementById('t1a').textContent = '0';
+    document.getElementById('t1b').textContent = t1B.toFixed(1);
+    document.getElementById('t1len').textContent = t1B.toFixed(1);
+}
+function setT1(v) { t1B = Math.max(0.5, Math.min(10, v)); drawT1(); }
+function randomT1() { t1B = Math.round((0.5 + Math.random() * 9.5) * 10) / 10; drawT1(); }
+
+// ===== ТРЕНАЖЁР 2: ВЕСЬ ОТРЕЗОК =====
+const canvas2 = document.getElementById('trainer2Canvas');
+const ctx2 = canvas2.getContext('2d');
+let t2AC = 3, t2CB = 5, t2Answered = false;
+function drawT2() {
+    drawSegmentOnCanvas(ctx2, canvas2, t2AC, t2CB, t2Answered, true, true);
+    document.getElementById('t2a').textContent = t2AC;
+    document.getElementById('t2b').textContent = t2CB;
+    document.getElementById('t2c').textContent = t2Answered ? (t2AC + t2CB) : '?';
+}
+function setT2(ac, cb) {
+    t2Answered = false;
+    const inp = document.getElementById('t2Input');
+    inp.value = ''; inp.className = ''; inp.disabled = false;
+    const fb = document.getElementById('t2Feedback');
+    fb.textContent = ''; fb.className = 'feedback';
+    t2AC = Math.max(1, Math.min(15, Math.round(ac)));
+    t2CB = Math.max(1, Math.min(15, Math.round(cb)));
+    drawT2();
+}
+function randomT2() {
+    t2Answered = false;
+    const inp = document.getElementById('t2Input');
+    inp.value = ''; inp.className = ''; inp.disabled = false;
+    const fb = document.getElementById('t2Feedback');
+    fb.textContent = ''; fb.className = 'feedback';
+    t2AC = Math.round(1 + Math.random() * 10);
+    t2CB = Math.round(1 + Math.random() * 10);
+    drawT2();
+}
+function checkT2() {
+    if (t2Answered) return;
+    const input = document.getElementById('t2Input');
+    const fb = document.getElementById('t2Feedback');
+    const val = parseFloat(input.value);
+    const total = t2AC + t2CB;
+    if (isNaN(val)) {
+        fb.textContent = '❌ Введи число!';
+        fb.className = 'feedback wrong';
+        return;
+    }
+    if (Math.abs(val - total) < 0.5) {
+        t2Answered = true;
+        input.className = 'correct';
+        input.disabled = true;
+        fb.textContent = '🎉 Правильно! AB = ' + total + ' см';
+        fb.className = 'feedback correct';
+        drawT2();
+    } else {
+        input.className = 'wrong';
+        fb.textContent = '❌ Неправильно. Попробуй ещё!';
+        fb.className = 'feedback wrong';
+        setTimeout(() => { input.className = ''; }, 600);
+    }
+}
+
+// ===== ТРЕНАЖЁР 3: ЧАСТЬ =====
+const canvas3 = document.getElementById('trainer3Canvas');
+const ctx3 = canvas3.getContext('2d');
+let t3AC = 3, t3AB = 8, t3Answered = false;
+function drawT3() {
+    const w = canvas3.width, h = canvas3.height;
+    const margin = 80;
+    const minX = margin, maxX = w - margin;
+    const scale = (maxX - minX) / Math.max(t3AB, 1);
+    const yLine = h / 2 + 10;
+
+    ctx3.clearRect(0, 0, w, h);
+    ctx3.fillStyle = '#f7fcfa';
+    ctx3.fillRect(0, 0, w, h);
+
+    const ax = minX, cx = minX + t3AC * scale, bx = minX + t3AB * scale;
+
+    ctx3.beginPath();
+    ctx3.moveTo(ax, yLine);
+    ctx3.lineTo(bx, yLine);
+    ctx3.strokeStyle = '#0e7c66';
+    ctx3.lineWidth = 3;
+    ctx3.stroke();
+
+    ctx3.beginPath();
+    ctx3.arc(cx, yLine, 9, 0, 2 * Math.PI);
+    ctx3.fillStyle = '#2ecc71';
+    ctx3.fill();
+    ctx3.strokeStyle = '#fff';
+    ctx3.lineWidth = 2;
+    ctx3.stroke();
+    ctx3.fillStyle = '#2ecc71';
+    ctx3.font = 'bold 14px Georgia';
+    ctx3.textAlign = 'center';
+    ctx3.textBaseline = 'bottom';
+    ctx3.fillText('C', cx, yLine - 14);
+
+    ctx3.beginPath();
+    ctx3.arc(ax, yLine, 8, 0, 2 * Math.PI);
+    ctx3.fillStyle = '#ff6b6b';
+    ctx3.fill();
+    ctx3.strokeStyle = '#fff';
+    ctx3.lineWidth = 2;
+    ctx3.stroke();
+    ctx3.fillStyle = '#ff6b6b';
+    ctx3.fillText('A', ax, yLine - 12);
+
+    ctx3.beginPath();
+    ctx3.arc(bx, yLine, 8, 0, 2 * Math.PI);
+    ctx3.fillStyle = '#1abc9c';
+    ctx3.fill();
+    ctx3.strokeStyle = '#fff';
+    ctx3.lineWidth = 2;
+    ctx3.stroke();
+    ctx3.fillStyle = '#1abc9c';
+    ctx3.fillText('B', bx, yLine - 12);
+
+    ctx3.font = 'bold 14px Georgia';
+    ctx3.textAlign = 'center';
+    ctx3.textBaseline = 'top';
+    ctx3.fillStyle = '#ff6b6b';
+    ctx3.fillText(t3AC + ' см', (ax + cx) / 2, yLine + 14);
+
+    const cb = t3AB - t3AC;
+    ctx3.fillStyle = '#2ecc71';
+    ctx3.fillText(t3Answered ? cb + ' см' : '?', (cx + bx) / 2, yLine + 14);
+
+    ctx3.fillStyle = '#1abc9c';
+    ctx3.textBaseline = 'bottom';
+    ctx3.fillText(t3AB + ' см', (ax + bx) / 2, yLine - 28);
+
+    document.getElementById('t3a').textContent = t3AC;
+    document.getElementById('t3b').textContent = t3AB;
+    document.getElementById('t3c').textContent = t3Answered ? cb : '?';
+}
+function setT3(ac, ab) {
+    t3Answered = false;
+    const inp = document.getElementById('t3Input');
+    inp.value = ''; inp.className = ''; inp.disabled = false;
+    const fb = document.getElementById('t3Feedback');
+    fb.textContent = ''; fb.className = 'feedback';
+    t3AC = Math.max(1, Math.min(14, Math.round(ac)));
+    t3AB = Math.max(t3AC + 1, Math.min(15, Math.round(ab)));
+    drawT3();
+}
+function randomT3() {
+    t3Answered = false;
+    const inp = document.getElementById('t3Input');
+    inp.value = ''; inp.className = ''; inp.disabled = false;
+    const fb = document.getElementById('t3Feedback');
+    fb.textContent = ''; fb.className = 'feedback';
+    t3AB = Math.round(2 + Math.random() * 12);
+    t3AC = Math.round(1 + Math.random() * (t3AB - 1));
+    drawT3();
+}
+function checkT3() {
+    if (t3Answered) return;
+    const input = document.getElementById('t3Input');
+    const fb = document.getElementById('t3Feedback');
+    const val = parseFloat(input.value);
+    const cb = t3AB - t3AC;
+    if (isNaN(val)) {
+        fb.textContent = '❌ Введи число!';
+        fb.className = 'feedback wrong';
+        return;
+    }
+    if (Math.abs(val - cb) < 0.5) {
+        t3Answered = true;
+        input.className = 'correct';
+        input.disabled = true;
+        fb.textContent = '🎉 Правильно! CB = ' + cb + ' см';
+        fb.className = 'feedback correct';
+        drawT3();
+    } else {
+        input.className = 'wrong';
+        fb.textContent = '❌ Неправильно. Попробуй ещё!';
+        fb.className = 'feedback wrong';
+        setTimeout(() => { input.className = ''; }, 600);
+    }
+}
+
+// ===== ПЕРЕТАСКИВАНИЕ ТОЧЕК =====
+function setupDrag(canvasId, type) {
+    const canvas = document.getElementById(canvasId);
+    let isDragging = false, target = null;
+
+    function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const sx = canvas.width / rect.width;
+        const sy = canvas.height / rect.height;
+        let cx, cy;
+        if (e.touches) { cx = e.touches[0].clientX; cy = e.touches[0].clientY; e.preventDefault(); }
+        else { cx = e.clientX; cy = e.clientY; }
+        return { x: (cx - rect.left) * sx, y: (cy - rect.top) * sy };
+    }
+
+    function getPoints() {
+        const w = canvas.width, h = canvas.height;
+        const margin = 80;
+        const minX = margin, maxX = w - margin;
+        const yLine = h / 2 + 10;
+        if (type === 2) {
+            const total = t2AC + t2CB;
+            const scale = (maxX - minX) / Math.max(total, 1);
+            return {
+                C: { x: minX + t2AC * scale, y: yLine },
+                B: { x: minX + total * scale, y: yLine }
+            };
+        } else if (type === 3) {
+            const scale = (maxX - minX) / Math.max(t3AB, 1);
+            return {
+                C: { x: minX + t3AC * scale, y: yLine },
+                B: { x: minX + t3AB * scale, y: yLine }
+            };
+        }
+        return {};
+    }
+
+    function resetAnswer() {
+        if (type === 2 && t2Answered) {
+            t2Answered = false;
+            const inp = document.getElementById('t2Input');
+            inp.value = ''; inp.className = ''; inp.disabled = false;
+            const fb = document.getElementById('t2Feedback');
+            fb.textContent = ''; fb.className = 'feedback';
+        }
+        if (type === 3 && t3Answered) {
+            t3Answered = false;
+            const inp = document.getElementById('t3Input');
+            inp.value = ''; inp.className = ''; inp.disabled = false;
+            const fb = document.getElementById('t3Feedback');
+            fb.textContent = ''; fb.className = 'feedback';
+        }
+    }
+
+    function onDown(e) {
+        const pos = getPos(e);
+        const pts = getPoints();
+        for (const [key, pt] of Object.entries(pts)) {
+            const dist = Math.sqrt((pos.x - pt.x) ** 2 + (pos.y - pt.y) ** 2);
+            if (dist < 35) {
+                isDragging = true;
+                target = key;
+                canvas.style.cursor = 'grabbing';
+                resetAnswer();
+                return;
+            }
+        }
+    }
+
+    function onMove(e) {
+        const pos = getPos(e);
+        if (isDragging && target) {
+            const margin = 80;
+            const w = canvas.width;
+            const minX = margin, maxX = w - margin;
+            if (type === 2) {
+                const total = t2AC + t2CB;
+                const scale = (maxX - minX) / Math.max(total, 1);
+                if (target === 'C') {
+                    let newAC = Math.round((pos.x - minX) / scale);
+                    newAC = Math.max(1, Math.min(total - 1, newAC));
+                    let newCB = total - newAC;
+                    if (newCB < 1) { newCB = 1; newAC = total - 1; }
+                    t2AC = newAC; t2CB = newCB;
+                    drawT2();
+                } else if (target === 'B') {
+                    let newTotal = Math.round((pos.x - minX) / scale);
+                    newTotal = Math.max(total + 1, Math.min(30, newTotal));
+                    const ratio = newTotal / total;
+                    let ac = Math.round(t2AC * ratio);
+                    let cb = newTotal - ac;
+                    if (ac < 1) { ac = 1; cb = newTotal - 1; }
+                    if (cb < 1) { cb = 1; ac = newTotal - 1; }
+                    t2AC = ac; t2CB = cb;
+                    drawT2();
+                }
+            } else if (type === 3) {
+                const scale = (maxX - minX) / Math.max(t3AB, 1);
+                if (target === 'C') {
+                    let newAC = Math.round((pos.x - minX) / scale);
+                    newAC = Math.max(1, Math.min(t3AB - 1, newAC));
+                    t3AC = newAC;
+                    drawT3();
+                } else if (target === 'B') {
+                    let newAB = Math.round((pos.x - minX) / scale);
+                    newAB = Math.max(t3AC + 1, Math.min(15, newAB));
+                    t3AB = newAB;
+                    drawT3();
+                }
+            }
+        } else {
+            const pts = getPoints();
+            let near = false;
+            for (const pt of Object.values(pts)) {
+                if (Math.sqrt((pos.x - pt.x) ** 2 + (pos.y - pt.y) ** 2) < 35) { near = true; break; }
+            }
+            canvas.style.cursor = near ? 'grab' : 'default';
+        }
+    }
+
+    function onUp() { isDragging = false; target = null; canvas.style.cursor = 'default'; }
+
+    canvas.addEventListener('mousedown', onDown);
+    canvas.addEventListener('mousemove', onMove);
+    canvas.addEventListener('mouseup', onUp);
+    canvas.addEventListener('mouseleave', onUp);
+    canvas.addEventListener('touchstart', onDown, { passive: false });
+    canvas.addEventListener('touchmove', onMove, { passive: false });
+    canvas.addEventListener('touchend', onUp, { passive: false });
+}
+
+// ===== КАНВАС-ПАНЕЛЬ =====
+function createDrawPanel(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const panel = document.createElement('div');
+    panel.className = 'draw-panel';
+
+    const state = {
+        mode: 'pen',
+        color: '#1abc9c',
+        history: [],
+        lineStart: null,
+        linePreview: null
+    };
+
+    const toolbar = document.createElement('div');
+    toolbar.className = 'draw-toolbar';
+
+    function makeTool(text, cls, onClick, active) {
+        const b = document.createElement('button');
+        b.className = 'tool ' + cls + (active ? ' active' : '');
+        b.textContent = text;
+        b.onclick = function() {
+            toolbar.querySelectorAll('.tool').forEach(t => t.classList.remove('active'));
+            b.classList.add('active');
+            onClick();
+            redraw();
+        };
+        return b;
+    }
+
+    toolbar.appendChild(makeTool('✏️ Карандаш', 'pen-tool', () => { state.mode = 'pen'; }, true));
+    toolbar.appendChild(makeTool('🔵 Синий', 'color-blue', () => { state.color = '#1abc9c'; state.mode = 'pen'; }, true));
+    toolbar.appendChild(makeTool('🔴 Красный', 'color-red', () => { state.color = '#ff6b6b'; state.mode = 'pen'; }, false));
+    toolbar.appendChild(makeTool('📏 Прямая', 'line-tool', () => { state.mode = 'line'; state.lineStart = null; state.linePreview = null; }, false));
+    toolbar.appendChild(makeTool('🧽 Ластик', 'eraser-tool', () => { state.mode = 'eraser'; }, false));
+    toolbar.appendChild(makeTool('↩️ Отменить', 'undo-tool', () => { undo(); }, false));
+    toolbar.appendChild(makeTool('🗑️ Очистить', 'clear-tool', () => { state.history = []; state.lineStart = null; state.linePreview = null; redraw(); }, false));
+
+    panel.appendChild(toolbar);
+
+    const wrap = document.createElement('div');
+    wrap.className = 'draw-canvas-wrap';
+    const canvas = document.createElement('canvas');
+    canvas.width = 800;
+    canvas.height = 260;
+    wrap.appendChild(canvas);
+    panel.appendChild(wrap);
+
+    const hint = document.createElement('div');
+    hint.className = 'draw-hint';
+    hint.innerHTML = '✏️ Пиши: <span>карандаш синий / красный</span> · <span>📏 Прямая</span> — клик в начале, клик в конце';
+    panel.appendChild(hint);
+
+    container.appendChild(panel);
+
+    const ctx = canvas.getContext('2d');
+
+    function drawBackground() {
+        ctx.fillStyle = '#f7fcfa';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = 'rgba(14,124,102,0.10)';
+        ctx.lineWidth = 1;
+        for (let x = 0; x <= canvas.width; x += 20) {
+            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+        }
+        for (let y = 0; y <= canvas.height; y += 20) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+        }
+    }
+
+    function drawStroke(stroke) {
+        if (stroke.type === 'eraser') {
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(stroke.x, stroke.y, stroke.size, 0, 2 * Math.PI);
+            ctx.clip();
+            drawBackground();
+            ctx.restore();
+            return;
+        }
+        if (stroke.type === 'line') {
+            ctx.beginPath();
+            ctx.strokeStyle = stroke.color;
+            ctx.lineWidth = 2.2;
+            ctx.lineCap = 'round';
+            ctx.moveTo(stroke.x1, stroke.y1);
+            ctx.lineTo(stroke.x2, stroke.y2);
+            ctx.stroke();
+            return;
+        }
+        ctx.beginPath();
+        ctx.strokeStyle = stroke.color;
+        ctx.lineWidth = stroke.size;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        if (stroke.points.length === 1) {
+            ctx.arc(stroke.points[0].x, stroke.points[0].y, stroke.size / 2, 0, 2 * Math.PI);
+            ctx.fillStyle = stroke.color;
+            ctx.fill();
+        } else {
+            ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
+            for (let i = 1; i < stroke.points.length; i++) {
+                ctx.lineTo(stroke.points[i].x, stroke.points[i].y);
+            }
+            ctx.stroke();
+        }
+    }
+
+    function redraw() {
+        drawBackground();
+        state.history.forEach(drawStroke);
+        if (state.mode === 'line' && state.linePreview) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.setLineDash([6, 5]);
+            ctx.strokeStyle = state.color;
+            ctx.lineWidth = 2;
+            ctx.moveTo(state.linePreview.x1, state.linePreview.y1);
+            ctx.lineTo(state.linePreview.x2, state.linePreview.y2);
+            ctx.stroke();
+            ctx.restore();
+        }
+        if (state.mode === 'line' && state.lineStart) {
+            ctx.beginPath();
+            ctx.arc(state.lineStart.x, state.lineStart.y, 5, 0, 2 * Math.PI);
+            ctx.fillStyle = state.color;
+            ctx.fill();
+        }
+    }
+
+    function undo() {
+        if (state.history.length > 0) {
+            state.history.pop();
+            redraw();
+        }
+    }
+
+    function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const sx = canvas.width / rect.width;
+        const sy = canvas.height / rect.height;
+        let cx, cy;
+        if (e.touches) { cx = e.touches[0].clientX; cy = e.touches[0].clientY; }
+        else { cx = e.clientX; cy = e.clientY; }
+        return { x: (cx - rect.left) * sx, y: (cy - rect.top) * sy };
+    }
+
+    let drawing = false;
+    let currentStroke = null;
+
+    function onDown(e) {
+        e.preventDefault();
+        const pos = getPos(e);
+
+        if (state.mode === 'line') {
+            if (!state.lineStart) {
+                state.lineStart = { x: pos.x, y: pos.y };
+                state.linePreview = null;
+            } else {
+                state.history.push({
+                    type: 'line',
+                    color: state.color,
+                    x1: state.lineStart.x,
+                    y1: state.lineStart.y,
+                    x2: pos.x,
+                    y2: pos.y
+                });
+                state.lineStart = null;
+                state.linePreview = null;
+            }
+            redraw();
+            return;
+        }
+
+        if (state.mode === 'eraser') {
+            drawing = true;
+            const stroke = { type: 'eraser', size: 18, x: pos.x, y: pos.y };
+            state.history.push(stroke);
+            redraw();
+            return;
+        }
+
+        drawing = true;
+        currentStroke = {
+            type: 'pen',
+            color: state.color,
+            size: 2.2,
+            points: [{ x: pos.x, y: pos.y }]
+        };
+        state.history.push(currentStroke);
+        redraw();
+    }
+
+    function onMove(e) {
+        const pos = getPos(e);
+
+        if (state.mode === 'line' && state.lineStart) {
+            state.linePreview = {
+                x1: state.lineStart.x,
+                y1: state.lineStart.y,
+                x2: pos.x,
+                y2: pos.y
+            };
+            redraw();
+            e.preventDefault && e.preventDefault();
+            return;
+        }
+
+        if (!drawing) return;
+
+        if (state.mode === 'eraser') {
+            const last = state.history[state.history.length - 1];
+            const stroke = { type: 'eraser', size: 18, x: pos.x, y: pos.y };
+            state.history.push(stroke);
+            if (last) {
+                const steps = 4;
+                for (let i = 1; i <= steps; i++) {
+                    const ix = last.x + (pos.x - last.x) * (i / steps);
+                    const iy = last.y + (pos.y - last.y) * (i / steps);
+                    state.history.push({ type: 'eraser', size: 18, x: ix, y: iy });
+                }
+            }
+            redraw();
+            e.preventDefault && e.preventDefault();
+            return;
+        }
+
+        if (currentStroke) {
+            currentStroke.points.push({ x: pos.x, y: pos.y });
+            const pts = currentStroke.points;
+            if (pts.length >= 2) {
+                const a = pts[pts.length - 2];
+                const b = pts[pts.length - 1];
+                ctx.beginPath();
+                ctx.strokeStyle = currentStroke.color;
+                ctx.lineWidth = currentStroke.size;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.moveTo(a.x, a.y);
+                ctx.lineTo(b.x, b.y);
+                ctx.stroke();
+            }
+        }
+        e.preventDefault && e.preventDefault();
+    }
+
+    function onUp() {
+        if (drawing && currentStroke && currentStroke.type === 'pen' && currentStroke.points.length === 1) {
+            ctx.beginPath();
+            ctx.arc(currentStroke.points[0].x, currentStroke.points[0].y, currentStroke.size / 2, 0, 2 * Math.PI);
+            ctx.fillStyle = currentStroke.color;
+            ctx.fill();
+        }
+        drawing = false;
+        currentStroke = null;
+    }
+
+    canvas.addEventListener('mousedown', onDown);
+    canvas.addEventListener('mousemove', onMove);
+    canvas.addEventListener('mouseup', onUp);
+    canvas.addEventListener('mouseleave', onUp);
+    canvas.addEventListener('touchstart', onDown, { passive: false });
+    canvas.addEventListener('touchmove', onMove, { passive: false });
+    canvas.addEventListener('touchend', onUp, { passive: false });
+
+    redraw();
+}
+
+// ===== ОБРАЗЦЫ =====
+function initSampleCanvases() {
+    ['drawSample1', 'drawSample2', 'drawSample3'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = '';
+    });
+    createDrawPanel('drawSample1');
+    createDrawPanel('drawSample2');
+    createDrawPanel('drawSample3');
+}
+
+// ===== БАНК ЗАДАЧ 3 УРОВНЯ (без чертежей!) =====
+const taskBank = {
+    easy: [
+        { id: 1, question: 'Точка C лежит на отрезке AB. AC = <span class="hl">3 см</span>, CB = <span class="hl-blue">5 см</span>. Найдите AB.', answer: 8 },
+        { id: 2, question: 'Точка C лежит на отрезке AB. AB = <span class="hl">10 см</span>, AC = <span class="hl-blue">4 см</span>. Найдите CB.', answer: 6 },
+        { id: 3, question: 'Точка C лежит на отрезке AB. AC = <span class="hl">7 см</span>, AB = <span class="hl-blue">12 см</span>. Найдите CB.', answer: 5 },
+        { id: 4, question: 'Точка C лежит на отрезке AB. AB = <span class="hl">15 см</span>, CB = <span class="hl-blue">9 см</span>. Найдите AC.', answer: 6 }
+    ],
+    medium: [
+        { id: 5, question: 'Точка C лежит на отрезке AB. AC в <span class="hl-orange">2 раза</span> больше CB. AB = <span class="hl">15 см</span>. Найдите CB.', answer: 5 },
+        { id: 6, question: 'Точка C лежит на отрезке AB. AC на <span class="hl-orange">4 см</span> больше CB. AB = <span class="hl">14 см</span>. Найдите AC.', answer: 9 },
+        { id: 7, question: 'Точка C лежит на отрезке AB. AC в <span class="hl-orange">3 раза</span> меньше CB. AB = <span class="hl">16 см</span>. Найдите AC.', answer: 4 },
+        { id: 8, question: 'Точка C лежит на отрезке AB. AC на <span class="hl-orange">5 см</span> меньше CB. AB = <span class="hl">11 см</span>. Найдите CB.', answer: 8 }
+    ],
+    hard: [
+        { id: 9, question: 'Точка C лежит на отрезке AB. AC : CB = <span class="hl-orange">1 : 4</span>. AB = <span class="hl">15 см</span>. Найдите AC.', answer: 3 },
+        { id: 10, question: 'Точка C лежит на отрезке AB. AC : CB = <span class="hl-orange">2 : 3</span>. AB = <span class="hl">20 см</span>. Найдите CB.', answer: 12 },
+        { id: 11, question: 'Точка C лежит на отрезке AB. AC : CB = <span class="hl-orange">3 : 5</span>. AB = <span class="hl">24 см</span>. Найдите AC и CB.', answer: [9, 15] },
+        { id: 12, question: 'Точка C лежит на отрезке AB. AC : CB = <span class="hl-orange">7 : 8</span>. AB = <span class="hl">30 см</span>. Найдите AC и CB.', answer: [14, 16] }
+    ]
+};
+
+let currentLevel = 'easy';
+let tasksDone = {};
+
+function switchLevel(level) {
+    currentLevel = level;
+    document.querySelectorAll('.level-btn').forEach(b => {
+        b.classList.remove('active');
+        if (b.dataset.level === level) b.classList.add('active');
+    });
+    renderTasks(level);
+}
+
+function renderTasks(level) {
+    const container = document.getElementById('tasksContainer');
+    container.innerHTML = '';
+    const tasks = taskBank[level];
+    tasksDone[level] = new Array(tasks.length).fill(false);
+
+    tasks.forEach((task, index) => {
+        const div = document.createElement('div');
+        div.className = 'task-item';
+
+        const q = document.createElement('div');
+        q.className = 'question';
+        q.innerHTML = task.question;
+        div.appendChild(q);
+
+        const controls = document.createElement('div');
+        controls.className = 'controls';
+
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.id = 'taskInput-' + level + '-' + index;
+        input.placeholder = 'см';
+        input.min = 0;
+        input.max = 60;
+        controls.appendChild(input);
+
+        const checkBtn = document.createElement('button');
+        checkBtn.className = 'btn btn-check-green';
+        checkBtn.textContent = '✅ Проверить';
+        checkBtn.onclick = () => checkTask(level, index, task.answer);
+        controls.appendChild(checkBtn);
+
+        const drawBtn = document.createElement('button');
+        drawBtn.className = 'btn btn-draw';
+        drawBtn.textContent = '📐 Решение';
+        drawBtn.onclick = () => {
+            const p = document.getElementById('drawPanel-' + level + '-' + index);
+            p.classList.toggle('show-panel');
+        };
+        controls.appendChild(drawBtn);
+
+        const showAnsBtn = document.createElement('button');
+        showAnsBtn.className = 'btn';
+        showAnsBtn.textContent = '👁️ Ответ';
+        showAnsBtn.onclick = () => {
+            document.getElementById('taskAnswer-' + level + '-' + index).classList.toggle('visible');
+        };
+        controls.appendChild(showAnsBtn);
+
+        const status = document.createElement('span');
+        status.className = 'task-status';
+        status.id = 'taskStatus-' + level + '-' + index;
+        controls.appendChild(status);
+
+        div.appendChild(controls);
+
+        const answerDiv = document.createElement('div');
+        answerDiv.className = 'task-answer';
+        answerDiv.id = 'taskAnswer-' + level + '-' + index;
+        answerDiv.textContent = Array.isArray(task.answer) ?
+            task.answer.join(' см и ') + ' см' : task.answer + ' см';
+        div.appendChild(answerDiv);
+
+        // Панель для решения (скрыта по умолчанию, открывается кнопкой «Решение»)
+        const panelHolder = document.createElement('div');
+        panelHolder.id = 'drawPanel-' + level + '-' + index;
+        panelHolder.className = 'draw-panel-holder';
+        div.appendChild(panelHolder);
+
+        container.appendChild(div);
+
+        createDrawPanel('drawPanel-' + level + '-' + index);
+    });
+
+    updateTaskProgress(level);
+}
+
+function checkTask(level, index, correct) {
+    if (tasksDone[level][index]) return;
+    const input = document.getElementById('taskInput-' + level + '-' + index);
+    const status = document.getElementById('taskStatus-' + level + '-' + index);
+    const val = parseFloat(input.value);
+
+    if (isNaN(val)) {
+        input.className = 'wrong';
+        status.textContent = '❌';
+        setTimeout(() => { input.className = ''; status.textContent = ''; }, 700);
+        return;
+    }
+
+    let isCorrect = false;
+    if (Array.isArray(correct)) {
+        isCorrect = Math.abs(val - correct[0]) < 0.5 || Math.abs(val - correct[1]) < 0.5;
+    } else {
+        isCorrect = Math.abs(val - correct) < 0.5;
+    }
+
+    if (isCorrect) {
+        tasksDone[level][index] = true;
+        input.className = 'correct';
+        input.disabled = true;
+        status.textContent = '✅';
+        status.style.color = '#2ecc71';
+        updateTaskProgress(level);
+    } else {
+        input.className = 'wrong';
+        status.textContent = '❌';
+        status.style.color = '#ff6b6b';
+        setTimeout(() => { input.className = ''; status.textContent = ''; }, 700);
+    }
+}
+
+function updateTaskProgress(level) {
+    const done = tasksDone[level] ? tasksDone[level].filter(Boolean).length : 0;
+    const total = taskBank[level] ? taskBank[level].length : 0;
+    document.getElementById('tasksCount').textContent = done;
+    document.getElementById('tasksTotal').textContent = total;
+}
+
+// ===== ДЗ =====
+const hwData = [
+    { q: 'Точка C лежит на отрезке AB. AC = <span class="hl">8 см</span>, CB = <span class="hl-blue">7 см</span>. Найдите AB.', a: 'AB = 15 см' },
+    { q: 'Точка C лежит на отрезке AB. AB = <span class="hl">18 см</span>, AC = <span class="hl-blue">11 см</span>. Найдите CB.', a: 'CB = 7 см' },
+    { q: 'Точка C лежит на отрезке AB. AC в <span class="hl-orange">2 раза</span> больше CB. AB = <span class="hl">21 см</span>. Найдите AC и CB.', a: 'AC = 14 см, CB = 7 см' },
+    { q: 'Точка C лежит на отрезке AB. AC : CB = <span class="hl-orange">2 : 5</span>. AB = <span class="hl">28 см</span>. Найдите AC и CB.', a: 'AC = 8 см, CB = 20 см' }
+];
+
+function renderHW() {
+    const container = document.getElementById('hwContainer');
+    container.innerHTML = '';
+    hwData.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'hw-item';
+
+        const q = document.createElement('span');
+        q.className = 'question';
+        q.innerHTML = item.q;
+        div.appendChild(q);
+
+        const btn = document.createElement('button');
+        btn.className = 'btn-show-hw';
+        btn.textContent = '👁️ Ответ';
+        btn.onclick = () => {
+            document.getElementById('hwAnswer' + index).classList.toggle('visible');
+        };
+        div.appendChild(btn);
+
+        const ans = document.createElement('div');
+        ans.className = 'hw-answer';
+        ans.id = 'hwAnswer' + index;
+        ans.textContent = item.a;
+        div.appendChild(ans);
+
+        container.appendChild(div);
+    });
+}
+
+// ===== ИНИЦИАЛИЗАЦИЯ =====
+function initAllTrainers() {
+    drawT1();
+    drawT2();
+    drawT3();
+    setupDrag('trainer2Canvas', 2);
+    setupDrag('trainer3Canvas', 3);
+}
+
+initAllTrainers();
+
+console.log('✅ ΤΕΤΡΑΚΤΥΣ · Измерение отрезков v4 загружен!');
+console.log('📄 6 страниц: Приветствие · Определения · Тренажёры · Образцы · Задачи 3 уровня · ДЗ');
+console.log('✏️ Канвас: карандаш (2 цвета) + 📏 Прямая + 🧽 Ластик + ↩️ + 🗑️');
+console.log('📚 Задачи 3 уровней вернулись (без чертежей)!');
+</script>
+
+</body>
+</html>
