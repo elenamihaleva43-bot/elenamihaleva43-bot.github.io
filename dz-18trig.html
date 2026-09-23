@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>ДЗ 18 · Тригонометрия · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{min-height:100vh;font-family:Georgia,'Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.06),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;padding:20px;overflow-x:hidden;display:flex;justify-content:center;}
+  .glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.5;}
+  .glow.g1{width:520px;height:520px;top:-120px;left:-120px;background:radial-gradient(circle,rgba(26,188,156,0.55),transparent 70%);}
+  .glow.g2{width:600px;height:600px;bottom:-200px;right:-180px;background:radial-gradient(circle,rgba(127,255,212,0.4),transparent 70%);}
+  .corner-logo{position:fixed;top:14px;left:16px;z-index:50;font-family:'Times New Roman',serif;text-align:center;line-height:1;padding:10px 18px 12px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(26,188,156,0.45);border-radius:14px;backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(0,0,0,0.35);}
+  .corner-logo .dots{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:16px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:4px;}
+  .corner-logo .ru{font-size:10px;letter-spacing:3px;color:var(--text-soft);margin-top:2px;}
+  .top-right{position:fixed;top:14px;right:16px;z-index:50;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+  .date-badge{display:flex;align-items:center;justify-content:center;height:46px;padding:0 16px;border-radius:14px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(127,255,212,0.45);color:var(--mint);backdrop-filter:blur(10px);font-weight:700;font-family:'Courier New',monospace;font-size:15px;}
+  .app{max-width:900px;width:100%;background:rgba(255,255,255,0.04);border:1.5px solid var(--glass-brd);border-radius:24px;padding:28px 30px;backdrop-filter:blur(12px);box-shadow:0 12px 50px rgba(0,0,0,0.5);position:relative;z-index:2;margin-top:50px;}
+  .header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:1px solid rgba(26,188,156,0.2);padding-bottom:14px;margin-bottom:20px;}
+  .header-title{font-size:14px;color:var(--text-soft);font-style:italic;}
+  h1{font-size:clamp(18px,2.6vw,24px);color:var(--mint);letter-spacing:1.5px;text-align:center;margin-bottom:6px;}
+  .subtitle{text-align:center;font-size:14px;color:var(--text-soft);font-style:italic;margin-bottom:20px;}
+  .name-block{background:linear-gradient(135deg,rgba(244,211,94,0.12),rgba(26,188,156,0.08));border:1.5px solid var(--gold);border-radius:14px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .name-block label{font-size:15px;color:var(--gold-light);font-weight:700;white-space:nowrap;}
+  .name-block input{flex:1;min-width:200px;padding:10px 14px;border-radius:10px;border:2px solid rgba(244,211,94,0.4);background:rgba(0,0,0,0.3);color:#fff;font-family:Georgia,serif;font-size:16px;outline:none;transition:0.2s;}
+  .name-block input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(244,211,94,0.25);}
+  .name-block input::placeholder{color:#a89a6a;font-style:italic;}
+  .intro-block{background:rgba(255,255,255,0.03);border-radius:16px;padding:18px 22px;margin-bottom:20px;border-left:4px solid var(--teal);font-size:15px;line-height:1.75;color:var(--text);}
+  .intro-block b{color:var(--mint);}
+  .intro-block .signature{display:block;text-align:right;font-size:13px;color:var(--text-soft);font-style:italic;margin-top:10px;}
+  .task-block{background:rgba(0,0,0,0.2);border-radius:16px;padding:18px 22px;margin-bottom:16px;border-left:4px solid var(--mint);transition:0.3s;}
+  .task-block.correct{border-left-color:var(--ok);background:rgba(46,204,113,0.08);}
+  .task-block.wrong{border-left-color:var(--err);background:rgba(255,107,107,0.08);}
+  .task-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
+  .task-num{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;background:linear-gradient(135deg,var(--gold),#c9a32b);color:#2a1f00;border-radius:10px;font-family:'Courier New',monospace;font-weight:700;font-size:15px;flex-shrink:0;}
+  .task-title{font-size:14px;color:var(--mint);font-weight:700;letter-spacing:1px;text-transform:uppercase;padding-top:8px;flex:1;}
+  .task-mark{font-size:20px;font-weight:800;flex-shrink:0;padding-top:4px;}
+  .task-mark.ok{color:var(--ok);}
+  .task-mark.err{color:var(--err);}
+  .graph-wrap{background:#f7fcfa;border-radius:14px;border:1.5px solid rgba(26,188,156,0.3);padding:8px;margin-bottom:12px;text-align:center;}
+  .graph-wrap canvas{display:block;width:100%;max-width:520px;height:auto;margin:0 auto;background:#f7fcfa;border-radius:10px;touch-action:none;}
+  .graph-wrap.wide canvas{max-width:660px;}
+  .task-question{font-size:16px;color:var(--text);margin-bottom:12px;line-height:1.6;}
+  .task-question b{color:var(--mint);}
+  .answer-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .answer-row label{font-size:15px;color:var(--gold-light);font-weight:700;min-width:110px;}
+  .answer-row input{flex:1;min-width:180px;padding:11px 14px;border-radius:10px;border:1.5px solid var(--glass-brd);background:rgba(10,42,51,0.5);color:var(--text);font-family:'Cambria Math',serif;font-size:16px;outline:none;transition:0.2s;}
+  .answer-row input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+  .answer-row input::placeholder{color:var(--text-soft);opacity:0.5;font-style:italic;}
+  .answer-row input.correct{border-color:var(--ok);background:rgba(46,204,113,0.15);}
+  .answer-row input.wrong{border-color:var(--err);background:rgba(255,107,107,0.15);}
+  .answer-row input:disabled{opacity:0.9;cursor:default;}
+  .photo-note{background:rgba(244,211,94,0.08);border-left:4px solid var(--gold);border-radius:0 12px 12px 0;padding:14px 18px;font-size:15px;line-height:1.6;color:var(--text);margin-top:10px;}
+  .photo-note b{color:var(--gold-light);}
+  .btn-check{width:100%;padding:16px 32px;font-size:18px;font-weight:700;font-family:inherit;letter-spacing:1px;border:none;border-radius:16px;background:linear-gradient(135deg,#f4d35e,#c9a32b);color:#2a1f00;cursor:pointer;transition:0.3s;box-shadow:0 6px 24px rgba(244,211,94,0.4);margin-top:16px;}
+  .btn-check:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(244,211,94,0.55);}
+  .btn-check:disabled{opacity:0.5;cursor:default;transform:none;}
+  .summary-box{display:none;background:linear-gradient(135deg,rgba(26,188,156,0.15),rgba(244,211,94,0.10));border:2px solid var(--mint);border-radius:16px;padding:20px 24px;margin-top:20px;text-align:center;}
+  .summary-box.show{display:block;animation:fade 0.5s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .summary-title{font-size:16px;color:var(--mint);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:14px;}
+  .summary-stats{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:10px;}
+  .summary-stat{display:flex;flex-direction:column;align-items:center;gap:4px;}
+  .summary-stat .num{font-family:'Courier New',monospace;font-size:38px;font-weight:800;color:var(--gold);line-height:1;}
+  .summary-stat .lbl{font-size:12px;color:var(--text-soft);letter-spacing:1.5px;text-transform:uppercase;}
+  .summary-stat .num.ok{color:var(--ok);}
+  .summary-stat .num.err{color:var(--err);}
+  .summary-line{font-size:15px;color:var(--text);margin-top:8px;font-style:italic;}
+  .result-area{margin-top:20px;display:none;}
+  .result-area.show{display:block;animation:fade 0.4s ease;}
+  .result-text{background:rgba(0,0,0,0.35);border:1.5px solid var(--mint);border-radius:12px;padding:16px 18px;font-family:'Courier New',monospace;font-size:13px;color:var(--text);white-space:pre-wrap;line-height:1.7;user-select:all;cursor:text;}
+  .result-hint{text-align:center;font-size:13px;color:var(--gold-light);font-style:italic;margin-top:10px;}
+  .btn-copy{display:block;width:100%;margin-top:12px;padding:13px 24px;font-size:15px;font-weight:700;font-family:inherit;border:2px solid var(--glass-brd);border-radius:12px;background:transparent;color:var(--mint);cursor:pointer;transition:0.25s;letter-spacing:1px;}
+  .btn-copy:hover{background:rgba(26,188,156,0.15);}
+  .btn-copy.copied{background:linear-gradient(135deg,#2ecc71,#27ae60);color:#fff;border-color:var(--ok);}
+  .btn-max{display:block;width:100%;margin-top:12px;padding:14px 24px;font-size:16px;font-weight:700;font-family:inherit;border:none;border-radius:12px;background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;cursor:pointer;text-decoration:none;text-align:center;letter-spacing:1px;box-shadow:0 6px 20px rgba(26,188,156,0.4);transition:0.2s;}
+  .btn-max:hover{transform:translateY(-2px);}
+  @media(max-width:600px){
+    .app{padding:18px 14px;}
+    .name-block{flex-direction:column;align-items:stretch;gap:8px;}
+    .name-block label{text-align:center;}
+    .task-block{padding:14px 16px;}
+    .answer-row label{min-width:80px;font-size:13px;}
+    .summary-stat .num{font-size:28px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div><div class="glow g2"></div>
+
+<div class="corner-logo">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+</div>
+
+<div class="top-right">
+  <div class="date-badge" id="dateDisplay">📅 00.00.0000</div>
+</div>
+
+<div class="app">
+
+  <div class="header">
+    <div class="header-title">ДЗ 18 · Тригонометрия · 11 заданий</div>
+    <div style="font-size:13px;color:var(--text-soft);">Геометрия</div>
+  </div>
+
+  <h1>Тригонометрия</h1>
+  <div class="subtitle">sin · cos · tg острого угла прямоугольного треугольника</div>
+
+  <div class="name-block">
+    <label for="studentName">👤 Имя ученика:</label>
+    <input type="text" id="studentName" placeholder="Введи своё имя и фамилию..." maxlength="60" autocomplete="off">
+  </div>
+
+  <div class="intro-block">
+    <b>📐 Как выполнять:</b><br>
+    • <b>Задания 1–10</b> — рассмотри чертёж, реши и впиши <b>число-ответ</b> (можно писать и «0,28», и «0.28»).<br>
+    • <b>Задание 11</b> — реши в тетради, сфотографируй и пришли учителю.<br>
+    • Когда всё заполнено — нажми <b>«Проверить»</b>.
+    <span class="signature">ΤΕΤΡΑΚΤΥΣ · Школа математики Елены Михалевой</span>
+  </div>
+
+  <!-- ЗАДАНИЕ 1 -->
+  <div class="task-block" id="task-1">
+    <div class="task-header">
+      <span class="task-num">1</span>
+      <span class="task-title">Синус острого угла</span>
+      <span class="task-mark" id="mark-1"></span>
+    </div>
+    <div class="graph-wrap"><canvas id="cv-1" width="600" height="460"></canvas></div>
+    <div class="task-question">
+      В треугольнике ABC угол C равен <b>90°</b>, AC = <b>7</b>, AB = <b>25</b>. Найдите <b>sinB</b>.
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-1" placeholder="введи ответ" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЕ 2 -->
+  <div class="task-block" id="task-2">
+    <div class="task-header">
+      <span class="task-num">2</span>
+      <span class="task-title">Косинус острого угла</span>
+      <span class="task-mark" id="mark-2"></span>
+    </div>
+    <div class="graph-wrap"><canvas id="cv-2" width="600" height="460"></canvas></div>
+    <div class="task-question">
+      В треугольнике ABC угол C равен <b>90°</b>, BC = <b>14</b>, AB = <b>50</b>. Найдите <b>cosB</b>.
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-2" placeholder="введи ответ" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЕ 3 -->
+  <div class="task-block" id="task-3">
+    <div class="task-header">
+      <span class="task-num">3</span>
+      <span class="task-title">Тангенс острого угла</span>
+      <span class="task-mark" id="mark-3"></span>
+    </div>
+    <div class="graph-wrap"><canvas id="cv-3" width="600" height="460"></canvas></div>
+    <div class="task-question">
+      В треугольнике ABC угол C равен <b>90°</b>, BC = <b>9</b>, AC = <b>27</b>. Найдите <b>tgB</b>.
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-3" placeholder="введи ответ" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЕ 4 -->
+  <div class="task-block" id="task-4">
+    <div class="task-header">
+      <span class="task-num">4</span>
+      <span class="task-title">Основное тригонометрическое тождество</span>
+      <span class="task-mark" id="mark-4"></span>
+    </div>
+    <div class="graph-wrap"><canvas id="cv-4" width="600" height="460"></canvas></div>
+    <div class="task-question">
+      Синус острого угла A треугольника ABC равен <b>√15 / 4</b>. Найдите <b>cosA</b>.
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-4" placeholder="введи ответ" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЕ 5 -->
+  <div class="task-block" id="task-5">
+    <div class="task-header">
+      <span class="task-num">5</span>
+      <span class="task-title">Основное тригонометрическое тождество</span>
+      <span class="task-mark" id="mark-5"></span>
+    </div>
+    <div class="task-question">
+      Косинус острого угла A треугольника ABC равен <b>2√6 / 5</b>. Найдите <b>sinA</b>.
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-5" placeholder="введи ответ" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЕ 6 -->
+  <div class="task-block" id="task-6">
+    <div class="task-header">
+      <span class="task-num">6</span>
+      <span class="task-title">Найти катет через синус</span>
+      <span class="task-mark" id="mark-6"></span>
+    </div>
+    <div class="graph-wrap"><canvas id="cv-6" width="600" height="460"></canvas></div>
+    <div class="task-question">
+      В треугольнике ABC угол C равен <b>90°</b>, sinB = <b>4/11</b>, AB = <b>55</b>. Найдите <b>AC</b>.
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-6" placeholder="введи ответ" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЕ 7 -->
+  <div class="task-block" id="task-7">
+    <div class="task-header">
+      <span class="task-num">7</span>
+      <span class="task-title">Найти катет через тангенс</span>
+      <span class="task-mark" id="mark-7"></span>
+    </div>
+    <div class="graph-wrap"><canvas id="cv-7" width="600" height="460"></canvas></div>
+    <div class="task-question">
+      В треугольнике ABC угол C равен <b>90°</b>, tgB = <b>8/5</b>, BC = <b>20</b>. Найдите <b>AC</b>.
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-7" placeholder="введи ответ" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЕ 8 -->
+  <div class="task-block" id="task-8">
+    <div class="task-header">
+      <span class="task-num">8</span>
+      <span class="task-title">Найти катет через косинус</span>
+      <span class="task-mark" id="mark-8"></span>
+    </div>
+    <div class="graph-wrap"><canvas id="cv-8" width="600" height="460"></canvas></div>
+    <div class="task-question">
+      В треугольнике ABC угол C равен <b>90°</b>, cosB = <b>7/9</b>, AB = <b>54</b>. Найдите <b>BC</b>.
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-8" placeholder="введи ответ" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЕ 9 -->
+  <div class="task-block" id="task-9">
+    <div class="task-header">
+      <span class="task-num">9</span>
+      <span class="task-title">Косинус в равнобедренном</span>
+      <span class="task-mark" id="mark-9"></span>
+    </div>
+    <div class="graph-wrap"><canvas id="cv-9" width="640" height="540"></canvas></div>
+    <div class="task-question">
+      В треугольнике ABC AB = BC, а высота AH делит сторону BC на отрезки BH = <b>2</b> и CH = <b>18</b>. Найдите <b>cosB</b>.
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-9" placeholder="введи ответ" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЕ 10 -->
+  <div class="task-block" id="task-10">
+    <div class="task-header">
+      <span class="task-num">10</span>
+      <span class="task-title">Тангенс по клеткам</span>
+      <span class="task-mark" id="mark-10"></span>
+    </div>
+    <div class="graph-wrap wide"><canvas id="cv-10" width="660" height="440"></canvas></div>
+    <div class="task-question">
+      Найдите тангенс угла AOB, изображённого на рисунке.
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-10" placeholder="введи ответ" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЕ 11 -->
+  <div class="task-block" id="task-11">
+    <div class="task-header">
+      <span class="task-num">11</span>
+      <span class="task-title">Задача с развёрнутым ответом</span>
+    </div>
+    <div class="task-question">
+      Из A в B одновременно выехали два автомобиля. Первый проехал с постоянной скоростью весь путь. Второй проехал первую половину пути со скоростью, меньшей скорости первого автомобиля на <b>11 км/ч</b>, а вторую половину пути проехал со скоростью <b>66 км/ч</b>, в результате чего прибыл в B одновременно с первым автомобилем. Найдите скорость первого автомобиля, если известно, что она больше <b>40 км/ч</b>.
+    </div>
+    <div class="photo-note">
+      📷 <b>Реши в тетради</b> и пришли фото решения учителю в Макс.
+    </div>
+  </div>
+
+  <button class="btn-check" id="btnCheck">✅ Проверить</button>
+
+  <div class="summary-box" id="summaryBox">
+    <div class="summary-title">📊 Результат</div>
+    <div class="summary-stats">
+      <div class="summary-stat">
+        <span class="num ok" id="statOk">0</span>
+        <span class="lbl">✅ верно</span>
+      </div>
+      <div class="summary-stat">
+        <span class="num err" id="statErr">0</span>
+        <span class="lbl">❌ неверно</span>
+      </div>
+      <div class="summary-stat">
+        <span class="num" id="statPercent">0%</span>
+        <span class="lbl">📊 процент</span>
+      </div>
+    </div>
+    <div class="summary-line" id="summaryLine">—</div>
+  </div>
+
+  <div class="result-area" id="resultArea">
+    <div class="result-text" id="resultText"></div>
+    <div class="result-hint">👇 Скопируй текст и отправь учителю</div>
+    <button class="btn-copy" id="btnCopy">📋 Скопировать результат</button>
+    <a class="btn-max" href="https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes" target="_blank" rel="noopener">💬 Отправить учителю в Макс</a>
+  </div>
+
+</div>
+
+<script>
+/* ===== ДАТА ===== */
+(function(){
+  const el=document.getElementById('dateDisplay');
+  const d=new Date();
+  el.textContent='📅 '+d.toLocaleDateString('ru-RU',{day:'2-digit',month:'long',year:'numeric'});
+})();
+
+/* ============================================================
+   ПРАВИЛЬНЫЕ ОТВЕТЫ
+   ============================================================ */
+const TASKS_CORRECT = {
+  1: '0,28',
+  2: '0,28',
+  3: '3',
+  4: '0,25',
+  5: '0,2',
+  6: '20',
+  7: '32',
+  8: '42',
+  9: '0,1',
+  10: '0,4'
+};
+
+/* ============================================================
+   ОБЩИЕ ФУНКЦИИ РИСОВАНИЯ
+   ============================================================ */
+function grid(ctx, W, H){
+  ctx.strokeStyle = 'rgba(14,124,102,0.08)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x <= W; x += 20) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+  }
+  for (let y = 0; y <= H; y += 20) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+}
+function pt(ctx, x, y){
+  ctx.beginPath();
+  ctx.arc(x, y, 6, 0, 2*Math.PI);
+  ctx.fillStyle = '#1abc9c';
+  ctx.fill();
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+}
+function rightAngle(ctx, x, y, dx, dy){
+  // dx, dy — куда «внутрь» треугольника рисовать квадратик
+  const s = 24;
+  ctx.beginPath();
+  ctx.moveTo(x + dx*s, y);
+  ctx.lineTo(x + dx*s, y + dy*s);
+  ctx.lineTo(x, y + dy*s);
+  ctx.strokeStyle = '#c9a32b';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+}
+
+/* ============================================================
+   ЧЕРТЁЖ: прямоугольный ABC (прямой угол при C внизу справа)
+   Используется в задачах 1, 2, 3, 4, 6, 7, 8
+   ============================================================ */
+function drawRightTriangle(canvasId){
+  const cv = document.getElementById(canvasId);
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0, 0, W, H);
+  grid(ctx, W, H);
+
+  const C = { x: W - 130, y: H - 80 };
+  const A = { x: 110,     y: H - 80 };
+  const B = { x: W - 130, y: 80 };
+
+  ctx.strokeStyle = '#0e7c66';
+  ctx.lineWidth = 2.8;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  ctx.beginPath();
+  ctx.moveTo(A.x, A.y);
+  ctx.lineTo(B.x, B.y);
+  ctx.lineTo(C.x, C.y);
+  ctx.closePath();
+  ctx.stroke();
+
+  // Прямой угол при C — квадратик слева-сверху от C
+  rightAngle(ctx, C.x, C.y, -1, -1);
+
+  pt(ctx, A.x, A.y);
+  pt(ctx, B.x, B.y);
+  pt(ctx, C.x, C.y);
+
+  ctx.font = 'italic bold 24px Georgia';
+  ctx.fillStyle = '#0e7c66';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  ctx.fillText('A', A.x - 25, A.y + 5);
+  ctx.fillText('B', B.x + 25, B.y - 10);
+  ctx.fillText('C', C.x + 25, C.y + 5);
+}
+
+/* ============================================================
+   ЧЕРТЁЖ ЗАДАЧИ 9: равнобедренный ABC, AH — высота
+   ============================================================ */
+function drawTask9(){
+  const cv = document.getElementById('cv-9');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0, 0, W, H);
+  grid(ctx, W, H);
+
+  const baseY = H - 70;
+  const A = { x: 190,     y: baseY };
+  const C = { x: W - 190, y: baseY };
+  const B = { x: W / 2,   y: 50 };
+
+  // H — основание высоты из A на BC
+  const BCx = C.x - B.x;
+  const BCy = C.y - B.y;
+  const BAx = A.x - B.x;
+  const BAy = A.y - B.y;
+  const dot = BAx * BCx + BAy * BCy;
+  const lenBC2 = BCx * BCx + BCy * BCy;
+  const t = dot / lenBC2;
+  const Hh = { x: B.x + t * BCx, y: B.y + t * BCy };
+
+  ctx.strokeStyle = '#0e7c66';
+  ctx.lineWidth = 2.8;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  ctx.beginPath();
+  ctx.moveTo(A.x, A.y);
+  ctx.lineTo(B.x, B.y);
+  ctx.lineTo(C.x, C.y);
+  ctx.closePath();
+  ctx.stroke();
+
+  // Высота AH
+  ctx.beginPath();
+  ctx.moveTo(A.x, A.y);
+  ctx.lineTo(Hh.x, Hh.y);
+  ctx.stroke();
+
+  pt(ctx, A.x, A.y);
+  pt(ctx, B.x, B.y);
+  pt(ctx, C.x, C.y);
+  pt(ctx, Hh.x, Hh.y);
+
+  ctx.font = 'italic bold 24px Georgia';
+  ctx.fillStyle = '#0e7c66';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  ctx.fillText('A', A.x - 25, A.y + 5);
+  ctx.fillText('B', B.x, B.y - 28);
+  ctx.fillText('C', C.x + 25, C.y + 5);
+  ctx.fillText('H', Hh.x + 25, Hh.y);
+}
+
+/* ============================================================
+   ЧЕРТЁЖ ЗАДАЧИ 10: угол AOB на клетках
+   ============================================================ */
+function drawTask10(){
+  const cv = document.getElementById('cv-10');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const CELL = 50;
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#f7fcfa';
+  ctx.fillRect(0, 0, W, H);
+
+  // Сетка
+  ctx.strokeStyle = 'rgba(14,124,102,0.35)';
+  ctx.lineWidth = 1.2;
+  for (let x = 0; x <= W; x += CELL) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+  }
+  for (let y = 0; y <= H; y += CELL) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+
+  const SHIFT_Y = 9;
+  const Ox = CELL * 1;
+  const Oy = H - CELL * 1 + SHIFT_Y;
+  const Ax = Ox + CELL * 6;
+  const Ay = Oy;
+  const Bx = Ax - CELL * 1;
+  const By = Ay - CELL * 2;
+
+  ctx.strokeStyle = '#0e7c66';
+  ctx.lineWidth = 2.8;
+  ctx.lineCap = 'round';
+
+  ctx.beginPath(); ctx.moveTo(Ox, Oy); ctx.lineTo(Ax, Ay); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(Ox, Oy); ctx.lineTo(Bx, By); ctx.stroke();
+
+  ctx.font = 'italic bold 26px Georgia';
+  ctx.fillStyle = '#0e7c66';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  ctx.fillText('O', Ox - 20, Oy + 20);
+  ctx.fillText('A', Ax + 20, Ay + 15);
+  ctx.fillText('B', Bx + 5, By - 20);
+}
+
+/* Рисуем все чертежи */
+drawRightTriangle('cv-1');
+drawRightTriangle('cv-2');
+drawRightTriangle('cv-3');
+drawRightTriangle('cv-4');
+drawRightTriangle('cv-6');
+drawRightTriangle('cv-7');
+drawRightTriangle('cv-8');
+drawTask9();
+drawTask10();
+
+/* ===== СОХРАНЕНИЕ ИМЕНИ ===== */
+const nameInput = document.getElementById('studentName');
+const savedName = localStorage.getItem('dz18_trig_name');
+if(savedName) nameInput.value = savedName;
+nameInput.addEventListener('input', ()=>{
+  localStorage.setItem('dz18_trig_name', nameInput.value.trim());
+});
+
+/* ===== НОРМАЛИЗАЦИЯ ===== */
+function normAnswer(s){
+  return String(s||'').trim().replace(/\s+/g,'').replace(',','.').replace(/[°Ссм]+$/gi,'').replace(/^0+(?=\d)/,'');
+}
+function checkNumeric(userAns, correctAns){
+  const u = normAnswer(userAns);
+  const c = normAnswer(correctAns);
+  if (!u) return false;
+  if (u === c) return true;
+  const un = parseFloat(u), cn = parseFloat(c);
+  if (!isNaN(un) && !isNaN(cn) && Math.abs(un-cn) < 0.01) return true;
+  return false;
+}
+
+/* ===== ПРОВЕРКА ===== */
+let checked = false;
+document.getElementById('btnCheck').addEventListener('click', function(){
+  if (checked) return;
+
+  const name = nameInput.value.trim();
+  if (!name) { alert('Введи имя ученика!'); nameInput.focus(); return; }
+
+  const empty = [];
+  [1,2,3,4,5,6,7,8,9,10].forEach(n => {
+    const v = document.getElementById('ans-'+n).value.trim();
+    if (!v) empty.push('Задание '+n);
+  });
+  if (empty.length > 0) { alert('Заполни все поля! Не хватает: ' + empty.join(', ')); return; }
+
+  const results = {};
+  let okCount = 0, errCount = 0;
+
+  [1,2,3,4,5,6,7,8,9,10].forEach(n => {
+    const inp = document.getElementById('ans-'+n);
+    const val = inp.value.trim();
+    const isOk = checkNumeric(val, TASKS_CORRECT[n]);
+    results[n] = { user: val, correct: TASKS_CORRECT[n], ok: isOk };
+    inp.classList.add(isOk ? 'correct' : 'wrong');
+    inp.disabled = true;
+    const mark = document.getElementById('mark-'+n);
+    mark.textContent = isOk ? '✅' : '❌';
+    mark.className = 'task-mark ' + (isOk ? 'ok' : 'err');
+    document.getElementById('task-'+n).classList.add(isOk ? 'correct' : 'wrong');
+    if (isOk) okCount++; else errCount++;
+  });
+
+  const totalCheckable = 10;
+  const percent = Math.round(okCount / totalCheckable * 100);
+
+  document.getElementById('statOk').textContent = okCount;
+  document.getElementById('statErr').textContent = errCount;
+  document.getElementById('statPercent').textContent = percent + '%';
+
+  let line = '';
+  if (percent >= 90) line = '🌟 Великолепно! Почти всё верно!';
+  else if (percent >= 75) line = '👍 Хороший результат!';
+  else if (percent >= 50) line = '💪 Есть над чем поработать';
+  else line = '📚 Стоит повторить тему';
+  document.getElementById('summaryLine').textContent = line;
+  document.getElementById('summaryBox').classList.add('show');
+
+  // === ТЕКСТ УЧИТЕЛЮ ===
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
+  let text = '📐 ОТВЕТЫ · ДЗ 18 · Тригонометрия\n';
+  text += 'Дата: ' + dateStr + '\n';
+  text += 'Ученик: ' + name + '\n\n';
+
+  [1,2,3,4,5,6,7,8,9,10].forEach(n => {
+    const r = results[n];
+    text += '  №' + n + '. Ответ: ' + r.user;
+    if (r.ok) text += ' ✅';
+    else text += ' ❌ (верно: ' + r.correct + ')';
+    text += '\n';
+  });
+
+  text += '\n📊 ИТОГО: ' + okCount + ' из ' + totalCheckable + ' верно (' + percent + '%)\n';
+  text += '\n📷 Задание 11. Решение в тетради (фото отдельно).';
+
+  document.getElementById('resultText').textContent = text;
+  document.getElementById('resultArea').classList.add('show');
+
+  checked = true;
+  this.disabled = true;
+  this.textContent = '✓ Проверено';
+  this.style.background = 'linear-gradient(135deg,#2ecc71,#27ae60)';
+  this.style.color = '#fff';
+  this.style.boxShadow = '0 6px 24px rgba(46,204,113,0.4)';
+
+  document.getElementById('summaryBox').scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+/* ===== КОПИРОВАНИЕ ===== */
+document.getElementById('btnCopy').addEventListener('click', async function(){
+  const text = document.getElementById('resultText').textContent;
+  try{
+    await navigator.clipboard.writeText(text);
+    this.textContent = '✓ Скопировано!';
+    this.classList.add('copied');
+    setTimeout(()=>{ this.textContent='📋 Скопировать результат'; this.classList.remove('copied'); }, 2500);
+  }catch(e){
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+    this.textContent = '✓ Скопировано!';
+    this.classList.add('copied');
+    setTimeout(()=>{ this.textContent='📋 Скопировать результат'; this.classList.remove('copied'); }, 2500);
+  }
+});
+</script>
+</body>
+</html>
