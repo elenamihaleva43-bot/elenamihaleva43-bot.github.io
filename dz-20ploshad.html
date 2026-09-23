@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>ДЗ 20 · Площадь треугольника · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{min-height:100vh;font-family:Georgia,'Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.06),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;padding:20px;overflow-x:hidden;display:flex;justify-content:center;}
+  .glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.5;}
+  .glow.g1{width:520px;height:520px;top:-120px;left:-120px;background:radial-gradient(circle,rgba(26,188,156,0.55),transparent 70%);}
+  .glow.g2{width:600px;height:600px;bottom:-200px;right:-180px;background:radial-gradient(circle,rgba(127,255,212,0.4),transparent 70%);}
+  .corner-logo{position:fixed;top:14px;left:16px;z-index:50;font-family:'Times New Roman',serif;text-align:center;line-height:1;padding:10px 18px 12px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(26,188,156,0.45);border-radius:14px;backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(0,0,0,0.35);}
+  .corner-logo .dots{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:16px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:4px;}
+  .corner-logo .ru{font-size:10px;letter-spacing:3px;color:var(--text-soft);margin-top:2px;}
+  .top-right{position:fixed;top:14px;right:16px;z-index:50;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+  .date-badge{display:flex;align-items:center;justify-content:center;height:46px;padding:0 16px;border-radius:14px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(127,255,212,0.45);color:var(--mint);backdrop-filter:blur(10px);font-weight:700;font-family:'Courier New',monospace;font-size:15px;}
+  .app{max-width:900px;width:100%;background:rgba(255,255,255,0.04);border:1.5px solid var(--glass-brd);border-radius:24px;padding:28px 30px;backdrop-filter:blur(12px);box-shadow:0 12px 50px rgba(0,0,0,0.5);position:relative;z-index:2;margin-top:50px;}
+  .header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:1px solid rgba(26,188,156,0.2);padding-bottom:14px;margin-bottom:20px;}
+  .header-title{font-size:14px;color:var(--text-soft);font-style:italic;}
+  h1{font-size:clamp(18px,2.6vw,24px);color:var(--mint);letter-spacing:1.5px;text-align:center;margin-bottom:6px;}
+  .subtitle{text-align:center;font-size:14px;color:var(--text-soft);font-style:italic;margin-bottom:20px;}
+  .name-block{background:linear-gradient(135deg,rgba(244,211,94,0.12),rgba(26,188,156,0.08));border:1.5px solid var(--gold);border-radius:14px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .name-block label{font-size:15px;color:var(--gold-light);font-weight:700;white-space:nowrap;}
+  .name-block input{flex:1;min-width:200px;padding:10px 14px;border-radius:10px;border:2px solid rgba(244,211,94,0.4);background:rgba(0,0,0,0.3);color:#fff;font-family:Georgia,serif;font-size:16px;outline:none;transition:0.2s;}
+  .name-block input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(244,211,94,0.25);}
+  .name-block input::placeholder{color:#a89a6a;font-style:italic;}
+  .intro-block{background:rgba(255,255,255,0.03);border-radius:16px;padding:18px 22px;margin-bottom:20px;border-left:4px solid var(--teal);font-size:15px;line-height:1.75;color:var(--text);}
+  .intro-block b{color:var(--mint);}
+  .intro-block .signature{display:block;text-align:right;font-size:13px;color:var(--text-soft);font-style:italic;margin-top:10px;}
+  .task-block{background:rgba(0,0,0,0.2);border-radius:16px;padding:18px 22px;margin-bottom:16px;border-left:4px solid var(--mint);transition:0.3s;}
+  .task-block.correct{border-left-color:var(--ok);background:rgba(46,204,113,0.08);}
+  .task-block.wrong{border-left-color:var(--err);background:rgba(255,107,107,0.08);}
+  .task-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
+  .task-num{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;background:linear-gradient(135deg,var(--gold),#c9a32b);color:#2a1f00;border-radius:10px;font-family:'Courier New',monospace;font-weight:700;font-size:15px;flex-shrink:0;}
+  .task-title{font-size:14px;color:var(--mint);font-weight:700;letter-spacing:1px;text-transform:uppercase;padding-top:8px;flex:1;}
+  .task-mark{font-size:20px;font-weight:800;flex-shrink:0;padding-top:4px;}
+  .task-mark.ok{color:var(--ok);}
+  .task-mark.err{color:var(--err);}
+  .claims-list{display:flex;flex-direction:column;gap:8px;margin-top:6px;}
+  .claim{display:flex;gap:12px;align-items:flex-start;padding:10px 14px;background:rgba(255,255,255,0.02);border:1px solid rgba(26,188,156,0.2);border-radius:10px;cursor:pointer;transition:0.2s;}
+  .claim:hover{border-color:var(--mint);background:rgba(26,188,156,0.05);}
+  .claim input{width:22px;height:22px;accent-color:var(--teal);cursor:pointer;flex-shrink:0;margin-top:2px;}
+  .claim .claim-num{font-family:'Courier New',monospace;color:var(--gold);font-weight:700;min-width:22px;flex-shrink:0;}
+  .claim .claim-text{font-size:15px;line-height:1.5;color:var(--text);}
+  .claim.correct{border-color:var(--ok);background:rgba(46,204,113,0.08);}
+  .claim.wrong{border-color:var(--err);background:rgba(255,107,107,0.08);}
+  .graph-wrap{background:#f7fcfa;border-radius:14px;border:1.5px solid rgba(26,188,156,0.3);padding:8px;margin-bottom:12px;text-align:center;}
+  .graph-wrap canvas{display:block;width:100%;max-width:520px;height:auto;margin:0 auto;background:#f7fcfa;border-radius:10px;touch-action:none;}
+  .graph-wrap.wide canvas{max-width:660px;}
+  .task-question{font-size:16px;color:var(--text);margin-bottom:12px;line-height:1.6;}
+  .task-question b{color:var(--mint);}
+  .answer-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .answer-row label{font-size:15px;color:var(--gold-light);font-weight:700;min-width:110px;}
+  .answer-row input{flex:1;min-width:180px;padding:11px 14px;border-radius:10px;border:1.5px solid var(--glass-brd);background:rgba(10,42,51,0.5);color:var(--text);font-family:'Cambria Math',serif;font-size:16px;outline:none;transition:0.2s;}
+  .answer-row input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+  .answer-row input::placeholder{color:var(--text-soft);opacity:0.5;font-style:italic;}
+  .answer-row input.correct{border-color:var(--ok);background:rgba(46,204,113,0.15);}
+  .answer-row input.wrong{border-color:var(--err);background:rgba(255,107,107,0.15);}
+  .answer-row input:disabled{opacity:0.9;cursor:default;}
+  .photo-note{background:rgba(244,211,94,0.08);border-left:4px solid var(--gold);border-radius:0 12px 12px 0;padding:14px 18px;font-size:15px;line-height:1.6;color:var(--text);margin-top:10px;}
+  .photo-note b{color:var(--gold-light);}
+  .btn-check{width:100%;padding:16px 32px;font-size:18px;font-weight:700;font-family:inherit;letter-spacing:1px;border:none;border-radius:16px;background:linear-gradient(135deg,#f4d35e,#c9a32b);color:#2a1f00;cursor:pointer;transition:0.3s;box-shadow:0 6px 24px rgba(244,211,94,0.4);margin-top:16px;}
+  .btn-check:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(244,211,94,0.55);}
+  .btn-check:disabled{opacity:0.5;cursor:default;transform:none;}
+  .summary-box{display:none;background:linear-gradient(135deg,rgba(26,188,156,0.15),rgba(244,211,94,0.10));border:2px solid var(--mint);border-radius:16px;padding:20px 24px;margin-top:20px;text-align:center;}
+  .summary-box.show{display:block;animation:fade 0.5s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .summary-title{font-size:16px;color:var(--mint);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:14px;}
+  .summary-stats{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:10px;}
+  .summary-stat{display:flex;flex-direction:column;align-items:center;gap:4px;}
+  .summary-stat .num{font-family:'Courier New',monospace;font-size:38px;font-weight:800;color:var(--gold);line-height:1;}
+  .summary-stat .lbl{font-size:12px;color:var(--text-soft);letter-spacing:1.5px;text-transform:uppercase;}
+  .summary-stat .num.ok{color:var(--ok);}
+  .summary-stat .num.err{color:var(--err);}
+  .summary-line{font-size:15px;color:var(--text);margin-top:8px;font-style:italic;}
+  .result-area{margin-top:20px;display:none;}
+  .result-area.show{display:block;animation:fade 0.4s ease;}
+  .result-text{background:rgba(0,0,0,0.35);border:1.5px solid var(--mint);border-radius:12px;padding:16px 18px;font-family:'Courier New',monospace;font-size:13px;color:var(--text);white-space:pre-wrap;line-height:1.7;user-select:all;cursor:text;}
+  .result-hint{text-align:center;font-size:13px;color:var(--gold-light);font-style:italic;margin-top:10px;}
+  .btn-copy{display:block;width:100%;margin-top:12px;padding:13px 24px;font-size:15px;font-weight:700;font-family:inherit;border:2px solid var(--glass-brd);border-radius:12px;background:transparent;color:var(--mint);cursor:pointer;transition:0.25s;letter-spacing:1px;}
+  .btn-copy:hover{background:rgba(26,188,156,0.15);}
+  .btn-copy.copied{background:linear-gradient(135deg,#2ecc71,#27ae60);color:#fff;border-color:var(--ok);}
+  .btn-max{display:block;width:100%;margin-top:12px;padding:14px 24px;font-size:16px;font-weight:700;font-family:inherit;border:none;border-radius:12px;background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;cursor:pointer;text-decoration:none;text-align:center;letter-spacing:1px;box-shadow:0 6px 20px rgba(26,188,156,0.4);transition:0.2s;}
+  .btn-max:hover{transform:translateY(-2px);}
+  @media(max-width:600px){
+    .app{padding:18px 14px;}
+    .name-block{flex-direction:column;align-items:stretch;gap:8px;}
+    .name-block label{text-align:center;}
+    .task-block{padding:14px 16px;}
+    .answer-row label{min-width:80px;font-size:13px;}
+    .summary-stat .num{font-size:28px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div><div class="glow g2"></div>
+
+<div class="corner-logo">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+</div>
+
+<div class="top-right">
+  <div class="date-badge" id="dateDisplay">📅 00.00.0000</div>
+</div>
+
+<div class="app">
+
+  <div class="header">
+    <div class="header-title">ДЗ 20 · Площадь треугольника · 15 заданий</div>
+    <div style="font-size:13px;color:var(--text-soft);">Геометрия</div>
+  </div>
+
+  <h1>Площадь треугольника</h1>
+  <div class="subtitle">S = ½ · a · h · средняя линия · подобие · прямоугольный треугольник</div>
+
+  <div class="name-block">
+    <label for="studentName">👤 Имя ученика:</label>
+    <input type="text" id="studentName" placeholder="Введи своё имя и фамилию..." maxlength="60" autocomplete="off">
+  </div>
+
+  <div class="intro-block">
+    <b>📐 Как выполнять:</b><br>
+    • <b>Задание 14</b> — отметь галочками номера <b>верных</b> утверждений.<br>
+    • <b>Задания 1–13</b> — рассмотри чертёж, реши и впиши <b>число-ответ</b>.<br>
+    • <b>Задание 15</b> — реши в тетради, сфотографируй и пришли учителю.<br>
+    • Когда всё заполнено — нажми <b>«Проверить»</b>.
+    <span class="signature">ΤΕΤΡΑΚΤΥΣ · Школа математики Елены Михалевой</span>
+  </div>
+
+  <!-- ЗАДАНИЕ 1 -->
+  <div class="task-block" id="task-1">
+    <div class="task-header">
+      <span class="task-num">1</span>
+      <span class="task-title">Площадь через высоту</span>
+      <span class="task-mark" id="mark-1"></span>
+    </div>
+    <div class="graph-wrap"><canvas id="cv-1" width="640" height="480"></canvas></div>
+    <div class="task-question">
+      Сторона треугольника равна <b>16</b>, а высота, проведённая к этой стороне, равна <b>19</b>. Найдите площадь этого треугольника.
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-1" placeholder="введи ответ" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЕ 2 -->
+  <div class="task-block" id="task-2">
+    <div class="task-header">
+      <span class="task-num">2</span>
+      <span class="task-title">Точка на стороне</span>
+      <span class="task-mark" id="mark-2"></span>
+    </div>
+    <div class="graph-wrap"><canvas id="cv-2" width="660" height="480"></canvas></div>
+    <div class="task-question">
+      На стороне AC треугольника ABC отмечена точка D так, что AD = <b>4</b>, DC = <b>8</b>. Площадь треугольника ABC равна <b>36</b>. Найдите площадь треугольника <b>BCD</b>.
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-2" placeholder="введи ответ" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЕ 3 -->
+  <div class="task-block" id="task-3">
+    <div class="task-header">
+      <span class="task-num">3</span>
+      <span class="task-title">Площадь через синус</span>
+      <span class="task-mark" id="mark-3"></span>
+    </div>
+    <div class="graph-wrap"><canvas id="cv-3" width="660" height="500"></canvas></div>
+    <div class="task-question">
+      В треугольнике ABC известно, что AB = <b>9</b>, BC = <b>16</b>, sin∠ABC = <b>7/12</b>. Найдите площадь треугольника ABC.
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-3" placeholder="введи ответ" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЕ 4 -->
+  <div class="task-block" id="task-4">
+    <div class="task-header">
+      <span class="task-num">4</span>
+      <span class="task-title">Прямоугольный, катеты</span>
+      <span class="task-mark" id="mark-4"></span>
+    </div>
+    <div class="graph-wrap"><canvas id="cv-4" width="640" height="460"></canvas></div>
+    <div class="task-question">
+      Два катета прямоугольного треугольника равны <b>18</b> и <b>7</b>. Найдите площадь этого треугольника.
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-4" placeholder="введи ответ" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЕ 5 -->
+  <div class="task-block" id="task-5">
+    <div class="task-header">
+      <span class="task-num">5</span>
+      <span class="task-title">Площадь треугольника</span>
+      <span class="task-mark" id="mark-5"></span>
+    </div>
+    <div class="graph-wrap"><canvas id="cv-5" width="700" height="520"></canvas></div>
+    <div class="task-question">
+      Найдите площадь треугольника, изображённого на рисунке.
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-5" placeholder="введи ответ" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЕ 6 -->
+  <div class="task-block" id="task-6">
+    <div class="task-header">
+      <span class="task-num">6</span>
+      <span class="task-title">Площадь на клетках</span>
+      <span class="task-mark" id="mark-6"></span>
+    </div>
+    <div class="graph-wrap"><canvas id="cv-6" width="760" height="600"></canvas></div>
+    <div class="task-question">
+      На клетчатой бумаге с размером клетки <b>1 см × 1 см</b> изображена фигура. Найдите её площадь.
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-6" placeholder="введи ответ" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЕ 7 -->
+  <div class="task-block" id="task-7">
+    <div class="task-header">
+      <span class="task-num">7</span>
+      <span class="task-title">Средняя линия</span>
+      <span class="task-mark" id="mark-7"></span>
+    </div>
+    <div class="graph-wrap"><canvas id="cv-7" width="700" height="500"></canvas></div>
+    <div class="task-question">
+      В треугольнике ABC известно, что DE — средняя линия. Площадь треугольника CDE равна <b>45</b>. Найдите площадь треугольника ABC.
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-7" placeholder="введи ответ" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЕ 8 -->
+  <div class="task-block" id="task-8">
+    <div class="task-header">
+      <span class="task-num">8</span>
+      <span class="task-title">Середины сторон</span>
+      <span class="task-mark" id="mark-8"></span>
+    </div>
+    <div class="graph-wrap"><canvas id="cv-8" width="700" height="500"></canvas></div>
+    <div class="task-question">
+      В треугольнике ABC отмечены середины M и N сторон BC и AC соответственно. Площадь треугольника CNM равна <b>67</b>. Найдите площадь четырёхугольника ABMN.
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-8" placeholder="введи ответ" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЕ 9 -->
+  <div class="task-block" id="task-9">
+    <div class="task-header">
+      <span class="task-num">9</span>
+      <span class="task-title">Равнобедренный</span>
+      <span class="task-mark" id="mark-9"></span>
+    </div>
+    <div class="graph-wrap"><canvas id="cv-9" width="640" height="500"></canvas></div>
+    <div class="task-question">
+      Периметр равнобедренного треугольника равен <b>144</b>, а основание — <b>64</b>. Найдите площадь треугольника.
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-9" placeholder="введи ответ" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЕ 10 -->
+  <div class="task-block" id="task-10">
+    <div class="task-header">
+      <span class="task-num">10</span>
+      <span class="task-title">Прямоугольный, угол 45°</span>
+      <span class="task-mark" id="mark-10"></span>
+    </div>
+    <div class="graph-wrap"><canvas id="cv-10" width="660" height="480"></canvas></div>
+    <div class="task-question">
+      В прямоугольном треугольнике один из катетов равен <b>32</b>, а угол, лежащий напротив него, равен <b>45°</b>. Найдите площадь треугольника.
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-10" placeholder="введи ответ" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЕ 11 -->
+  <div class="task-block" id="task-11">
+    <div class="task-header">
+      <span class="task-num">11</span>
+      <span class="task-title">Прямоугольный, катет и гипотенуза</span>
+      <span class="task-mark" id="mark-11"></span>
+    </div>
+    <div class="graph-wrap"><canvas id="cv-11" width="660" height="480"></canvas></div>
+    <div class="task-question">
+      Найдите площадь прямоугольного треугольника, если его катет и гипотенуза равны соответственно <b>32</b> и <b>68</b>.
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-11" placeholder="введи ответ" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЕ 12 -->
+  <div class="task-block" id="task-12">
+    <div class="task-header">
+      <span class="task-num">12</span>
+      <span class="task-title">Прямоугольный, угол 30°</span>
+      <span class="task-mark" id="mark-12"></span>
+    </div>
+    <div class="graph-wrap"><canvas id="cv-12" width="660" height="480"></canvas></div>
+    <div class="task-question">
+      Площадь прямоугольного треугольника равна <b>512√3</b>. Один из острых углов равен <b>30°</b>. Найдите длину катета, лежащего напротив этого угла.
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-12" placeholder="введи ответ" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЕ 13 -->
+  <div class="task-block" id="task-13">
+    <div class="task-header">
+      <span class="task-num">13</span>
+      <span class="task-title">Две высоты</span>
+      <span class="task-mark" id="mark-13"></span>
+    </div>
+    <div class="graph-wrap"><canvas id="cv-13" width="700" height="520"></canvas></div>
+    <div class="task-question">
+      У треугольника со сторонами <b>8</b> и <b>6</b> проведены высоты к этим сторонам. Высота, проведённая к первой стороне, равна <b>3</b>. Чему равна высота, проведённая ко второй стороне?
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-13" placeholder="введи ответ" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЕ 14 -->
+  <div class="task-block" id="task-14">
+    <div class="task-header">
+      <span class="task-num">14</span>
+      <span class="task-title">Верные утверждения</span>
+      <span class="task-mark" id="mark-14"></span>
+    </div>
+    <div style="font-size:15px;color:var(--text);margin-bottom:10px;">Отметь номера <b>верных</b> утверждений:</div>
+    <div class="claims-list" id="claimsList14"></div>
+  </div>
+
+  <!-- ЗАДАНИЕ 15 -->
+  <div class="task-block" id="task-15">
+    <div class="task-header">
+      <span class="task-num">15</span>
+      <span class="task-title">Задача с развёрнутым ответом</span>
+    </div>
+    <div class="task-question">
+      Баржа прошла по течению реки <b>32 км</b> и, повернув обратно, прошла ещё <b>24 км</b>, затратив на весь путь <b>4 часа</b>. Найдите собственную скорость баржи, если скорость течения реки равна <b>5 км/ч</b>.
+    </div>
+    <div class="photo-note">
+      📷 <b>Реши в тетради</b> и пришли фото решения учителю в Макс.
+    </div>
+  </div>
+
+  <button class="btn-check" id="btnCheck">✅ Проверить</button>
+
+  <div class="summary-box" id="summaryBox">
+    <div class="summary-title">📊 Результат</div>
+    <div class="summary-stats">
+      <div class="summary-stat">
+        <span class="num ok" id="statOk">0</span>
+        <span class="lbl">✅ верно</span>
+      </div>
+      <div class="summary-stat">
+        <span class="num err" id="statErr">0</span>
+        <span class="lbl">❌ неверно</span>
+      </div>
+      <div class="summary-stat">
+        <span class="num" id="statPercent">0%</span>
+        <span class="lbl">📊 процент</span>
+      </div>
+    </div>
+    <div class="summary-line" id="summaryLine">—</div>
+  </div>
+
+  <div class="result-area" id="resultArea">
+    <div class="result-text" id="resultText"></div>
+    <div class="result-hint">👇 Скопируй текст и отправь учителю</div>
+    <button class="btn-copy" id="btnCopy">📋 Скопировать результат</button>
+    <a class="btn-max" href="https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes" target="_blank" rel="noopener">💬 Отправить учителю в Макс</a>
+  </div>
+
+</div>
+
+<script>
+/* ===== ДАТА ===== */
+(function(){
+  const el=document.getElementById('dateDisplay');
+  const d=new Date();
+  el.textContent='📅 '+d.toLocaleDateString('ru-RU',{day:'2-digit',month:'long',year:'numeric'});
+})();
+
+/* ============================================================
+   ПРАВИЛЬНЫЕ ОТВЕТЫ
+   ============================================================ */
+const CLAIMS14_CORRECT = [2];
+const TASKS_CORRECT = {
+  1: '152',
+  2: '24',
+  3: '42',
+  4: '63',
+  5: '336',
+  6: '3',
+  7: '180',
+  8: '201',
+  9: '768',
+  10: '512',
+  11: '960',
+  12: '32',
+  13: '4'
+};
+
+/* Утверждения */
+const CLAIMS14=[
+  'Отношение площадей подобных треугольников равно коэффициенту подобия.',
+  'Площадь треугольника меньше произведения двух его сторон.'
+];
+
+(function renderClaims(){
+  const box = document.getElementById('claimsList14');
+  CLAIMS14.forEach((text,i)=>{
+    const el = document.createElement('label');
+    el.className = 'claim';
+    el.id = 'c14-'+(i+1);
+    el.innerHTML = `
+      <input type="checkbox" data-claim="${i+1}" id="c14-cb-${i+1}">
+      <span class="claim-num">${i+1}.</span>
+      <span class="claim-text">${text}</span>
+    `;
+    box.appendChild(el);
+  });
+})();
+
+/* ============================================================
+   ОБЩИЕ ФУНКЦИИ
+   ============================================================ */
+function grid(ctx, W, H){
+  ctx.strokeStyle = 'rgba(14,124,102,0.08)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x <= W; x += 20) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+  for (let y = 0; y <= H; y += 20) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+}
+function pt(ctx, x, y){
+  ctx.beginPath();
+  ctx.arc(x, y, 6, 0, 2*Math.PI);
+  ctx.fillStyle = '#1abc9c'; ctx.fill();
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke();
+}
+function txt(ctx, s, x, y, color, size){
+  ctx.font = 'bold ' + (size||24) + 'px Georgia';
+  ctx.fillStyle = color || '#c0392b';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(s, x, y);
+}
+
+/* ============================================================
+   ЗАДАЧА 1: произвольный, высота к боковой стороне
+   ============================================================ */
+function drawTask1(){
+  const cv = document.getElementById('cv-1');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0, 0, W, H);
+  grid(ctx, W, H);
+
+  // A — внизу слева, B — вершина сверху, C — правая боковая
+  const A = { x: 90, y: H - 100 };
+  const B = { x: 280, y: 80 };
+  const C = { x: W - 100, y: H - 130 };
+
+  // Проекция A на BC
+  const BCx = C.x - B.x, BCy = C.y - B.y;
+  const BAx = A.x - B.x, BAy = A.y - B.y;
+  const dot = BAx*BCx + BAy*BCy;
+  const lenBC2 = BCx*BCx + BCy*BCy;
+  const t = dot / lenBC2;
+  const Hh = { x: B.x + t*BCx, y: B.y + t*BCy };
+
+  ctx.strokeStyle = '#0e7c66'; ctx.lineWidth = 2.8;
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+
+  // Треугольник
+  ctx.beginPath();
+  ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.lineTo(C.x, C.y);
+  ctx.closePath(); ctx.stroke();
+
+  // Высота AH
+  ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(Hh.x, Hh.y); ctx.stroke();
+
+  // Квадратик при H — внутрь угла
+  const lenBC = Math.sqrt(lenBC2);
+  const ux = BCx/lenBC, uy = BCy/lenBC;
+  const nxRaw = -uy, nyRaw = ux;
+  const sign = ((A.x - Hh.x)*nxRaw + (A.y - Hh.y)*nyRaw) > 0 ? 1 : -1;
+  const nx = nxRaw*sign, ny = nyRaw*sign;
+  const uBx = (B.x - Hh.x) / Math.hypot(B.x - Hh.x, B.y - Hh.y);
+  const uBy = (B.y - Hh.y) / Math.hypot(B.x - Hh.x, B.y - Hh.y);
+  const hs = 22;
+  ctx.beginPath();
+  ctx.moveTo(Hh.x + uBx*hs, Hh.y + uBy*hs);
+  ctx.lineTo(Hh.x + uBx*hs + nx*hs, Hh.y + uBy*hs + ny*hs);
+  ctx.lineTo(Hh.x + nx*hs, Hh.y + ny*hs);
+  ctx.strokeStyle = '#c9a32b'; ctx.lineWidth = 2.5; ctx.stroke();
+
+  pt(ctx, A.x, A.y); pt(ctx, B.x, B.y); pt(ctx, C.x, C.y); pt(ctx, Hh.x, Hh.y);
+}
+
+/* ============================================================
+   ЗАДАЧА 2: произвольный, D на AC
+   ============================================================ */
+function drawTask2(){
+  const cv = document.getElementById('cv-2');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0, 0, W, H);
+  grid(ctx, W, H);
+
+  const A = { x: 100, y: H - 90 };
+  const C = { x: W - 100, y: H - 90 };
+  const B = { x: 420, y: 90 };
+  const tD = 0.3;
+  const D = { x: A.x + tD*(C.x - A.x), y: A.y };
+
+  ctx.strokeStyle = '#0e7c66'; ctx.lineWidth = 2.8;
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+
+  ctx.beginPath();
+  ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.lineTo(C.x, C.y);
+  ctx.closePath(); ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(B.x, B.y); ctx.lineTo(D.x, D.y); ctx.stroke();
+
+  pt(ctx, A.x, A.y); pt(ctx, B.x, B.y); pt(ctx, C.x, C.y); pt(ctx, D.x, D.y);
+
+  ctx.font = 'italic bold 24px Georgia';
+  ctx.fillStyle = '#0e7c66';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('A', A.x - 28, A.y + 8);
+  ctx.fillText('C', C.x + 28, C.y + 8);
+  ctx.fillText('B', B.x + 25, B.y - 10);
+  ctx.fillText('D', D.x, D.y + 28);
+}
+
+/* ============================================================
+   ЗАДАЧА 3: прямоугольный, B сверху
+   ============================================================ */
+function drawTask3(){
+  const cv = document.getElementById('cv-3');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0, 0, W, H);
+  grid(ctx, W, H);
+
+  const A = { x: 100, y: H - 90 };
+  const C = { x: W - 100, y: H - 90 };
+  const cx = (A.x + C.x)/2, cy = A.y;
+  const R = (C.x - A.x)/2;
+  const angleB = 100 * Math.PI/180;
+  const B = { x: cx + R*Math.cos(angleB), y: cy - R*Math.sin(angleB) };
+
+  ctx.strokeStyle = '#0e7c66'; ctx.lineWidth = 2.8;
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+
+  ctx.beginPath();
+  ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.lineTo(C.x, C.y);
+  ctx.closePath(); ctx.stroke();
+
+  function unitTo(px, py){
+    const dx = px - B.x, dy = py - B.y;
+    const L = Math.hypot(dx, dy);
+    return { x: dx/L, y: dy/L };
+  }
+  const uA = unitTo(A.x, A.y), uC = unitTo(C.x, C.y);
+  const s = 22;
+  ctx.beginPath();
+  ctx.moveTo(B.x + uA.x*s, B.y + uA.y*s);
+  ctx.lineTo(B.x + uA.x*s + uC.x*s, B.y + uA.y*s + uC.y*s);
+  ctx.lineTo(B.x + uC.x*s, B.y + uC.y*s);
+  ctx.strokeStyle = '#c9a32b'; ctx.lineWidth = 2.5; ctx.stroke();
+
+  pt(ctx, A.x, A.y); pt(ctx, B.x, B.y); pt(ctx, C.x, C.y);
+
+  ctx.font = 'italic bold 24px Georgia';
+  ctx.fillStyle = '#0e7c66';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('B', B.x, B.y - 28);
+  ctx.fillText('A', A.x - 28, A.y + 8);
+  ctx.fillText('C', C.x + 28, C.y + 8);
+}
+
+/* ============================================================
+   ЗАДАЧА 4: прямоугольный, прямой угол внизу справа
+   ============================================================ */
+function drawTask4(){
+  const cv = document.getElementById('cv-4');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0, 0, W, H);
+  grid(ctx, W, H);
+
+  const C = { x: W - 110, y: H - 90 };
+  const B = { x: W - 110, y: H - 90 - 240 };
+  const A = { x: 110, y: H - 90 };
+
+  ctx.strokeStyle = '#0e7c66'; ctx.lineWidth = 2.8;
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+
+  ctx.beginPath();
+  ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.lineTo(C.x, C.y);
+  ctx.closePath(); ctx.stroke();
+
+  const s = 24;
+  ctx.beginPath();
+  ctx.moveTo(C.x - s, C.y); ctx.lineTo(C.x - s, C.y - s); ctx.lineTo(C.x, C.y - s);
+  ctx.strokeStyle = '#c9a32b'; ctx.lineWidth = 2.5; ctx.stroke();
+
+  pt(ctx, A.x, A.y); pt(ctx, B.x, B.y); pt(ctx, C.x, C.y);
+}
+
+/* ============================================================
+   ЗАДАЧА 5: треугольник с высотой 16
+   ============================================================ */
+function drawTask5(){
+  const cv = document.getElementById('cv-5');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0, 0, W, H);
+  grid(ctx, W, H);
+
+  const scale = 500 / 42;
+  const baseY = H - 100;
+  const totalW = 42 * scale;
+  const Ax = (W - totalW)/2;
+  const Cx = Ax + totalW;
+  const Hx = Ax + 30 * scale;
+
+  const A = { x: Ax, y: baseY };
+  const C = { x: Cx, y: baseY };
+  const Hh = { x: Hx, y: baseY };
+  const By = baseY - 16 * scale;
+  const B = { x: Hx, y: By };
+
+  ctx.strokeStyle = '#0e7c66'; ctx.lineWidth = 2.8;
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+
+  ctx.beginPath();
+  ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.lineTo(C.x, C.y);
+  ctx.closePath(); ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(B.x, B.y); ctx.lineTo(Hh.x, Hh.y); ctx.stroke();
+
+  const midAB = { x: (A.x + B.x)/2, y: (A.y + B.y)/2 };
+  txt(ctx, '34', midAB.x - 30, midAB.y);
+  const midBC = { x: (B.x + C.x)/2, y: (B.y + C.y)/2 };
+  txt(ctx, '20', midBC.x + 28, midBC.y - 5);
+  const midBH = { x: (B.x + Hh.x)/2, y: (B.y + Hh.y)/2 };
+  txt(ctx, '16', midBH.x + 28, midBH.y);
+  const midAH = { x: (A.x + Hh.x)/2, y: baseY + 25 };
+  txt(ctx, '30', midAH.x, midAH.y);
+  const midHC = { x: (Hh.x + C.x)/2, y: baseY + 25 };
+  txt(ctx, '12', midHC.x, midHC.y);
+}
+
+/* ============================================================
+   ЗАДАЧА 6: треугольник на клетках
+   ============================================================ */
+function drawTask6(){
+  const cv = document.getElementById('cv-6');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const CELL = 80;
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#f7fcfa'; ctx.fillRect(0, 0, W, H);
+
+  ctx.strokeStyle = 'rgba(14,124,102,0.35)'; ctx.lineWidth = 1.4;
+  for (let x = 0; x <= W; x += CELL) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+  for (let y = 0; y <= H; y += CELL) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+  const P_top_x = 5 * CELL, P_top_y = 2 * CELL;
+  const P_bot_x = P_top_x, P_bot_y = P_top_y + 3 * CELL;
+  const L_top_x = P_top_x - 2 * CELL, L_top_y = P_top_y - 1 * CELL;
+
+  ctx.strokeStyle = '#0e7c66'; ctx.lineWidth = 3.5;
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+
+  ctx.beginPath();
+  ctx.moveTo(L_top_x, L_top_y); ctx.lineTo(P_top_x, P_top_y);
+  ctx.lineTo(P_bot_x, P_bot_y); ctx.closePath();
+  ctx.stroke();
+
+  pt(ctx, L_top_x, L_top_y); pt(ctx, P_top_x, P_top_y); pt(ctx, P_bot_x, P_bot_y);
+}
+
+/* ============================================================
+   ЗАДАЧА 7: DE — средняя линия, DE ∥ AB
+   ============================================================ */
+function drawTask7(){
+  const cv = document.getElementById('cv-7');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0, 0, W, H);
+  grid(ctx, W, H);
+
+  const A = { x: 110, y: H - 90 };
+  const C = { x: W - 90, y: H - 90 };
+  const B = { x: 340, y: 80 };
+  const D = { x: (B.x + C.x)/2, y: (B.y + C.y)/2 };
+  const E = { x: (A.x + C.x)/2, y: (A.y + C.y)/2 };
+
+  ctx.strokeStyle = '#0e7c66'; ctx.lineWidth = 2.8;
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+
+  ctx.beginPath();
+  ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.lineTo(C.x, C.y);
+  ctx.closePath(); ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(D.x, D.y); ctx.lineTo(E.x, E.y); ctx.stroke();
+
+  pt(ctx, A.x, A.y); pt(ctx, B.x, B.y); pt(ctx, C.x, C.y); pt(ctx, D.x, D.y); pt(ctx, E.x, E.y);
+
+  ctx.font = 'italic bold 24px Georgia';
+  ctx.fillStyle = '#0e7c66';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('A', A.x - 28, A.y + 8);
+  ctx.fillText('B', B.x + 8, B.y - 28);
+  ctx.fillText('C', C.x + 28, C.y + 8);
+  ctx.fillText('D', D.x + 28, D.y - 5);
+  ctx.fillText('E', E.x, E.y + 28);
+}
+
+/* ============================================================
+   ЗАДАЧА 8: MN — средняя линия, MN ∥ AB
+   ============================================================ */
+function drawTask8(){
+  const cv = document.getElementById('cv-8');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0, 0, W, H);
+  grid(ctx, W, H);
+
+  const B = { x: 90, y: H - 90 };
+  const A = { x: W - 90, y: H - 90 };
+  const C = { x: 480, y: 80 };
+  const M = { x: (B.x + C.x)/2, y: (B.y + C.y)/2 };
+  const N = { x: (A.x + C.x)/2, y: (A.y + C.y)/2 };
+
+  ctx.strokeStyle = '#0e7c66'; ctx.lineWidth = 2.8;
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+
+  ctx.beginPath();
+  ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.lineTo(C.x, C.y);
+  ctx.closePath(); ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(M.x, M.y); ctx.lineTo(N.x, N.y); ctx.stroke();
+
+  pt(ctx, A.x, A.y); pt(ctx, B.x, B.y); pt(ctx, C.x, C.y); pt(ctx, M.x, M.y); pt(ctx, N.x, N.y);
+
+  ctx.font = 'italic bold 24px Georgia';
+  ctx.fillStyle = '#0e7c66';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('B', B.x - 28, B.y + 8);
+  ctx.fillText('A', A.x + 28, A.y + 8);
+  ctx.fillText('C', C.x + 8, C.y - 28);
+  ctx.fillText('M', M.x - 28, M.y - 5);
+  ctx.fillText('N', N.x + 28, N.y - 5);
+}
+
+/* ============================================================
+   ЗАДАЧА 9: равнобедренный без букв
+   ============================================================ */
+function drawTask9(){
+  const cv = document.getElementById('cv-9');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0, 0, W, H);
+  grid(ctx, W, H);
+
+  const baseY = H - 90;
+  const A = { x: 130, y: baseY };
+  const C = { x: W - 130, y: baseY };
+  const B = { x: W/2, y: 90 };
+
+  ctx.strokeStyle = '#0e7c66'; ctx.lineWidth = 2.8;
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+
+  ctx.beginPath();
+  ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.lineTo(C.x, C.y);
+  ctx.closePath(); ctx.stroke();
+
+  pt(ctx, A.x, A.y); pt(ctx, B.x, B.y); pt(ctx, C.x, C.y);
+}
+
+/* ============================================================
+   ЗАДАЧА 10, 11: прямоугольный с прямым углом внизу слева
+   ============================================================ */
+function drawTask1011(canvasId){
+  const cv = document.getElementById(canvasId);
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0, 0, W, H);
+  grid(ctx, W, H);
+
+  const A = { x: 100, y: H - 90 };
+  const B = { x: 100, y: H - 90 - 220 };
+  const C = { x: W - 100, y: H - 90 };
+
+  ctx.strokeStyle = '#0e7c66'; ctx.lineWidth = 2.8;
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+
+  ctx.beginPath();
+  ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.lineTo(C.x, C.y);
+  ctx.closePath(); ctx.stroke();
+
+  const s = 24;
+  ctx.beginPath();
+  ctx.moveTo(A.x + s, A.y); ctx.lineTo(A.x + s, A.y - s); ctx.lineTo(A.x, A.y - s);
+  ctx.strokeStyle = '#c9a32b'; ctx.lineWidth = 2.5; ctx.stroke();
+
+  pt(ctx, A.x, A.y); pt(ctx, B.x, B.y); pt(ctx, C.x, C.y);
+}
+
+/* ============================================================
+   ЗАДАЧА 12: прямоугольный, прямой угол внизу справа
+   ============================================================ */
+function drawTask12(){
+  const cv = document.getElementById('cv-12');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0, 0, W, H);
+  grid(ctx, W, H);
+
+  const C = { x: W - 110, y: H - 90 };
+  const B = { x: W - 110, y: H - 90 - 260 };
+  const A = { x: 110, y: H - 90 };
+
+  ctx.strokeStyle = '#0e7c66'; ctx.lineWidth = 2.8;
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+
+  ctx.beginPath();
+  ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.lineTo(C.x, C.y);
+  ctx.closePath(); ctx.stroke();
+
+  const s = 24;
+  ctx.beginPath();
+  ctx.moveTo(C.x - s, C.y); ctx.lineTo(C.x - s, C.y - s); ctx.lineTo(C.x, C.y - s);
+  ctx.strokeStyle = '#c9a32b'; ctx.lineWidth = 2.5; ctx.stroke();
+
+  pt(ctx, A.x, A.y); pt(ctx, B.x, B.y); pt(ctx, C.x, C.y);
+}
+
+/* ============================================================
+   ЗАДАЧА 13: две высоты
+   ============================================================ */
+function drawTask13(){
+  const cv = document.getElementById('cv-13');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0, 0, W, H);
+  grid(ctx, W, H);
+
+  const A = { x: 110, y: H - 100 };
+  const B = { x: W - 90, y: H - 100 };
+  const C = { x: 280, y: 80 };
+
+  const H1 = { x: C.x, y: A.y };
+
+  const BCx = C.x - B.x, BCy = C.y - B.y;
+  const BAx = A.x - B.x, BAy = A.y - B.y;
+  const dot = BAx*BCx + BAy*BCy;
+  const lenBC2 = BCx*BCx + BCy*BCy;
+  const t = dot / lenBC2;
+  const H2 = { x: B.x + t*BCx, y: B.y + t*BCy };
+
+  ctx.strokeStyle = '#0e7c66'; ctx.lineWidth = 2.8;
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+
+  ctx.beginPath();
+  ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.lineTo(C.x, C.y);
+  ctx.closePath(); ctx.stroke();
+
+  ctx.beginPath(); ctx.moveTo(C.x, C.y); ctx.lineTo(H1.x, H1.y); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(H2.x, H2.y); ctx.stroke();
+
+  pt(ctx, A.x, A.y); pt(ctx, B.x, B.y); pt(ctx, C.x, C.y); pt(ctx, H1.x, H1.y); pt(ctx, H2.x, H2.y);
+}
+
+/* Рисуем всё */
+drawTask1();
+drawTask2();
+drawTask3();
+drawTask4();
+drawTask5();
+drawTask6();
+drawTask7();
+drawTask8();
+drawTask9();
+drawTask1011('cv-10');
+drawTask1011('cv-11');
+drawTask12();
+drawTask13();
+
+/* ===== СОХРАНЕНИЕ ИМЕНИ ===== */
+const nameInput = document.getElementById('studentName');
+const savedName = localStorage.getItem('dz20_ploshad_name');
+if(savedName) nameInput.value = savedName;
+nameInput.addEventListener('input', ()=>{
+  localStorage.setItem('dz20_ploshad_name', nameInput.value.trim());
+});
+
+/* ===== НОРМАЛИЗАЦИЯ ===== */
+function normAnswer(s){
+  return String(s||'').trim().replace(/\s+/g,'').replace(',','.').replace(/[°Ссм]+$/gi,'').replace(/^0+(?=\d)/,'').replace('−','-');
+}
+function checkNumeric(userAns, correctAns){
+  const u = normAnswer(userAns);
+  const c = normAnswer(correctAns);
+  if (!u) return false;
+  if (u === c) return true;
+  const un = parseFloat(u), cn = parseFloat(c);
+  if (!isNaN(un) && !isNaN(cn) && Math.abs(un-cn) < 0.01) return true;
+  return false;
+}
+
+/* ===== ПРОВЕРКА ===== */
+let checked = false;
+document.getElementById('btnCheck').addEventListener('click', function(){
+  if (checked) return;
+
+  const name = nameInput.value.trim();
+  if (!name) { alert('Введи имя ученика!'); nameInput.focus(); return; }
+
+  const empty = [];
+  let c14c = document.querySelectorAll('#claimsList14 input:checked').length;
+  if (c14c === 0) empty.push('Задание 14');
+  [1,2,3,4,5,6,7,8,9,10,11,12,13].forEach(n => {
+    const v = document.getElementById('ans-'+n).value.trim();
+    if (!v) empty.push('Задание '+n);
+  });
+  if (empty.length > 0) { alert('Заполни все поля! Не хватает: ' + empty.join(', ')); return; }
+
+  // ЗАДАНИЕ 14
+  const selected14 = [];
+  document.querySelectorAll('#claimsList14 input:checked').forEach(cb=>selected14.push(parseInt(cb.dataset.claim)));
+  selected14.sort((a,b)=>a-b);
+  const task14Ok = selected14.length === CLAIMS14_CORRECT.length &&
+                   selected14.every((v,i)=>v === CLAIMS14_CORRECT[i]);
+  for(let i=1;i<=CLAIMS14.length;i++){
+    const el = document.getElementById('c14-'+i);
+    const cb = document.getElementById('c14-cb-'+i);
+    cb.disabled = true;
+    const isCorrect = CLAIMS14_CORRECT.includes(i);
+    const isChecked = selected14.includes(i);
+    if (isCorrect === isChecked) el.classList.add('correct');
+    else el.classList.add('wrong');
+  }
+  const m14 = document.getElementById('mark-14');
+  m14.textContent = task14Ok ? '✅' : '❌';
+  m14.className = 'task-mark ' + (task14Ok ? 'ok' : 'err');
+  document.getElementById('task-14').classList.add(task14Ok ? 'correct' : 'wrong');
+
+  // ЗАДАНИЯ 1-13
+  const results = {};
+  let okCount = task14Ok ? 1 : 0;
+  let errCount = task14Ok ? 0 : 1;
+
+  [1,2,3,4,5,6,7,8,9,10,11,12,13].forEach(n => {
+    const inp = document.getElementById('ans-'+n);
+    const val = inp.value.trim();
+    const isOk = checkNumeric(val, TASKS_CORRECT[n]);
+    results[n] = { user: val, correct: TASKS_CORRECT[n], ok: isOk };
+    inp.classList.add(isOk ? 'correct' : 'wrong');
+    inp.disabled = true;
+    const mark = document.getElementById('mark-'+n);
+    mark.textContent = isOk ? '✅' : '❌';
+    mark.className = 'task-mark ' + (isOk ? 'ok' : 'err');
+    document.getElementById('task-'+n).classList.add(isOk ? 'correct' : 'wrong');
+    if (isOk) okCount++; else errCount++;
+  });
+
+  const totalCheckable = 14;  // задание 14 + 1-13
+  const percent = Math.round(okCount / totalCheckable * 100);
+
+  document.getElementById('statOk').textContent = okCount;
+  document.getElementById('statErr').textContent = errCount;
+  document.getElementById('statPercent').textContent = percent + '%';
+
+  let line = '';
+  if (percent >= 90) line = '🌟 Великолепно! Почти всё верно!';
+  else if (percent >= 75) line = '👍 Хороший результат!';
+  else if (percent >= 50) line = '💪 Есть над чем поработать';
+  else line = '📚 Стоит повторить тему';
+  document.getElementById('summaryLine').textContent = line;
+  document.getElementById('summaryBox').classList.add('show');
+
+  // ТЕКСТ УЧИТЕЛЮ
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
+  let text = '📐 ОТВЕТЫ · ДЗ 20 · Площадь треугольника\n';
+  text += 'Дата: ' + dateStr + '\n';
+  text += 'Ученик: ' + name + '\n\n';
+
+  text += '📌 Задание 14 (верные утверждения)\n';
+  text += '  Отмечено: ' + (selected14.join(', ') || '—') + '\n';
+  text += '  Верно: ' + CLAIMS14_CORRECT.join(', ') + '\n';
+  text += '  Результат: ' + (task14Ok ? '✅ верно' : '❌ неверно') + '\n\n';
+
+  text += '📌 Задания 1–13\n';
+  [1,2,3,4,5,6,7,8,9,10,11,12,13].forEach(n => {
+    const r = results[n];
+    text += '  №' + n + '. Ответ: ' + r.user;
+    if (r.ok) text += ' ✅';
+    else text += ' ❌ (верно: ' + r.correct + ')';
+    text += '\n';
+  });
+
+  text += '\n📊 ИТОГО: ' + okCount + ' из ' + totalCheckable + ' верно (' + percent + '%)\n';
+  text += '\n📷 Задание 15. Решение в тетради (фото отдельно).';
+
+  document.getElementById('resultText').textContent = text;
+  document.getElementById('resultArea').classList.add('show');
+
+  checked = true;
+  this.disabled = true;
+  this.textContent = '✓ Проверено';
+  this.style.background = 'linear-gradient(135deg,#2ecc71,#27ae60)';
+  this.style.color = '#fff';
+  this.style.boxShadow = '0 6px 24px rgba(46,204,113,0.4)';
+
+  document.getElementById('summaryBox').scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+/* ===== КОПИРОВАНИЕ ===== */
+document.getElementById('btnCopy').addEventListener('click', async function(){
+  const text = document.getElementById('resultText').textContent;
+  try{
+    await navigator.clipboard.writeText(text);
+    this.textContent = '✓ Скопировано!';
+    this.classList.add('copied');
+    setTimeout(()=>{ this.textContent='📋 Скопировать результат'; this.classList.remove('copied'); }, 2500);
+  }catch(e){
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+    this.textContent = '✓ Скопировано!';
+    this.classList.add('copied');
+    setTimeout(()=>{ this.textContent='📋 Скопировать результат'; this.classList.remove('copied'); }, 2500);
+  }
+});
+</script>
+</body>
+</html>
