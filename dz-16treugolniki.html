@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>ДЗ · Треугольники · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{min-height:100vh;font-family:Georgia,'Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.06),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;padding:20px;overflow-x:hidden;display:flex;justify-content:center;}
+  .glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.5;}
+  .glow.g1{width:520px;height:520px;top:-120px;left:-120px;background:radial-gradient(circle,rgba(26,188,156,0.55),transparent 70%);}
+  .glow.g2{width:600px;height:600px;bottom:-200px;right:-180px;background:radial-gradient(circle,rgba(127,255,212,0.4),transparent 70%);}
+  .corner-logo{position:fixed;top:14px;left:16px;z-index:50;font-family:'Times New Roman',serif;text-align:center;line-height:1;padding:10px 18px 12px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(26,188,156,0.45);border-radius:14px;backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(0,0,0,0.35);}
+  .corner-logo .dots{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:16px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:4px;}
+  .corner-logo .ru{font-size:10px;letter-spacing:3px;color:var(--text-soft);margin-top:2px;}
+  .top-right{position:fixed;top:14px;right:16px;z-index:50;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+  .date-badge{display:flex;align-items:center;justify-content:center;height:46px;padding:0 16px;border-radius:14px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(127,255,212,0.45);color:var(--mint);backdrop-filter:blur(10px);font-weight:700;font-family:'Courier New',monospace;font-size:15px;}
+  .app{max-width:900px;width:100%;background:rgba(255,255,255,0.04);border:1.5px solid var(--glass-brd);border-radius:24px;padding:28px 30px;backdrop-filter:blur(12px);box-shadow:0 12px 50px rgba(0,0,0,0.5);position:relative;z-index:2;margin-top:50px;}
+  .header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:1px solid rgba(26,188,156,0.2);padding-bottom:14px;margin-bottom:20px;}
+  .header-title{font-size:14px;color:var(--text-soft);font-style:italic;}
+  h1{font-size:clamp(20px,2.8vw,26px);color:var(--mint);letter-spacing:1.5px;text-align:center;margin-bottom:6px;}
+  .subtitle{text-align:center;font-size:14px;color:var(--text-soft);font-style:italic;margin-bottom:20px;}
+  .name-block{background:linear-gradient(135deg,rgba(244,211,94,0.12),rgba(26,188,156,0.08));border:1.5px solid var(--gold);border-radius:14px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .name-block label{font-size:15px;color:var(--gold-light);font-weight:700;white-space:nowrap;}
+  .name-block input{flex:1;min-width:200px;padding:10px 14px;border-radius:10px;border:2px solid rgba(244,211,94,0.4);background:rgba(0,0,0,0.3);color:#fff;font-family:Georgia,serif;font-size:16px;outline:none;transition:0.2s;}
+  .name-block input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(244,211,94,0.25);}
+  .name-block input::placeholder{color:#a89a6a;font-style:italic;}
+  .intro-block{background:rgba(255,255,255,0.03);border-radius:16px;padding:18px 22px;margin-bottom:20px;border-left:4px solid var(--teal);font-size:15px;line-height:1.75;color:var(--text);}
+  .intro-block b{color:var(--mint);}
+  .intro-block .signature{display:block;text-align:right;font-size:13px;color:var(--text-soft);font-style:italic;margin-top:10px;}
+  .task-block{background:rgba(0,0,0,0.2);border-radius:16px;padding:18px 22px;margin-bottom:16px;border-left:4px solid var(--mint);transition:0.3s;}
+  .task-block.correct{border-left-color:var(--ok);background:rgba(46,204,113,0.08);}
+  .task-block.wrong{border-left-color:var(--err);background:rgba(255,107,107,0.08);}
+  .task-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
+  .task-num{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;background:linear-gradient(135deg,var(--gold),#c9a32b);color:#2a1f00;border-radius:10px;font-family:'Courier New',monospace;font-weight:700;font-size:15px;flex-shrink:0;}
+  .task-title{font-size:14px;color:var(--mint);font-weight:700;letter-spacing:1px;text-transform:uppercase;padding-top:8px;flex:1;}
+  .task-mark{font-size:20px;font-weight:800;flex-shrink:0;padding-top:4px;}
+  .task-mark.ok{color:var(--ok);}
+  .task-mark.err{color:var(--err);}
+  .claims-list{display:flex;flex-direction:column;gap:8px;margin-top:6px;}
+  .claim{display:flex;gap:12px;align-items:flex-start;padding:10px 14px;background:rgba(255,255,255,0.02);border:1px solid rgba(26,188,156,0.2);border-radius:10px;cursor:pointer;transition:0.2s;}
+  .claim:hover{border-color:var(--mint);background:rgba(26,188,156,0.05);}
+  .claim input{width:22px;height:22px;accent-color:var(--teal);cursor:pointer;flex-shrink:0;margin-top:2px;}
+  .claim .claim-num{font-family:'Courier New',monospace;color:var(--gold);font-weight:700;min-width:22px;flex-shrink:0;}
+  .claim .claim-text{font-size:15px;line-height:1.5;color:var(--text);}
+  .claim.correct{border-color:var(--ok);background:rgba(46,204,113,0.08);}
+  .claim.wrong{border-color:var(--err);background:rgba(255,107,107,0.08);}
+  .graph-wrap{background:#f7fcfa;border-radius:14px;border:1.5px solid rgba(26,188,156,0.3);padding:8px;margin-bottom:12px;}
+  .graph-wrap svg{display:block;width:100%;max-width:320px;margin:0 auto;}
+  .task-question{font-size:16px;color:var(--text);margin-bottom:12px;line-height:1.6;}
+  .task-question b{color:var(--mint);}
+  .answer-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .answer-row label{font-size:15px;color:var(--gold-light);font-weight:700;min-width:110px;}
+  .answer-row input{flex:1;min-width:180px;padding:11px 14px;border-radius:10px;border:1.5px solid var(--glass-brd);background:rgba(10,42,51,0.5);color:var(--text);font-family:'Cambria Math',serif;font-size:16px;outline:none;transition:0.2s;}
+  .answer-row input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+  .answer-row input::placeholder{color:var(--text-soft);opacity:0.5;font-style:italic;}
+  .answer-row input.correct{border-color:var(--ok);background:rgba(46,204,113,0.15);}
+  .answer-row input.wrong{border-color:var(--err);background:rgba(255,107,107,0.15);}
+  .answer-row input:disabled{opacity:0.9;cursor:default;}
+
+  /* ГЛАВНЫЕ КНОПКИ */
+  .btn-check{width:100%;padding:16px 32px;font-size:18px;font-weight:700;font-family:inherit;letter-spacing:1px;border:none;border-radius:16px;background:linear-gradient(135deg,#f4d35e,#c9a32b);color:#2a1f00;cursor:pointer;transition:0.3s;box-shadow:0 6px 24px rgba(244,211,94,0.4);margin-top:16px;}
+  .btn-check:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(244,211,94,0.55);}
+  .btn-check:disabled{opacity:0.5;cursor:default;transform:none;}
+
+  /* ИТОГ */
+  .summary-box{display:none;background:linear-gradient(135deg,rgba(26,188,156,0.15),rgba(244,211,94,0.10));border:2px solid var(--mint);border-radius:16px;padding:20px 24px;margin-top:20px;text-align:center;}
+  .summary-box.show{display:block;animation:fade 0.5s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .summary-title{font-size:16px;color:var(--mint);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:14px;}
+  .summary-stats{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:10px;}
+  .summary-stat{display:flex;flex-direction:column;align-items:center;gap:4px;}
+  .summary-stat .num{font-family:'Courier New',monospace;font-size:38px;font-weight:800;color:var(--gold);line-height:1;}
+  .summary-stat .lbl{font-size:12px;color:var(--text-soft);letter-spacing:1.5px;text-transform:uppercase;}
+  .summary-stat .num.ok{color:var(--ok);}
+  .summary-stat .num.err{color:var(--err);}
+  .summary-line{font-size:15px;color:var(--text);margin-top:8px;font-style:italic;}
+
+  /* ФИНАЛЬНЫЙ ТЕКСТ */
+  .result-area{margin-top:20px;display:none;}
+  .result-area.show{display:block;animation:fade 0.4s ease;}
+  .result-text{background:rgba(0,0,0,0.35);border:1.5px solid var(--mint);border-radius:12px;padding:16px 18px;font-family:'Courier New',monospace;font-size:13px;color:var(--text);white-space:pre-wrap;line-height:1.7;user-select:all;cursor:text;}
+  .result-hint{text-align:center;font-size:13px;color:var(--gold-light);font-style:italic;margin-top:10px;}
+  .btn-copy{display:block;width:100%;margin-top:12px;padding:13px 24px;font-size:15px;font-weight:700;font-family:inherit;border:2px solid var(--glass-brd);border-radius:12px;background:transparent;color:var(--mint);cursor:pointer;transition:0.25s;letter-spacing:1px;}
+  .btn-copy:hover{background:rgba(26,188,156,0.15);}
+  .btn-copy.copied{background:linear-gradient(135deg,#2ecc71,#27ae60);color:#fff;border-color:var(--ok);}
+  .btn-max{display:block;width:100%;margin-top:12px;padding:14px 24px;font-size:16px;font-weight:700;font-family:inherit;border:none;border-radius:12px;background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;cursor:pointer;text-decoration:none;text-align:center;letter-spacing:1px;box-shadow:0 6px 20px rgba(26,188,156,0.4);transition:0.2s;}
+  .btn-max:hover{transform:translateY(-2px);}
+  .photo-note{background:rgba(244,211,94,0.08);border-left:4px solid var(--gold);border-radius:0 12px 12px 0;padding:14px 18px;font-size:15px;line-height:1.6;color:var(--text);margin-top:10px;}
+  .photo-note b{color:var(--gold-light);}
+  @media(max-width:600px){
+    .app{padding:18px 14px;}
+    .name-block{flex-direction:column;align-items:stretch;gap:8px;}
+    .name-block label{text-align:center;}
+    .task-block{padding:14px 16px;}
+    .answer-row label{min-width:80px;font-size:13px;}
+    .graph-wrap svg{max-width:260px;}
+    .summary-stat .num{font-size:28px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div><div class="glow g2"></div>
+
+<div class="corner-logo">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+</div>
+
+<div class="top-right">
+  <div class="date-badge" id="dateDisplay">📅 00.00.0000</div>
+</div>
+
+<div class="app">
+
+  <div class="header">
+    <div class="header-title">ДЗ · Треугольники · 17 заданий</div>
+    <div style="font-size:13px;color:var(--text-soft);">Геометрия</div>
+  </div>
+
+  <h1>Треугольники</h1>
+  <div class="subtitle">Отметь верные утверждения · реши задачи · проверь себя</div>
+
+  <div class="name-block">
+    <label for="studentName">👤 Имя ученика:</label>
+    <input type="text" id="studentName" placeholder="Введи своё имя и фамилию..." maxlength="60" autocomplete="off">
+  </div>
+
+  <div class="intro-block">
+    <b>📐 Как выполнять:</b><br>
+    • <b>Задание 1</b> — отметь галочками номера <b>верных</b> утверждений.<br>
+    • <b>Задания 2–16</b> — реши задачу, впиши <b>число-ответ</b> (только число, без «градусов» и «см»).<br>
+    • <b>Задание 17</b> — реши в тетради, сфотографируй и пришли учителю.<br>
+    • Когда всё заполнено — нажми <b>«Проверить»</b> и увидишь результат.
+    <span class="signature">ΤΕΤΡΑΚΤΥΣ · Школа математики Елены Михалевой</span>
+  </div>
+
+  <!-- ЗАДАНИЕ 1 -->
+  <div class="task-block" id="task-1">
+    <div class="task-header">
+      <span class="task-num">1</span>
+      <span class="task-title">Отметь верные утверждения</span>
+      <span class="task-mark" id="mark-1"></span>
+    </div>
+    <div class="claims-list" id="claimsList"></div>
+  </div>
+
+  <!-- ЗАДАНИЯ 2-16 -->
+  <div id="tasksContainer"></div>
+
+  <!-- ЗАДАНИЕ 17 -->
+  <div class="task-block" id="task-17">
+    <div class="task-header">
+      <span class="task-num">17</span>
+      <span class="task-title">Задача на движение</span>
+    </div>
+    <div class="task-question">
+      Из двух городов одновременно навстречу друг другу отправились два велосипедиста. Проехав некоторую часть пути, первый велосипедист сделал остановку на <b>51 минуту</b>, а затем продолжил движение до встречи со вторым велосипедистом. Расстояние между городами — <b>251 км</b>. Скорость первого — <b>10 км/ч</b>, второго — <b>20 км/ч</b>. Найдите расстояние от города, из которого выехал второй велосипедист, до места встречи.
+    </div>
+    <div class="photo-note">
+      📷 <b>Реши в тетради</b> и пришли фото решения учителю в Макс.
+    </div>
+  </div>
+
+  <button class="btn-check" id="btnCheck">✅ Проверить</button>
+
+  <!-- ИТОГ -->
+  <div class="summary-box" id="summaryBox">
+    <div class="summary-title">📊 Результат</div>
+    <div class="summary-stats">
+      <div class="summary-stat">
+        <span class="num ok" id="statOk">0</span>
+        <span class="lbl">✅ верно</span>
+      </div>
+      <div class="summary-stat">
+        <span class="num err" id="statErr">0</span>
+        <span class="lbl">❌ неверно</span>
+      </div>
+      <div class="summary-stat">
+        <span class="num" id="statPercent">0%</span>
+        <span class="lbl">📊 процент</span>
+      </div>
+    </div>
+    <div class="summary-line" id="summaryLine">—</div>
+  </div>
+
+  <!-- ТЕКСТ ДЛЯ УЧИТЕЛЯ -->
+  <div class="result-area" id="resultArea">
+    <div class="result-text" id="resultText"></div>
+    <div class="result-hint">👇 Скопируй текст и отправь учителю</div>
+    <button class="btn-copy" id="btnCopy">📋 Скопировать результат</button>
+    <a class="btn-max" href="https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes" target="_blank" rel="noopener">💬 Отправить учителю в Макс</a>
+  </div>
+
+</div>
+
+<script>
+/* ===== ДАТА ===== */
+(function(){
+  const el=document.getElementById('dateDisplay');
+  const d=new Date();
+  el.textContent='📅 '+d.toLocaleDateString('ru-RU',{day:'2-digit',month:'long',year:'numeric'});
+})();
+
+/* ============================================================
+   ПРАВИЛЬНЫЕ ОТВЕТЫ
+   ============================================================ */
+
+// Задание 1 — номера верных утверждений
+const CLAIMS_CORRECT = [2, 4, 5, 8, 10, 14, 15, 16, 17, 18, 19];
+
+// Задания 2-16 — числовые ответы (строкой; принимаем запятую и точку)
+const TASKS_CORRECT = {
+  2:  '23',
+  3:  '8',
+  4:  '53',
+  5:  '74',
+  6:  '44',
+  7:  '24',
+  8:  '22',
+  9:  '18',
+  10: '114',
+  11: '59,25',
+  12: '105',
+  13: '15',
+  14: '6',
+  15: '128',
+  16: '53,5'
+};
+
+/* ===== УТВЕРЖДЕНИЯ (Задание 1) ===== */
+const CLAIMS=[
+  'Если в треугольнике есть один острый угол, то этот треугольник остроугольный.',
+  'В любом тупоугольном треугольнике есть острый угол.',
+  'В тупоугольном треугольнике все углы тупые.',
+  'В треугольнике против большего угла лежит большая сторона.',
+  'Внешний угол треугольника больше не смежного с ним внутреннего угла.',
+  'Внешний угол треугольника равен сумме его внутренних углов.',
+  'Медиана треугольника делит пополам угол, из вершины которого проведена.',
+  'Один из углов треугольника всегда не превышает 60 градусов.',
+  'Сумма углов любого треугольника равна 360 градусам.',
+  'Треугольник со сторонами 1, 2, 4 не существует.',
+  'Биссектриса треугольника делит пополам сторону, к которой проведена.',
+  'Каждая из биссектрис равнобедренного треугольника является его высотой.',
+  'Каждая из биссектрис равнобедренного треугольника является его медианой.',
+  'Сумма углов равнобедренного треугольника равна 180 градусам.',
+  'Биссектрисы треугольника пересекаются в точке, которая является центром окружности, вписанной в треугольник.',
+  'Серединные перпендикуляры к сторонам треугольника пересекаются в точке, являющейся центром окружности, описанной около треугольника.',
+  'Все высоты равностороннего треугольника равны.',
+  'Всякий равносторонний треугольник является равнобедренным.',
+  'Всякий равносторонний треугольник является остроугольным.',
+  'Всякий равнобедренный треугольник является остроугольным.'
+];
+
+/* ===== ЧЕРТЕЖИ (SVG) ===== */
+const CHARTS = {
+  2: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="background:#f7fcfa;border-radius:12px;"><polygon points="40,260 340,260 200,40" fill="none" stroke="#0e7c66" stroke-width="3" stroke-linejoin="round"/><line x1="40" y1="260" x2="251" y2="120" stroke="#f4d35e" stroke-width="2.5" stroke-dasharray="6,4"/><circle cx="251" cy="120" r="5" fill="#f4d35e" stroke="#0e7c66" stroke-width="1.5"/><circle cx="40" cy="260" r="5" fill="#1abc9c"/><circle cx="340" cy="260" r="5" fill="#1abc9c"/><circle cx="200" cy="40" r="5" fill="#1abc9c"/><text x="20" y="280" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">A</text><text x="345" y="280" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">C</text><text x="195" y="30" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">B</text><text x="261" y="115" font-family="Times New Roman" font-size="18" font-style="italic" font-weight="700" fill="#c9a32b">D</text></svg>`,
+  3: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="background:#f7fcfa;border-radius:12px;"><polygon points="40,260 340,260 200,40" fill="none" stroke="#0e7c66" stroke-width="3" stroke-linejoin="round"/><line x1="200" y1="40" x2="190" y2="260" stroke="#f4d35e" stroke-width="2.5" stroke-dasharray="6,4"/><circle cx="190" cy="260" r="5" fill="#f4d35e" stroke="#0e7c66" stroke-width="1.5"/><circle cx="40" cy="260" r="5" fill="#1abc9c"/><circle cx="340" cy="260" r="5" fill="#1abc9c"/><circle cx="200" cy="40" r="5" fill="#1abc9c"/><text x="20" y="280" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">A</text><text x="345" y="280" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">C</text><text x="195" y="30" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">B</text><text x="180" y="285" font-family="Times New Roman" font-size="18" font-style="italic" font-weight="700" fill="#c9a32b">M</text></svg>`,
+  4: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="background:#f7fcfa;border-radius:12px;"><polygon points="60,250 340,230 180,50" fill="none" stroke="#0e7c66" stroke-width="3" stroke-linejoin="round"/></svg>`,
+  5: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="background:#f7fcfa;border-radius:12px;"><polygon points="60,240 200,60 320,220" fill="none" stroke="#0e7c66" stroke-width="3" stroke-linejoin="round"/><line x1="320" y1="220" x2="390" y2="210" stroke="#0e7c66" stroke-width="3" stroke-linecap="round"/><path d="M 348 216 A 35 35 0 0 0 305 195" fill="none" stroke="#f4d35e" stroke-width="3"/><circle cx="60" cy="240" r="5" fill="#1abc9c"/><circle cx="200" cy="60" r="5" fill="#1abc9c"/><circle cx="320" cy="220" r="5" fill="#1abc9c"/><text x="40" y="260" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">A</text><text x="195" y="50" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">B</text><text x="330" y="240" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">C</text></svg>`,
+  6: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="background:#f7fcfa;border-radius:12px;"><polygon points="50,250 230,60 350,250" fill="none" stroke="#0e7c66" stroke-width="3" stroke-linejoin="round"/><line x1="230" y1="60" x2="230" y2="250" stroke="#f4d35e" stroke-width="2.5" stroke-dasharray="6,4"/><polyline points="230,235 245,235 245,250" fill="none" stroke="#c9a32b" stroke-width="2"/><circle cx="230" cy="250" r="5" fill="#f4d35e" stroke="#0e7c66" stroke-width="1.5"/><circle cx="50" cy="250" r="5" fill="#1abc9c"/><circle cx="230" cy="60" r="5" fill="#1abc9c"/><circle cx="350" cy="250" r="5" fill="#1abc9c"/><text x="30" y="270" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">A</text><text x="225" y="50" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">B</text><text x="355" y="270" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">C</text><text x="220" y="275" font-family="Times New Roman" font-size="18" font-style="italic" font-weight="700" fill="#c9a32b">H</text></svg>`,
+  7: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="background:#f7fcfa;border-radius:12px;"><polygon points="50,250 230,60 350,250" fill="none" stroke="#0e7c66" stroke-width="3" stroke-linejoin="round"/><line x1="140" y1="155" x2="290" y2="155" stroke="#f4d35e" stroke-width="2.5" stroke-dasharray="6,4"/><circle cx="140" cy="155" r="5" fill="#f4d35e" stroke="#0e7c66" stroke-width="1.5"/><circle cx="290" cy="155" r="5" fill="#f4d35e" stroke="#0e7c66" stroke-width="1.5"/><circle cx="50" cy="250" r="5" fill="#1abc9c"/><circle cx="230" cy="60" r="5" fill="#1abc9c"/><circle cx="350" cy="250" r="5" fill="#1abc9c"/><text x="30" y="270" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">A</text><text x="225" y="50" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">B</text><text x="355" y="270" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">C</text><text x="120" y="150" font-family="Times New Roman" font-size="18" font-style="italic" font-weight="700" fill="#c9a32b">M</text><text x="298" y="150" font-family="Times New Roman" font-size="18" font-style="italic" font-weight="700" fill="#c9a32b">N</text></svg>`,
+  8: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="background:#f7fcfa;border-radius:12px;"><polygon points="50,250 230,60 350,250" fill="none" stroke="#0e7c66" stroke-width="3" stroke-linejoin="round"/><line x1="50" y1="250" x2="290" y2="155" stroke="#f4d35e" stroke-width="2.5" stroke-dasharray="6,4"/><line x1="350" y1="250" x2="140" y2="155" stroke="#f4d35e" stroke-width="2.5" stroke-dasharray="6,4"/><circle cx="212" cy="188" r="6" fill="#ff6b6b" stroke="#0e7c66" stroke-width="1.5"/><circle cx="140" cy="155" r="5" fill="#f4d35e" stroke="#0e7c66" stroke-width="1.5"/><circle cx="290" cy="155" r="5" fill="#f4d35e" stroke="#0e7c66" stroke-width="1.5"/><circle cx="50" cy="250" r="5" fill="#1abc9c"/><circle cx="230" cy="60" r="5" fill="#1abc9c"/><circle cx="350" cy="250" r="5" fill="#1abc9c"/><text x="30" y="270" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">A</text><text x="225" y="50" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">B</text><text x="355" y="270" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">C</text><text x="120" y="150" font-family="Times New Roman" font-size="18" font-style="italic" font-weight="700" fill="#c9a32b">M</text><text x="298" y="150" font-family="Times New Roman" font-size="18" font-style="italic" font-weight="700" fill="#c9a32b">N</text><text x="198" y="178" font-family="Times New Roman" font-size="18" font-style="italic" font-weight="700" fill="#ff6b6b">O</text></svg>`,
+  9: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="background:#f7fcfa;border-radius:12px;"><polygon points="60,250 200,90 340,250" fill="none" stroke="#0e7c66" stroke-width="3" stroke-linejoin="round"/><line x1="118" y1="178" x2="128" y2="186" stroke="#0e7c66" stroke-width="2.5"/><line x1="272" y1="186" x2="282" y2="178" stroke="#0e7c66" stroke-width="2.5"/><circle cx="60" cy="250" r="5" fill="#1abc9c"/><circle cx="200" cy="90" r="5" fill="#1abc9c"/><circle cx="340" cy="250" r="5" fill="#1abc9c"/><text x="40" y="270" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">A</text><text x="195" y="80" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">B</text><text x="345" y="270" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">C</text></svg>`,
+  10: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="background:#f7fcfa;border-radius:12px;"><polygon points="50,250 230,60 350,250" fill="none" stroke="#0e7c66" stroke-width="3" stroke-linejoin="round"/><line x1="50" y1="250" x2="284" y2="155" stroke="#f4d35e" stroke-width="2.5" stroke-dasharray="6,4"/><line x1="230" y1="60" x2="200" y2="250" stroke="#f4d35e" stroke-width="2.5" stroke-dasharray="6,4"/><circle cx="211" cy="180" r="6" fill="#ff6b6b" stroke="#0e7c66" stroke-width="1.5"/><circle cx="50" cy="250" r="5" fill="#1abc9c"/><circle cx="230" cy="60" r="5" fill="#1abc9c"/><circle cx="350" cy="250" r="5" fill="#1abc9c"/><text x="30" y="270" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">M</text><text x="225" y="50" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">N</text><text x="355" y="270" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">P</text><text x="190" y="172" font-family="Times New Roman" font-size="18" font-style="italic" font-weight="700" fill="#ff6b6b">A</text></svg>`,
+  11: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="background:#f7fcfa;border-radius:12px;"><polygon points="50,250 230,60 350,250" fill="none" stroke="#0e7c66" stroke-width="3" stroke-linejoin="round"/><line x1="230" y1="60" x2="230" y2="250" stroke="#f4d35e" stroke-width="2.5" stroke-dasharray="6,4"/><line x1="230" y1="60" x2="200" y2="250" stroke="#f4d35e" stroke-width="2.5" stroke-dasharray="6,4"/><circle cx="230" cy="250" r="5" fill="#f4d35e" stroke="#0e7c66" stroke-width="1.5"/><circle cx="200" cy="250" r="5" fill="#f4d35e" stroke="#0e7c66" stroke-width="1.5"/><circle cx="50" cy="250" r="5" fill="#1abc9c"/><circle cx="230" cy="60" r="5" fill="#1abc9c"/><circle cx="350" cy="250" r="5" fill="#1abc9c"/><text x="30" y="270" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">A</text><text x="225" y="50" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">B</text><text x="355" y="270" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">C</text><text x="235" y="275" font-family="Times New Roman" font-size="18" font-style="italic" font-weight="700" fill="#c9a32b">H</text><text x="185" y="275" font-family="Times New Roman" font-size="18" font-style="italic" font-weight="700" fill="#c9a32b">M</text></svg>`,
+  12: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="background:#f7fcfa;border-radius:12px;"><polygon points="50,250 230,60 350,250" fill="none" stroke="#0e7c66" stroke-width="3" stroke-linejoin="round"/><line x1="230" y1="60" x2="230" y2="250" stroke="#f4d35e" stroke-width="2.5" stroke-dasharray="6,4"/><line x1="230" y1="60" x2="200" y2="250" stroke="#f4d35e" stroke-width="2.5" stroke-dasharray="6,4"/><circle cx="230" cy="250" r="5" fill="#f4d35e" stroke="#0e7c66" stroke-width="1.5"/><circle cx="200" cy="250" r="5" fill="#f4d35e" stroke="#0e7c66" stroke-width="1.5"/><circle cx="50" cy="250" r="5" fill="#1abc9c"/><circle cx="230" cy="60" r="5" fill="#1abc9c"/><circle cx="350" cy="250" r="5" fill="#1abc9c"/><text x="30" y="270" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">A</text><text x="225" y="50" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">B</text><text x="355" y="270" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">C</text><text x="235" y="275" font-family="Times New Roman" font-size="18" font-style="italic" font-weight="700" fill="#c9a32b">H</text><text x="185" y="275" font-family="Times New Roman" font-size="18" font-style="italic" font-weight="700" fill="#c9a32b">M</text></svg>`,
+  13: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="background:#f7fcfa;border-radius:12px;"><polygon points="50,250 200,130 350,250" fill="none" stroke="#0e7c66" stroke-width="3" stroke-linejoin="round"/><line x1="200" y1="130" x2="200" y2="250" stroke="#f4d35e" stroke-width="2.5" stroke-dasharray="6,4"/><line x1="200" y1="130" x2="170" y2="250" stroke="#f4d35e" stroke-width="2.5" stroke-dasharray="6,4"/><polyline points="200,235 215,235 215,250" fill="none" stroke="#c9a32b" stroke-width="2"/><circle cx="200" cy="250" r="5" fill="#f4d35e" stroke="#0e7c66" stroke-width="1.5"/><circle cx="170" cy="250" r="5" fill="#f4d35e" stroke="#0e7c66" stroke-width="1.5"/><circle cx="50" cy="250" r="5" fill="#1abc9c"/><circle cx="200" cy="130" r="5" fill="#1abc9c"/><circle cx="350" cy="250" r="5" fill="#1abc9c"/><text x="30" y="270" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">A</text><text x="195" y="120" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">B</text><text x="355" y="270" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">C</text><text x="205" y="275" font-family="Times New Roman" font-size="18" font-style="italic" font-weight="700" fill="#c9a32b">H</text><text x="155" y="275" font-family="Times New Roman" font-size="18" font-style="italic" font-weight="700" fill="#c9a32b">D</text></svg>`,
+  14: `<svg viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg" style="background:#f7fcfa;border-radius:12px;"><polygon points="50,250 200,130 440,250" fill="none" stroke="#0e7c66" stroke-width="3" stroke-linejoin="round"/><line x1="200" y1="130" x2="245" y2="250" stroke="#f4d35e" stroke-width="2.5" stroke-dasharray="6,4"/><line x1="50" y1="250" x2="223" y2="190" stroke="#7fffd4" stroke-width="2.5" stroke-dasharray="6,4"/><circle cx="223" cy="190" r="6" fill="#ff6b6b" stroke="#0e7c66" stroke-width="1.5"/><circle cx="245" cy="250" r="5" fill="#f4d35e" stroke="#0e7c66" stroke-width="1.5"/><circle cx="50" cy="250" r="5" fill="#1abc9c"/><circle cx="200" cy="130" r="5" fill="#1abc9c"/><circle cx="440" cy="250" r="5" fill="#1abc9c"/><text x="30" y="270" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">A</text><text x="195" y="120" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">B</text><text x="445" y="270" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">C</text><text x="231" y="188" font-family="Times New Roman" font-size="18" font-style="italic" font-weight="700" fill="#ff6b6b">D</text><text x="250" y="275" font-family="Times New Roman" font-size="18" font-style="italic" font-weight="700" fill="#c9a32b">M</text></svg>`,
+  15: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="background:#f7fcfa;border-radius:12px;"><polygon points="80,240 320,240 200,80" fill="none" stroke="#0e7c66" stroke-width="3" stroke-linejoin="round"/><line x1="320" y1="240" x2="380" y2="240" stroke="#0e7c66" stroke-width="3" stroke-linecap="round"/><circle cx="80" cy="240" r="5" fill="#1abc9c"/><circle cx="320" cy="240" r="5" fill="#1abc9c"/><circle cx="200" cy="80" r="5" fill="#1abc9c"/><text x="60" y="260" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">A</text><text x="325" y="260" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">B</text><text x="195" y="70" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">C</text></svg>`,
+  16: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="background:#f7fcfa;border-radius:12px;"><polygon points="80,240 180,240 300,90" fill="none" stroke="#0e7c66" stroke-width="3" stroke-linejoin="round"/><line x1="195" y1="162" x2="180" y2="240" stroke="#7fffd4" stroke-width="2.5" stroke-dasharray="6,4"/><circle cx="195" cy="162" r="6" fill="#ff6b6b" stroke="#0e7c66" stroke-width="1.5"/><circle cx="80" cy="240" r="5" fill="#1abc9c"/><circle cx="300" cy="90" r="5" fill="#1abc9c"/><circle cx="180" cy="240" r="5" fill="#1abc9c"/><text x="60" y="260" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">A</text><text x="305" y="85" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">B</text><text x="185" y="262" font-family="Times New Roman" font-size="20" font-style="italic" font-weight="700" fill="#0e7c66">C</text><text x="178" y="160" font-family="Times New Roman" font-size="18" font-style="italic" font-weight="700" fill="#ff6b6b">D</text></svg>`
+};
+
+/* ===== ЗАДАЧИ 2-16 ===== */
+const TASKS = [
+  { num:2, chart:2, text:'В треугольнике ABC известно, что ∠BAC = 46°, AD — биссектриса. Найдите угол BAD. Ответ дайте в градусах.' },
+  { num:3, chart:3, text:'В треугольнике ABC известно, что AC = 16, BM — медиана, BM = 12. Найдите AM.' },
+  { num:4, chart:4, text:'В треугольнике два угла равны 38° и 89°. Найдите его третий угол. Ответ дайте в градусах.' },
+  { num:5, chart:5, text:'В треугольнике ABC угол C равен 106°. Найдите внешний угол при вершине C. Ответ дайте в градусах.' },
+  { num:6, chart:6, text:'В остроугольном треугольнике ABC проведена высота BH, ∠BAC = 46°. Найдите угол ABH. Ответ дайте в градусах.' },
+  { num:7, chart:7, text:'Точки M и N являются серединами сторон AB и BC треугольника ABC, сторона AB равна 26, сторона BC равна 39, сторона AC равна 48. Найдите MN.' },
+  { num:8, chart:8, text:'Точки M и N являются серединами сторон AB и BC треугольника ABC соответственно. Отрезки AN и CM пересекаются в точке O, AN = 33, CM = 15. Найдите AO.' },
+  { num:9, chart:9, text:'В треугольнике ABC известно, что AB = BC, ∠ABC = 144°. Найдите угол BCA. Ответ дайте в градусах.' },
+  { num:10, chart:10, text:'Биссектрисы углов N и M треугольника MNP пересекаются в точке A. Найдите ∠NAM, если ∠N = 73°, а ∠M = 59°.' },
+  { num:11, chart:11, text:'В треугольнике ABC проведены медиана BM и высота BH. Известно, что AC = 79 и BC = BM. Найдите AH.' },
+  { num:12, chart:12, text:'В треугольнике ABC BM — медиана и BH — высота. Известно, что AC = 236, HC = 59 и ∠ACB = 75°. Найдите ∠AMB. Ответ дайте в градусах.' },
+  { num:13, chart:13, text:'В треугольнике ABC углы A и C равны 20° и 50° соответственно. Найдите угол между высотой BH и биссектрисой BD.' },
+  { num:14, chart:14, text:'Прямая AD, перпендикулярная медиане BM треугольника ABC, делит угол BAC пополам. Найдите сторону AC, если сторона AB равна 3.' },
+  { num:15, chart:15, text:'В треугольнике ABC AC = BC. Внешний угол при вершине B равен 154°. Найдите угол C. Ответ дайте в градусах.' },
+  { num:16, chart:16, text:'Точка D на стороне AB треугольника ABC выбрана так, что AD = AC. Известно, что ∠CAB = 39° и ∠ACB = 124°. Найдите ∠DCB. Ответ дайте в градусах.' }
+];
+
+/* ===== РЕНДЕР ===== */
+(function renderClaims(){
+  const box = document.getElementById('claimsList');
+  CLAIMS.forEach((text,i)=>{
+    const el = document.createElement('label');
+    el.className = 'claim';
+    el.id = 'claim-'+(i+1);
+    el.innerHTML = `
+      <input type="checkbox" data-claim="${i+1}" id="claim-cb-${i+1}">
+      <span class="claim-num">${i+1}.</span>
+      <span class="claim-text">${text}</span>
+    `;
+    box.appendChild(el);
+  });
+})();
+
+(function renderTasks(){
+  const box = document.getElementById('tasksContainer');
+  TASKS.forEach(t=>{
+    const el = document.createElement('div');
+    el.className = 'task-block';
+    el.id = 'task-'+t.num;
+    el.innerHTML = `
+      <div class="task-header">
+        <span class="task-num">${t.num}</span>
+        <span class="task-title">Задача</span>
+        <span class="task-mark" id="mark-${t.num}"></span>
+      </div>
+      <div class="graph-wrap">${CHARTS[t.chart]}</div>
+      <div class="task-question">${t.text}</div>
+      <div class="answer-row">
+        <label>Ответ:</label>
+        <input type="text" id="ans-${t.num}" placeholder="введи ответ" autocomplete="off">
+      </div>
+    `;
+    box.appendChild(el);
+  });
+})();
+
+/* ===== СОХРАНЕНИЕ ИМЕНИ ===== */
+const nameInput = document.getElementById('studentName');
+const savedName = localStorage.getItem('dz_treugolniki_name');
+if(savedName) nameInput.value = savedName;
+nameInput.addEventListener('input', ()=>{
+  localStorage.setItem('dz_treugolniki_name', nameInput.value.trim());
+});
+
+/* ===== НОРМАЛИЗАЦИЯ ОТВЕТОВ ===== */
+function normAnswer(s){
+  return String(s||'').trim().replace(/\s+/g,'').replace(',','.').replace(/[°Ссм]+$/gi,'').replace(/^0+(?=\d)/,'');
+}
+function checkNumeric(userAns, correctAns){
+  const u = normAnswer(userAns);
+  const c = normAnswer(correctAns);
+  if (!u) return false;
+  if (u === c) return true;
+  const un = parseFloat(u), cn = parseFloat(c);
+  if (!isNaN(un) && !isNaN(cn) && Math.abs(un-cn) < 0.01) return true;
+  return false;
+}
+
+/* ===== ПРОВЕРКА ===== */
+let checked = false;
+
+document.getElementById('btnCheck').addEventListener('click', function(){
+  if (checked) return;
+
+  const name = nameInput.value.trim();
+  if (!name) {
+    alert('Введи имя ученика!');
+    nameInput.focus();
+    return;
+  }
+
+  // Проверяем, что всё заполнено
+  const empty = [];
+  let claimsChecked = document.querySelectorAll('.claim input:checked').length;
+  if (claimsChecked === 0) empty.push('Задание 1');
+  TASKS.forEach(t => {
+    const v = document.getElementById('ans-'+t.num).value.trim();
+    if (!v) empty.push('Задание '+t.num);
+  });
+  if (empty.length > 0) {
+    alert('Заполни все поля! Не хватает: ' + empty.join(', '));
+    return;
+  }
+
+  // === ЗАДАНИЕ 1 ===
+  const selected = [];
+  document.querySelectorAll('.claim input:checked').forEach(cb => {
+    selected.push(parseInt(cb.dataset.claim));
+  });
+  selected.sort((a,b)=>a-b);
+  const task1Correct = selected.length === CLAIMS_CORRECT.length &&
+                       selected.every((v,i) => v === CLAIMS_CORRECT[i]);
+  // Помечаем каждый пункт
+  for (let i = 1; i <= CLAIMS.length; i++) {
+    const claimEl = document.getElementById('claim-'+i);
+    const cb = document.getElementById('claim-cb-'+i);
+    cb.disabled = true;
+    const isCorrect = CLAIMS_CORRECT.includes(i);
+    const isChecked = selected.includes(i);
+    if (isCorrect && isChecked) claimEl.classList.add('correct');
+    else if (!isCorrect && !isChecked) claimEl.classList.add('correct');
+    else claimEl.classList.add('wrong');
+  }
+  const mark1 = document.getElementById('mark-1');
+  mark1.textContent = task1Correct ? '✅' : '❌';
+  mark1.className = 'task-mark ' + (task1Correct ? 'ok' : 'err');
+  document.getElementById('task-1').classList.add(task1Correct ? 'correct' : 'wrong');
+
+  // === ЗАДАНИЯ 2-16 ===
+  const results = {};
+  let okCount = task1Correct ? 1 : 0;
+  let errCount = task1Correct ? 0 : 1;
+
+  TASKS.forEach(t => {
+    const inp = document.getElementById('ans-'+t.num);
+    const val = inp.value.trim();
+    const isOk = checkNumeric(val, TASKS_CORRECT[t.num]);
+    results[t.num] = { user: val, correct: TASKS_CORRECT[t.num], ok: isOk };
+    inp.classList.add(isOk ? 'correct' : 'wrong');
+    inp.disabled = true;
+    const mark = document.getElementById('mark-'+t.num);
+    mark.textContent = isOk ? '✅' : '❌';
+    mark.className = 'task-mark ' + (isOk ? 'ok' : 'err');
+    document.getElementById('task-'+t.num).classList.add(isOk ? 'correct' : 'wrong');
+    if (isOk) okCount++; else errCount++;
+  });
+
+  // === ИТОГ (только 16 автопроверяемых: 1 + 2-16 = 16; задание 17 — фото) ===
+  const totalCheckable = 16;
+  const percent = Math.round(okCount / totalCheckable * 100);
+
+  document.getElementById('statOk').textContent = okCount;
+  document.getElementById('statErr').textContent = errCount;
+  document.getElementById('statPercent').textContent = percent + '%';
+
+  let line = '';
+  if (percent >= 90) line = '🌟 Великолепно! Почти всё верно!';
+  else if (percent >= 75) line = '👍 Хороший результат!';
+  else if (percent >= 50) line = '💪 Есть над чем поработать';
+  else line = '📚 Стоит повторить тему';
+  document.getElementById('summaryLine').textContent = line;
+  document.getElementById('summaryBox').classList.add('show');
+
+  // === ФОРМИРОВАНИЕ ТЕКСТА ДЛЯ УЧИТЕЛЯ ===
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
+
+  let text = '📐 ОТВЕТЫ · ДЗ · Треугольники\n';
+  text += 'Дата: ' + dateStr + '\n';
+  text += 'Ученик: ' + name + '\n\n';
+
+  // Задание 1
+  text += '📌 Задание 1 (верные утверждения)\n';
+  text += '  Отмечено: ' + selected.join(', ') + '\n';
+  text += '  Верно: ' + CLAIMS_CORRECT.join(', ') + '\n';
+  text += '  Результат: ' + (task1Correct ? '✅ верно' : '❌ неверно') + '\n\n';
+
+  // Задания 2-16
+  text += '📌 Задания 2–16\n';
+  TASKS.forEach(t => {
+    const r = results[t.num];
+    text += '  №' + t.num + '. Ответ: ' + r.user;
+    if (r.ok) {
+      text += ' ✅';
+    } else {
+      text += ' ❌ (верно: ' + r.correct + ')';
+    }
+    text += '\n';
+  });
+
+  text += '\n📊 ИТОГО: ' + okCount + ' из ' + totalCheckable + ' верно (' + percent + '%)\n';
+  text += '\n📷 Задание 17. Решение в тетради (фото отдельно).';
+
+  document.getElementById('resultText').textContent = text;
+  document.getElementById('resultArea').classList.add('show');
+
+  checked = true;
+  this.disabled = true;
+  this.textContent = '✓ Проверено';
+  this.style.background = 'linear-gradient(135deg,#2ecc71,#27ae60)';
+  this.style.color = '#fff';
+  this.style.boxShadow = '0 6px 24px rgba(46,204,113,0.4)';
+
+  document.getElementById('summaryBox').scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+/* ===== КОПИРОВАНИЕ ===== */
+document.getElementById('btnCopy').addEventListener('click', async function(){
+  const text = document.getElementById('resultText').textContent;
+  try{
+    await navigator.clipboard.writeText(text);
+    this.textContent = '✓ Скопировано!';
+    this.classList.add('copied');
+    setTimeout(()=>{ this.textContent='📋 Скопировать результат'; this.classList.remove('copied'); }, 2500);
+  }catch(e){
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+    this.textContent = '✓ Скопировано!';
+    this.classList.add('copied');
+    setTimeout(()=>{ this.textContent='📋 Скопировать результат'; this.classList.remove('copied'); }, 2500);
+  }
+});
+</script>
+</body>
+</html>
