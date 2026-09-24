@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>ОГЭ · Квартира · ДЗ · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{min-height:100vh;font-family:Georgia,'Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.06),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;padding:20px;overflow-x:hidden;display:flex;justify-content:center;}
+  .glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.5;}
+  .glow.g1{width:520px;height:520px;top:-120px;left:-120px;background:radial-gradient(circle,rgba(26,188,156,0.55),transparent 70%);}
+  .glow.g2{width:600px;height:600px;bottom:-200px;right:-180px;background:radial-gradient(circle,rgba(127,255,212,0.4),transparent 70%);}
+  .corner-logo{position:fixed;top:14px;left:16px;z-index:50;font-family:'Times New Roman',serif;text-align:center;line-height:1;padding:8px 14px 10px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(26,188,156,0.45);border-radius:14px;backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(0,0,0,0.35);}
+  .corner-logo .dots{font-family:'Courier New',monospace;font-size:9px;letter-spacing:1px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:14px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:3px;}
+  .corner-logo .ru{font-size:9px;letter-spacing:3px;color:var(--text-soft);margin-top:2px;}
+  .date-badge{position:fixed;top:14px;right:16px;z-index:50;display:flex;align-items:center;justify-content:center;height:42px;padding:0 14px;border-radius:14px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(127,255,212,0.45);color:var(--mint);backdrop-filter:blur(10px);font-weight:700;font-family:'Courier New',monospace;font-size:14px;}
+
+  .app{max-width:1000px;width:100%;background:rgba(255,255,255,0.04);border:1.5px solid var(--glass-brd);border-radius:24px;padding:28px 30px;backdrop-filter:blur(12px);box-shadow:0 12px 50px rgba(0,0,0,0.5);position:relative;z-index:2;margin-top:50px;}
+
+  h1{font-size:clamp(20px,2.8vw,26px);color:var(--mint);letter-spacing:1.5px;text-align:center;margin-bottom:6px;}
+  .subtitle{text-align:center;font-size:14px;color:var(--text-soft);font-style:italic;margin-bottom:20px;}
+
+  .student-box{
+    background:rgba(255,255,255,0.04);border:1.5px solid var(--glass-brd);
+    border-radius:16px;padding:14px 20px;margin-bottom:20px;
+    display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+    backdrop-filter:blur(10px);box-shadow:0 8px 30px rgba(0,0,0,0.3);
+  }
+  .student-box label{font-size:14px;color:var(--text-soft);font-weight:700;font-family:'Courier New',monospace;}
+  .student-box input{
+    flex:1;min-width:200px;padding:10px 14px;font-size:15px;
+    border:2px solid var(--teal);border-radius:10px;
+    background:rgba(10,42,51,0.7);color:var(--mint);
+    font-family:Georgia,serif;font-weight:700;outline:none;transition:0.2s;
+  }
+  .student-box input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(26,188,156,0.2);}
+
+  .instruction{
+    background:rgba(26,188,156,0.08);border:1.5px solid rgba(26,188,156,0.4);
+    border-left:5px solid var(--teal);border-radius:12px;padding:14px 18px;
+    margin-bottom:24px;font-size:14px;line-height:1.7;color:var(--text);
+  }
+  .instruction b{color:var(--gold-light);}
+
+  .plan-box{
+    background:#f7fcfa;border-radius:16px;border:2px solid var(--teal-deep);
+    padding:10px;margin-bottom:24px;text-align:center;
+  }
+  .plan-box svg{display:block;width:100%;max-width:900px;height:auto;margin:0 auto;}
+
+  .task{
+    background:rgba(255,255,255,0.03);border:1.5px solid rgba(26,188,156,0.35);
+    border-left:5px solid var(--teal);border-radius:16px;padding:20px 24px;
+    margin-bottom:22px;transition:0.25s;
+  }
+  .task:hover{background:rgba(26,188,156,0.05);border-left-color:var(--mint);}
+  .task-title{
+    font-size:16px;color:var(--mint);font-weight:700;margin-bottom:12px;
+    letter-spacing:0.5px;
+  }
+  .task-title .num{
+    display:inline-block;font-family:'Courier New',monospace;
+    font-size:14px;padding:3px 10px;border-radius:8px;
+    background:rgba(244,211,94,0.15);color:var(--gold-light);
+    border:1px solid rgba(244,211,94,0.4);margin-right:8px;
+  }
+  .task-text{font-size:14px;line-height:1.7;color:var(--text);margin-bottom:12px;}
+  .task-text b{color:var(--gold-light);}
+
+  .task-table{
+    width:100%;border-collapse:separate;border-spacing:0;
+    background:rgba(10,42,51,0.4);border-radius:12px;overflow:hidden;
+    border:1.5px solid rgba(26,188,156,0.35);font-size:13px;
+    margin-bottom:12px;
+  }
+  .task-table th,.task-table td{
+    padding:10px 12px;text-align:center;
+    border-bottom:1px solid rgba(26,188,156,0.2);
+    border-right:1px solid rgba(26,188,156,0.2);
+  }
+  .task-table th:last-child,.task-table td:last-child{border-right:none;}
+  .task-table tr:last-child td{border-bottom:none;}
+  .task-table th{background:rgba(26,188,156,0.12);color:var(--gold-light);font-weight:700;font-size:12px;}
+  .task-table td{color:var(--text);background:rgba(10,42,51,0.25);}
+
+  .answer-row{
+    display:flex;align-items:center;gap:12px;
+    margin-top:8px;flex-wrap:wrap;
+  }
+  .answer-row label{font-size:14px;color:var(--text-soft);font-weight:700;font-family:'Courier New',monospace;}
+  .answer-row input{
+    flex:1;min-width:180px;padding:10px 14px;font-size:15px;
+    border:2px solid var(--teal);border-radius:10px;
+    background:rgba(10,42,51,0.7);color:var(--mint);
+    font-family:'Courier New',monospace;font-weight:700;outline:none;transition:0.2s;
+  }
+  .answer-row input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(26,188,156,0.2);}
+
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;}
+  .btn{flex:1;min-width:200px;padding:14px 24px;font-size:15px;font-weight:700;font-family:inherit;letter-spacing:1px;border:none;border-radius:14px;cursor:pointer;transition:0.3s;}
+  .btn-main{background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;box-shadow:0 6px 20px rgba(26,188,156,0.4);}
+  .btn-main:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(26,188,156,0.55);}
+  .btn-copy{background:rgba(26,188,156,0.15);color:var(--mint);border:2px solid var(--teal);}
+  .btn-copy:hover{background:rgba(26,188,156,0.3);transform:translateY(-2px);}
+  .btn-max{background:linear-gradient(135deg,#7fffd4,#1abc9c);color:#04231d;box-shadow:0 6px 20px rgba(127,255,212,0.4);}
+  .btn-max:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(127,255,212,0.55);}
+
+  .result-box{
+    display:none;background:linear-gradient(135deg,rgba(26,188,156,0.15),rgba(244,211,94,0.10));
+    border:2px solid var(--mint);border-radius:16px;padding:20px 24px;margin-top:20px;
+    font-size:14px;line-height:1.7;white-space:pre-wrap;font-family:Georgia,serif;color:var(--text);
+  }
+  .result-box.show{display:block;animation:fade 0.5s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .result-title{font-size:15px;color:var(--mint);letter-spacing:2px;font-weight:700;margin-bottom:12px;text-transform:uppercase;font-family:'Courier New',monospace;}
+
+  .toast{
+    position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);
+    padding:14px 28px;background:linear-gradient(135deg,#1abc9c,#16a085);
+    color:#04231d;font-weight:700;border-radius:14px;z-index:200;
+    box-shadow:0 8px 30px rgba(26,188,156,0.5);transition:0.4s;font-family:Georgia,serif;
+  }
+  .toast.show{transform:translateX(-50%) translateY(0);}
+
+  @media(max-width:680px){
+    .app{padding:18px 14px;}
+    .task{padding:16px 14px;}
+    .task-table th,.task-table td{padding:8px 6px;font-size:12px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div><div class="glow g2"></div>
+
+<div class="corner-logo">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+</div>
+
+<div class="date-badge" id="dateDisplay">📅 00.00.0000</div>
+
+<div class="app">
+
+  <h1>📐 ОГЭ · Квартира</h1>
+  <div class="subtitle">Задание 3 · план двухкомнатной квартиры</div>
+
+  <div class="student-box">
+    <label>👤 Ученик:</label>
+    <input type="text" id="studentName" autocomplete="off" placeholder="введи имя и фамилию">
+  </div>
+
+  <div class="instruction">
+    <b>Как оформлять ответы:</b><br>
+    • Несколько чисел — через <b>точку с запятой</b> (;), без пробелов<br>
+    • Единицы измерения <b>не пиши</b> (только числа)<br>
+    • Десятичные дроби — через <b>запятую</b> (например, 2,56)<br>
+    • Проценты — только число (например, 200, а не 200%)
+  </div>
+
+  <!-- ПЛАН КВАРТИРЫ -->
+  <div class="plan-box">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 870 450" id="plan-svg">
+      <style>
+        .bg { fill: #f7fcfa; }
+        .grid { stroke: rgba(14,124,102,0.15); stroke-width: 0.6; }
+        .border { stroke: #0e7c66; stroke-width: 1.5; fill: none; }
+        .room-border { stroke: #0e7c66; stroke-width: 2.5; fill: none; }
+        .obj-border { stroke: #0e7c66; stroke-width: 1.5; fill: none; }
+        .obj-circle { fill: rgba(127,255,212,0.15); stroke: #1abc9c; stroke-width: 2; }
+        .obj-text { font-family: 'Georgia', serif; font-size: 18px; font-weight: bold; fill: #0e7c66; text-anchor: middle; dominant-baseline: central; }
+        .dim-line { stroke: #c9a32b; stroke-width: 0.8; }
+        .door-line { stroke: #ff6b6b; stroke-width: 1.4; }
+        .erase { fill: #f7fcfa; stroke: none; }
+        .label-text { font-family: 'Arial', sans-serif; font-size: 12px; fill: #0e7c66; text-anchor: middle; font-weight: bold; }
+        .window-symbol { stroke: #c9a32b; stroke-width: 1.4; fill: none; }
+        .window-top { fill: none; stroke: #c9a32b; stroke-width: 1.6; }
+        .window-between { fill: none; stroke: #c9a32b; stroke-width: 1.6; }
+        .scale-line { stroke: #0e7c66; stroke-width: 1.4; }
+        .scale-text { font-family: 'Arial', sans-serif; font-size: 11px; fill: #0e7c66; text-anchor: middle; font-weight: bold; }
+      </style>
+
+      <rect x="15" y="15" width="820" height="420" class="bg"/>
+      <g class="grid">
+        <line x1="15" y1="15" x2="15" y2="415"/><line x1="35" y1="15" x2="35" y2="415"/><line x1="55" y1="15" x2="55" y2="415"/><line x1="75" y1="15" x2="75" y2="415"/><line x1="95" y1="15" x2="95" y2="415"/><line x1="115" y1="15" x2="115" y2="415"/><line x1="135" y1="15" x2="135" y2="415"/><line x1="155" y1="15" x2="155" y2="415"/><line x1="175" y1="15" x2="175" y2="415"/><line x1="195" y1="15" x2="195" y2="415"/><line x1="215" y1="15" x2="215" y2="415"/><line x1="235" y1="15" x2="235" y2="415"/><line x1="255" y1="15" x2="255" y2="415"/><line x1="275" y1="15" x2="275" y2="415"/><line x1="295" y1="15" x2="295" y2="415"/><line x1="315" y1="15" x2="315" y2="415"/><line x1="335" y1="15" x2="335" y2="415"/><line x1="355" y1="15" x2="355" y2="415"/><line x1="375" y1="15" x2="375" y2="415"/><line x1="395" y1="15" x2="395" y2="415"/><line x1="415" y1="15" x2="415" y2="415"/><line x1="435" y1="15" x2="435" y2="415"/><line x1="455" y1="15" x2="455" y2="415"/><line x1="475" y1="15" x2="475" y2="415"/><line x1="495" y1="15" x2="495" y2="415"/><line x1="515" y1="15" x2="515" y2="415"/><line x1="535" y1="15" x2="535" y2="415"/><line x1="555" y1="15" x2="555" y2="415"/><line x1="575" y1="15" x2="575" y2="415"/><line x1="595" y1="15" x2="595" y2="415"/><line x1="615" y1="15" x2="615" y2="415"/><line x1="635" y1="15" x2="635" y2="415"/><line x1="655" y1="15" x2="655" y2="415"/><line x1="675" y1="15" x2="675" y2="415"/><line x1="695" y1="15" x2="695" y2="415"/><line x1="715" y1="15" x2="715" y2="415"/><line x1="735" y1="15" x2="735" y2="415"/><line x1="755" y1="15" x2="755" y2="415"/><line x1="775" y1="15" x2="775" y2="415"/><line x1="795" y1="15" x2="795" y2="415"/><line x1="815" y1="15" x2="815" y2="415"/><line x1="835" y1="15" x2="835" y2="415"/>
+        <line x1="15" y1="15" x2="835" y2="15"/><line x1="15" y1="35" x2="835" y2="35"/><line x1="15" y1="55" x2="835" y2="55"/><line x1="15" y1="75" x2="835" y2="75"/><line x1="15" y1="95" x2="835" y2="95"/><line x1="15" y1="115" x2="835" y2="115"/><line x1="15" y1="135" x2="835" y2="135"/><line x1="15" y1="155" x2="835" y2="155"/><line x1="15" y1="175" x2="835" y2="175"/><line x1="15" y1="195" x2="835" y2="195"/><line x1="15" y1="215" x2="835" y2="215"/><line x1="15" y1="235" x2="835" y2="235"/><line x1="15" y1="255" x2="835" y2="255"/><line x1="15" y1="275" x2="835" y2="275"/><line x1="15" y1="295" x2="835" y2="295"/><line x1="15" y1="315" x2="835" y2="315"/><line x1="15" y1="335" x2="835" y2="335"/><line x1="15" y1="355" x2="835" y2="355"/><line x1="15" y1="375" x2="835" y2="375"/><line x1="15" y1="395" x2="835" y2="395"/><line x1="15" y1="415" x2="835" y2="415"/>
+      </g>
+
+      <rect x="15" y="15" width="820" height="400" class="border"/>
+      <rect x="35" y="35" width="660" height="360" class="room-border"/>
+
+      <!-- Лоджия 8 -->
+      <line x1="35" y1="35" x2="255" y2="35" stroke="#f7fcfa" stroke-width="3"/>
+      <rect x="35" y="34.67" width="220" height="3.33" fill="none" class="window-top"/>
+      <line x1="35" y1="35" x2="35" y2="115" stroke="#0e7c66" stroke-width="1.5"/>
+      <line x1="255" y1="35" x2="255" y2="115" stroke="#0e7c66" stroke-width="1.5"/>
+      <line x1="35" y1="115" x2="255" y2="115" stroke="#f7fcfa" stroke-width="3"/>
+      <rect x="55" y="114.67" width="80" height="3.33" fill="none" class="window-between"/>
+      <rect x="155" y="105" width="40" height="20" class="erase"/>
+      <line x1="155" y1="115" x2="175" y2="135" class="door-line"/>
+      <line x1="155" y1="115" x2="195" y2="115" stroke="#f7fcfa" stroke-width="3"/>
+      <line x1="195" y1="115" x2="255" y2="115" stroke="#0e7c66" stroke-width="1.5"/>
+      <line x1="35" y1="115" x2="55" y2="115" stroke="#0e7c66" stroke-width="1.5"/>
+      <circle cx="145" cy="75" r="18" class="obj-circle"/>
+      <text x="145" y="75" class="obj-text">8</text>
+
+      <!-- Спальня 7 -->
+      <rect x="35" y="115" width="220" height="180" class="obj-border"/>
+      <circle cx="145" cy="205" r="18" class="obj-circle"/>
+      <text x="145" y="205" class="obj-text">7</text>
+
+      <!-- Санузел 6 -->
+      <rect x="35" y="295" width="80" height="100" class="obj-border"/>
+      <circle cx="75" cy="345" r="18" class="obj-circle"/>
+      <text x="75" y="345" class="obj-text">6</text>
+
+      <!-- Гостиная 1 -->
+      <rect x="255" y="35" width="240" height="260" class="obj-border"/>
+      <circle cx="375" cy="165" r="18" class="obj-circle"/>
+      <text x="375" y="165" class="obj-text">1</text>
+
+      <line x1="375" y1="295" x2="415" y2="295" stroke="#f7fcfa" stroke-width="3"/>
+      <rect x="375" y="285" width="40" height="20" class="erase"/>
+      <line x1="375" y1="295" x2="395" y2="305" class="door-line"/>
+
+      <!-- Лоджия 2 -->
+      <line x1="495" y1="35" x2="695" y2="35" stroke="#f7fcfa" stroke-width="3"/>
+      <rect x="495" y="34.67" width="200" height="3.33" fill="none" class="window-top"/>
+      <line x1="495" y1="35" x2="495" y2="95" stroke="#0e7c66" stroke-width="1.5"/>
+      <line x1="695" y1="35" x2="695" y2="95" stroke="#0e7c66" stroke-width="1.5"/>
+      <line x1="495" y1="95" x2="695" y2="95" stroke="#f7fcfa" stroke-width="3"/>
+      <rect x="615" y="94.67" width="60" height="3.33" fill="none" class="window-between"/>
+      <rect x="555" y="85" width="40" height="20" class="erase"/>
+      <line x1="555" y1="95" x2="575" y2="105" class="door-line"/>
+      <line x1="555" y1="95" x2="595" y2="95" stroke="#f7fcfa" stroke-width="3"/>
+      <line x1="495" y1="95" x2="555" y2="95" stroke="#0e7c66" stroke-width="1.5"/>
+      <line x1="595" y1="95" x2="615" y2="95" stroke="#0e7c66" stroke-width="1.5"/>
+      <line x1="675" y1="95" x2="695" y2="95" stroke="#0e7c66" stroke-width="1.5"/>
+      <circle cx="595" cy="65" r="18" class="obj-circle"/>
+      <text x="595" y="65" class="obj-text">2</text>
+
+      <!-- Кухня 3 -->
+      <rect x="495" y="95" width="200" height="180" class="obj-border"/>
+      <circle cx="595" cy="185" r="18" class="obj-circle"/>
+      <text x="595" y="185" class="obj-text">3</text>
+
+      <!-- Кладовая 4 -->
+      <rect x="595" y="275" width="100" height="120" class="obj-border"/>
+      <circle cx="645" cy="335" r="18" class="obj-circle"/>
+      <text x="645" y="335" class="obj-text">4</text>
+
+      <!-- Коридор 5 -->
+      <circle cx="500" cy="335" r="18" class="obj-circle"/>
+      <text x="500" y="335" class="obj-text">5</text>
+
+      <!-- Двери -->
+      <rect x="195" y="285" width="60" height="20" class="erase"/>
+      <line x1="195" y1="295" x2="235" y2="305" class="door-line"/>
+      <rect x="485" y="135" width="20" height="40" class="erase"/>
+      <line x1="495" y1="135" x2="485" y2="155" class="door-line"/>
+      <rect x="535" y="265" width="40" height="20" class="erase"/>
+      <line x1="535" y1="275" x2="555" y2="285" class="door-line"/>
+      <rect x="585" y="325" width="20" height="40" class="erase"/>
+      <line x1="595" y1="325" x2="585" y2="345" class="door-line"/>
+      <rect x="105" y="325" width="20" height="40" class="erase"/>
+      <line x1="115" y1="325" x2="105" y2="345" class="door-line"/>
+      <rect x="415" y="385" width="40" height="20" class="erase"/>
+      <line x1="415" y1="395" x2="435" y2="405" class="door-line"/>
+
+      <!-- Окно и дверь справа -->
+      <line x1="715" y1="170" x2="735" y2="170" class="window-symbol"/>
+      <rect x="735" y="169" width="40" height="2" fill="none" stroke="#c9a32b" stroke-width="1.4"/>
+      <line x1="775" y1="170" x2="795" y2="170" class="window-symbol"/>
+      <text x="755" y="185" class="label-text">окно</text>
+
+      <line x1="715" y1="90" x2="735" y2="90" class="dim-line"/>
+      <line x1="775" y1="90" x2="795" y2="90" class="dim-line"/>
+      <line x1="775" y1="90" x2="735" y2="110" class="door-line"/>
+      <text x="755" y="125" class="label-text">дверь</text>
+
+      <!-- Масштаб -->
+      <line x1="735" y1="270" x2="755" y2="270" class="scale-line"/>
+      <line x1="735" y1="267" x2="735" y2="273" stroke="#0e7c66" stroke-width="1"/>
+      <line x1="755" y1="267" x2="755" y2="273" stroke="#0e7c66" stroke-width="1"/>
+      <text x="745" y="285" class="scale-text">0,4 м</text>
+    </svg>
+  </div>
+
+  <!-- ЗАДАЧА 1 -->
+  <div class="task">
+    <div class="task-title"><span class="num">1</span>Заполните таблицу</div>
+    <div class="task-text">Для объектов, указанных в таблице, определите, какими цифрами они обозначены на плане. Заполните таблицу, в бланк ответа перенесите последовательность четырёх цифр без пробелов, запятых и других дополнительных символов.</div>
+    <table class="task-table">
+      <tr><th>Объекты</th><th>кухня</th><th>гостиная</th><th>кладовая</th><th>коридор</th></tr>
+      <tr><td>Цифры</td><td></td><td></td><td></td><td></td></tr>
+    </table>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" data-task="1" placeholder="введи ответ">
+    </div>
+  </div>
+
+  <!-- ЗАДАЧА 2 -->
+  <div class="task">
+    <div class="task-title"><span class="num">2</span>Площадь санузла</div>
+    <div class="task-text">Найдите площадь санузла. Ответ дайте в квадратных метрах.</div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" data-task="2" placeholder="введи ответ">
+    </div>
+  </div>
+
+  <!-- ЗАДАЧА 3 -->
+  <div class="task">
+    <div class="task-title"><span class="num">3</span>Кухня и лоджия</div>
+    <div class="task-text">На сколько процентов площадь кухни больше площади лоджии, примыкающей к кухне?</div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" data-task="3" placeholder="введи ответ">
+    </div>
+  </div>
+
+  <!-- ЗАДАЧА 4 -->
+  <div class="task">
+    <div class="task-title"><span class="num">4</span>Паркетная доска</div>
+    <div class="task-text">Паркетная доска размером 20 см на 80 см продаётся в упаковках по 12 штук. Сколько упаковок паркетной доски понадобилось, чтобы выложить пол в коридоре?</div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" data-task="4" placeholder="введи ответ">
+    </div>
+  </div>
+
+  <!-- ЗАДАЧА 5 -->
+  <div class="task">
+    <div class="task-title"><span class="num">5</span>Стиральная машина</div>
+    <div class="task-text">В квартире планируется установить стиральную машину. Характеристики стиральных машин, условия подключения и доставки приведены в таблице. Планируется купить стиральную машину с фронтальной загрузкой вместимостью не менее 6 кг. Сколько рублей будет стоить наиболее дешёвый подходящий вариант вместе с подключением и доставкой?</div>
+    <table class="task-table">
+      <tr><th>Модель</th><th>Вместимость (кг)</th><th>Тип загрузки</th><th>Стоимость (руб.)</th><th>Подключение (руб.)</th><th>Доставка (% от стоимости)</th><th>Габариты (см)</th></tr>
+      <tr><td>А</td><td>7</td><td>верт.</td><td>28 000</td><td>1700</td><td>бесплатно</td><td>85×60×45</td></tr>
+      <tr><td>Б</td><td>5</td><td>фронт.</td><td>24 000</td><td>4500</td><td>10</td><td>85×60×40</td></tr>
+      <tr><td>В</td><td>5</td><td>фронт.</td><td>25 000</td><td>5000</td><td>10</td><td>85×60×40</td></tr>
+      <tr><td>Г</td><td>6,5</td><td>фронт.</td><td>24 000</td><td>4500</td><td>10</td><td>85×60×44</td></tr>
+      <tr><td>Д</td><td>6</td><td>фронт.</td><td>28 000</td><td>1700</td><td>бесплатно</td><td>85×60×45</td></tr>
+      <tr><td>Е</td><td>6</td><td>верт.</td><td>27 600</td><td>2300</td><td>бесплатно</td><td>89×60×40</td></tr>
+      <tr><td>Ж</td><td>6</td><td>верт.</td><td>27 585</td><td>1900</td><td>10</td><td>89×60×40</td></tr>
+      <tr><td>З</td><td>6</td><td>фронт.</td><td>20 000</td><td>6300</td><td>15</td><td>85×60×42</td></tr>
+      <tr><td>И</td><td>5</td><td>фронт.</td><td>27 000</td><td>1800</td><td>бесплатно</td><td>85×60×40</td></tr>
+      <tr><td>К</td><td>5</td><td>верт.</td><td>27 000</td><td>1800</td><td>бесплатно</td><td>85×60×40</td></tr>
+    </table>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" data-task="5" placeholder="введи ответ">
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-main" id="btnForm">📩 Сформировать ответ для учителя</button>
+    <button class="btn btn-copy" id="btnCopy">📋 Скопировать ответы</button>
+    <button class="btn btn-max" id="btnMax">💬 Отправить учителю в Макс</button>
+  </div>
+
+  <div class="result-box" id="resultBox">
+    <div class="result-title">📄 Готовый ответ</div>
+    <div id="resultText"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast">✓ Скопировано!</div>
+
+<script>
+(function(){
+  const el=document.getElementById('dateDisplay');
+  const d=new Date();
+  el.textContent='📅 '+d.toLocaleDateString('ru-RU',{day:'2-digit',month:'long',year:'numeric'});
+})();
+
+/* ЗАГРУЗКА ИМЕНИ */
+(function(){
+  const inp = document.getElementById('studentName');
+  const saved = localStorage.getItem('tetraktis_student');
+  if (saved) inp.value = saved;
+  inp.addEventListener('input', () => localStorage.setItem('tetraktis_student', inp.value));
+})();
+
+/* ФОРМИРОВАНИЕ ОТВЕТА */
+function buildAnswer(){
+  const name = document.getElementById('studentName').value.trim() || '(не указано)';
+  const d = new Date();
+  const dateStr = d.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'}) + ' ' +
+                  d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+
+  let out = '📐 ОТВЕТЫ · ОГЭ Квартира\n';
+  out += 'Дата: ' + dateStr + '\n';
+  out += 'Ученик: ' + name + '\n\n';
+
+  const tasks = document.querySelectorAll('input[data-task]');
+  tasks.forEach(inp => {
+    const num = inp.dataset.task;
+    const val = inp.value.trim() || '(нет ответа)';
+    out += 'Задание ' + num + '. Ответ: ' + val + '\n';
+  });
+
+  return out;
+}
+
+/* КНОПКА «СФОРМИРОВАТЬ» */
+document.getElementById('btnForm').addEventListener('click', function(){
+  const text = buildAnswer();
+  const box = document.getElementById('resultBox');
+  document.getElementById('resultText').textContent = text;
+  box.classList.add('show');
+  box.scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+/* КНОПКА «СКОПИРОВАТЬ» */
+document.getElementById('btnCopy').addEventListener('click', function(){
+  const text = buildAnswer();
+  navigator.clipboard.writeText(text).then(() => {
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+  });
+});
+
+/* КНОПКА «ОТПРАВИТЬ В МАКС» */
+document.getElementById('btnMax').addEventListener('click', function(){
+  const text = buildAnswer();
+  const url = 'https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes';
+  navigator.clipboard.writeText(text).then(() => {
+    const t = document.getElementById('toast');
+    t.textContent = '✓ Скопировано! Открываю Макс...';
+    t.classList.add('show');
+    setTimeout(() => {
+      t.classList.remove('show');
+      t.textContent = '✓ Скопировано!';
+      window.open(url, '_blank');
+    }, 800);
+  });
+});
+</script>
+
+</body>
+</html>
