@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ΤΕΤΡΑΚΤΥΣ · ДЗ · Корни и степени</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c; --teal-dark:#16a085; --teal-deep:#0e7c66;
+    --mint:#7fffd4; --coral:#ff6b6b;
+    --gold:#f4d35e; --gold-light:#ffe89a;
+    --text:#e8f8f5; --text-soft:#b8d8d0;
+    --ok:#2ecc71; --err:#ff6b6b;
+    --card-bg:rgba(255,255,255,0.04);
+    --card-border:rgba(26,188,156,0.4);
+  }
+  html,body{min-height:100%;}
+  body{
+    font-family:Georgia,'Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(26,188,156,0.22), transparent 55%),
+      radial-gradient(ellipse at 85% 90%, rgba(127,255,212,0.15), transparent 55%),
+      radial-gradient(ellipse at 50% 50%, rgba(244,211,94,0.06), transparent 70%),
+      linear-gradient(160deg, #0a2a33 0%, #0d3b47 50%, #134e5e 100%);
+    background-attachment:fixed;overflow-x:hidden;
+  }
+  .stars{position:fixed;inset:0;pointer-events:none;z-index:0;}
+  .stars span{position:absolute;background:var(--mint);border-radius:50%;animation:tw 3s infinite ease-in-out;opacity:.5;}
+  @keyframes tw{0%,100%{opacity:.15;transform:scale(.8)}50%{opacity:.7;transform:scale(1.2)}}
+
+  .wrap{position:relative;z-index:1;max-width:840px;margin:0 auto;padding:14px;}
+
+  /* ЛОГОТИП */
+  .logo-mini{
+    display:flex;align-items:center;gap:12px;
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    border:1.5px solid rgba(26,188,156,0.4);
+    border-radius:20px;padding:8px 16px;
+    font-family:'Times New Roman',serif;
+    box-shadow:0 8px 30px rgba(0,0,0,.3);
+    width:max-content;margin-bottom:14px;
+  }
+  .logo-dots{font-size:7px;line-height:1.15;letter-spacing:3px;font-weight:bold;color:var(--teal);}
+  .logo-txt{font-size:14px;letter-spacing:2px;font-weight:700;color:var(--teal);}
+  .logo-txt small{display:block;font-size:9px;letter-spacing:1px;font-weight:400;color:var(--text-soft);font-style:italic;}
+
+  /* ДАТА */
+  .topbar{display:flex;justify-content:flex-end;margin-bottom:14px;}
+  .chip.date{
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    border-radius:20px;padding:6px 14px;
+    font-weight:700;font-size:14px;white-space:nowrap;
+    box-shadow:0 4px 14px rgba(0,0,0,.3);
+    border:1.5px solid var(--card-border);
+    font-family:'Courier New',monospace;color:var(--mint);
+  }
+
+  /* КАРТОЧКА */
+  .card{
+    background:var(--card-bg);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    border-radius:20px;padding:22px 20px;margin-bottom:16px;
+    border:1.5px solid var(--card-border);
+    box-shadow:0 8px 30px rgba(0,0,0,.3);
+    border-top:3px solid var(--teal);
+  }
+  h1{font-size:26px;text-align:center;color:var(--mint);margin-bottom:8px;font-family:'Times New Roman',serif;letter-spacing:2px;}
+  .sub{text-align:center;font-size:14px;color:var(--text-soft);margin-bottom:16px;font-style:italic;}
+
+  /* ИМЯ */
+  .name-field{margin-bottom:16px;}
+  .name-field input{
+    width:100%;padding:12px 14px;border:1.5px solid var(--card-border);
+    border-radius:14px;font-size:16px;outline:none;margin:0;
+    font-family:Georgia,serif;background:rgba(0,0,0,.2);color:var(--text);transition:.2s;
+  }
+  .name-field input::placeholder{color:var(--text-soft);opacity:.6;}
+  .name-field input:focus{border-color:var(--mint);background:rgba(0,0,0,.3);}
+
+  /* ИНСТРУКЦИЯ */
+  .instruction{
+    background:rgba(244,211,94,.10);border-left:4px solid var(--gold);
+    border-radius:12px;padding:12px 16px;margin:12px 0 20px;
+    font-size:14px;line-height:1.7;color:var(--text);
+  }
+  .instruction b{color:var(--gold);}
+
+  /* ЗАДАНИЯ */
+  .task-list{display:flex;flex-direction:column;gap:14px;}
+  .task-block{
+    background:rgba(255,255,255,.04);border-radius:14px;padding:14px 16px;
+    border-left:4px solid var(--teal);page-break-inside:avoid;
+  }
+  .task-header{display:flex;gap:12px;align-items:baseline;margin-bottom:10px;}
+  .task-num{font-weight:800;color:var(--gold);font-size:16px;font-family:'Courier New',monospace;white-space:nowrap;min-width:28px;}
+  .task-question{
+    flex:1;font-size:20px;color:var(--text);
+    font-family:'Cambria Math','Times New Roman',serif;
+    line-height:1.9;padding:4px 0;
+  }
+  .task-question sup{font-size:.7em;vertical-align:super;}
+
+  /* ДРОБЬ (вертикальная) */
+  .frac{
+    display:inline-flex;flex-direction:column;align-items:center;
+    vertical-align:middle;margin:0 4px;line-height:1.1;
+  }
+  .frac .num{padding:0 4px 1px;border-bottom:1.5px solid var(--mint);}
+  .frac .den{padding:1px 4px 0;}
+
+  .answer-row{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap;}
+  .answer-row label{font-size:13px;color:var(--text-soft);font-weight:700;}
+  .answer-row input{
+    flex:1;min-width:160px;padding:10px 14px;border:1.5px solid var(--card-border);
+    border-radius:10px;font-size:15px;font-weight:700;outline:none;
+    font-family:'Courier New',monospace;background:rgba(0,0,0,.2);color:var(--text);margin:0;transition:.2s;
+  }
+  .answer-row input::placeholder{color:var(--text-soft);opacity:.6;}
+  .answer-row input:focus{border-color:var(--mint);background:rgba(0,0,0,.3);}
+  .answer-row input.ok{border-color:var(--ok);background:rgba(46,204,113,.15);}
+  .answer-row input.err{border-color:var(--err);background:rgba(255,107,107,.12);}
+  .answer-row button{
+    font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;border:none;
+    border-radius:10px;padding:10px 20px;color:#04231d;
+    background:linear-gradient(135deg,var(--teal),var(--teal-dark));transition:.2s;
+  }
+  .answer-row button:hover{transform:translateY(-1px);}
+  .task-verdict{text-align:center;font-size:14px;font-weight:700;margin-top:8px;min-height:20px;}
+  .task-verdict.ok{color:var(--ok);}
+  .task-verdict.err{color:var(--err);}
+
+  /* КНОПКИ ВНИЗУ */
+  .bottom-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:22px;}
+  button.big{
+    font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;border:none;
+    border-radius:14px;padding:12px 22px;color:#04231d;
+    background:linear-gradient(135deg,var(--teal),var(--teal-dark));
+    transition:.2s;box-shadow:0 6px 18px rgba(26,188,156,.35);
+  }
+  button.big:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(26,188,156,.5);}
+  button.big.gold{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#3a2b00;box-shadow:0 6px 18px rgba(244,211,94,.35);}
+  button.big.mint{background:linear-gradient(135deg,var(--mint),var(--teal));color:#04231d;}
+  button.big.soft{background:rgba(255,255,255,.08);color:var(--text-soft);border:1.5px solid var(--card-border);box-shadow:none;}
+  button.big.soft:hover{background:rgba(255,255,255,.14);color:var(--mint);}
+
+  /* ИТОГ */
+  .final-bar{
+    background:linear-gradient(135deg,var(--teal),var(--teal-deep));
+    border:2px solid var(--gold);
+    border-radius:16px;padding:16px 20px;margin:20px 0;
+    text-align:center;box-shadow:0 10px 30px rgba(26,188,156,.35);
+  }
+  .final-bar .lbl{font-size:12px;letter-spacing:2px;color:var(--gold-light);text-transform:uppercase;margin-bottom:8px;}
+  .final-bar .score{font-size:32px;font-weight:900;color:#fff;font-family:'Courier New',monospace;letter-spacing:2px;}
+
+  /* МОДАЛКА */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,.7);
+    display:none;align-items:center;justify-content:center;z-index:200;padding:20px;
+  }
+  .modal-overlay.show{display:flex;}
+  .modal{
+    background:linear-gradient(160deg, rgba(13,59,71,.99), rgba(10,42,51,.99));
+    border:2px solid var(--gold);border-radius:20px;
+    padding:24px;max-width:640px;width:100%;max-height:80vh;overflow-y:auto;
+    box-shadow:0 20px 60px rgba(0,0,0,.7);
+  }
+  .modal h3{color:var(--mint);font-family:'Times New Roman',serif;font-size:20px;margin-bottom:14px;text-align:center;}
+  .modal textarea{
+    width:100%;min-height:280px;padding:14px;
+    background:rgba(0,0,0,.3);color:var(--text);
+    border:1.5px solid var(--card-border);border-radius:12px;
+    font-family:'Courier New',monospace;font-size:13px;line-height:1.6;
+    resize:vertical;outline:none;
+  }
+  .modal textarea:focus{border-color:var(--mint);}
+  .modal-actions{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap;}
+
+  @media print{
+    body{background:#fff;padding:0;color:#000;}
+    .topbar,.bottom-actions,.answer-row{display:none!important;}
+    .card{box-shadow:none;border:1px solid #ccc;background:#fff;color:#000;}
+    h1{color:#0e7c66!important;}
+  }
+
+  @media(max-width:520px){
+    h1{font-size:20px;}
+    .task-question{font-size:17px;}
+    .answer-row input{font-size:14px;}
+    button.big{font-size:13px;padding:10px 16px;}
+  }
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+
+<div class="wrap">
+  <div class="logo-mini">
+    <div class="logo-dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+    <div class="logo-txt">ΤΕΤΡΑΚΤΥΣ<small>Школа Елены Михалевой</small></div>
+  </div>
+
+  <div class="topbar">
+    <div class="chip date">📅 <span id="todayDate">—</span></div>
+  </div>
+
+  <div class="card">
+    <h1>Домашняя работа</h1>
+    <p class="sub">Корни и степени · 11 заданий</p>
+
+    <div class="name-field">
+      <input type="text" id="nameInp" placeholder="Фамилия и имя" maxlength="40">
+    </div>
+
+    <div class="instruction">
+      <b>✍️ Как писать ответы:</b><br>
+      • Целые: <b>16</b><br>
+      • Дроби: <b>1/6</b> или <b>0,5</b><br>
+      • Корни: <b>√12</b> или <b>sqrt(12)</b><br>
+      • Степени: <b>2^3</b> или <b>2³</b><br>
+      • Упрощай до конца! Например, √18 = 3√2, а не √18
+    </div>
+
+    <div class="task-list" id="tasks"></div>
+
+    <div class="final-bar">
+      <div class="lbl">✦ Результат ✦</div>
+      <div class="score"><span id="scoreNow">0</span> / <span id="scoreTotal">0</span></div>
+    </div>
+
+    <div class="bottom-actions">
+      <button class="big mint" onclick="copyAnswers()">📋 Скопировать ответы</button>
+      <button class="big gold" onclick="sendToTeacher()">📩 Сформировать ответ для учителя</button>
+      <button class="big" onclick="sendToMax()">💬 Отправить учителю в Макс</button>
+    </div>
+  </div>
+</div>
+
+<!-- МОДАЛКА -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3>📩 Ответ для учителя</h3>
+    <textarea id="modalText" readonly></textarea>
+    <div class="modal-actions">
+      <button class="big mint" onclick="copyModalText()">📋 Скопировать</button>
+      <button class="big soft" onclick="closeModal()">✕ Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ЗВЁЗДЫ */
+(function(){
+  const box=document.getElementById('stars');
+  for(let i=0;i<70;i++){
+    const s=document.createElement('span');
+    const sz=Math.random()*2.2+0.8;
+    s.style.width=sz+'px'; s.style.height=sz+'px';
+    s.style.left=Math.random()*100+'%';
+    s.style.top=Math.random()*100+'%';
+    s.style.animationDelay=(Math.random()*3)+'s';
+    box.appendChild(s);
+  }
+})();
+
+/* ДАТА */
+(function showDate(){
+  function pad(n){return String(n).padStart(2,'0');}
+  function update(){
+    const d=new Date();
+    document.getElementById('todayDate').textContent =
+      pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear();
+  }
+  update();
+  setInterval(update, 60000);
+})();
+
+/* ИМЯ — localStorage */
+const nameInp = document.getElementById('nameInp');
+const savedName = localStorage.getItem('tetraktis_student_name') || '';
+nameInp.value = savedName;
+nameInp.addEventListener('input', () => {
+  localStorage.setItem('tetraktis_student_name', nameInp.value.trim());
+});
+
+/* ВЕРТИКАЛЬНАЯ ДРОБЬ — HTML */
+function frac(num, den){
+  return '<span class="frac"><span class="num">' + num + '</span><span class="den">' + den + '</span></span>';
+}
+
+/* ЗАДАНИЯ */
+/* HTML-версии для красивого отображения */
+const tasks = [
+  {num:1,
+   question: frac('(8√3)<sup>2</sup>', '96'),
+   answer:'2'},
+
+  {num:2,
+   question: frac('14', '(3√7)<sup>2</sup>'),
+   answer:'2/9'},
+
+  {num:3,
+   question: '√5<sup>6</sup>',
+   answer:'125'},
+
+  {num:4,
+   question: frac('√200', '√8'),
+   answer:'5'},
+
+  {num:5,
+   question: '√18 · √8',
+   answer:'12'},
+
+  {num:6,
+   question: '√1600',
+   answer:'40'},
+
+  {num:7,
+   question: '√0,036',
+   answer:'0,6'},
+
+  {num:8,
+   question: frac('√21 · √14', '√6'),
+   answer:'7'},
+
+  {num:9,
+   question: frac('√35 · √21', '√15'),
+   answer:'7'},
+
+  {num:10,
+   question: '√(5<sup>4</sup> · 6<sup>2</sup> · 13<sup>2</sup>)',
+   answer:'1950'},
+
+  {num:11,
+   question: '7√15 · 2√2 · √30',
+   answer:'420'}
+];
+
+let solved = 0;
+const TOTAL = tasks.length;
+const taskAnswers = {};
+
+function renderTasks(){
+  const box = document.getElementById('tasks');
+  box.innerHTML = '';
+  document.getElementById('scoreTotal').textContent = TOTAL;
+
+  tasks.forEach((t, i) => {
+    const block = document.createElement('div');
+    block.className = 'task-block';
+    block.innerHTML = `
+      <div class="task-header">
+        <span class="task-num">${t.num}.</span>
+        <span class="task-question">${t.question}</span>
+      </div>
+      <div class="answer-row">
+        <label>Ответ:</label>
+        <input type="text" id="ans-${i}" placeholder="Введи ответ">
+        <button onclick="checkTask(${i})">Проверить</button>
+      </div>
+      <div class="task-verdict" id="v-${i}"></div>
+    `;
+    box.appendChild(block);
+  });
+
+  /* Enter = проверить */
+  document.querySelectorAll('.answer-row input').forEach((inp, i) => {
+    inp.addEventListener('keydown', e => {
+      if(e.key === 'Enter'){ e.preventDefault(); checkTask(i); }
+    });
+  });
+}
+
+/* НОРМАЛИЗАЦИЯ ОТВЕТА */
+function normalize(s){
+  if(!s) return '';
+  s = String(s).trim().toLowerCase();
+  s = s.replace(/\s+/g, '');
+  s = s.replace(/,/g, '.');
+  s = s.replace(/√/g, 'sqrt');
+  s = s.replace(/⁰/g,'^0').replace(/¹/g,'^1').replace(/²/g,'^2')
+       .replace(/³/g,'^3').replace(/⁴/g,'^4').replace(/⁵/g,'^5')
+       .replace(/⁶/g,'^6').replace(/⁷/g,'^7').replace(/⁸/g,'^8').replace(/⁹/g,'^9');
+  return s;
+}
+
+function checkTask(i){
+  const t = tasks[i];
+  const inp = document.getElementById('ans-' + i);
+  const v = document.getElementById('v-' + i);
+  const userRaw = inp.value.trim();
+
+  inp.classList.remove('ok','err');
+  v.classList.remove('ok','err');
+
+  if(!userRaw){
+    v.textContent = 'Введи ответ 🙂';
+    v.className = 'task-verdict err';
+    return;
+  }
+
+  const user = normalize(userRaw);
+  const correct = normalize(t.answer);
+
+  let ok = (user === correct);
+
+  /* Числовое совпадение для простых чисел */
+  if(!ok){
+    const cNum = parseFloat(correct);
+    const uNum = parseFloat(user);
+    if(!isNaN(cNum) && !isNaN(uNum) && Math.abs(cNum - uNum) < 0.0001){
+      if(/^-?\d+(\.\d+)?$/.test(correct) && /^-?\d+(\.\d+)?$/.test(user)){
+        ok = true;
+      }
+    }
+  }
+
+  if(ok){
+    inp.classList.add('ok');
+    v.textContent = '✅ Верно!';
+    v.className = 'task-verdict ok';
+    if(!taskAnswers[i]){
+      taskAnswers[i] = true;
+      solved++;
+      document.getElementById('scoreNow').textContent = solved;
+    }
+  } else {
+    inp.classList.add('err');
+    v.textContent = '❌ Пока неверно. Попробуй ещё!';
+    v.className = 'task-verdict err';
+  }
+}
+
+/* СБОР ОТВЕТОВ */
+function collectAnswers(){
+  const name = nameInp.value.trim() || 'Без имени';
+  const d = new Date();
+  function pad(n){return String(n).padStart(2,'0');}
+  const date = pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()+' '+
+               pad(d.getHours())+':'+pad(d.getMinutes());
+
+  let lines = [];
+  lines.push('📐 ОТВЕТЫ · ДЗ «Корни и степени»');
+  lines.push('Дата: ' + date);
+  lines.push('Ученик: ' + name);
+  lines.push('');
+  tasks.forEach((t, i) => {
+    const inp = document.getElementById('ans-' + i);
+    const ans = inp.value.trim() || '—';
+    lines.push('Задание ' + t.num + '. Ответ: ' + ans);
+  });
+  return lines.join('\n');
+}
+
+/* СКОПИРОВАТЬ ОТВЕТЫ */
+function copyAnswers(){
+  const text = collectAnswers();
+  navigator.clipboard.writeText(text).then(() => {
+    alert('✅ Ответы скопированы!');
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    alert('✅ Ответы скопированы!');
+  });
+}
+
+/* СФОРМИРОВАТЬ ОТВЕТ ДЛЯ УЧИТЕЛЯ */
+function sendToTeacher(){
+  const text = collectAnswers();
+  document.getElementById('modalText').value = text;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function copyModalText(){
+  const ta = document.getElementById('modalText');
+  ta.select();
+  navigator.clipboard.writeText(ta.value).then(() => {
+    alert('✅ Скопировано!');
+  }).catch(() => {
+    document.execCommand('copy');
+    alert('✅ Скопировано!');
+  });
+}
+
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('show');
+}
+
+/* ОТПРАВИТЬ В МАКС */
+function sendToMax(){
+  copyAnswers();
+  window.open('https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes', '_blank');
+  setTimeout(() => {
+    alert('✅ Ответы скопированы!\n\nВставь их в чат с учителем (Ctrl+V).');
+  }, 400);
+}
+
+/* КЛИК ПО ОВЕРЛЕЮ */
+document.getElementById('modalOverlay').addEventListener('click', function(e){
+  if(e.target === this) closeModal();
+});
+
+/* СТАРТ */
+renderTasks();
+</script>
+</body>
+</html>
