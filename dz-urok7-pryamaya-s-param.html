@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>ДЗ · Прямая y = kx + b с параметром · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--mint-soft:#a8f0dc;
+    --coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass:rgba(255,255,255,0.04);--glass-brd:rgba(26,188,156,0.4);
+  }
+  html,body{
+    min-height:100%;font-family:'Georgia','Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.06),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;padding:40px 20px 60px;overflow-x:hidden;
+  }
+  .glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.5;}
+  .glow.g1{width:520px;height:520px;top:-120px;left:-120px;background:radial-gradient(circle,rgba(26,188,156,0.55),transparent 70%);}
+  .glow.g2{width:600px;height:600px;bottom:-200px;right:-180px;background:radial-gradient(circle,rgba(127,255,212,0.45),transparent 70%);}
+
+  .wrap{position:relative;z-index:10;max-width:900px;margin:0 auto;}
+
+  .header{
+    text-align:center;margin-bottom:30px;
+    padding:26px 28px;
+    background:var(--glass);border:1.5px solid var(--glass-brd);
+    border-radius:20px;backdrop-filter:blur(12px);
+    box-shadow:0 8px 30px rgba(0,0,0,0.35);
+  }
+  .header h1{
+    font-family:'Times New Roman',serif;
+    font-size:clamp(22px,3vw,30px);
+    color:var(--mint);letter-spacing:1.2px;margin-bottom:8px;
+  }
+  .header .sub{
+    font-size:15px;color:var(--text-soft);font-style:italic;
+  }
+
+  .task-card{
+    background:var(--glass);border:1.5px solid var(--glass-brd);
+    border-radius:20px;backdrop-filter:blur(12px);
+    box-shadow:0 8px 30px rgba(0,0,0,0.35);
+    padding:24px 28px;margin-bottom:18px;
+    transition:border-color 0.25s;
+  }
+  .task-card:hover{border-color:var(--mint);}
+  .task-head{
+    display:flex;align-items:center;gap:14px;margin-bottom:14px;
+    padding-bottom:12px;
+    border-bottom:1.5px dashed rgba(26,188,156,0.3);
+  }
+  .task-num{
+    display:inline-flex;align-items:center;justify-content:center;
+    min-width:44px;height:40px;padding:0 14px;
+    background:linear-gradient(135deg,#f4d35e,#c9a32b);
+    color:#2a1f00;border-radius:12px;
+    font-family:'Times New Roman',serif;font-weight:700;font-size:18px;
+    letter-spacing:1px;
+  }
+  .task-title{
+    font-family:'Times New Roman',serif;color:var(--gold);
+    font-size:16px;letter-spacing:0.5px;font-style:italic;
+  }
+  .task-text{
+    font-size:16.5px;line-height:1.85;color:var(--text);
+  }
+  .task-text .frm{
+    font-family:'Cambria Math','Times New Roman',serif;
+    color:var(--mint);font-style:italic;font-size:17px;
+    background:rgba(26,188,156,0.1);
+    padding:1px 8px;border-radius:6px;
+  }
+  .task-text b{color:var(--gold-light);}
+  .frac{
+    display:inline-flex;flex-direction:column;
+    vertical-align:middle;text-align:center;
+    margin:0 4px;line-height:1.1;font-size:0.95em;
+  }
+  .frac .num{border-bottom:1.5px solid currentColor;padding:0 6px 2px;}
+  .frac .den{padding:2px 6px 0;}
+
+  .footer{
+    text-align:center;padding:30px 20px 10px;color:var(--text-soft);
+    font-size:13px;font-family:'Times New Roman',serif;letter-spacing:2px;
+    margin-top:20px;
+  }
+  .footer .f-logo{color:var(--teal);font-size:15px;margin-bottom:6px;}
+  .footer .f-sub{font-style:italic;opacity:.75;}
+
+  @media(max-width:700px){
+    body{padding:24px 12px 40px;}
+    .header,.task-card{padding:18px 18px;}
+    .task-text{font-size:15px;}
+    .task-num{min-width:36px;height:34px;font-size:16px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div>
+<div class="glow g2"></div>
+
+<div class="wrap">
+
+  <div class="header">
+    <h1>Домашнее задание</h1>
+    <div class="sub">Прямая y = kx + b с параметром · 5 заданий</div>
+  </div>
+
+  <!-- Задание 1 -->
+  <div class="task-card">
+    <div class="task-head">
+      <span class="task-num">1</span>
+      <span class="task-title">Прямая через две точки</span>
+    </div>
+    <div class="task-text">
+      Прямая <span class="frm">y = kx + b</span> проходит через точки
+      <span class="frm">A(1; 4)</span> и <span class="frm">B(4; −5)</span>.
+      Найдите абсциссу точки пересечения этой прямой с осью <b>Ox</b>.
+    </div>
+  </div>
+
+  <!-- Задание 2 -->
+  <div class="task-card">
+    <div class="task-head">
+      <span class="task-num">2</span>
+      <span class="task-title">Неподвижная точка</span>
+    </div>
+    <div class="task-text">
+      Найдите неподвижную точку прямой
+      <span class="frm">y = (a − 3)x + 2a − 6</span>.
+      В ответе укажите её координаты.
+    </div>
+  </div>
+
+  <!-- Задание 3 -->
+  <div class="task-card">
+    <div class="task-head">
+      <span class="task-num">3</span>
+      <span class="task-title">Параллельность</span>
+    </div>
+    <div class="task-text">
+      Прямая <span class="frm">y = kx + b</span> параллельна прямой
+      <span class="frm">y = 3x − 1</span> и проходит через точку
+      <span class="frm">(1; 5)</span>. Найдите значение <b>b</b>.
+    </div>
+  </div>
+
+  <!-- Задание 4 -->
+  <div class="task-card">
+    <div class="task-head">
+      <span class="task-num">4</span>
+      <span class="task-title">Перпендикулярность</span>
+    </div>
+    <div class="task-text">
+      Прямая <span class="frm">y = kx + b</span> перпендикулярна прямой
+      <span class="frm">y = 2x + 7</span> и проходит через точку
+      <span class="frm">(4; 1)</span>.
+      Найдите точку пересечения этой прямой с осью <b>Oy</b>.
+      В ответе укажите её координаты.
+    </div>
+  </div>
+
+  <!-- Задание 5 -->
+  <div class="task-card">
+    <div class="task-head">
+      <span class="task-num">5</span>
+      <span class="task-title">Параметр</span>
+    </div>
+    <div class="task-text">
+      При каком наименьшем значении параметра <b>a</b> прямая
+      <span class="frm">y = a²x − 3ax + 4a − 12</span>
+      не имеет общих точек с прямой
+      <span class="frm">y = x + 5</span>?
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <div class="f-logo">ΤΕΤΡΑΚΤΥΣ · ТЕТРАКТИС</div>
+  <div class="f-sub">где математика превращается в приключение</div>
+</div>
+
+</body>
+</html>
