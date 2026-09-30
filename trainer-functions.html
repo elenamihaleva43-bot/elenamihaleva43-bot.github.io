@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Тренажёр · Функции · 9 класс · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--mint-soft:#a8f0dc;
+    --coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass:rgba(255,255,255,0.04);
+    --glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{
+    min-height:100%;
+    font-family:'Georgia','Times New Roman',serif;
+    color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(26,188,156,0.22), transparent 55%),
+      radial-gradient(ellipse at 85% 90%, rgba(127,255,212,0.15), transparent 55%),
+      radial-gradient(ellipse at 50% 50%, rgba(244,211,94,0.06), transparent 70%),
+      linear-gradient(160deg, #0a2a33 0%, #0d3b47 50%, #134e5e 100%);
+    background-attachment:fixed;
+    overflow-x:hidden;
+  }
+  .glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.5;}
+  .glow.g1{width:520px;height:520px;top:-120px;left:-120px;background:radial-gradient(circle,rgba(26,188,156,0.55),transparent 70%);animation:pulse 9s ease-in-out infinite;}
+  .glow.g2{width:600px;height:600px;bottom:-200px;right:-180px;background:radial-gradient(circle,rgba(127,255,212,0.45),transparent 70%);animation:pulse 11s ease-in-out infinite reverse;}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:0.35;}50%{transform:scale(1.15);opacity:0.6;}}
+
+  .corner-logo{
+    position:fixed;top:14px;left:16px;z-index:50;
+    font-family:'Times New Roman',serif;text-align:center;line-height:1;
+    padding:8px 14px 10px;background:rgba(10,42,51,0.6);
+    border:1px solid var(--glass-brd);border-radius:12px;
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    box-shadow:0 4px 20px rgba(0,0,0,0.35);
+  }
+  .corner-logo .dots{font-size:9px;letter-spacing:2px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:13px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:4px;}
+  .corner-logo .ru{font-size:9px;letter-spacing:2px;color:var(--text-soft);margin-top:2px;}
+
+  /* ── Кнопки навигации ── */
+  .back-btn{
+    position:fixed;top:14px;left:150px;z-index:50;
+    padding:10px 18px;border-radius:12px;
+    background:rgba(10,42,51,0.75);
+    border:1px solid var(--glass-brd);
+    color:var(--mint);text-decoration:none;
+    font-family:'Georgia',serif;font-size:14px;
+    backdrop-filter:blur(8px);
+    transition:all 0.25s;
+  }
+  .back-btn:hover{background:rgba(26,188,156,0.15);transform:translateY(-2px);border-color:var(--mint);}
+  .back-btn.home{left:auto;right:150px;}
+
+  .topbar-right{
+    position:fixed;top:14px;right:16px;z-index:50;
+    display:flex;gap:10px;align-items:center;
+    padding:10px 16px;border-radius:12px;
+    background:rgba(10,42,51,0.75);
+    border:1px solid var(--glass-brd);backdrop-filter:blur(8px);
+    font-family:'Courier New',monospace;color:var(--mint);font-size:15px;
+  }
+  #timerBox{font-weight:700;color:#fff;letter-spacing:1.5px;}
+
+  .app{position:relative;z-index:10;max-width:760px;margin:0 auto;padding:90px 20px 60px;}
+
+  .glass{
+    background:var(--glass);border:1px solid var(--glass-brd);border-radius:20px;
+    padding:22px 26px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    box-shadow:0 8px 40px rgba(0,0,0,0.45);
+  }
+
+  .page-head{text-align:center;margin-bottom:20px;}
+  .page-head h1{font-size:clamp(22px,3.4vw,30px);color:var(--mint);letter-spacing:1.5px;margin-bottom:6px;}
+  .page-head .sub{font-size:14px;color:var(--text-soft);font-style:italic;}
+
+  .name-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center;margin-bottom:14px;}
+  .name-row label{font-size:15px;color:var(--text-soft);}
+  .name-row input{
+    padding:11px 16px;border-radius:12px;border:1.5px solid var(--glass-brd);
+    background:rgba(255,255,255,0.05);color:var(--text);
+    font-family:inherit;font-size:16px;min-width:220px;outline:none;
+  }
+  .name-row input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.2);}
+
+  #greeting{
+    text-align:center;color:var(--gold-light);
+    font-size:15px;margin-bottom:16px;min-height:22px;font-style:italic;
+    transition:color 0.25s;
+  }
+
+  .btn{
+    display:inline-block;padding:13px 34px;border-radius:14px;border:none;
+    font-family:inherit;font-size:16px;letter-spacing:1px;font-weight:700;
+    cursor:pointer;transition:transform 0.15s,box-shadow 0.2s;
+    background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;
+    box-shadow:0 8px 26px rgba(26,188,156,0.4);text-decoration:none;
+  }
+  .btn:hover{transform:translateY(-2px);}
+  .btn:disabled{opacity:0.4;cursor:not-allowed;transform:none!important;}
+  .btn.ghost{background:transparent;color:var(--mint);border:1.5px solid var(--glass-brd);box-shadow:none;}
+  .btn.ghost:hover{background:rgba(26,188,156,0.1);}
+  .center{text-align:center;}
+
+  #gameScreen{display:none;}
+  #gameScreen.active{display:block;}
+
+  .score-strip{
+    display:flex;justify-content:center;align-items:center;gap:14px;
+    flex-wrap:wrap;margin-bottom:20px;
+  }
+  .dot{
+    width:34px;height:34px;border-radius:50%;
+    background:rgba(255,255,255,0.06);
+    border:2px solid rgba(26,188,156,0.4);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Courier New',monospace;font-weight:700;
+    color:var(--text-soft);font-size:14px;
+    transition:all 0.3s ease;
+  }
+  .dot.ok{background:linear-gradient(135deg,#2ecc71,#27ae60);border-color:#2ecc71;color:#fff;transform:scale(1.12);box-shadow:0 0 12px rgba(46,204,113,0.6);}
+  .dot.err{background:linear-gradient(135deg,#ff6b6b,#c0392b);border-color:var(--err);color:#fff;}
+  .dot.current{border-color:var(--mint);box-shadow:0 0 0 4px rgba(127,255,212,0.2), 0 0 18px rgba(127,255,212,0.5);color:var(--mint);}
+  .score-text{
+    margin-left:8px;font-family:'Courier New',monospace;
+    font-size:17px;font-weight:700;color:var(--gold-light);letter-spacing:1px;
+  }
+
+  .card{
+    background:var(--glass);border:1.5px solid var(--glass-brd);border-radius:24px;
+    padding:30px 28px;backdrop-filter:blur(12px);
+    box-shadow:0 12px 50px rgba(0,0,0,0.5);
+    animation:fadeIn 0.4s ease;
+    transition:border-color 0.3s, background 0.3s;
+  }
+  .card.ok{border-color:rgba(46,204,113,0.7);background:rgba(46,204,113,0.08);}
+  .card.err{border-color:rgba(255,107,107,0.7);background:rgba(255,107,107,0.08);}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(20px) scale(0.98);}to{opacity:1;transform:translateY(0) scale(1);}}
+
+  .card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+  .task-num{
+    display:inline-flex;align-items:center;justify-content:center;
+    padding:6px 14px;border-radius:10px;
+    background:rgba(26,188,156,0.15);border:1px solid var(--glass-brd);
+    font-family:'Courier New',monospace;font-size:14px;
+    color:var(--mint);font-weight:700;letter-spacing:1px;
+  }
+  .task-kind{font-size:13px;color:var(--text-soft);font-style:italic;}
+
+  .formula-block{
+    background:rgba(26,188,156,0.08);
+    border-left:5px solid var(--teal);
+    border-radius:12px;padding:16px 20px;margin-bottom:18px;
+    font-family:'Cambria Math','Times New Roman',serif;
+    font-size:clamp(20px,2.6vw,24px);
+    color:var(--mint);letter-spacing:0.5px;
+  }
+  .formula-block .label{font-size:13px;color:var(--text-soft);font-style:italic;margin-right:10px;font-family:'Georgia',serif;}
+
+  .question{font-size:clamp(16px,2vw,18px);line-height:1.6;color:var(--text);margin-bottom:18px;}
+  .question .expr{font-family:'Cambria Math','Times New Roman',serif;color:var(--gold-light);font-size:1.05em;}
+
+  .input-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  .input-row .prefix{font-family:'Cambria Math','Times New Roman',serif;font-size:22px;color:var(--text-soft);}
+  .input-row input{
+    flex:1;min-width:160px;padding:16px 20px;border-radius:14px;
+    border:2px solid var(--glass-brd);background:rgba(255,255,255,0.06);color:var(--text);
+    font-family:'Cambria Math','Times New Roman',serif;
+    font-size:24px;font-weight:600;outline:none;
+    transition:border-color 0.25s, box-shadow 0.25s, background 0.25s;
+    text-align:center;
+  }
+  .input-row input:focus{border-color:var(--mint);box-shadow:0 0 0 4px rgba(127,255,212,0.2);}
+  .input-row input.ok{border-color:var(--ok);background:rgba(46,204,113,0.12);box-shadow:0 0 0 4px rgba(46,204,113,0.25);}
+  .input-row input.err{border-color:var(--err);background:rgba(255,107,107,0.12);box-shadow:0 0 0 4px rgba(255,107,107,0.25);}
+  .input-row .check-btn{
+    padding:16px 26px;border-radius:14px;border:none;
+    background:linear-gradient(135deg,#1abc9c,#16a085);
+    color:#04231d;font-family:inherit;font-size:16px;font-weight:700;
+    letter-spacing:0.5px;cursor:pointer;
+    box-shadow:0 6px 20px rgba(26,188,156,0.35);
+    transition:transform 0.15s, box-shadow 0.2s;
+  }
+  .input-row .check-btn:hover{transform:translateY(-1px);}
+  .input-row .mark{font-size:34px;min-width:40px;text-align:center;transition:transform 0.25s ease;}
+  .input-row .mark.ok{color:var(--ok);transform:scale(1.2);}
+  .input-row .mark.err{color:var(--err);transform:scale(1.2);}
+
+  .feedback{margin-top:16px;min-height:26px;text-align:center;font-size:17px;font-weight:700;letter-spacing:0.5px;}
+  .feedback.ok{color:var(--ok);}
+  .feedback.err{color:var(--err);}
+
+  .final-box{
+    background:var(--glass);border:2px solid var(--glass-brd);
+    border-radius:24px;padding:34px 28px;text-align:center;
+    box-shadow:0 12px 50px rgba(0,0,0,0.5);
+    animation:fadeIn 0.5s ease;
+  }
+  .final-box h2{font-size:clamp(24px,3.4vw,32px);color:var(--mint);letter-spacing:1.5px;margin-bottom:14px;}
+  .final-score{font-family:'Times New Roman',serif;font-size:64px;font-weight:900;color:var(--gold-light);letter-spacing:3px;line-height:1;margin:10px 0;}
+  .final-score small{font-size:0.5em;color:var(--text-soft);font-weight:400;}
+  .grade-badge{
+    display:inline-block;font-size:42px;font-weight:900;
+    padding:10px 32px;border-radius:18px;margin:16px 0;
+    font-family:'Times New Roman',serif;letter-spacing:2px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.4);
+  }
+  .grade-5{background:linear-gradient(135deg,#2ecc71,#27ae60);color:#fff;}
+  .grade-4{background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;}
+  .grade-3{background:linear-gradient(135deg,#f4d35e,#e8b923);color:#3a2a00;}
+  .grade-2{background:linear-gradient(135deg,#ff6b6b,#c0392b);color:#fff;}
+
+  .final-info{margin-top:10px;font-size:16px;color:var(--text-soft);line-height:1.7;}
+  .final-info b{color:var(--mint);font-weight:700;}
+
+  .final-btns{margin-top:22px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+
+  @media (max-width:720px){
+    .app{padding:100px 12px 50px;}
+    .glass{padding:18px 16px;border-radius:16px;}
+    .card{padding:22px 18px;border-radius:20px;}
+    .corner-logo{padding:6px 10px 8px;}
+    .corner-logo .gr{font-size:11px;}
+    .back-btn{left:auto;right:16px;top:64px;font-size:12px;padding:7px 12px;}
+    .back-btn.home{right:auto;left:16px;top:64px;}
+    .topbar-right{padding:8px 12px;font-size:13px;top:14px;}
+    .input-row input{font-size:20px;padding:14px 16px;min-width:130px;}
+    .input-row .prefix{font-size:18px;}
+    .input-row .check-btn{padding:14px 20px;font-size:15px;}
+    .input-row .mark{font-size:28px;min-width:34px;}
+    .dot{width:30px;height:30px;font-size:12px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div>
+<div class="glow g2"></div>
+
+<div class="corner-logo">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+</div>
+
+<!-- Навигация -->
+<a href="funkcii.html" class="back-btn">← К разделу «Функции»</a>
+<a href="index.html" class="back-btn home">🏠 На главную</a>
+
+<div class="topbar-right">
+  <span id="dateBox">📅 --.--.----</span>
+  <span id="timerBox">⏱ 00:00</span>
+</div>
+
+<div class="app">
+
+  <!-- СТАРТ -->
+  <section id="startScreen">
+    <div class="page-head">
+      <h1>Тренажёр · Функции</h1>
+      <div class="sub">9 класс · линейная и квадратичная</div>
+    </div>
+
+    <div class="glass">
+      <div class="name-row">
+        <label for="studentName">👤 Имя ученика:</label>
+        <input type="text" id="studentName" placeholder="введи имя" autocomplete="off">
+      </div>
+      <div id="greeting">✨ Введи имя, чтобы начать</div>
+
+      <div class="center" style="margin-top:18px;">
+        <button class="btn" id="btnStart" disabled>▶ Начать тренажёр</button>
+      </div>
+
+      <div style="margin-top:20px;font-size:14px;color:var(--text-soft);text-align:center;line-height:1.7;">
+        <b style="color:var(--mint);">Как работает:</b><br>
+        Каждый раз — <b>5 новых случайных заданий</b> из банка.<br>
+        Вводишь ответ → нажимаешь <b>Enter</b> или кнопку <b>«Проверить»</b>.<br>
+        Вверху — счётчик правильных (до 5). В конце — оценка.<br>
+        <b style="color:var(--gold-light);">Если корней два — вводи через ; (например: 1; 3)</b>
+      </div>
+    </div>
+  </section>
+
+  <!-- ИГРА -->
+  <section id="gameScreen">
+    <div class="score-strip" id="scoreStrip"></div>
+    <div id="cardWrap"></div>
+  </section>
+
+  <!-- ФИНАЛ -->
+  <section id="finalScreen" style="display:none;">
+    <div class="final-box" id="finalBox">
+      <h2>🎉 Тренажёр пройден!</h2>
+      <div class="final-score" id="finalScore">0 <small>/ 5</small></div>
+      <div class="grade-badge" id="finalGrade">—</div>
+      <div class="final-info" id="finalInfo"></div>
+      <div class="final-btns">
+        <button class="btn ghost" id="btnRestart">🔄 Ещё раз</button>
+        <a href="funkcii.html" class="btn ghost">← К разделу</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ДАТА */
+(function updateDate(){
+  const d = new Date();
+  const dd = String(d.getDate()).padStart(2,'0');
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const yyyy = d.getFullYear();
+  document.getElementById('dateBox').textContent = `📅 ${dd}.${mm}.${yyyy}`;
+})();
+
+/* ТАЙМЕР */
+const timerBox = document.getElementById('timerBox');
+let timerStart = null, timerInterval = null, timerStarted = false;
+function startTimer(){
+  if(timerStarted) return;
+  timerStarted = true;
+  timerStart = Date.now();
+  timerInterval = setInterval(() => {
+    const el = Math.floor((Date.now() - timerStart) / 1000);
+    const m = String(Math.floor(el/60)).padStart(2,'0');
+    const s = String(el%60).padStart(2,'0');
+    timerBox.textContent = `⏱ ${m}:${s}`;
+  }, 500);
+}
+function resetTimer(){
+  if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+  timerStarted = false;
+  timerBox.textContent = '⏱ 00:00';
+}
+
+/* ИМЯ */
+const nameInput = document.getElementById('studentName');
+const greeting = document.getElementById('greeting');
+const startBtn = document.getElementById('btnStart');
+let studentName = localStorage.getItem('tetraktus_student') || '';
+
+if(studentName){
+  nameInput.value = studentName;
+  greeting.textContent = `✨ Привет, ${studentName}! Готов?`;
+  greeting.style.color = 'var(--mint)';
+  startBtn.disabled = false;
+}
+nameInput.addEventListener('input', () => {
+  studentName = nameInput.value.trim();
+  localStorage.setItem('tetraktus_student', studentName);
+  if(studentName){
+    greeting.textContent = `✨ Привет, ${studentName}! Готов?`;
+    greeting.style.color = 'var(--mint)';
+    startBtn.disabled = false;
+  } else {
+    greeting.textContent = '✨ Введи имя, чтобы начать';
+    greeting.style.color = 'var(--gold-light)';
+    startBtn.disabled = true;
+  }
+});
+
+/* ============================================================
+   БАНК ЗАДАНИЙ (15 штук) — все корни целые
+============================================================ */
+const BANK = [
+  /* ===== ЛИНЕЙНЫЕ (5) ===== */
+  { kind:'linear', formula:'f(x) = 3x − 4', type:'from-x',
+    question:'Найди <span class="expr">f(2)</span>', answers:[2] },
+
+  { kind:'linear', formula:'f(x) = 3x − 4', type:'from-x',
+    question:'Найди <span class="expr">f(−1)</span>', answers:[-7] },
+
+  { kind:'linear', formula:'f(x) = 3x − 4', type:'from-fx',
+    question:'При каком x значение функции равно <span class="expr">5</span>?', answers:[3] },
+
+  { kind:'linear', formula:'f(x) = −2x + 6', type:'from-x',
+    question:'Найди <span class="expr">f(4)</span>', answers:[-2] },
+
+  { kind:'linear', formula:'f(x) = −2x + 6', type:'from-fx',
+    question:'При каком x значение функции равно <span class="expr">0</span>?', answers:[3] },
+
+  /* ===== КВАДРАТНЫЕ (10) ===== */
+  { kind:'quad', formula:'f(x) = x² − 3', type:'from-x',
+    question:'Найди <span class="expr">f(4)</span>', answers:[13] },
+
+  { kind:'quad', formula:'f(x) = x² − 3', type:'from-x',
+    question:'Найди <span class="expr">f(−2)</span>', answers:[1] },
+
+  { kind:'quad', formula:'f(x) = x² − 3', type:'from-fx',
+    question:'При каких x значение функции равно <span class="expr">6</span>?',
+    answers:[-3, 3] },
+
+  { kind:'quad', formula:'f(x) = 2x² + 1', type:'from-x',
+    question:'Найди <span class="expr">f(3)</span>', answers:[19] },
+
+  { kind:'quad', formula:'f(x) = 2x² + 1', type:'from-fx',
+    question:'При каких x значение функции равно <span class="expr">9</span>?',
+    answers:[-2, 2] },
+
+  { kind:'quad', formula:'f(x) = x² − 4x', type:'from-fx',
+    question:'При каких x значение функции равно <span class="expr">0</span>?',
+    answers:[0, 4] },
+
+  { kind:'quad', formula:'f(x) = x² + 3x', type:'from-fx',
+    question:'При каких x значение функции равно <span class="expr">0</span>?',
+    answers:[-3, 0] },
+
+  { kind:'quad', formula:'f(x) = 2x² − 6x', type:'from-x',
+    question:'Найди <span class="expr">f(3)</span>', answers:[0] },
+
+  { kind:'quad', formula:'f(x) = x² − 5x + 6', type:'from-fx',
+    question:'При каких x значение функции равно <span class="expr">0</span>?',
+    answers:[2, 3] },
+
+  { kind:'quad', formula:'f(x) = x² + 2x − 3', type:'from-fx',
+    question:'При каких x значение функции равно <span class="expr">0</span>?',
+    answers:[-3, 1] }
+];
+
+const TASKS_PER_ROUND = 5;
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function pickRound(){
+  return shuffle(BANK).slice(0, TASKS_PER_ROUND);
+}
+
+let TASKS = [];
+let currentIdx = 0;
+let correct = 0;
+let results = [];
+
+const scoreStrip = document.getElementById('scoreStrip');
+const cardWrap = document.getElementById('cardWrap');
+
+function renderScore(){
+  scoreStrip.innerHTML = '';
+  for(let i = 0; i < TASKS.length; i++){
+    const d = document.createElement('div');
+    d.className = 'dot';
+    if(results[i] === 'ok') d.classList.add('ok');
+    else if(results[i] === 'err') d.classList.add('err');
+    else if(i === currentIdx) d.classList.add('current');
+    d.textContent = results[i] === 'ok' ? '✓' : (results[i] === 'err' ? '✗' : (i+1));
+    scoreStrip.appendChild(d);
+  }
+  const txt = document.createElement('div');
+  txt.className = 'score-text';
+  txt.textContent = `✓ ${correct} / ${TASKS.length}`;
+  scoreStrip.appendChild(txt);
+}
+
+function renderCard(){
+  const t = TASKS[currentIdx];
+  const tag = t.type === 'from-x' ? '🔢 Дано x → найти f(x)' : '🔍 Дано f(x) → найти x';
+  const multi = t.answers.length > 1;
+
+  cardWrap.innerHTML = `
+    <div class="card" id="currentCard">
+      <div class="card-head">
+        <span class="task-num">Задание ${currentIdx + 1} из ${TASKS.length}</span>
+        <span class="task-kind">${tag}</span>
+      </div>
+
+      <div class="formula-block">
+        <span class="label">Дано:</span>${t.formula}
+      </div>
+
+      <div class="question">${t.question}</div>
+
+      <div class="input-row">
+        <span class="prefix">${t.type === 'from-x' ? 'f(x) =' : (multi ? 'x₁; x₂ =' : 'x =')}</span>
+        <input type="text" id="answerInput" placeholder="${multi ? 'например: 1; 3' : 'ответ'}" autocomplete="off">
+        <button class="check-btn" id="checkBtn">Проверить</button>
+        <span class="mark" id="answerMark"></span>
+      </div>
+
+      <div class="feedback" id="feedback"></div>
+    </div>
+  `;
+
+  const inp = document.getElementById('answerInput');
+  inp.focus();
+  inp.addEventListener('keydown', e => {
+    if(e.key === 'Enter'){ e.preventDefault(); doCheck(); }
+  });
+  document.getElementById('checkBtn').addEventListener('click', doCheck);
+}
+
+function normalize(s){
+  return String(s || '').toLowerCase()
+    .replace(/[\u2212\u2013\u2014\u2012\u2015]/g, '-')
+    .replace(/\u00A0/g, ' ').replace(/\s+/g, '')
+    .replace(/ё/g,'е').replace(/,/g, '.').trim();
+}
+function parseNum(s){
+  s = normalize(s);
+  if(s.includes('/')){
+    const [a, b] = s.split('/');
+    const na = parseFloat(a), nb = parseFloat(b);
+    if(!isNaN(na) && !isNaN(nb) && nb !== 0) return na / nb;
+    return NaN;
+  }
+  return parseFloat(s);
+}
+
+let locked = false;
+
+function doCheck(){
+  if(locked) return;
+  const inp = document.getElementById('answerInput');
+  const mark = document.getElementById('answerMark');
+  const fb = document.getElementById('feedback');
+  const card = document.getElementById('currentCard');
+  const t = TASKS[currentIdx];
+
+  const val = inp.value.trim();
+  if(!val){
+    fb.className = 'feedback err';
+    fb.textContent = '⚠ Введи ответ';
+    return;
+  }
+
+  startTimer();
+
+  const parts = val.split(/[;\n]+/).map(x => x.trim()).filter(x => x.length > 0);
+  const parsed = parts.map(parseNum).filter(x => !isNaN(x));
+
+  if(parsed.length === 0){
+    fb.className = 'feedback err';
+    fb.textContent = '⚠ Не понимаю ответ. Введи число.';
+    return;
+  }
+
+  const correctSet = [...t.answers].sort((a,b) => a-b);
+  const userSet = [...new Set(parsed)].sort((a,b) => a-b);
+
+  let ok = false;
+  if(userSet.length === correctSet.length){
+    ok = userSet.every((v, i) => Math.abs(v - correctSet[i]) < 1e-6);
+  }
+
+  inp.classList.remove('ok','err');
+  mark.classList.remove('ok','err');
+  fb.classList.remove('ok','err');
+  card.classList.remove('ok','err');
+
+  if(ok){
+    inp.classList.add('ok');
+    mark.textContent = '✓'; mark.classList.add('ok');
+    fb.textContent = '✓ Верно! Молодец!'; fb.classList.add('ok');
+    card.classList.add('ok');
+    results[currentIdx] = 'ok';
+    correct++;
+    locked = true;
+    renderScore();
+    inp.blur();
+    setTimeout(nextTask, 1400);
+  } else {
+    inp.classList.add('err');
+    mark.textContent = '✗'; mark.classList.add('err');
+    const ans = t.answers.map(formatAnswer).join('; ');
+    fb.textContent = '✗ Неверно. Правильный ответ: ' + ans;
+    fb.classList.add('err');
+    card.classList.add('err');
+    results[currentIdx] = 'err';
+    locked = true;
+    renderScore();
+    inp.blur();
+    setTimeout(nextTask, 2400);
+  }
+}
+
+function formatAnswer(n){
+  return String(n).replace('-', '−').replace('.', ',');
+}
+
+function nextTask(){
+  currentIdx++;
+  locked = false;
+  if(currentIdx >= TASKS.length) showFinal();
+  else { renderScore(); renderCard(); }
+}
+
+function showFinal(){
+  document.getElementById('gameScreen').style.display = 'none';
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('finalScreen').style.display = 'block';
+
+  document.getElementById('finalScore').innerHTML = `${correct} <small>/ ${TASKS.length}</small>`;
+
+  const total = TASKS.length;
+  const errors = total - correct;
+  let grade;
+  if(correct === total) grade = 5;
+  else if(errors <= 1) grade = 5;
+  else if(errors <= 2) grade = 4;
+  else if(correct >= total/2) grade = 3;
+  else grade = 2;
+
+  const badge = document.getElementById('finalGrade');
+  badge.textContent = grade;
+  badge.className = 'grade-badge grade-' + grade;
+
+  const finalTime = timerBox.textContent.replace('⏱ ', '');
+  let infoHtml = '';
+  if(studentName) infoHtml += `👤 <b>${studentName}</b><br>`;
+  infoHtml += `⏱ Время: <b>${finalTime}</b>`;
+  document.getElementById('finalInfo').innerHTML = infoHtml;
+}
+
+startBtn.addEventListener('click', () => {
+  studentName = nameInput.value.trim();
+  if(!studentName) return;
+
+  TASKS = pickRound();
+  currentIdx = 0; correct = 0; results = []; locked = false;
+  resetTimer();
+
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('gameScreen').style.display = 'block';
+
+  renderScore();
+  renderCard();
+});
+
+document.getElementById('btnRestart').addEventListener('click', () => {
+  resetTimer();
+  document.getElementById('finalScreen').style.display = 'none';
+  document.getElementById('startScreen').style.display = 'block';
+});
+</script>
+</body>
+</html>
