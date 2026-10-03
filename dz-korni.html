@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>ДЗ · Преобразование выражений с квадратными корнями · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--mint-soft:#a8f0dc;
+    --coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass:rgba(255,255,255,0.04);--glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{min-height:100vh;font-family:Georgia,'Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.06),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;padding:20px;overflow-x:hidden;}
+
+  .corner-logo{position:fixed;top:14px;left:16px;z-index:50;font-family:'Times New Roman',serif;text-align:center;line-height:1;padding:10px 18px 12px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(26,188,156,0.45);border-radius:14px;backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(0,0,0,0.35);}
+  .corner-logo .dots{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:16px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:4px;}
+  .corner-logo .ru{font-size:10px;letter-spacing:3px;color:var(--text-soft);margin-top:2px;}
+
+  .top-right{position:fixed;top:14px;right:16px;z-index:50;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+  .date-badge{display:flex;align-items:center;justify-content:center;height:46px;padding:0 16px;border-radius:14px;backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;font-size:15px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(127,255,212,0.45);color:var(--mint);font-family:'Courier New',monospace;}
+
+  .wrap{position:relative;z-index:10;max-width:900px;margin:80px auto 40px;}
+  .card{background:var(--glass);border:1.5px solid var(--glass-brd);border-radius:20px;padding:26px 28px;backdrop-filter:blur(10px);box-shadow:0 8px 30px rgba(0,0,0,0.3);margin-bottom:20px;transition:.25s;}
+  .card:hover{border-color:var(--mint);}
+  h1{font-family:'Times New Roman',serif;font-size:clamp(20px,3vw,27px);color:var(--teal);letter-spacing:1px;margin-bottom:8px;}
+  h1 .num{color:var(--gold);margin-right:8px;}
+  .subtitle{color:var(--text-soft);font-style:italic;font-size:14px;}
+  h2{font-family:'Times New Roman',serif;font-size:20px;color:var(--mint);letter-spacing:1px;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+  h2::before{content:'';width:6px;height:22px;background:linear-gradient(180deg,var(--teal),var(--mint));border-radius:3px;}
+
+  .progress-card{background:linear-gradient(135deg,rgba(26,188,156,0.12),rgba(244,211,94,0.08));border:2px solid var(--teal);border-radius:20px;padding:18px 22px;margin-bottom:20px;}
+  .progress-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;}
+  .progress-label{font-family:'Courier New',monospace;font-size:14px;color:var(--mint);letter-spacing:1px;font-weight:700;}
+  .progress-stats{display:flex;gap:14px;font-family:'Courier New',monospace;font-size:14px;font-weight:700;}
+  .progress-stats .s-ok{color:var(--ok);}
+  .progress-stats .s-err{color:var(--err);}
+  .progress-stats .s-pct{color:var(--gold);}
+  .progress-bar-bg{height:14px;background:rgba(10,42,51,0.6);border-radius:10px;overflow:hidden;border:1px solid rgba(26,188,156,0.3);}
+  .progress-bar-fill{height:100%;width:0;background:linear-gradient(90deg,#1abc9c,#7fffd4,#f4d35e);border-radius:10px;transition:width .4s ease;}
+
+  .name-block{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+  .name-block label{font-size:15px;color:var(--mint);font-weight:700;letter-spacing:1px;}
+  .name-block input{flex:1;min-width:200px;padding:11px 16px;font-size:16px;background:rgba(10,42,51,0.5);border:1.5px solid var(--glass-brd);border-radius:12px;color:var(--text);outline:none;font-family:inherit;transition:.2s;}
+  .name-block input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+
+  .instr{background:rgba(244,211,94,0.06);border:1.5px solid rgba(244,211,94,0.3);border-radius:16px;padding:18px 22px;margin-bottom:20px;}
+  .instr h3{font-family:'Times New Roman',serif;color:var(--gold);font-size:17px;letter-spacing:1px;margin-bottom:12px;font-weight:700;}
+  .instr ul{list-style:none;padding:0;}
+  .instr li{padding:6px 0;font-size:14.5px;line-height:1.6;color:var(--text);}
+  .instr li::before{content:'▸';color:var(--mint);margin-right:10px;font-weight:700;}
+  .instr code{font-family:'Courier New',monospace;background:rgba(26,188,156,0.15);color:var(--mint);padding:2px 8px;border-radius:6px;font-size:13.5px;}
+
+  .task{background:rgba(255,255,255,0.03);border:1.5px solid rgba(26,188,156,0.25);border-radius:16px;padding:16px 20px;margin-bottom:12px;transition:.2s;}
+  .task:hover{border-color:rgba(127,255,212,0.5);}
+  .task.correct{border-color:var(--ok);background:rgba(46,204,113,0.08);}
+  .task.wrong{border-color:var(--err);background:rgba(255,107,107,0.06);}
+  .task-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
+  .task-num{display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:32px;padding:0 8px;background:linear-gradient(135deg,var(--gold),#c9a32b);color:#2a1f00;border-radius:10px;font-family:'Courier New',monospace;font-weight:700;font-size:14px;flex-shrink:0;}
+  .task-eq{flex:1;font-family:'Cambria Math','Times New Roman',serif;font-size:19px;color:var(--text);line-height:1.9;font-style:italic;padding-top:3px;}
+  .task-eq .cond{color:var(--text-soft);font-size:15px;font-style:normal;margin-left:8px;}
+
+  /* ДРОБИ */
+  .frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 4px;line-height:1.15;font-size:0.92em;}
+  .frac .num{border-bottom:1.6px solid currentColor;padding:0 6px 2px;}
+  .frac .den{padding:2px 6px 0;}
+
+  /* КОРЕНЬ: знак √ рисуется через ::before, сверху — линия над подкоренным */
+  .sqrt{display:inline-flex;align-items:flex-start;position:relative;padding-left:0.15em;}
+  .sqrt::before{content:'√';font-size:1.25em;line-height:1;color:inherit;margin-right:0;position:relative;top:-0.02em;}
+  .sqrt-inner{border-top:1.6px solid currentColor;padding:1px 4px 0 2px;display:inline-block;line-height:1.3;}
+
+  .pow{font-size:0.72em;vertical-align:super;line-height:0;}
+
+  .answer-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  .answer-row input{flex:1;min-width:140px;padding:11px 16px;font-size:17px;background:rgba(10,42,51,0.5);border:2px solid var(--glass-brd);border-radius:12px;color:var(--text);outline:none;font-family:'Cambria Math','Times New Roman',serif;transition:.2s;}
+  .answer-row input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+  .answer-row input.ok{border-color:var(--ok);background:rgba(46,204,113,0.12);color:var(--ok);}
+  .answer-row input.err{border-color:var(--err);background:rgba(255,107,107,0.12);color:var(--err);}
+  .answer-row input::placeholder{color:var(--text-soft);opacity:0.45;}
+  .answer-row input:disabled{opacity:0.9;cursor:not-allowed;}
+
+  .btn-check{padding:11px 22px;font-size:14px;font-weight:700;border:none;border-radius:12px;background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;cursor:pointer;font-family:inherit;letter-spacing:1px;transition:.2s;box-shadow:0 4px 14px rgba(26,188,156,0.35);}
+  .btn-check:hover:not(:disabled){transform:translateY(-2px);}
+  .btn-check:disabled{opacity:0.4;cursor:not-allowed;}
+
+  .task-feedback{margin-top:10px;font-size:14px;font-weight:700;min-height:20px;line-height:1.5;}
+  .task-feedback.ok{color:var(--ok);}
+  .task-feedback.err{color:var(--err);}
+  .task-feedback .hint{color:var(--gold);font-family:'Cambria Math',serif;font-style:italic;font-size:15px;}
+
+  .send-block{background:linear-gradient(135deg,rgba(244,211,94,0.12),rgba(26,188,156,0.08));border:2px solid var(--gold);border-radius:20px;padding:24px;text-align:center;margin:20px 0;}
+  .send-block h3{font-family:'Times New Roman',serif;color:var(--gold-light);font-size:20px;letter-spacing:1.5px;margin-bottom:8px;font-weight:700;}
+  .send-block p{font-size:14px;color:var(--text-soft);margin-bottom:18px;}
+  .send-buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+  .btn{padding:13px 26px;font-size:15px;font-weight:700;border:none;border-radius:14px;cursor:pointer;font-family:inherit;letter-spacing:1px;transition:.2s;text-decoration:none;display:inline-flex;align-items:center;gap:8px;}
+  .btn:hover{transform:translateY(-2px);}
+  .btn-teal{background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;box-shadow:0 6px 20px rgba(26,188,156,0.4);}
+  .btn-gold{background:linear-gradient(135deg,#f4d35e,#c9a32b);color:#4a3800;box-shadow:0 6px 20px rgba(244,211,94,0.4);}
+  .btn-max{background:linear-gradient(135deg,#7fffd4,#1abc9c);color:#04231d;box-shadow:0 6px 20px rgba(127,255,212,0.4);}
+
+  .send-preview{margin-top:16px;text-align:left;background:rgba(10,42,51,0.6);border:1px solid rgba(26,188,156,0.3);border-radius:12px;padding:14px 18px;font-family:'Courier New',monospace;font-size:13px;color:var(--text);white-space:pre-wrap;line-height:1.6;min-height:60px;display:none;}
+  .send-preview.visible{display:block;}
+
+  .copy-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;padding:14px 26px;border-radius:14px;font-weight:700;font-size:15px;box-shadow:0 10px 30px rgba(26,188,156,0.5);opacity:0;transition:.3s;z-index:100;pointer-events:none;}
+  .copy-toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+  .footer{text-align:center;padding:30px 20px 20px;color:var(--text-soft);font-size:13px;font-family:'Times New Roman',serif;letter-spacing:2px;}
+  .footer .f-logo{color:var(--teal);font-size:15px;margin-bottom:6px;}
+  .footer .f-sub{font-style:italic;opacity:.75;}
+
+  @media(max-width:700px){
+    .wrap{margin-top:80px;}
+    .corner-logo{padding:7px 12px 9px;left:12px;}
+    .corner-logo .gr{font-size:13px;}
+    .top-right{gap:6px;}
+    .date-badge{padding:0 12px;font-size:13px;height:40px;}
+    .card{padding:20px 18px;}
+    .task-eq{font-size:17px;}
+    .task{padding:14px 16px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="corner-logo">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+</div>
+
+<div class="top-right">
+  <div class="date-badge" id="dateBadge">--.--.----</div>
+</div>
+
+<div class="wrap">
+
+  <div class="card">
+    <h1><span class="num">📐 ДЗ ·</span>Преобразование выражений с квадратными корнями</h1>
+    <p class="subtitle">ОГЭ · подготовка · ΤΕΤΡΑΚΤΥΣ</p>
+  </div>
+
+  <div class="progress-card">
+    <div class="progress-head">
+      <div class="progress-label">📊 Прогресс: <span id="pSolved">0</span> / <span id="pTotal">23</span></div>
+      <div class="progress-stats">
+        <span class="s-ok">✓ <span id="pOk">0</span></span>
+        <span class="s-err">✗ <span id="pErr">0</span></span>
+        <span class="s-pct" id="pPct">0%</span>
+      </div>
+    </div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="pBar"></div></div>
+  </div>
+
+  <div class="card">
+    <div class="name-block">
+      <label>👤 Ученик:</label>
+      <input type="text" id="studentName" placeholder="введи имя и фамилию" autocomplete="off">
+    </div>
+  </div>
+
+  <div class="instr">
+    <h3>📖 Как писать ответы</h3>
+    <ul>
+      <li>Степени: <code>x2</code>, <code>x^2</code>, <code>x²</code></li>
+      <li>Дроби: <code>1/2</code>, <code>0,5</code>, <code>0.5</code></li>
+      <li>Минус: <code>-5</code>, <code>−5</code>, <code>–5</code></li>
+      <li>Корни (если два): через <code>;</code> или <code>,</code> — порядок неважен</li>
+      <li>«нет корней»: <code>нет</code>, <code>нет корней</code>, <code>н</code></li>
+      <li>«много решений»: <code>много</code>, <code>∞</code>, <code>бесконечно</code></li>
+      <li>На каждое задание — <b>одна попытка</b>. После неё — покажу верный ответ.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>📋 Задания</h2>
+    <div id="tasksContainer"></div>
+  </div>
+
+  <div class="send-block">
+    <h3>📩 Отправить учителю</h3>
+    <p>Собери ответы и отправь в Макс</p>
+    <div class="send-buttons">
+      <button class="btn btn-teal" id="btnForm">📩 Сформировать ответ</button>
+      <button class="btn btn-gold" id="btnCopy">📋 Скопировать</button>
+      <a class="btn btn-max" id="btnMax" href="https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes" target="_blank" rel="noopener">💬 Отправить в Макс</a>
+    </div>
+    <div class="send-preview" id="sendPreview"></div>
+  </div>
+
+  <div class="footer">
+    <div class="f-logo">ΤΕΤΡΑΚΤΥΣ · ТЕТРАКТИС</div>
+    <div class="f-sub">где математика превращается в приключение</div>
+  </div>
+
+</div>
+
+<div class="copy-toast" id="copyToast">✓ Скопировано!</div>
+
+<script>
+/* ===== ДАТА ===== */
+(function(){
+  var el = document.getElementById('dateBadge');
+  function upd(){
+    var d = new Date();
+    el.textContent = String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();
+  }
+  upd();
+  setInterval(upd, 60000);
+})();
+
+/* ============================================================
+   ЗАДАНИЯ
+   ВАЖНО: в HTML нет символа √ — он рисуется через CSS .sqrt::before
+   ============================================================ */
+var TASKS = [
+  { n:1,  html:'<span class="sqrt"><span class="sqrt-inner">8</span></span> · <span class="sqrt"><span class="sqrt-inner">2</span></span>', answer:['4'] },
+  { n:2,  html:'4<span class="sqrt"><span class="sqrt-inner">7</span></span> · 2<span class="sqrt"><span class="sqrt-inner">3</span></span> · <span class="sqrt"><span class="sqrt-inner">21</span></span>', answer:['168'] },
+  { n:3,  html:'<span class="frac"><span class="num"><span class="sqrt"><span class="sqrt-inner">15</span></span> · <span class="sqrt"><span class="sqrt-inner">6</span></span></span><span class="den"><span class="sqrt"><span class="sqrt-inner">10</span></span></span></span>', answer:['3'] },
+  { n:4,  html:'<span class="sqrt"><span class="sqrt-inner">0,64</span></span>', answer:['0,8','0.8','4/5'] },
+  { n:5,  html:'<span class="sqrt"><span class="sqrt-inner">360000</span></span>', answer:['600'] },
+  { n:6,  html:'<span class="frac"><span class="num">(2<span class="sqrt"><span class="sqrt-inner">5</span></span>)<span class="pow">2</span></span><span class="den">20</span></span>', answer:['1'] },
+  { n:7,  html:'<span class="frac"><span class="num">12</span><span class="den">(2<span class="sqrt"><span class="sqrt-inner">3</span></span>)<span class="pow">2</span></span></span>', answer:['1'] },
+  { n:8,  html:'<span class="sqrt"><span class="sqrt-inner">8<span class="pow">4</span></span></span>', answer:['64'] },
+  { n:9,  html:'<span class="sqrt"><span class="sqrt-inner">3<span class="pow">4</span> · 5<span class="pow">2</span> · 7<span class="pow">2</span></span></span>', answer:['315'] },
+  { n:10, html:'(<span class="sqrt"><span class="sqrt-inner">12</span></span> − <span class="sqrt"><span class="sqrt-inner">3</span></span>) · <span class="sqrt"><span class="sqrt-inner">3</span></span>', answer:['3'] },
+  { n:11, html:'(<span class="sqrt"><span class="sqrt-inner">11</span></span> − 5)(<span class="sqrt"><span class="sqrt-inner">11</span></span> + 5)', answer:['-14','−14','–14'] },
+  { n:12, html:'(3 + <span class="sqrt"><span class="sqrt-inner">2</span></span>)<span class="pow">2</span> + (3 − <span class="sqrt"><span class="sqrt-inner">2</span></span>)<span class="pow">2</span>', answer:['22'] },
+  { n:13, html:'(<span class="sqrt"><span class="sqrt-inner">17</span></span> − 5)<span class="pow">2</span> + 10<span class="sqrt"><span class="sqrt-inner">17</span></span>', answer:['42'] },
+  { n:14, html:'<span class="sqrt"><span class="sqrt-inner">7</span></span> · <span class="sqrt"><span class="sqrt-inner">7</span></span>', answer:['7'] },
+  { n:15, html:'3<span class="sqrt"><span class="sqrt-inner">2</span></span> · 5<span class="sqrt"><span class="sqrt-inner">6</span></span> · <span class="sqrt"><span class="sqrt-inner">3</span></span>', answer:['90'] },
+  { n:16, html:'<span class="frac"><span class="num"><span class="sqrt"><span class="sqrt-inner">35</span></span> · <span class="sqrt"><span class="sqrt-inner">10</span></span></span><span class="den"><span class="sqrt"><span class="sqrt-inner">14</span></span></span></span>', answer:['5'] },
+  { n:17, html:'<span class="sqrt"><span class="sqrt-inner">0,25</span></span>', answer:['0,5','0.5','1/2'] },
+  { n:18, html:'<span class="sqrt"><span class="sqrt-inner">490000</span></span>', answer:['700'] },
+  { n:19, html:'<span class="frac"><span class="num">(4<span class="sqrt"><span class="sqrt-inner">3</span></span>)<span class="pow">2</span></span><span class="den">24</span></span>', answer:['2'] },
+  { n:20, html:'<span class="sqrt"><span class="sqrt-inner"><span class="frac"><span class="num">36x<span class="pow">4</span></span><span class="den">y<span class="pow">2</span></span></span></span></span><span class="cond">при x = 4, y = 6</span>', answer:['16'] },
+  { n:21, html:'<span class="sqrt"><span class="sqrt-inner"><span class="frac"><span class="num">25a<span class="pow">10</span></span><span class="den">a<span class="pow">4</span></span></span></span></span><span class="cond">при a = 2</span>', answer:['40'] },
+  { n:22, html:'<span class="sqrt"><span class="sqrt-inner"><span class="frac"><span class="num">1</span><span class="den">9</span></span> · x<span class="pow">6</span>y<span class="pow">4</span></span></span><span class="cond">при x = 3, y = 2</span>', answer:['36'] },
+  { n:23, html:'<span class="sqrt"><span class="sqrt-inner"><span class="frac"><span class="num">1</span><span class="den">25</span></span> · x<span class="pow">4</span>y<span class="pow">6</span></span></span><span class="cond">при x = 2, y = 5</span>', answer:['100'] }
+];
+
+/* ===== НОРМАЛИЗАЦИЯ ===== */
+function normalize(s){
+  if(s === null || s === undefined) return '';
+  s = String(s).trim().toLowerCase();
+  s = s.replace(/[−–—]/g, '-');
+  s = s.replace(/,/g, '.');
+  s = s.replace(/\s+/g, '');
+  return s;
+}
+function checkAnswer(userRaw, correctList){
+  var u = normalize(userRaw);
+  if(!u) return false;
+  for(var i = 0; i < correctList.length; i++){
+    if(normalize(correctList[i]) === u) return true;
+  }
+  return false;
+}
+
+/* ===== СОСТОЯНИЕ ===== */
+var state = {};
+
+/* ===== ОТРИСОВКА ===== */
+function renderTasks(){
+  var box = document.getElementById('tasksContainer');
+  if(!box) return;
+  box.innerHTML = '';
+
+  for(var i = 0; i < TASKS.length; i++){
+    (function(t){
+      state[t.n] = { answered:false, solved:false, value:'' };
+
+      var div = document.createElement('div');
+      div.className = 'task';
+      div.id = 'task-' + t.n;
+
+      var head = document.createElement('div');
+      head.className = 'task-head';
+      head.innerHTML = '<span class="task-num">' + t.n + '</span><div class="task-eq">' + t.html + '</div>';
+
+      var row = document.createElement('div');
+      row.className = 'answer-row';
+
+      var input = document.createElement('input');
+      input.type = 'text';
+      input.id = 'ans-' + t.n;
+      input.placeholder = 'введи ответ';
+      input.autocomplete = 'off';
+
+      var btn = document.createElement('button');
+      btn.className = 'btn-check';
+      btn.textContent = '✓ Проверить';
+
+      row.appendChild(input);
+      row.appendChild(btn);
+
+      var fb = document.createElement('div');
+      fb.className = 'task-feedback';
+      fb.id = 'fb-' + t.n;
+
+      div.appendChild(head);
+      div.appendChild(row);
+      div.appendChild(fb);
+      box.appendChild(div);
+
+      function doCheck(){
+        var st = state[t.n];
+        if(st.answered) return;
+        var val = input.value;
+        st.value = val;
+        st.answered = true;
+        var ok = checkAnswer(val, t.answer);
+        st.solved = ok;
+
+        input.disabled = true;
+        btn.disabled = true;
+
+        if(ok){
+          input.classList.add('ok');
+          div.classList.add('correct');
+          fb.className = 'task-feedback ok';
+          fb.textContent = '✓ Верно!';
+        } else {
+          input.classList.add('err');
+          div.classList.add('wrong');
+          fb.className = 'task-feedback err';
+          fb.innerHTML = '✗ Неверно. Правильный ответ: <span class="hint">' + t.answer[0] + '</span>';
+        }
+        updateProgress();
+      }
+
+      btn.addEventListener('click', doCheck);
+      input.addEventListener('keydown', function(e){
+        if(e.key === 'Enter'){ e.preventDefault(); doCheck(); }
+      });
+    })(TASKS[i]);
+  }
+
+  updateProgress();
+}
+
+/* ===== ПРОГРЕСС ===== */
+function updateProgress(){
+  var done = 0, ok = 0, err = 0;
+  for(var i = 0; i < TASKS.length; i++){
+    var st = state[TASKS[i].n];
+    if(!st) continue;
+    if(st.answered){
+      done++;
+      if(st.solved) ok++; else err++;
+    }
+  }
+  var total = TASKS.length;
+  var pct = Math.round((done / total) * 100);
+
+  var el;
+  el = document.getElementById('pSolved'); if(el) el.textContent = done;
+  el = document.getElementById('pTotal');   if(el) el.textContent = total;
+  el = document.getElementById('pOk');      if(el) el.textContent = ok;
+  el = document.getElementById('pErr');     if(el) el.textContent = err;
+  el = document.getElementById('pPct');     if(el) el.textContent = pct + '%';
+  el = document.getElementById('pBar');     if(el) el.style.width = pct + '%';
+}
+
+/* ===== ИМЯ ===== */
+var NAME_KEY = 'tetraktys_student_name';
+var nameInput = document.getElementById('studentName');
+(function(){
+  try{
+    var saved = localStorage.getItem(NAME_KEY);
+    if(saved) nameInput.value = saved;
+  }catch(_){}
+  nameInput.addEventListener('input', function(){
+    try{ localStorage.setItem(NAME_KEY, nameInput.value); }catch(_){}
+  });
+})();
+
+/* ===== ОТЧЁТ ===== */
+function buildReport(){
+  var d = new Date();
+  var dateStr = String(d.getDate()).padStart(2,'0') + '.' +
+                String(d.getMonth()+1).padStart(2,'0') + '.' +
+                d.getFullYear() + ' ' +
+                String(d.getHours()).padStart(2,'0') + ':' +
+                String(d.getMinutes()).padStart(2,'0');
+  var name = (nameInput.value || '').trim() || '—';
+
+  var lines = [];
+  lines.push('📐 ОТВЕТЫ · ДЗ · Преобразование выражений с квадратными корнями');
+  lines.push('Дата: ' + dateStr);
+  lines.push('Ученик: ' + name);
+  lines.push('');
+
+  var okCount = 0, doneCount = 0;
+  for(var i = 0; i < TASKS.length; i++){
+    var t = TASKS[i];
+    var st = state[t.n];
+    var val = (st && st.value) ? st.value.trim() : '—';
+    var mark = '— нет ответа';
+    if(st && st.answered){
+      if(st.solved){ mark = '✅ верно'; okCount++; }
+      else { mark = '❌ неверно'; }
+      doneCount++;
+    }
+    lines.push('Задание ' + t.n + '. Ответ: ' + val + '  —  ' + mark);
+  }
+
+  lines.push('');
+  lines.push('✅ Итог: ' + okCount + ' из ' + TASKS.length + ' верно');
+  lines.push('📊 Отвечено: ' + doneCount + ' из ' + TASKS.length);
+  return lines.join('\n');
+}
+
+var preview = document.getElementById('sendPreview');
+
+document.getElementById('btnForm').addEventListener('click', function(){
+  preview.textContent = buildReport();
+  preview.classList.add('visible');
+  preview.scrollIntoView({behavior:'smooth', block:'nearest'});
+});
+
+document.getElementById('btnCopy').addEventListener('click', function(){
+  var text = preview.textContent || buildReport();
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){
+      showToast('✓ Скопировано!');
+    }).catch(function(){ fallbackCopy(text); });
+  } else {
+    fallbackCopy(text);
+  }
+});
+
+function fallbackCopy(text){
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.left = '-9999px';
+  document.body.appendChild(ta);
+  ta.select();
+  try{ document.execCommand('copy'); showToast('✓ Скопировано!'); }
+  catch(_){ showToast('Не удалось скопировать'); }
+  document.body.removeChild(ta);
+}
+
+document.getElementById('btnMax').addEventListener('click', function(){
+  var text = buildReport();
+  preview.textContent = text;
+  preview.classList.add('visible');
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){
+      showToast('✓ Текст скопирован — вставь в чат');
+    }).catch(function(){});
+  }
+});
+
+/* ===== ТОСТ ===== */
+var toast = document.getElementById('copyToast');
+var toastTimer = null;
+function showToast(msg){
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 2200);
+}
+
+/* ===== СТАРТ ===== */
+try{
+  renderTasks();
+}catch(err){
+  console.error('Ошибка:', err);
+  var box = document.getElementById('tasksContainer');
+  if(box){
+    box.innerHTML = '<p style="color:#ff6b6b;font-weight:700;">⚠ Ошибка: ' + err.message + '</p>';
+  }
+}
+</script>
+</body>
+</html>
