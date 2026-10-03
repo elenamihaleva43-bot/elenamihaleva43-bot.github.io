@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Тренажёр · Теорема Виета · ΤΕΤΡΑΚΤΥΣ</title>
+<script>
+  MathJax = {
+    tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" id="MathJax-script" async></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--mint-soft:#a8f0dc;
+    --coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass:rgba(255,255,255,0.04);--glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{min-height:100vh;font-family:Georgia,'Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.28),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.18),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.10),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;padding:20px;overflow-x:hidden;}
+
+  /* Звёзды на фоне */
+  .bg-decor{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+  .bg-decor .star{position:absolute;color:var(--mint);opacity:0.25;animation:twinkle 4s ease-in-out infinite;}
+  .bg-decor .star:nth-child(1){top:12%;left:8%;font-size:14px;animation-delay:0s;}
+  .bg-decor .star:nth-child(2){top:22%;right:12%;font-size:10px;animation-delay:1s;}
+  .bg-decor .star:nth-child(3){top:45%;left:5%;font-size:12px;animation-delay:2s;}
+  .bg-decor .star:nth-child(4){top:65%;right:8%;font-size:16px;animation-delay:0.5s;}
+  .bg-decor .star:nth-child(5){top:80%;left:15%;font-size:11px;animation-delay:1.5s;}
+  .bg-decor .star:nth-child(6){top:35%;right:5%;font-size:13px;animation-delay:2.5s;}
+  @keyframes twinkle{0%,100%{opacity:0.15;transform:scale(1);}50%{opacity:0.55;transform:scale(1.3);}}
+
+  /* Логотип */
+  .corner-logo{position:fixed;top:14px;left:16px;z-index:50;font-family:'Times New Roman',serif;text-align:center;line-height:1;padding:10px 18px 12px;background:rgba(10,42,51,0.75);border:1.5px solid rgba(26,188,156,0.45);border-radius:14px;backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(0,0,0,0.35);}
+  .corner-logo .dots{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:16px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:4px;}
+  .corner-logo .ru{font-size:10px;letter-spacing:3px;color:var(--text-soft);margin-top:2px;}
+
+  /* Кнопка на главную */
+  .home-btn{position:fixed;top:110px;left:16px;z-index:50;padding:9px 16px;border-radius:12px;background:rgba(10,42,51,0.75);border:1.5px solid rgba(26,188,156,0.45);color:var(--mint);text-decoration:none;font-family:'Georgia',serif;font-size:13px;backdrop-filter:blur(10px);box-shadow:0 4px 18px rgba(0,0,0,0.35);transition:all 0.25s;letter-spacing:0.5px;white-space:nowrap;}
+  .home-btn:hover{background:rgba(26,188,156,0.18);border-color:var(--mint);transform:translateY(-2px);}
+
+  /* Правая панель: дата + звук */
+  .top-right{position:fixed;top:14px;right:16px;z-index:50;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+  .date-badge{display:flex;align-items:center;justify-content:center;height:46px;padding:0 16px;border-radius:14px;backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;font-size:15px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(127,255,212,0.45);color:var(--mint);font-family:'Courier New',monospace;}
+  .sound-btn{width:46px;height:46px;display:flex;align-items:center;justify-content:center;border-radius:14px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(26,188,156,0.45);color:var(--teal);cursor:pointer;font-size:20px;transition:.2s;}
+  .sound-btn:hover{transform:translateY(-2px);border-color:var(--mint);color:var(--mint);}
+  .sound-btn.muted{opacity:0.6;color:#8aa8a0;}
+
+  .wrap{position:relative;z-index:10;max-width:780px;margin:80px auto 40px;}
+
+  .container{
+    background:var(--glass);
+    border:1.5px solid var(--glass-brd);
+    border-radius:24px;
+    padding:26px 28px 22px;
+    backdrop-filter:blur(10px);
+    box-shadow:0 8px 36px rgba(0,0,0,0.4);
+    position:relative;
+    min-height:520px;
+    transition:.25s;
+  }
+  .container:hover{border-color:var(--mint);}
+
+  .watermark{
+    position:absolute;top:50%;left:50%;
+    transform:translate(-50%,-50%) rotate(-30deg);
+    font-size:60px;font-weight:700;
+    color:rgba(26,188,156,0.045);
+    font-family:'Times New Roman',serif;
+    letter-spacing:10px;pointer-events:none;
+    z-index:0;user-select:none;
+  }
+  .watermark .symbol{font-size:34px;display:block;text-align:center;letter-spacing:14px;line-height:1.2;margin-bottom:4px;color:rgba(127,255,212,0.05);}
+
+  .content{position:relative;z-index:1;text-align:left;}
+
+  .page{display:none;animation:fadeIn 0.4s ease;}
+  .page.active{display:block;}
+  @keyframes fadeIn{0%{opacity:0;transform:translateY(8px);}100%{opacity:1;transform:translateY(0);}}
+
+  /* Приветствие */
+  .welcome{text-align:center;padding:10px 0 6px;}
+  .welcome .emoji{font-size:64px;display:block;animation:float 3s ease-in-out infinite;filter:drop-shadow(0 8px 16px rgba(0,0,0,0.35));}
+  @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+  .welcome h1{font-family:'Times New Roman',serif;font-size:28px;color:var(--text);margin:6px 0 4px;letter-spacing:1px;}
+  .welcome h1 span{color:var(--teal);}
+  .welcome p{font-size:15px;color:var(--text-soft);margin-bottom:14px;}
+  .welcome .motto{
+    font-size:15px;color:var(--mint);
+    font-style:italic;font-weight:600;margin-bottom:18px;
+    background:rgba(26,188,156,0.10);
+    padding:6px 18px;border-radius:30px;display:inline-block;
+    border:1px dashed rgba(127,255,212,0.4);
+  }
+
+  /* Форма */
+  .form-row{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin:6px 0 12px;}
+  .form-group{display:flex;flex-direction:column;align-items:flex-start;gap:6px;width:100%;max-width:300px;}
+  .form-group label{font-size:14px;font-weight:700;color:var(--mint);letter-spacing:.5px;}
+  .form-group input,
+  .form-group select{
+    padding:10px 16px;font-size:16px;width:100%;
+    border:1.5px solid var(--glass-brd);
+    border-radius:12px;
+    background:rgba(10,42,51,0.5);
+    color:var(--text);
+    outline:none;
+    font-family:'Times New Roman',Times,serif;
+    transition:.2s;
+  }
+  .form-group input:focus,
+  .form-group select:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+  .form-group input::placeholder{color:var(--text-soft);opacity:0.5;}
+  .form-group select{
+    appearance:none;-webkit-appearance:none;
+    background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237fffd4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat:no-repeat;background-position:right 12px center;background-size:18px;
+    padding-right:40px;cursor:pointer;
+  }
+  .form-group select option{background:#0d3b47;color:var(--text);}
+  .level-desc{font-size:13px;color:var(--text-soft);margin-top:2px;font-style:italic;width:100%;text-align:left;min-height:20px;}
+
+  /* Кнопки */
+  .btn{padding:12px 32px;font-size:16px;font-weight:700;border:none;border-radius:14px;cursor:pointer;font-family:inherit;letter-spacing:1px;transition:.2s;display:inline-flex;align-items:center;gap:8px;text-decoration:none;}
+  .btn:hover:not(:disabled){transform:translateY(-3px);}
+  .btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
+  .btn-start{background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;box-shadow:0 8px 24px rgba(26,188,156,0.45);font-size:18px;padding:14px 44px;}
+  .btn-check{background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;box-shadow:0 6px 20px rgba(26,188,156,0.45);font-size:18px;padding:12px 28px;}
+  .btn-no-roots{background:linear-gradient(135deg,#f4d35e,#c9a32b);color:#4a3800;box-shadow:0 6px 20px rgba(244,211,94,0.45);font-size:15px;padding:12px 22px;}
+  .btn-continue{background:linear-gradient(135deg,#2ecc71,#27ae60);color:#04231d;box-shadow:0 6px 20px rgba(46,204,113,0.45);font-size:16px;padding:12px 32px;}
+  .btn-back{background:transparent;color:var(--mint);border:1.5px solid var(--glass-brd);font-size:14px;padding:10px 24px;}
+  .btn-back:hover{background:rgba(26,188,156,0.12);}
+  .btn-center{text-align:center;}
+
+  /* Игровой экран */
+  .game-header{display:flex;justify-content:space-between;align-items:center;border-bottom:1.5px solid rgba(26,188,156,0.35);padding-bottom:10px;margin-bottom:14px;flex-wrap:wrap;gap:6px;}
+  .game-header .title{font-family:'Times New Roman',serif;font-size:18px;font-weight:700;color:var(--mint);letter-spacing:.5px;}
+  .game-header .title span{color:var(--gold);}
+  .game-header .stats{font-size:15px;color:var(--text-soft);display:flex;gap:16px;font-family:'Courier New',monospace;font-weight:700;}
+  .game-header .stats strong{color:var(--mint);}
+  .game-header .stats .correct-count{color:var(--ok);}
+
+  .level-indicator{text-align:center;font-size:14px;color:var(--text-soft);margin-bottom:10px;font-style:italic;}
+  .level-indicator strong{color:var(--mint);}
+
+  .progress-bar{height:10px;background:rgba(10,42,51,0.6);border-radius:8px;margin:8px 0 14px;overflow:hidden;border:1px solid rgba(26,188,156,0.35);}
+  .progress-bar .fill{height:100%;background:linear-gradient(90deg,#1abc9c,#7fffd4,#f4d35e);transition:width 0.5s ease;border-radius:8px;width:0%;}
+
+  .game-body{text-align:center;padding:6px 0;}
+  .task-display{
+    font-size:26px;font-weight:700;color:var(--text);
+    padding:22px 18px;background:rgba(10,42,51,0.55);
+    border-radius:16px;margin:6px 0 16px;
+    min-height:90px;
+    display:flex;align-items:center;justify-content:center;
+    border:2px solid rgba(26,188,156,0.4);
+    flex-wrap:wrap;gap:6px;
+    box-shadow:inset 0 2px 12px rgba(0,0,0,0.15);
+    font-family:'Cambria Math','Times New Roman',serif;
+    font-style:italic;
+  }
+
+  .input-area{display:flex;gap:14px;justify-content:center;align-items:flex-end;flex-wrap:wrap;margin:12px 0;}
+  .input-area .input-group{display:flex;flex-direction:column;align-items:center;gap:6px;}
+  .input-area .input-group label{font-size:15px;color:var(--mint);font-weight:700;font-family:'Cambria Math',serif;}
+  .input-area input{
+    padding:12px 14px;font-size:22px;width:110px;
+    border:2px solid var(--glass-brd);border-radius:12px;
+    text-align:center;font-family:'Cambria Math','Times New Roman',serif;
+    outline:none;transition:.2s;
+    background:rgba(10,42,51,0.5);color:var(--text);
+  }
+  .input-area input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.18);}
+  .input-area input.correct{border-color:var(--ok);background:rgba(46,204,113,0.15);color:var(--ok);}
+  .input-area input.wrong{border-color:var(--err);background:rgba(255,107,107,0.15);color:var(--err);animation:shake 0.4s ease;}
+  .input-area input:disabled{opacity:0.85;}
+  .input-area input::placeholder{color:var(--text-soft);opacity:0.4;}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+
+  .feedback{font-size:17px;font-weight:700;min-height:38px;margin:12px 0;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;line-height:1.4;}
+  .feedback.correct{color:var(--ok);animation:pop 0.4s ease;}
+  .feedback.wrong{color:var(--err);animation:shake 0.4s ease;}
+  .feedback .correct-answer{color:var(--ok);font-weight:700;}
+  .feedback .no-roots{color:var(--gold);font-weight:700;}
+  @keyframes pop{0%{transform:scale(0.8);opacity:0;}50%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+
+  .action-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:12px;}
+
+  /* Финиш */
+  .finish{text-align:center;padding:24px 0;}
+  .finish .trophy{font-size:82px;display:block;animation:pulse 1.5s ease-in-out infinite;filter:drop-shadow(0 8px 20px rgba(0,0,0,0.4));}
+  @keyframes pulse{0%,100%{transform:scale(1) rotate(0deg);}50%{transform:scale(1.08) rotate(3deg);}}
+  .finish h2{font-family:'Times New Roman',serif;font-size:28px;color:var(--text);margin:8px 0;letter-spacing:1px;}
+  .finish h2 span{color:var(--teal);}
+  .finish .result-stats{font-size:18px;color:var(--text);margin:14px 0;line-height:1.8;}
+  .finish .result-stats strong{color:var(--mint);}
+  .finish .result-stats .correct-count{color:var(--ok);}
+  .finish .result-stats .errors-count{color:var(--err);}
+
+  @media(max-width:600px){
+    .wrap{margin-top:150px;}
+    .container{padding:18px 16px 18px;}
+    .corner-logo{padding:7px 12px 9px;left:12px;}
+    .corner-logo .gr{font-size:13px;}
+    .home-btn{top:100px;font-size:12px;padding:7px 12px;left:12px;}
+    .top-right{gap:6px;}
+    .date-badge{padding:0 12px;font-size:13px;height:40px;}
+    .sound-btn{width:40px;height:40px;font-size:17px;}
+    .welcome h1{font-size:22px;}
+    .welcome .emoji{font-size:54px;}
+    .form-group{max-width:100%;}
+    .form-row{gap:10px;}
+    .task-display{font-size:22px;padding:16px;min-height:70px;}
+    .input-area input{width:90px;font-size:18px;}
+    .input-area .input-group label{font-size:13px;}
+    .btn-start{padding:12px 30px;font-size:16px;}
+    .btn-check{padding:10px 20px;font-size:16px;}
+    .game-header .title{font-size:15px;}
+    .game-header .stats{font-size:13px;gap:10px;}
+    .watermark{font-size:40px;}
+    .watermark .symbol{font-size:22px;letter-spacing:8px;}
+    .finish .trophy{font-size:60px;}
+    .finish h2{font-size:22px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-decor" aria-hidden="true">
+  <span class="star">✦</span>
+  <span class="star">✧</span>
+  <span class="star">✦</span>
+  <span class="star">✧</span>
+  <span class="star">✦</span>
+  <span class="star">✧</span>
+</div>
+
+<div class="corner-logo">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+</div>
+
+<a href="https://elenamihaleva43-bot.github.io/" class="home-btn">🏠 На главную</a>
+
+<div class="top-right">
+  <div class="date-badge" id="dateBadge">--.--.----</div>
+  <button class="sound-btn" id="soundToggle" title="Звук">🔊</button>
+</div>
+
+<div class="wrap">
+
+  <div class="container">
+    <div class="watermark">
+      <div class="symbol">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+      ΤΕΤΡΑΚΤΥΣ
+    </div>
+
+    <div class="content">
+
+      <!-- ===== СТРАНИЦА 1: СТАРТ ===== -->
+      <div class="page active" id="pageStart">
+        <div class="welcome">
+          <span class="emoji">🔮</span>
+          <h1>Тренажёр · <span>Теорема Виета</span></h1>
+          <p>Найди корни уравнения</p>
+          <div class="motto">✨ Где математика превращается в приключение!</div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="studentName">👤 Имя</label>
+              <input type="text" id="studentName" placeholder="Введи имя..." maxlength="25">
+            </div>
+            <div class="form-group">
+              <label for="studentDate">📅 Дата</label>
+              <input type="date" id="studentDate">
+            </div>
+          </div>
+
+          <div class="form-row" style="justify-content:center;">
+            <div class="form-group" style="max-width:420px;">
+              <label for="levelSelect">🎯 Уровень сложности</label>
+              <select id="levelSelect">
+                <option value="1">1 — Приведённые (целые корни)</option>
+                <option value="2">2 — Неприведённые (рациональные корни)</option>
+              </select>
+              <span class="level-desc" id="levelDesc">\(x^2 + px + q = 0\) — целые корни</span>
+            </div>
+          </div>
+
+          <div class="btn-center" style="margin-top:14px;">
+            <button class="btn btn-start" id="startBtn" disabled>🚀 Начать тренировку!</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== СТРАНИЦА 2: ИГРА ===== -->
+      <div class="page" id="pageGame">
+        <div class="game-header">
+          <div class="title">🧮 <span id="gameLevelName">Уровень 1</span></div>
+          <div class="stats">
+            <span>✅ <strong class="correct-count" id="scoreDisplay">0</strong></span>
+            <span>❌ <strong id="errorsDisplay">0</strong></span>
+            <span>📊 <strong id="progressDisplay">0/10</strong></span>
+          </div>
+        </div>
+
+        <div class="level-indicator">
+          👤 <span id="studentNameDisplay">—</span> · 📅 <span id="studentDateDisplay">—</span>
+        </div>
+
+        <div class="progress-bar">
+          <div class="fill" id="progressFill"></div>
+        </div>
+
+        <div class="game-body">
+          <div class="task-display" id="taskDisplay">
+            <span style="color:#b8d8d0;">Загрузка...</span>
+          </div>
+
+          <div class="input-area">
+            <div class="input-group">
+              <label for="root1">\(x_1 =\)</label>
+              <input type="text" id="root1" placeholder="?" autocomplete="off">
+            </div>
+            <div class="input-group">
+              <label for="root2">\(x_2 =\)</label>
+              <input type="text" id="root2" placeholder="?" autocomplete="off">
+            </div>
+            <button class="btn btn-check" id="checkBtn">⚡ Проверить</button>
+            <button class="btn btn-no-roots" id="noRootsBtn">🚫 Нет корней</button>
+          </div>
+
+          <div class="feedback" id="feedback"></div>
+
+          <div class="action-row" id="continueRow" style="display:none;">
+            <button class="btn btn-continue" id="continueBtn">➡️ Продолжить</button>
+          </div>
+        </div>
+
+        <div class="btn-center" style="margin-top:10px;">
+          <button class="btn btn-back" onclick="backToMenu()">🏠 В меню</button>
+        </div>
+      </div>
+
+      <!-- ===== СТРАНИЦА 3: ФИНИШ ===== -->
+      <div class="page" id="pageFinish">
+        <div class="finish">
+          <span class="trophy" id="finishEmoji">🏆</span>
+          <h2 id="finishTitle">🎉 <span>Отлично!</span></h2>
+          <p id="finishDesc" style="color:var(--text);font-size:16px;margin:8px 0;">Ты справился с заданиями!</p>
+          <div class="result-stats">
+            ✅ Правильных: <strong class="correct-count" id="finalScore">0</strong> из 10<br>
+            ❌ Ошибок: <strong class="errors-count" id="finalErrors">0</strong>
+          </div>
+          <div class="btn-center" style="margin-top:14px;">
+            <button class="btn btn-start" onclick="restartGame()">🔄 Пройти ещё раз</button>
+            <button class="btn btn-back" onclick="backToMenu()" style="margin-left:8px;">🏠 В меню</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /container -->
+
+</div>
+<script>
+/* ============================================================
+   ДАТА
+   ============================================================ */
+(function(){
+  var el = document.getElementById('dateBadge');
+  function upd(){
+    var d = new Date();
+    el.textContent = String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();
+  }
+  upd();
+  setInterval(upd, 60000);
+})();
+
+/* ============================================================
+   ЗВУКИ (Web Audio API)
+   ============================================================ */
+var audioCtx = null;
+var soundEnabled = true;
+
+function initAudio(){
+  if(!audioCtx){
+    try{
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }catch(_){}
+  }
+  if(audioCtx && audioCtx.state === 'suspended'){
+    audioCtx.resume();
+  }
+  return audioCtx;
+}
+
+function playSound(type){
+  if(!soundEnabled) return;
+  try{
+    var ctx = initAudio();
+    if(!ctx) return;
+    var now = ctx.currentTime;
+
+    if(type === 'correct'){
+      var notes = [523.25, 659.25, 783.99];
+      notes.forEach(function(freq, i){
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + i * 0.08);
+        gain.gain.setValueAtTime(0.20, now + i * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.08 + 0.25);
+        osc.start(now + i * 0.08);
+        osc.stop(now + i * 0.08 + 0.25);
+      });
+    } else if(type === 'wrong'){
+      var osc2 = ctx.createOscillator();
+      var gain2 = ctx.createGain();
+      osc2.connect(gain2);
+      gain2.connect(ctx.destination);
+      osc2.type = 'sawtooth';
+      osc2.frequency.setValueAtTime(180, now);
+      osc2.frequency.exponentialRampToValueAtTime(110, now + 0.4);
+      gain2.gain.setValueAtTime(0.10, now);
+      gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+      osc2.start(now);
+      osc2.stop(now + 0.4);
+    } else if(type === 'click'){
+      var osc3 = ctx.createOscillator();
+      var gain3 = ctx.createGain();
+      osc3.connect(gain3);
+      gain3.connect(ctx.destination);
+      osc3.type = 'sine';
+      osc3.frequency.setValueAtTime(800, now);
+      osc3.frequency.exponentialRampToValueAtTime(600, now + 0.08);
+      gain3.gain.setValueAtTime(0.08, now);
+      gain3.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+      osc3.start(now);
+      osc3.stop(now + 0.1);
+    } else if(type === 'finish'){
+      var melody = [523.25, 587.33, 659.25, 783.99, 1046.50];
+      melody.forEach(function(freq, i){
+        var osc4 = ctx.createOscillator();
+        var gain4 = ctx.createGain();
+        osc4.connect(gain4);
+        gain4.connect(ctx.destination);
+        osc4.type = 'sine';
+        osc4.frequency.setValueAtTime(freq, now + i * 0.13);
+        gain4.gain.setValueAtTime(0.16, now + i * 0.13);
+        gain4.gain.exponentialRampToValueAtTime(0.01, now + i * 0.13 + 0.22);
+        osc4.start(now + i * 0.13);
+        osc4.stop(now + i * 0.13 + 0.22);
+      });
+    }
+  }catch(_){}
+}
+
+/* ============================================================
+   КНОПКА ЗВУКА
+   ============================================================ */
+var soundToggle = document.getElementById('soundToggle');
+soundToggle.addEventListener('click', function(){
+  soundEnabled = !soundEnabled;
+  soundToggle.textContent = soundEnabled ? '🔊' : '🔇';
+  soundToggle.classList.toggle('muted', !soundEnabled);
+  if(soundEnabled) initAudio();
+});
+
+/* ============================================================
+   БАНК ЗАДАНИЙ
+   ============================================================ */
+var LEVEL_BANK = {
+  1: {
+    name: 'Приведённые (целые корни)',
+    desc: '\\(x^2 + px + q = 0\\) — целые корни',
+    tasks: [
+      { equation: 'x^2 - 7x + 12 = 0', roots: ['3', '4'] },
+      { equation: 'x^2 + 5x + 6 = 0', roots: ['-2', '-3'] },
+      { equation: 'x^2 - 9x + 20 = 0', roots: ['4', '5'] },
+      { equation: 'x^2 + 8x + 15 = 0', roots: ['-3', '-5'] },
+      { equation: 'x^2 - 11x + 30 = 0', roots: ['5', '6'] },
+      { equation: 'x^2 + 3x - 10 = 0', roots: ['2', '-5'] },
+      { equation: 'x^2 - 4x - 21 = 0', roots: ['7', '-3'] },
+      { equation: 'x^2 + 6x - 16 = 0', roots: ['2', '-8'] },
+      { equation: 'x^2 - 5x - 14 = 0', roots: ['7', '-2'] },
+      { equation: 'x^2 + 10x + 21 = 0', roots: ['-3', '-7'] },
+      { equation: 'x^2 - 8x + 16 = 0', roots: ['4', '4'] },
+      { equation: 'x^2 - 12x + 36 = 0', roots: ['6', '6'] },
+      { equation: 'x^2 + 2x + 1 = 0', roots: ['-1', '-1'] },
+      { equation: 'x^2 - 6x + 9 = 0', roots: ['3', '3'] },
+      { equation: 'x^2 + 4x + 4 = 0', roots: ['-2', '-2'] },
+      { equation: 'x^2 + x - 12 = 0', roots: ['3', '-4'] },
+      { equation: 'x^2 - 13x + 42 = 0', roots: ['6', '7'] },
+      { equation: 'x^2 + 9x + 14 = 0', roots: ['-2', '-7'] },
+      { equation: 'x^2 - 3x - 28 = 0', roots: ['7', '-4'] },
+      { equation: 'x^2 + 7x - 18 = 0', roots: ['2', '-9'] },
+      { equation: 'x^2 + 2x + 5 = 0', roots: null },
+      { equation: 'x^2 - 4x + 8 = 0', roots: null },
+      { equation: 'x^2 + 6x + 10 = 0', roots: null },
+      { equation: 'x^2 - 3x + 7 = 0', roots: null },
+      { equation: 'x^2 + x + 3 = 0', roots: null }
+    ]
+  },
+  2: {
+    name: 'Неприведённые (рациональные корни)',
+    desc: '\\(ax^2 + bx + c = 0\\) — рациональные корни',
+    tasks: [
+      { equation: '2x^2 - 7x + 3 = 0', roots: ['1/2', '3'] },
+      { equation: '3x^2 + 5x - 2 = 0', roots: ['-2', '1/3'] },
+      { equation: '4x^2 - 11x + 6 = 0', roots: ['3/4', '2'] },
+      { equation: '5x^2 + 7x - 6 = 0', roots: ['-2', '3/5'] },
+      { equation: '2x^2 + 3x - 2 = 0', roots: ['-2', '1/2'] },
+      { equation: '3x^2 - 10x + 3 = 0', roots: ['1/3', '3'] },
+      { equation: '4x^2 + 3x - 1 = 0', roots: ['-1', '1/4'] },
+      { equation: '6x^2 - 13x + 5 = 0', roots: ['1/2', '5/3'] },
+      { equation: '2x^2 - 5x - 3 = 0', roots: ['-1/2', '3'] },
+      { equation: '3x^2 + 8x + 4 = 0', roots: ['-2', '-2/3'] },
+      { equation: '4x^2 - 4x - 3 = 0', roots: ['-1/2', '3/2'] },
+      { equation: '5x^2 + 2x - 3 = 0', roots: ['-1', '3/5'] },
+      { equation: '2x^2 - 3x - 2 = 0', roots: ['-1/2', '2'] },
+      { equation: '3x^2 + 2x - 5 = 0', roots: ['-5/3', '1'] },
+      { equation: '4x^2 + 11x + 6 = 0', roots: ['-3/4', '-2'] },
+      { equation: '6x^2 - 5x - 4 = 0', roots: ['-1/2', '4/3'] },
+      { equation: '2x^2 + 5x + 2 = 0', roots: ['-2', '-1/2'] },
+      { equation: '3x^2 - 11x + 6 = 0', roots: ['2/3', '3'] },
+      { equation: '4x^2 + 9x + 2 = 0', roots: ['-2', '-1/4'] },
+      { equation: '5x^2 - 9x - 2 = 0', roots: ['-1/5', '2'] },
+      { equation: '2x^2 + 4x + 5 = 0', roots: null },
+      { equation: '3x^2 - 6x + 8 = 0', roots: null },
+      { equation: '4x^2 + 8x + 7 = 0', roots: null },
+      { equation: '5x^2 - 10x + 9 = 0', roots: null },
+      { equation: '2x^2 + 3x + 4 = 0', roots: null }
+    ]
+  }
+};
+
+/* ============================================================
+   СОСТОЯНИЕ
+   ============================================================ */
+var currentLevel = 1;
+var studentName = '';
+var studentDate = '';
+var tasks = [];
+var currentIndex = 0;
+var score = 0;
+var errors = 0;
+var totalTasks = 10;
+var isAnswered = false;
+var currentTask = null;
+var taskOffset = {};
+
+/* ============================================================
+   DOM
+   ============================================================ */
+var nameInput = document.getElementById('studentName');
+var dateInput = document.getElementById('studentDate');
+var levelSelect = document.getElementById('levelSelect');
+var levelDesc = document.getElementById('levelDesc');
+var startBtn = document.getElementById('startBtn');
+
+var gameLevelName = document.getElementById('gameLevelName');
+var studentNameDisplay = document.getElementById('studentNameDisplay');
+var studentDateDisplay = document.getElementById('studentDateDisplay');
+var taskDisplay = document.getElementById('taskDisplay');
+var root1 = document.getElementById('root1');
+var root2 = document.getElementById('root2');
+var checkBtn = document.getElementById('checkBtn');
+var noRootsBtn = document.getElementById('noRootsBtn');
+var continueBtn = document.getElementById('continueBtn');
+var continueRow = document.getElementById('continueRow');
+var feedback = document.getElementById('feedback');
+var scoreDisplay = document.getElementById('scoreDisplay');
+var errorsDisplay = document.getElementById('errorsDisplay');
+var progressDisplay = document.getElementById('progressDisplay');
+var progressFill = document.getElementById('progressFill');
+
+var finalScore = document.getElementById('finalScore');
+var finalErrors = document.getElementById('finalErrors');
+var finishEmoji = document.getElementById('finishEmoji');
+var finishTitle = document.getElementById('finishTitle');
+var finishDesc = document.getElementById('finishDesc');
+
+/* ============================================================
+   СТРАНИЦЫ
+   ============================================================ */
+function showPage(pageId){
+  var pages = document.querySelectorAll('.page');
+  for(var i = 0; i < pages.length; i++) pages[i].classList.remove('active');
+  document.getElementById(pageId).classList.add('active');
+  if(window.MathJax && MathJax.typesetPromise){
+    MathJax.typesetPromise().catch(function(){});
+  }
+}
+
+/* ============================================================
+   СТАРТ
+   ============================================================ */
+var levelDescs = {
+  '1': '\\(x^2 + px + q = 0\\) — целые корни',
+  '2': '\\(ax^2 + bx + c = 0\\) — рациональные корни'
+};
+
+(function setDefaultDate(){
+  var today = new Date().toISOString().split('T')[0];
+  dateInput.value = today;
+})();
+
+levelSelect.addEventListener('change', function(){
+  levelDesc.textContent = levelDescs[this.value] || '';
+  if(window.MathJax && MathJax.typesetPromise){
+    MathJax.typesetPromise([levelDesc]).catch(function(){});
+  }
+});
+
+function checkStart(){
+  startBtn.disabled = !(nameInput.value.trim() && dateInput.value);
+}
+
+nameInput.addEventListener('input', checkStart);
+dateInput.addEventListener('change', checkStart);
+
+startBtn.addEventListener('click', function(){
+  studentName = nameInput.value.trim();
+  var rawDate = dateInput.value;
+  if(rawDate){
+    var d = new Date(rawDate);
+    studentDate = d.toLocaleDateString('ru-RU');
+  }
+  currentLevel = parseInt(levelSelect.value);
+  if(!taskOffset[currentLevel]) taskOffset[currentLevel] = 0;
+  startGame();
+});
+
+[nameInput, dateInput].forEach(function(input){
+  input.addEventListener('keydown', function(e){
+    if(e.key === 'Enter' && !startBtn.disabled){
+      startBtn.click();
+    }
+  });
+});
+
+/* ============================================================
+   ИГРА
+   ============================================================ */
+function shuffleArray(arr){
+  for(var i = arr.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+  }
+  return arr;
+}
+
+function getTasksForLevel(level, offset){
+  var bank = LEVEL_BANK[level].tasks;
+  var count = 10;
+  var result = [];
+  for(var i = 0; i < count; i++){
+    var idx = (offset + i) % bank.length;
+    result.push({
+      equation: bank[idx].equation,
+      roots: bank[idx].roots ? bank[idx].roots.slice() : null
+    });
+  }
+  return shuffleArray(result);
+}
+
+function startGame(){
+  var levelData = LEVEL_BANK[currentLevel];
+  tasks = getTasksForLevel(currentLevel, taskOffset[currentLevel] || 0);
+  currentIndex = 0;
+  score = 0;
+  errors = 0;
+  isAnswered = false;
+  totalTasks = tasks.length;
+
+  showPage('pageGame');
+  gameLevelName.textContent = 'Уровень ' + currentLevel + ' — ' + levelData.name;
+  studentNameDisplay.textContent = studentName;
+  studentDateDisplay.textContent = studentDate;
+  updateStats();
+  showTask();
+  root1.focus();
+}
+
+function showTask(){
+  if(currentIndex >= totalTasks){
+    finishGame();
+    return;
+  }
+
+  currentTask = tasks[currentIndex];
+  taskDisplay.innerHTML = '$$' + currentTask.equation + '$$';
+  root1.value = '';
+  root2.value = '';
+  root1.className = '';
+  root2.className = '';
+  root1.disabled = false;
+  root2.disabled = false;
+  feedback.textContent = '';
+  feedback.className = 'feedback';
+  checkBtn.disabled = false;
+  noRootsBtn.disabled = false;
+  continueRow.style.display = 'none';
+  isAnswered = false;
+  updateStats();
+  root1.focus();
+
+  if(window.MathJax && MathJax.typesetPromise){
+    MathJax.typesetPromise([taskDisplay]).catch(function(){});
+  }
+}
+
+function parseFraction(str){
+  str = str.trim().replace(/\s/g, '');
+  str = str.replace(',', '.');
+  if(str.indexOf('/') !== -1){
+    var parts = str.split('/');
+    if(parts.length === 2){
+      var num = parseFloat(parts[0]);
+      var den = parseFloat(parts[1]);
+      if(!isNaN(num) && !isNaN(den) && den !== 0){
+        return num / den;
+      }
+    }
+  }
+  return parseFloat(str);
+}
+
+function compareRoots(user1, user2, correct1, correct2){
+  var u1 = parseFraction(user1);
+  var u2 = parseFraction(user2);
+  var c1 = parseFraction(correct1);
+  var c2 = parseFraction(correct2);
+
+  if(isNaN(u1) || isNaN(u2) || isNaN(c1) || isNaN(c2)) return false;
+
+  return (Math.abs(u1 - c1) < 0.0001 && Math.abs(u2 - c2) < 0.0001) ||
+         (Math.abs(u1 - c2) < 0.0001 && Math.abs(u2 - c1) < 0.0001);
+}
+
+function formatRoot(root){
+  var num = parseFraction(root);
+  if(isNaN(num)) return root;
+  if(Number.isInteger(num)) return num.toString();
+  var str = root.toString();
+  if(str.indexOf('/') !== -1) return str;
+  if(currentTask && currentTask.roots){
+    for(var i = 0; i < currentTask.roots.length; i++){
+      var r = currentTask.roots[i];
+      if(Math.abs(parseFraction(r) - num) < 0.0001 && r.indexOf('/') !== -1){
+        return r;
+      }
+    }
+  }
+  return num.toFixed(4).replace(/\.?0+$/, '');
+}
+
+function renderFeedbackWithMath(text){
+  feedback.innerHTML = text;
+  if(window.MathJax && MathJax.typesetPromise){
+    MathJax.typesetPromise([feedback]).catch(function(){});
+  }
+}
+
+function handleAnswer(isCorrect, correct1, correct2, isTrap, isNoRoots){
+  isAnswered = true;
+  root1.disabled = true;
+  root2.disabled = true;
+  checkBtn.disabled = true;
+  noRootsBtn.disabled = true;
+
+  if(isTrap && isNoRoots){
+    score++;
+    root1.className = 'correct';
+    root2.className = 'correct';
+    renderFeedbackWithMath('✅ Отлично! Корней действительно нет!');
+    feedback.className = 'feedback correct';
+    playSound('correct');
+    continueRow.style.display = 'flex';
+    updateStats();
+    return;
+  }
+
+  if(isCorrect){
+    score++;
+    root1.className = 'correct';
+    root2.className = 'correct';
+    renderFeedbackWithMath('✅ Отлично! Корни найдены верно!');
+    feedback.className = 'feedback correct';
+    playSound('correct');
+    continueRow.style.display = 'flex';
+    updateStats();
+    return;
+  }
+
+  errors++;
+  root1.className = 'wrong';
+  root2.className = 'wrong';
+
+  if(isTrap){
+    renderFeedbackWithMath('❌ Неправильно. У этого уравнения <span class="no-roots">нет корней</span> (D &lt; 0)');
+  } else {
+    var display1 = formatRoot(correct1);
+    var display2 = formatRoot(correct2);
+    renderFeedbackWithMath('❌ Неправильно. Верные корни: <span class="correct-answer">\\(x_1 = ' + display1 + ', x_2 = ' + display2 + '\\)</span>');
+  }
+  feedback.className = 'feedback wrong';
+  playSound('wrong');
+
+  continueRow.style.display = 'flex';
+  updateStats();
+}
+
+function checkAnswer(){
+  if(isAnswered) return;
+
+  var r1 = root1.value.trim();
+  var r2 = root2.value.trim();
+
+  if(!r1 || !r2){
+    renderFeedbackWithMath('✏️ Введи оба корня!');
+    feedback.className = 'feedback wrong';
+    return;
+  }
+
+  var isTrap = currentTask.roots === null;
+
+  if(isTrap){
+    var noRoots = ['нет', '∅', 'no', 'none', 'нет корней', 'корней нет'];
+    var userInput = (r1 + ' ' + r2).toLowerCase().replace(/\s/g, '');
+    var isNoRoots = false;
+    for(var i = 0; i < noRoots.length; i++){
+      if(userInput.indexOf(noRoots[i]) !== -1){ isNoRoots = true; break; }
+    }
+    handleAnswer(false, null, null, true, isNoRoots);
+    return;
+  }
+
+  var correct1 = currentTask.roots[0];
+  var correct2 = currentTask.roots[1];
+  var isCorrect = compareRoots(r1, r2, correct1, correct2);
+
+  if(isCorrect){
+    var displayRoots = currentTask.roots.map(function(r){ return formatRoot(r); });
+    handleAnswer(true, displayRoots[0], displayRoots[1], false, false);
+  } else {
+    handleAnswer(false, correct1, correct2, false, false);
+  }
+}
+
+function handleNoRoots(){
+  if(isAnswered) return;
+  var isTrap = currentTask.roots === null;
+  if(!isTrap){
+    renderFeedbackWithMath('⚠️ У этого уравнения есть корни! Попробуй найти их.');
+    feedback.className = 'feedback wrong';
+    playSound('wrong');
+    return;
+  }
+  handleAnswer(false, null, null, true, true);
+}
+
+function continueToNext(){
+  playSound('click');
+  currentIndex++;
+  showTask();
+}
+
+function updateStats(){
+  scoreDisplay.textContent = score;
+  errorsDisplay.textContent = errors;
+  var done = Math.min(currentIndex, totalTasks);
+  progressDisplay.textContent = done + '/' + totalTasks;
+  var pct = (done / totalTasks) * 100;
+  progressFill.style.width = pct + '%';
+}
+
+/* ============================================================
+   ФИНИШ
+   ============================================================ */
+function finishGame(){
+  showPage('pageFinish');
+  finalScore.textContent = score;
+  finalErrors.textContent = errors;
+  playSound('finish');
+
+  var pct = Math.round((score / totalTasks) * 100);
+  if(pct === 100){
+    finishEmoji.textContent = '🏆';
+    finishTitle.innerHTML = '🎉 <span>Идеально!</span>';
+    finishDesc.textContent = 'Ты решил все ' + totalTasks + ' уравнений без ошибок! Ты — настоящий мастер теоремы Виета!';
+  } else if(pct >= 70){
+    finishEmoji.textContent = '🌟';
+    finishTitle.innerHTML = '👏 <span>Отлично!</span>';
+    finishDesc.textContent = 'Ты справился с ' + score + ' из ' + totalTasks + ' уравнений! Хороший результат!';
+  } else if(pct >= 50){
+    finishEmoji.textContent = '💪';
+    finishTitle.innerHTML = '😊 <span>Неплохо!</span>';
+    finishDesc.textContent = 'Ты решил ' + score + ' из ' + totalTasks + '. Попробуй ещё раз, чтобы улучшить результат!';
+  } else {
+    finishEmoji.textContent = '📚';
+    finishTitle.innerHTML = '🤔 <span>Тренируйся!</span>';
+    finishDesc.textContent = 'Ты решил ' + score + ' из ' + totalTasks + '. Не сдавайся — практика делает мастером!';
+  }
+}
+
+/* ============================================================
+   КНОПКИ
+   ============================================================ */
+checkBtn.addEventListener('click', checkAnswer);
+noRootsBtn.addEventListener('click', handleNoRoots);
+continueBtn.addEventListener('click', continueToNext);
+
+[root1, root2].forEach(function(input){
+  input.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      if(input === root1){
+        root2.focus();
+      } else if(!isAnswered){
+        checkBtn.click();
+      }
+    }
+  });
+});
+
+function restartGame(){
+  taskOffset[currentLevel] = (taskOffset[currentLevel] || 0) + 10;
+  startGame();
+}
+
+function backToMenu(){
+  showPage('pageStart');
+  checkStart();
+}
+
+/* ============================================================
+   ЗАПУСК
+   ============================================================ */
+levelDesc.textContent = '\\(x^2 + px + q = 0\\) — целые корни';
+checkStart();
+</script>
+</body>
+</html>
