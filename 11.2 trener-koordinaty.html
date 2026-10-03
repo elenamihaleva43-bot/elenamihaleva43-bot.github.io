@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Тренажёр · Координатная плоскость · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--mint-soft:#a8f0dc;
+    --coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass:rgba(255,255,255,0.04);--glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{min-height:100vh;font-family:Georgia,'Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.28),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.18),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.10),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;padding:20px;overflow-x:hidden;}
+
+  .bg-decor{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+  .bg-decor .star{position:absolute;color:var(--mint);opacity:0.25;animation:twinkle 4s ease-in-out infinite;}
+  .bg-decor .star:nth-child(1){top:12%;left:8%;font-size:14px;animation-delay:0s;}
+  .bg-decor .star:nth-child(2){top:22%;right:12%;font-size:10px;animation-delay:1s;}
+  .bg-decor .star:nth-child(3){top:45%;left:5%;font-size:12px;animation-delay:2s;}
+  .bg-decor .star:nth-child(4){top:65%;right:8%;font-size:16px;animation-delay:0.5s;}
+  .bg-decor .star:nth-child(5){top:80%;left:15%;font-size:11px;animation-delay:1.5s;}
+  .bg-decor .star:nth-child(6){top:35%;right:5%;font-size:13px;animation-delay:2.5s;}
+  @keyframes twinkle{0%,100%{opacity:0.15;transform:scale(1);}50%{opacity:0.55;transform:scale(1.3);}}
+
+  .corner-logo{position:fixed;top:14px;left:16px;z-index:50;font-family:'Times New Roman',serif;text-align:center;line-height:1;padding:10px 18px 12px;background:rgba(10,42,51,0.75);border:1.5px solid rgba(26,188,156,0.45);border-radius:14px;backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(0,0,0,0.35);}
+  .corner-logo .dots{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:16px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:4px;}
+  .corner-logo .ru{font-size:10px;letter-spacing:3px;color:var(--text-soft);margin-top:2px;}
+
+  /* Кнопки в правом верхнем углу */
+  .top-controls{position:fixed;top:14px;right:16px;z-index:50;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+  .ctrl-btn{display:flex;align-items:center;justify-content:center;height:46px;padding:0 16px;border-radius:14px;backdrop-filter:blur(10px);font-weight:700;letter-spacing:1px;font-size:15px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(26,188,156,0.45);color:var(--mint);cursor:pointer;font-family:'Courier New',monospace;transition:.2s;}
+  .ctrl-btn:hover{transform:translateY(-2px);border-color:var(--mint);background:rgba(26,188,156,0.18);}
+  .ctrl-btn.muted{opacity:0.5;}
+
+  .wrap{position:relative;z-index:10;max-width:880px;margin:80px auto 40px;}
+
+  .hud{
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+    padding:14px 22px;
+    background:linear-gradient(135deg,rgba(26,188,156,0.14),rgba(244,211,94,0.08));
+    border:2px solid var(--teal);border-radius:18px;margin-bottom:16px;
+    box-shadow:0 6px 20px rgba(0,0,0,0.3);
+  }
+  .hud-item{display:flex;align-items:center;gap:8px;font-family:'Courier New',monospace;font-size:15px;font-weight:700;letter-spacing:.5px;}
+  .hud-item .label{color:var(--text-soft);font-size:12px;text-transform:uppercase;}
+  .hud-item .value{color:var(--mint);font-size:17px;}
+  .hud-item .lives{font-size:20px;letter-spacing:2px;line-height:1;}
+  .hud-item .lives .life-lost{opacity:0.25;filter:grayscale(1);}
+  .hud-item .score{color:var(--gold);font-size:18px;}
+
+  .progress-bar-bg{height:8px;background:rgba(10,42,51,0.7);border-radius:6px;overflow:hidden;border:1px solid rgba(26,188,156,0.3);margin-bottom:18px;}
+  .progress-bar-fill{height:100%;width:0;background:linear-gradient(90deg,#1abc9c,#7fffd4,#f4d35e);border-radius:6px;transition:width .4s ease;}
+
+  .game-card{
+    background:var(--glass);border:1.5px solid var(--glass-brd);border-radius:20px;
+    padding:24px 26px;backdrop-filter:blur(10px);
+    box-shadow:0 8px 30px rgba(0,0,0,0.35);
+  }
+
+  .level-badge{
+    display:inline-flex;align-items:center;gap:8px;
+    background:linear-gradient(135deg,var(--gold),#c9a32b);color:#2a1f00;
+    font-family:'Times New Roman',serif;font-weight:700;letter-spacing:1.5px;
+    font-size:13px;text-transform:uppercase;
+    padding:6px 16px;border-radius:10px;margin-bottom:14px;
+    box-shadow:0 4px 12px rgba(244,211,94,0.4);
+  }
+
+  .task-title{
+    font-family:'Times New Roman',serif;font-size:22px;color:var(--mint);
+    letter-spacing:.5px;margin-bottom:14px;line-height:1.4;
+  }
+  .task-title .accent{color:var(--gold);font-family:'Cambria Math',serif;font-style:italic;font-size:26px;}
+  .task-title .coords-big{
+    display:inline-block;background:rgba(26,188,156,0.20);
+    color:var(--mint);padding:4px 18px;border-radius:12px;
+    border:1.5px dashed var(--mint);font-family:'Cambria Math',serif;
+    font-style:italic;font-size:28px;font-weight:700;letter-spacing:1px;
+    animation:pulseCoord 2s ease-in-out infinite;
+  }
+  @keyframes pulseCoord{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
+
+  .task-hint{font-size:14.5px;color:var(--text-soft);font-style:italic;margin-bottom:14px;}
+
+  .plane-wrap{
+    position:relative;background:#f7fcfa;border-radius:14px;
+    border:2px solid rgba(26,188,156,0.5);padding:10px;margin-bottom:16px;
+    box-shadow:0 6px 20px rgba(0,0,0,0.25);
+  }
+  .plane-stage{position:relative;max-width:480px;margin:0 auto;aspect-ratio:1/1;}
+  .plane-stage canvas{display:block;width:100%;height:100%;background:#f7fcfa;border-radius:10px;cursor:crosshair;touch-action:none;}
+
+  .answer-row{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:10px;}
+  .answer-row input{
+    padding:14px 18px;font-size:20px;width:200px;text-align:center;
+    background:rgba(10,42,51,0.5);border:2px solid var(--glass-brd);
+    border-radius:12px;color:var(--text);outline:none;
+    font-family:'Cambria Math',serif;transition:.2s;
+  }
+  .answer-row input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.20);}
+  .answer-row input::placeholder{color:var(--text-soft);opacity:0.5;}
+
+  .btn{padding:13px 28px;font-size:15px;font-weight:700;border:none;border-radius:14px;cursor:pointer;font-family:inherit;letter-spacing:1px;transition:.2s;text-decoration:none;display:inline-flex;align-items:center;gap:8px;}
+  .btn:hover:not(:disabled){transform:translateY(-3px);}
+  .btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
+  .btn-teal{background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;box-shadow:0 6px 20px rgba(26,188,156,0.45);}
+  .btn-gold{background:linear-gradient(135deg,#f4d35e,#c9a32b);color:#4a3800;box-shadow:0 6px 20px rgba(244,211,94,0.45);}
+  .btn-ghost{background:transparent;color:var(--mint);border:1.5px solid var(--glass-brd);box-shadow:none;}
+  .btn-ghost:hover{background:rgba(26,188,156,0.12);}
+  .btn-center{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:16px;}
+
+  .feedback{
+    text-align:center;font-size:17px;font-weight:700;min-height:30px;
+    margin-top:14px;line-height:1.4;transition:.2s;
+  }
+  .feedback.ok{color:var(--ok);animation:pop 0.4s ease;}
+  .feedback.err{color:var(--err);animation:shake 0.4s ease;}
+  @keyframes pop{0%{transform:scale(0.8);opacity:0;}50%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+
+  .screen-end{text-align:center;padding:30px 20px;}
+  .screen-end .big-icon{font-size:88px;line-height:1;margin-bottom:16px;display:block;filter:drop-shadow(0 8px 20px rgba(0,0,0,0.4));}
+  .screen-end h2{font-family:'Times New Roman',serif;font-size:30px;color:var(--gold);letter-spacing:1.5px;margin-bottom:12px;justify-content:center;}
+  .screen-end h2::before{display:none;}
+  .screen-end.win h2{color:var(--ok);}
+  .screen-end.lose h2{color:var(--err);}
+  .screen-end p{font-size:17px;color:var(--text);margin-bottom:8px;}
+  .screen-end .stats{
+    display:inline-flex;gap:20px;flex-wrap:wrap;justify-content:center;
+    background:rgba(10,42,51,0.5);border:1.5px solid var(--glass-brd);
+    border-radius:14px;padding:14px 26px;margin:18px 0;
+    font-family:'Courier New',monospace;font-size:15px;
+  }
+  .screen-end .stats .item{display:flex;flex-direction:column;gap:4px;align-items:center;}
+  .screen-end .stats .item .lbl{font-size:11px;color:var(--text-soft);text-transform:uppercase;letter-spacing:1px;}
+  .screen-end .stats .item .val{font-size:20px;color:var(--mint);font-weight:700;}
+
+  .screen-start{text-align:center;padding:36px 20px;}
+  .screen-start .big-icon{font-size:96px;line-height:1;margin-bottom:16px;display:block;filter:drop-shadow(0 8px 20px rgba(0,0,0,0.4));animation:float 3s ease-in-out infinite;}
+  @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+  .screen-start h2{font-family:'Times New Roman',serif;font-size:28px;color:var(--teal);letter-spacing:1.5px;margin-bottom:14px;justify-content:center;}
+  .screen-start h2::before{display:none;}
+  .screen-start p{font-size:16px;color:var(--text);margin-bottom:10px;line-height:1.7;max-width:540px;margin-left:auto;margin-right:auto;}
+  .screen-start .rules{
+    background:linear-gradient(135deg,rgba(244,211,94,0.12),rgba(26,188,156,0.08));
+    border:2px solid var(--gold);border-radius:16px;
+    padding:18px 26px;margin:20px auto;max-width:520px;
+    text-align:left;font-size:15px;line-height:2;
+  }
+  .screen-start .rules .r{display:flex;gap:10px;align-items:flex-start;}
+  .screen-start .rules .r .emoji{flex-shrink:0;font-size:18px;}
+
+  /* Выбор уровня на старте */
+  .level-picker{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:22px 0 10px;}
+  .level-opt{
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    padding:16px 22px;min-width:150px;
+    background:rgba(255,255,255,0.03);
+    border:2px solid var(--glass-brd);border-radius:16px;
+    cursor:pointer;transition:.25s;
+  }
+  .level-opt:hover{transform:translateY(-4px);border-color:var(--mint);background:rgba(26,188,156,0.10);}
+  .level-opt.active{
+    border-color:var(--gold);
+    background:linear-gradient(135deg,rgba(244,211,94,0.18),rgba(26,188,156,0.10));
+    box-shadow:0 8px 24px rgba(244,211,94,0.3);
+  }
+  .level-opt .ico{font-size:38px;line-height:1;}
+  .level-opt .ttl{font-family:'Times New Roman',serif;font-size:15px;color:var(--gold);font-weight:700;letter-spacing:.5px;text-align:center;line-height:1.3;}
+  .level-opt .sub{font-size:11.5px;color:var(--text-soft);text-align:center;line-height:1.4;}
+
+  .footer{text-align:center;padding:30px 20px 20px;color:var(--text-soft);font-size:13px;font-family:'Times New Roman',serif;letter-spacing:2px;}
+  .footer .f-logo{color:var(--teal);font-size:15px;margin-bottom:6px;}
+  .footer .f-sub{font-style:italic;opacity:.75;}
+
+  .flash-ok, .flash-err{
+    position:fixed;inset:0;z-index:100;pointer-events:none;
+    opacity:0;transition:opacity 0.3s;
+  }
+  .flash-ok{background:radial-gradient(circle at center,rgba(46,204,113,0.4),transparent 60%);}
+  .flash-err{background:radial-gradient(circle at center,rgba(255,107,107,0.4),transparent 60%);}
+  .flash-ok.show,.flash-err.show{opacity:1;}
+
+  @media(max-width:700px){
+    .wrap{margin-top:90px;}
+    .corner-logo{padding:7px 12px 9px;left:12px;}
+    .corner-logo .gr{font-size:13px;}
+    .top-controls{gap:6px;top:12px;right:12px;}
+    .ctrl-btn{height:40px;padding:0 12px;font-size:13px;}
+    .hud{padding:12px 16px;font-size:14px;}
+    .hud-item .value{font-size:15px;}
+    .game-card{padding:18px 16px;}
+    .task-title{font-size:19px;}
+    .task-title .coords-big{font-size:22px;padding:3px 12px;}
+    .plane-stage{max-width:340px;}
+    .answer-row input{width:160px;font-size:18px;}
+    .screen-end .big-icon,.screen-start .big-icon{font-size:72px;}
+    .screen-end h2,.screen-start h2{font-size:24px;}
+    .level-opt{min-width:130px;padding:14px 16px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-decor" aria-hidden="true">
+  <span class="star">✦</span>
+  <span class="star">✧</span>
+  <span class="star">✦</span>
+  <span class="star">✧</span>
+  <span class="star">✦</span>
+  <span class="star">✧</span>
+</div>
+
+<div class="corner-logo">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+</div>
+
+<div class="top-controls">
+  <button class="ctrl-btn" id="btnSound" title="Звук">🔊 Звук</button>
+  <button class="ctrl-btn" id="btnMenu" title="В меню">🏠 В меню</button>
+</div>
+
+<div class="wrap">
+
+  <div class="hud">
+    <div class="hud-item">
+      <span class="label">Уровень</span>
+      <span class="value" id="hudLevel">—</span>
+    </div>
+    <div class="hud-item">
+      <span class="label">Задание</span>
+      <span class="value" id="hudTask">0 / 10</span>
+    </div>
+    <div class="hud-item">
+      <span class="label">Счёт</span>
+      <span class="score" id="hudScore">0</span>
+    </div>
+    <div class="hud-item">
+      <span class="label">Жизни</span>
+      <span class="lives" id="hudLives">❤️❤️❤️</span>
+    </div>
+  </div>
+
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
+
+  <div class="game-card">
+    <div id="gameContent"></div>
+  </div>
+
+  <div class="footer">
+    <div class="f-logo">ΤΕΤΡΑΚΤΥΣ · ТЕТРАКТИС</div>
+    <div class="f-sub">где математика превращается в приключение</div>
+  </div>
+
+</div>
+
+<div class="flash-ok" id="flashOk"></div>
+<div class="flash-err" id="flashErr"></div>
+<script>
+/* ============================================================
+   ЗВУК (Web Audio API — без внешних файлов)
+   ============================================================ */
+var soundEnabled = true;
+var audioCtx = null;
+
+function initAudio(){
+  if(!audioCtx){
+    try{
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }catch(_){}
+  }
+}
+
+function playTone(freq, duration, type, vol){
+  if(!soundEnabled) return;
+  initAudio();
+  if(!audioCtx) return;
+  try{
+    var o = audioCtx.createOscillator();
+    var g = audioCtx.createGain();
+    o.type = type || 'sine';
+    o.frequency.value = freq;
+    g.gain.value = vol || 0.15;
+    o.connect(g);
+    g.connect(audioCtx.destination);
+    var now = audioCtx.currentTime;
+    g.gain.setValueAtTime(g.gain.value, now);
+    g.gain.exponentialRampToValueAtTime(0.001, now + duration);
+    o.start(now);
+    o.stop(now + duration + 0.02);
+  }catch(_){}
+}
+
+function sfxClick(){ playTone(600, 0.08, 'sine', 0.08); }
+function sfxOk(){
+  playTone(700, 0.10, 'sine', 0.15);
+  setTimeout(function(){ playTone(1050, 0.18, 'sine', 0.15); }, 90);
+}
+function sfxErr(){
+  playTone(220, 0.18, 'sawtooth', 0.12);
+  setTimeout(function(){ playTone(160, 0.22, 'sawtooth', 0.12); }, 100);
+}
+function sfxWin(){
+  playTone(523, 0.15, 'triangle', 0.18);
+  setTimeout(function(){ playTone(659, 0.15, 'triangle', 0.18); }, 130);
+  setTimeout(function(){ playTone(784, 0.15, 'triangle', 0.18); }, 260);
+  setTimeout(function(){ playTone(1047, 0.35, 'triangle', 0.20); }, 390);
+}
+function sfxLose(){
+  playTone(392, 0.20, 'sawtooth', 0.14);
+  setTimeout(function(){ playTone(330, 0.20, 'sawtooth', 0.14); }, 180);
+  setTimeout(function(){ playTone(262, 0.40, 'sawtooth', 0.14); }, 360);
+}
+
+/* ============================================================
+   СОСТОЯНИЕ ИГРЫ
+   ============================================================ */
+var PLANE_RANGE = 6;
+var TOTAL_TASKS = 10;
+var MAX_LIVES = 3;
+
+var state = {
+  level: 1,
+  taskIndex: 0,
+  score: 0,
+  lives: MAX_LIVES,
+  currentTask: null,
+  level1Tasks: [],
+  level2Tasks: [],
+  locked: false,
+  phase: 'start',
+  mode: 'both' // 'both' | 'lvl1' | 'lvl2'
+};
+
+/* ============================================================
+   ГЕНЕРАЦИЯ ЗАДАНИЙ
+   ============================================================ */
+function randInt(min, max){
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function makeTasks(){
+  var arr = [];
+  var used = {};
+  while(arr.length < TOTAL_TASKS){
+    var x, y, key;
+    var r = Math.random();
+    if(r < 0.1){ x = 0; y = randInt(-5, 5); if(y === 0) continue; }
+    else if(r < 0.2){ y = 0; x = randInt(-5, 5); if(x === 0) continue; }
+    else { x = randInt(-5, 5); y = randInt(-5, 5); }
+    key = x + ':' + y;
+    if(used[key]) continue;
+    used[key] = true;
+    arr.push({ x: x, y: y });
+  }
+  return arr;
+}
+
+/* ============================================================
+   РИСОВАНИЕ ПЛОСКОСТИ
+   ============================================================ */
+function setupCanvas(canvas){
+  var dpr = window.devicePixelRatio || 1;
+  var rect = canvas.getBoundingClientRect();
+  var w = Math.max(200, rect.width);
+  var h = Math.max(200, rect.height);
+  canvas.width = Math.round(w*dpr);
+  canvas.height = Math.round(h*dpr);
+  var ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return { ctx: ctx, w: w, h: h, dpr: dpr };
+}
+
+function drawPlane(canvas){
+  var s = setupCanvas(canvas);
+  var ctx = s.ctx, w = s.w, h = s.h;
+
+  var pad = 24;
+  var size = Math.min(w, h) - 2*pad;
+  var cell = size / (2*PLANE_RANGE);
+  var cx = w/2;
+  var cy = h/2;
+  var xLeft = cx - PLANE_RANGE*cell;
+  var yTop = cy - PLANE_RANGE*cell;
+
+  ctx.fillStyle = '#f7fcfa';
+  ctx.fillRect(0, 0, w, h);
+
+  ctx.strokeStyle = '#d8ede6';
+  ctx.lineWidth = 1;
+  for(var i = -PLANE_RANGE; i <= PLANE_RANGE; i++){
+    var x = cx + i*cell;
+    var y = cy - i*cell;
+    ctx.beginPath(); ctx.moveTo(Math.round(x)+0.5, yTop); ctx.lineTo(Math.round(x)+0.5, yTop+size); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(xLeft, Math.round(y)+0.5); ctx.lineTo(xLeft+size, Math.round(y)+0.5); ctx.stroke();
+  }
+
+  ctx.strokeStyle = '#0e7c66';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(xLeft, cy); ctx.lineTo(xLeft+size, cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx, yTop); ctx.lineTo(cx, yTop+size); ctx.stroke();
+
+  ctx.fillStyle = '#0e7c66';
+  ctx.beginPath(); ctx.moveTo(xLeft+size-2, cy-7); ctx.lineTo(xLeft+size+8, cy); ctx.lineTo(xLeft+size-2, cy+7); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(cx-7, yTop+2); ctx.lineTo(cx, yTop-8); ctx.lineTo(cx+7, yTop+2); ctx.fill();
+
+  ctx.fillStyle = '#0e7c66';
+  ctx.font = 'bold 16px Times New Roman';
+  ctx.textAlign = 'right'; ctx.textBaseline = 'top';
+  ctx.fillText('X', xLeft+size+4, cy+8);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+  ctx.fillText('Y', cx+8, yTop-4);
+
+  ctx.font = '11px Courier New';
+  ctx.fillStyle = '#6a8a84';
+  for(var j = -PLANE_RANGE; j <= PLANE_RANGE; j++){
+    if(j === 0) continue;
+    var px = cx + j*cell;
+    var py = cy - j*cell;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    ctx.fillText(j, px, cy + 4);
+    ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    ctx.fillText(j, cx - 5, py);
+  }
+  ctx.fillStyle = '#0e7c66';
+  ctx.font = 'bold 12px Courier New';
+  ctx.textAlign = 'right'; ctx.textBaseline = 'top';
+  ctx.fillText('0', cx - 4, cy + 4);
+
+  return {
+    ctx: ctx, cx: cx, cy: cy, cell: cell, w: w, h: h,
+    toScreen: function(x, y){
+      return { px: cx + x*cell, py: cy - y*cell };
+    },
+    toMath: function(px, py){
+      return {
+        x: Math.round((px - cx) / cell),
+        y: Math.round((cy - py) / cell)
+      };
+    },
+    isInside: function(x, y){
+      return x >= -PLANE_RANGE && x <= PLANE_RANGE && y >= -PLANE_RANGE && y <= PLANE_RANGE;
+    }
+  };
+}
+
+function drawPoint(ctx, px, py, color, label, pulse){
+  var r = pulse ? 8 + 3*Math.sin(Date.now()/250) : 8;
+  if(pulse){
+    ctx.beginPath();
+    ctx.arc(px, py, r + 8, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(244,211,94,0.30)';
+    ctx.fill();
+  }
+  ctx.beginPath();
+  ctx.arc(px, py, r, 0, Math.PI*2);
+  ctx.fillStyle = color || '#ff6b6b';
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 2.5;
+  ctx.fill();
+  ctx.stroke();
+
+  if(label){
+    ctx.fillStyle = color || '#ff6b6b';
+    ctx.font = 'bold 13px Courier New';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText(label, px + 12, py - 10);
+  }
+}
+
+/* ============================================================
+   HUD
+   ============================================================ */
+function updateHUD(){
+  var levelEl = document.getElementById('hudLevel');
+  var taskEl = document.getElementById('hudTask');
+  var scoreEl = document.getElementById('hudScore');
+  var livesEl = document.getElementById('hudLives');
+  var barEl = document.getElementById('progressBar');
+
+  var lvlText = '—';
+  if(state.phase !== 'start'){
+    if(state.level === 1) lvlText = '1 · Найди клад';
+    else lvlText = '2 · Назови координаты';
+  }
+  if(levelEl) levelEl.textContent = lvlText;
+
+  var taskText = '0 / ' + TOTAL_TASKS;
+  if(state.phase !== 'start'){
+    taskText = (state.taskIndex + 1) + ' / ' + TOTAL_TASKS;
+  }
+  if(taskEl) taskEl.textContent = taskText;
+  if(scoreEl) scoreEl.textContent = state.score;
+
+  if(livesEl){
+    var html = '';
+    for(var i = 0; i < MAX_LIVES; i++){
+      if(i < state.lives) html += '❤️';
+      else html += '<span class="life-lost">❤️</span>';
+    }
+    livesEl.innerHTML = html;
+  }
+
+  if(barEl){
+    var pct = state.phase === 'start' ? 0 : Math.round((state.taskIndex / TOTAL_TASKS) * 100);
+    barEl.style.width = pct + '%';
+  }
+}
+
+function flash(type){
+  var el = document.getElementById(type === 'ok' ? 'flashOk' : 'flashErr');
+  if(!el) return;
+  el.classList.add('show');
+  setTimeout(function(){ el.classList.remove('show'); }, 300);
+}
+
+/* ============================================================
+   СТАРТОВЫЙ ЭКРАН
+   ============================================================ */
+function showStartScreen(){
+  state.phase = 'start';
+  state.locked = false;
+  updateHUD();
+
+  var box = document.getElementById('gameContent');
+  box.innerHTML =
+    '<div class="screen-start">' +
+      '<span class="big-icon">🏴‍☠️</span>' +
+      '<h2>Остров сокровищ</h2>' +
+      '<p>Выбери уровень и отправляйся в путешествие по координатной плоскости!</p>' +
+      '<div class="level-picker">' +
+        '<div class="level-opt active" data-mode="both">' +
+          '<span class="ico">🏆</span>' +
+          '<span class="ttl">Оба уровня</span>' +
+          '<span class="sub">20 заданий</span>' +
+        '</div>' +
+        '<div class="level-opt" data-mode="lvl1">' +
+          '<span class="ico">🎯</span>' +
+          '<span class="ttl">Уровень 1</span>' +
+          '<span class="sub">Найди клад · 10</span>' +
+        '</div>' +
+        '<div class="level-opt" data-mode="lvl2">' +
+          '<span class="ico">✍️</span>' +
+          '<span class="ttl">Уровень 2</span>' +
+          '<span class="sub">Назови координаты · 10</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="rules">' +
+        '<div class="r"><span class="emoji">❤️</span><span><b>3 жизни.</b> Одна попытка на ответ.</span></div>' +
+        '<div class="r"><span class="emoji">💀</span><span>Потерял все 3 — начинай заново.</span></div>' +
+        '<div class="r"><span class="emoji">💡</span><span>Если перепутаешь порядок — подскажу: <b>сначала X, потом Y</b>.</span></div>' +
+      '</div>' +
+      '<div class="btn-center"><button class="btn btn-gold" id="btnStart">⚓ Начать путешествие</button></div>' +
+    '</div>';
+
+  var opts = box.querySelectorAll('.level-opt');
+  for(var i = 0; i < opts.length; i++){
+    (function(opt){
+      opt.addEventListener('click', function(){
+        sfxClick();
+        for(var k = 0; k < opts.length; k++) opts[k].classList.remove('active');
+        opt.classList.add('active');
+        state.mode = opt.getAttribute('data-mode');
+      });
+    })(opts[i]);
+  }
+
+  document.getElementById('btnStart').addEventListener('click', function(){
+    sfxClick();
+    startGame();
+  });
+}
+
+/* ============================================================
+   СТАРТ ИГРЫ
+   ============================================================ */
+function startGame(){
+  state.score = 0;
+  state.lives = MAX_LIVES;
+  state.taskIndex = 0;
+  state.locked = false;
+  state.phase = 'playing';
+  state.level1Tasks = makeTasks();
+  state.level2Tasks = makeTasks();
+
+  if(state.mode === 'lvl1'){
+    state.level = 1;
+    renderLevel1();
+  } else if(state.mode === 'lvl2'){
+    state.level = 2;
+    renderLevel2();
+  } else {
+    state.level = 1;
+    renderLevel1();
+  }
+}
+
+/* ============================================================
+   УРОВЕНЬ 1: НАЙДИ КЛАД
+   ============================================================ */
+function renderLevel1(){
+  updateHUD();
+  var t = state.level1Tasks[state.taskIndex];
+  state.currentTask = t;
+  state.locked = false;
+
+  var box = document.getElementById('gameContent');
+  box.innerHTML =
+    '<div class="level-badge">🎯 Уровень 1 · Найди клад</div>' +
+    '<div class="task-title">Клад спрятан в точке: <span class="coords-big">(' + t.x + '; ' + t.y + ')</span></div>' +
+    '<div class="task-hint">Кликни по карте в нужное место. Одна попытка!</div>' +
+    '<div class="plane-wrap"><div class="plane-stage"><canvas id="gameCanvas"></canvas></div></div>' +
+    '<div class="feedback" id="feedback"></div>';
+
+  var canvas = document.getElementById('gameCanvas');
+  var drawn = false;
+
+  function redraw(){
+    var p = drawPlane(canvas);
+    if(drawn){
+      var sp = p.toScreen(t.x, t.y);
+      drawPoint(p.ctx, sp.px, sp.py, '#2ecc71', '', false);
+      p.ctx.font = '28px serif';
+      p.ctx.textAlign = 'center';
+      p.ctx.textBaseline = 'middle';
+      p.ctx.fillText('💰', sp.px, sp.py - 4);
+    }
+  }
+
+  canvas.addEventListener('pointerdown', function(e){
+    if(state.locked) return;
+    e.preventDefault();
+    var rect = canvas.getBoundingClientRect();
+    var px = e.clientX - rect.left;
+    var py = e.clientY - rect.top;
+    var p = drawPlane(canvas);
+    var m = p.toMath(px, py);
+    if(!p.isInside(m.x, m.y)) return;
+
+    state.locked = true;
+
+    if(m.x === t.x && m.y === t.y){
+      drawn = true;
+      redraw();
+      state.score++;
+      flash('ok');
+      sfxOk();
+      document.getElementById('feedback').className = 'feedback ok';
+      document.getElementById('feedback').textContent = '🎉 В точку! Клад найден!';
+      updateHUD();
+      setTimeout(nextTask, 1100);
+    } else {
+      state.lives--;
+      flash('err');
+      sfxErr();
+      var fb = document.getElementById('feedback');
+      fb.className = 'feedback err';
+      fb.innerHTML = '💥 Мимо! Правильная точка: <b>(' + t.x + '; ' + t.y + ')</b>';
+      drawn = true;
+      redraw();
+      var wp = p.toScreen(m.x, m.y);
+      p.ctx.strokeStyle = '#ff6b6b';
+      p.ctx.lineWidth = 4;
+      p.ctx.beginPath();
+      p.ctx.moveTo(wp.px - 12, wp.py - 12); p.ctx.lineTo(wp.px + 12, wp.py + 12);
+      p.ctx.moveTo(wp.px + 12, wp.py - 12); p.ctx.lineTo(wp.px - 12, wp.py + 12);
+      p.ctx.stroke();
+      updateHUD();
+      if(state.lives <= 0){
+        setTimeout(showLoseScreen, 1200);
+      } else {
+        setTimeout(nextTask, 1500);
+      }
+    }
+  });
+
+  window.addEventListener('resize', function(){ redraw(); });
+  redraw();
+}
+
+/* ============================================================
+   УРОВЕНЬ 2: НАЗОВИ КООРДИНАТЫ
+   ============================================================ */
+function renderLevel2(){
+  updateHUD();
+  var t = state.level2Tasks[state.taskIndex];
+  state.currentTask = t;
+  state.locked = false;
+
+  var box = document.getElementById('gameContent');
+  box.innerHTML =
+    '<div class="level-badge">✍️ Уровень 2 · Назови координаты</div>' +
+    '<div class="task-title">Определи координаты <span class="accent">точки ' + (state.taskIndex + 1) + '</span></div>' +
+    '<div class="task-hint">Впиши координаты в формате <b>(x;y)</b> или <b>x;y</b>. Одна попытка!</div>' +
+    '<div class="plane-wrap"><div class="plane-stage"><canvas id="gameCanvas"></canvas></div></div>' +
+    '<div class="answer-row">' +
+      '<input type="text" id="answerInput" placeholder="(x;y)" autocomplete="off" inputmode="text">' +
+      '<button class="btn btn-teal" id="btnCheck">✓ Проверить</button>' +
+    '</div>' +
+    '<div class="feedback" id="feedback"></div>';
+
+  var canvas = document.getElementById('gameCanvas');
+  var pulseOn = true;
+
+  function redraw(){
+    var p = drawPlane(canvas);
+    var sp = p.toScreen(t.x, t.y);
+    drawPoint(p.ctx, sp.px, sp.py, '#ff6b6b', '', pulseOn);
+  }
+
+  var pulseInterval = setInterval(function(){
+    if(state.locked){ clearInterval(pulseInterval); return; }
+    pulseOn = !pulseOn;
+    redraw();
+  }, 400);
+
+  redraw();
+
+  var input = document.getElementById('answerInput');
+  var btn = document.getElementById('btnCheck');
+
+  function check(){
+    if(state.locked) return;
+    var val = normalize(input.value);
+    if(!val){ input.focus(); return; }
+    state.locked = true;
+    clearInterval(pulseInterval);
+
+    var correct1 = normalize(t.x + ';' + t.y);
+    var correct2 = normalize(t.y + ';' + t.x);
+
+    if(val === correct1){
+      state.score++;
+      flash('ok');
+      sfxOk();
+      var p = drawPlane(canvas);
+      var sp = p.toScreen(t.x, t.y);
+      drawPoint(p.ctx, sp.px, sp.py, '#2ecc71', '(' + t.x + '; ' + t.y + ')', false);
+      input.disabled = true;
+      btn.disabled = true;
+      document.getElementById('feedback').className = 'feedback ok';
+      document.getElementById('feedback').textContent = '🎉 Верно!';
+      updateHUD();
+      setTimeout(nextTask, 1100);
+    } else if(val === correct2){
+      state.lives--;
+      flash('err');
+      sfxErr();
+      input.disabled = true;
+      btn.disabled = true;
+      document.getElementById('feedback').className = 'feedback err';
+      document.getElementById('feedback').innerHTML = '🔀 Перепутал порядок! Сначала <b>X</b>, потом <b>Y</b>. Верно: <b>(' + t.x + '; ' + t.y + ')</b>';
+      updateHUD();
+      if(state.lives <= 0){
+        setTimeout(showLoseScreen, 1800);
+      } else {
+        setTimeout(nextTask, 1800);
+      }
+    } else {
+      state.lives--;
+      flash('err');
+      sfxErr();
+      input.disabled = true;
+      btn.disabled = true;
+      document.getElementById('feedback').className = 'feedback err';
+      document.getElementById('feedback').innerHTML = '💥 Неверно. Правильный ответ: <b>(' + t.x + '; ' + t.y + ')</b>';
+      updateHUD();
+      if(state.lives <= 0){
+        setTimeout(showLoseScreen, 1800);
+      } else {
+        setTimeout(nextTask, 1800);
+      }
+    }
+  }
+
+  btn.addEventListener('click', check);
+  input.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ e.preventDefault(); check(); }
+  });
+  input.focus();
+}
+
+/* ============================================================
+   ПЕРЕХОД К СЛЕДУЮЩЕМУ ЗАДАНИЮ
+   ============================================================ */
+function nextTask(){
+  if(state.lives <= 0){ showLoseScreen(); return; }
+  state.taskIndex++;
+
+  if(state.taskIndex >= TOTAL_TASKS){
+    if(state.mode === 'lvl1'){
+      showWinScreen();
+      return;
+    }
+    if(state.mode === 'lvl2'){
+      showWinScreen();
+      return;
+    }
+    // режим "оба уровня"
+    if(state.level === 1){
+      state.level = 2;
+      state.taskIndex = 0;
+      var box = document.getElementById('gameContent');
+      box.innerHTML =
+        '<div class="screen-end win">' +
+          '<span class="big-icon">🎉</span>' +
+          '<h2>Уровень 1 пройден!</h2>' +
+          '<p>Ты нашёл все клады! Теперь — обратная задача: назвать координаты точек.</p>' +
+          '<div class="stats">' +
+            '<div class="item"><span class="lbl">Счёт</span><span class="val">' + state.score + '</span></div>' +
+            '<div class="item"><span class="lbl">Жизни</span><span class="val">' + state.lives + ' / ' + MAX_LIVES + '</span></div>' +
+          '</div>' +
+          '<div class="btn-center"><button class="btn btn-gold" id="btnNextLevel">🎯 Уровень 2 →</button></div>' +
+        '</div>';
+      updateHUD();
+      sfxWin();
+      document.getElementById('btnNextLevel').addEventListener('click', function(){
+        sfxClick();
+        state.taskIndex = 0;
+        renderLevel2();
+      });
+    } else {
+      showWinScreen();
+    }
+    return;
+  }
+
+  if(state.level === 1) renderLevel1();
+  else renderLevel2();
+}
+
+/* ============================================================
+   ЭКРАН ПОБЕДЫ
+   ============================================================ */
+function showWinScreen(){
+  state.phase = 'win';
+  updateHUD();
+  sfxWin();
+  var totalDone = state.mode === 'both' ? 20 : 10;
+  var box = document.getElementById('gameContent');
+  box.innerHTML =
+    '<div class="screen-end win">' +
+      '<span class="big-icon">🏆</span>' +
+      '<h2>Победа!</h2>' +
+      '<p>Ты прошёл все задания. Ты настоящий капитан координатной плоскости!</p>' +
+      '<div class="stats">' +
+        '<div class="item"><span class="lbl">Счёт</span><span class="val">' + state.score + ' / ' + totalDone + '</span></div>' +
+        '<div class="item"><span class="lbl">Жизни</span><span class="val">' + state.lives + ' / ' + MAX_LIVES + '</span></div>' +
+        '<div class="item"><span class="lbl">Точность</span><span class="val">' + Math.round(state.score / totalDone * 100) + '%</span></div>' +
+      '</div>' +
+      '<div class="btn-center">' +
+        '<button class="btn btn-gold" id="btnRestart">🔁 Играть снова</button>' +
+        '<button class="btn btn-ghost" id="btnToMenu">🏠 В меню</button>' +
+      '</div>' +
+    '</div>';
+  document.getElementById('btnRestart').addEventListener('click', function(){ sfxClick(); startGame(); });
+  document.getElementById('btnToMenu').addEventListener('click', function(){ sfxClick(); showStartScreen(); });
+}
+
+/* ============================================================
+   ЭКРАН ПОРАЖЕНИЯ
+   ============================================================ */
+function showLoseScreen(){
+  state.phase = 'lose';
+  updateHUD();
+  sfxLose();
+  var box = document.getElementById('gameContent');
+  box.innerHTML =
+    '<div class="screen-end lose">' +
+      '<span class="big-icon">💀</span>' +
+      '<h2>Игра окончена</h2>' +
+      '<p>Жизни закончились. Попробуй ещё раз — у тебя обязательно получится!</p>' +
+      '<div class="stats">' +
+        '<div class="item"><span class="lbl">Счёт</span><span class="val">' + state.score + '</span></div>' +
+        '<div class="item"><span class="lbl">Уровень</span><span class="val">' + state.level + '</span></div>' +
+        '<div class="item"><span class="lbl">Задание</span><span class="val">' + (state.taskIndex + 1) + ' / ' + TOTAL_TASKS + '</span></div>' +
+      '</div>' +
+      '<div class="btn-center">' +
+        '<button class="btn btn-gold" id="btnRestart">🔁 Начать заново</button>' +
+        '<button class="btn btn-ghost" id="btnToMenu">🏠 В меню</button>' +
+      '</div>' +
+    '</div>';
+  document.getElementById('btnRestart').addEventListener('click', function(){ sfxClick(); startGame(); });
+  document.getElementById('btnToMenu').addEventListener('click', function(){ sfxClick(); showStartScreen(); });
+}
+
+/* ============================================================
+   НОРМАЛИЗАЦИЯ ОТВЕТА
+   ============================================================ */
+function normalize(s){
+  if(s === null || s === undefined) return '';
+  s = String(s).trim().toLowerCase();
+  s = s.replace(/[−–—]/g, '-');
+  s = s.replace(/[()\s]/g, '');
+  s = s.replace(/[,.]/g, ';');
+  return s;
+}
+
+/* ============================================================
+   КНОПКИ ВВЕРХУ: звук и меню
+   ============================================================ */
+(function(){
+  var btnSound = document.getElementById('btnSound');
+  var btnMenu = document.getElementById('btnMenu');
+
+  btnSound.addEventListener('click', function(){
+    soundEnabled = !soundEnabled;
+    if(soundEnabled){
+      btnSound.textContent = '🔊 Звук';
+      btnSound.classList.remove('muted');
+      sfxClick();
+    } else {
+      btnSound.textContent = '🔇 Звук';
+      btnSound.classList.add('muted');
+    }
+  });
+
+  btnMenu.addEventListener('click', function(){
+    sfxClick();
+    showStartScreen();
+  });
+})();
+
+/* ============================================================
+   СТАРТ
+   ============================================================ */
+showStartScreen();
+</script>
+</body>
+</html>
