@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔘 Шины — диаметр колеса | ТЕТРАКТИС</title>
+<style>
+  :root{
+    --teal:#1abc9c; --mint:#7fffd4; --gold:#f4d35e; --gold-light:#ffe89a;
+    --coral:#ff6b6b; --violet:#a78bfa; --blue:#6bb8ff;
+    --text:#e8f8f5; --text-soft:#b8d8d0;
+    --glass:rgba(255,255,255,0.06); --glass-brd:rgba(26,188,156,0.4);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:Georgia,serif; color:var(--text); min-height:100vh; padding:24px 16px 60px;
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(26,188,156,0.22), transparent 55%),
+      radial-gradient(ellipse at 85% 90%, rgba(127,255,212,0.15), transparent 55%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;
+    transition:padding-right .35s cubic-bezier(.4,0,.2,1);
+  }
+  body.cheat-open{padding-right:min(460px,92vw)}
+
+  .wrap{max-width:920px;margin:0 auto}
+
+  /* ══ ЛОГОТИП ══ */
+  .logo{
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    padding:8px 14px;border:1.5px solid var(--glass-brd);border-radius:14px;
+    background:rgba(0,0,0,.2);
+  }
+  .logo-pyramid{display:flex;flex-direction:column;align-items:center;gap:2px}
+  .logo-row{display:flex;gap:3px;justify-content:center}
+  .logo-dot{
+    width:5px;height:5px;border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, #d4fff0, var(--mint));
+    box-shadow:0 0 4px rgba(127,255,212,.7);
+  }
+  .logo-dot.dim{background:radial-gradient(circle at 30% 30%, #b8e6d8, #6fb8a5);box-shadow:none;opacity:.85}
+  .logo-title{
+    font-family:'Courier New',monospace;font-weight:bold;font-size:13px;
+    letter-spacing:3px;color:var(--mint);
+  }
+  .logo-sub{
+    font-family:'Courier New',monospace;font-size:9px;
+    letter-spacing:3px;color:var(--text-soft);opacity:.75;
+  }
+
+  /* ── Шапка ── */
+  header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;gap:10px}
+  .nav{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .nav a, .nav button{
+    text-decoration:none;font-size:14px;font-family:Georgia,serif;cursor:pointer;
+    padding:9px 16px;border-radius:12px;transition:.2s;
+    background:var(--glass);color:var(--mint);border:1.5px solid var(--glass-brd);
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .nav a:hover, .nav button:hover{transform:translateY(-2px);border-color:var(--mint)}
+  .nav button.active{background:linear-gradient(135deg,var(--teal),#0e7a63);color:#fff}
+  .nav a.home-link:hover{background:rgba(127,255,212,.12)}
+
+  h1{
+    font-size:clamp(26px,5vw,42px); text-align:center; color:var(--teal);
+    text-shadow:0 0 18px rgba(26,188,156,.6), 0 0 40px rgba(26,188,156,.25);
+    margin-bottom:8px; letter-spacing:2px;
+  }
+  .sub{text-align:center;color:var(--text-soft);font-size:14px;margin-bottom:28px}
+
+  /* ── Переключатель ── */
+  .switch{display:flex;gap:10px;justify-content:center;margin-bottom:26px;flex-wrap:wrap}
+  .switch button{
+    font-family:Georgia,serif;font-size:16px;padding:12px 26px;border-radius:14px;cursor:pointer;
+    background:var(--glass);color:var(--text-soft);border:1.5px solid var(--glass-brd);transition:.2s;
+  }
+  .switch button:hover{transform:translateY(-2px)}
+  .switch button.active{
+    background:linear-gradient(135deg,var(--teal),#0e7a63);color:#fff;
+    border-color:var(--mint);box-shadow:0 0 18px rgba(26,188,156,.5);
+  }
+
+  /* ── Карточки ── */
+  .card{
+    background:var(--glass);border:1.5px solid var(--glass-brd);border-radius:20px;
+    padding:22px;margin-bottom:18px;backdrop-filter:blur(6px);
+  }
+  .card h2{font-size:18px;color:var(--mint);margin-bottom:16px;font-weight:normal;letter-spacing:1px}
+
+  /* ── Поля ── */
+  .fields{display:flex;gap:14px;flex-wrap:wrap}
+  .field{flex:1;min-width:130px}
+  .field label{display:block;font-size:13px;color:var(--text-soft);margin-bottom:6px}
+  .field label .var{
+    display:inline-block;font-family:'Courier New',monospace;font-weight:bold;
+    padding:1px 8px;border-radius:6px;margin-right:5px;border:1.5px solid;
+  }
+  .v-a{color:var(--gold);border-color:var(--gold);background:rgba(244,211,94,.12)}
+  .v-b{color:var(--violet);border-color:var(--violet);background:rgba(167,139,250,.12)}
+  .v-c{color:var(--teal);border-color:var(--teal);background:rgba(26,188,156,.12)}
+  .field input{
+    width:100%;padding:12px 14px;border-radius:12px;font-size:18px;
+    font-family:'Courier New',monospace;color:var(--gold-light);
+    background:rgba(0,0,0,.25);border:1.5px solid var(--glass-brd);outline:none;transition:.2s;
+  }
+  .field input:focus{border-color:var(--mint);box-shadow:0 0 12px rgba(127,255,212,.3)}
+  .unit{font-size:12px;color:var(--text-soft);margin-top:4px;text-align:right}
+
+  /* ── Кнопки расчёта ── */
+  .btns{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:8px}
+  .btns button{
+    font-family:Georgia,serif;font-size:15px;padding:14px 12px;border-radius:14px;cursor:pointer;
+    background:linear-gradient(135deg,var(--teal),#0e7a63);color:#fff;border:none;transition:.2s;
+  }
+  .btns button:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(26,188,156,.4)}
+  .btns button.gold{background:linear-gradient(135deg,var(--gold),#c9a63d);color:#1a1a1a}
+  .btns button.violet{background:linear-gradient(135deg,var(--violet),#7c5fd3);color:#fff}
+  .btns button.coral{background:linear-gradient(135deg,var(--coral),#d94a4a);color:#fff}
+  .btns button.blue{background:linear-gradient(135deg,var(--blue),#3a86c9);color:#fff}
+
+  /* ── Результат ── */
+  .result{
+    margin-top:20px;padding:20px;border-radius:16px;text-align:center;display:none;
+    background:rgba(244,211,94,.08);border:1.5px solid var(--gold);
+  }
+  .result.show{display:block;animation:fade .3s}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .result .label{font-size:14px;color:var(--text-soft);margin-bottom:8px}
+  .result .value{font-family:'Courier New',monospace;font-size:clamp(30px,6vw,46px);color:var(--gold-light);font-weight:bold}
+  .result .value small{font-size:20px;color:var(--gold)}
+  .result .formula{margin-top:12px;font-family:'Courier New',monospace;font-size:14px;color:var(--mint);word-break:break-word}
+  .result .extra{margin-top:8px;font-size:14px;color:var(--text-soft)}
+
+  /* ── Таблица сравнения ── */
+  .compare{width:100%;border-collapse:collapse;margin-top:18px;display:none}
+  .compare.show{display:table}
+  .compare th,.compare td{padding:12px;border-bottom:1px solid rgba(26,188,156,.25);text-align:center;font-size:15px}
+  .compare th{color:var(--mint);font-weight:normal;font-size:13px;letter-spacing:.5px}
+  .compare td:first-child{text-align:left;color:var(--text-soft);font-size:14px}
+  .compare .val{font-family:'Courier New',monospace;color:var(--gold-light)}
+  .diff{font-family:'Courier New',monospace;font-weight:bold}
+  .diff.ok{color:var(--mint)}
+  .diff.warn{color:var(--gold)}
+  .diff.bad{color:var(--coral)}
+  .verdict{margin-top:16px;padding:14px;border-radius:14px;font-size:15px;text-align:center;display:none}
+  .verdict.show{display:block}
+  .verdict.ok{background:rgba(127,255,212,.12);border:1.5px solid var(--mint);color:var(--mint)}
+  .verdict.warn{background:rgba(244,211,94,.12);border:1.5px solid var(--gold);color:var(--gold-light)}
+  .verdict.bad{background:rgba(255,107,107,.12);border:1.5px solid var(--coral);color:var(--coral)}
+
+  /* ══ ВЫЕЗЖАЮЩАЯ ШПАРГАЛКА ══ */
+  .cheat-panel{
+    position:fixed;top:0;right:0;height:100vh;width:min(460px,92vw);
+    background:linear-gradient(160deg,#0d3b47 0%,#134e5e 100%);
+    border-left:2px solid var(--mint);
+    box-shadow:-20px 0 60px rgba(0,0,0,.5);
+    transform:translateX(105%);transition:transform .35s cubic-bezier(.4,0,.2,1);
+    z-index:1000;overflow-y:auto;padding:24px 22px 40px;
+  }
+  .cheat-panel.open{transform:translateX(0)}
+  .cheat-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+  .cheat-head h2{font-size:20px;color:var(--mint);font-weight:normal;letter-spacing:1px}
+  .cheat-close{
+    font-size:20px;cursor:pointer;color:var(--coral);background:none;border:none;
+    width:38px;height:38px;border-radius:10px;transition:.2s;
+  }
+  .cheat-close:hover{background:rgba(255,107,107,.15);transform:rotate(90deg)}
+
+  .cheat-logo{
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    padding:14px;margin-bottom:20px;border-radius:16px;
+    background:rgba(0,0,0,.25);border:1.5px solid var(--glass-brd);
+  }
+
+  .marking{
+    background:rgba(0,0,0,.3);border-radius:16px;padding:20px;margin-bottom:20px;
+    border:1.5px dashed var(--glass-brd);text-align:center;
+  }
+  .marking-label{font-size:12px;color:var(--text-soft);letter-spacing:2px;margin-bottom:12px;text-transform:uppercase}
+  .marking-code{
+    font-family:'Courier New',monospace;font-size:30px;font-weight:bold;
+    letter-spacing:1px;margin-bottom:16px;
+  }
+  .marking-code .m-a{color:var(--gold)}
+  .marking-code .m-b{color:var(--violet)}
+  .marking-code .m-c{color:var(--teal)}
+  .marking-code .m-sep{color:var(--text-soft);opacity:.6}
+  .marking-code .m-r{color:var(--text-soft);font-size:22px;opacity:.7}
+  .marking-legend{display:flex;flex-direction:column;gap:8px;text-align:left}
+  .mk-row{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-soft)}
+  .mk-row .mk-dot{
+    font-family:'Courier New',monospace;font-weight:bold;font-size:15px;
+    width:26px;height:26px;display:flex;align-items:center;justify-content:center;
+    border-radius:7px;border:1.5px solid;flex-shrink:0;
+  }
+  .mk-row b{color:var(--text)}
+
+  .vars-list{
+    background:rgba(26,188,156,.06);border:1.5px solid var(--glass-brd);
+    border-radius:14px;padding:14px;margin-bottom:20px;
+  }
+  .vars-list h3{font-size:12px;color:var(--mint);letter-spacing:2px;margin-bottom:12px;font-weight:normal;text-transform:uppercase}
+  .var-row{display:flex;align-items:center;gap:10px;font-size:13px;margin-bottom:7px;color:var(--text-soft)}
+  .var-row:last-child{margin-bottom:0}
+  .var-row .sym{
+    font-family:'Courier New',monospace;font-weight:bold;font-size:14px;
+    width:28px;height:28px;display:flex;align-items:center;justify-content:center;
+    border-radius:7px;border:1.5px solid;flex-shrink:0;
+  }
+  .var-row b{color:var(--text)}
+  .var-row .unit-tag{
+    margin-left:auto;font-size:11px;color:var(--text-soft);
+    font-family:'Courier New',monospace;opacity:.8;
+  }
+
+  .formula-card{
+    background:rgba(0,0,0,.25);border-radius:16px;padding:16px;margin-bottom:12px;
+    border-left:4px solid;transition:.2s;
+  }
+  .formula-card:hover{transform:translateX(-4px)}
+  .fc-teal{border-left-color:var(--teal)}
+  .fc-gold{border-left-color:var(--gold)}
+  .fc-mint{border-left-color:var(--mint)}
+  .fc-coral{border-left-color:var(--coral)}
+  .fc-blue{border-left-color:var(--blue)}
+
+  .formula-card .fc-head{
+    display:flex;align-items:center;gap:8px;margin-bottom:12px;
+    font-size:12px;color:var(--text-soft);letter-spacing:1px;text-transform:uppercase;
+  }
+  .formula-card .fc-icon{font-size:16px}
+
+  .formula-display{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    font-family:'Courier New',monospace;font-size:22px;font-weight:bold;
+    padding:6px 0;flex-wrap:wrap;
+  }
+  .formula-display .sym{
+    display:inline-block;font-family:'Courier New',monospace;font-weight:bold;
+    padding:2px 10px;border-radius:8px;border:1.5px solid;
+  }
+  .sym-a{color:var(--gold);border-color:var(--gold);background:rgba(244,211,94,.1)}
+  .sym-b{color:var(--violet);border-color:var(--violet);background:rgba(167,139,250,.1)}
+  .sym-c{color:var(--teal);border-color:var(--teal);background:rgba(26,188,156,.1)}
+  .sym-H{color:var(--mint);border-color:var(--mint);background:rgba(127,255,212,.1)}
+  .sym-d{color:var(--blue);border-color:var(--blue);background:rgba(107,184,255,.1)}
+  .sym-D{color:var(--coral);border-color:var(--coral);background:rgba(255,107,107,.1)}
+  .sym-R{color:var(--gold-light);border-color:var(--gold-light);background:rgba(255,232,154,.1)}
+  .formula-display .op{color:var(--mint)}
+
+  .frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 4px}
+  .frac .num{padding:2px 8px;border-bottom:2px solid var(--mint);line-height:1.2}
+  .frac .den{padding:2px 8px;line-height:1.2}
+
+  .tip{
+    margin-top:16px;padding:14px;border-radius:12px;font-size:13px;line-height:1.7;
+    background:rgba(255,107,107,.08);border-left:4px solid var(--coral);color:var(--text-soft);
+  }
+  .tip b{color:var(--coral)}
+
+  .hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="logo">
+      <div class="logo-pyramid">
+        <div class="logo-row"><span class="logo-dot"></span></div>
+        <div class="logo-row"><span class="logo-dot dim"></span><span class="logo-dot"></span></div>
+        <div class="logo-row"><span class="logo-dot"></span><span class="logo-dot dim"></span><span class="logo-dot"></span></div>
+      </div>
+      <div class="logo-title">ΤΕΤΡΑΚΤΥΣ</div>
+      <div class="logo-sub">ТЕТРАКТИС</div>
+    </div>
+
+    <div class="nav">
+      <button id="cheatBtn" onclick="toggleCheat()">📐 Шпаргалка</button>
+      <a class="home-link" href="https://elenamihaleva43-bot.github.io/index.html" title="На главную">🏠 Главная</a>
+    </div>
+  </header>
+
+  <h1>🔘 ШИНЫ</h1>
+  <p class="sub">Введи маркировку — выбери, что посчитать — сверь ответ</p>
+
+  <div class="switch">
+    <button id="modeOne" class="active" onclick="setMode('one')">⚪ Одно колесо</button>
+    <button id="modeTwo" onclick="setMode('two')">⚫⚫ Два колеса</button>
+  </div>
+
+  <!-- РЕЖИМ: ОДНО КОЛЕСО -->
+  <div id="oneBlock">
+    <div class="card">
+      <h2>Маркировка колеса</h2>
+      <div class="fields">
+        <div class="field">
+          <label><span class="var v-a">a</span> Ширина</label>
+          <input type="number" id="w1" value="205" min="1" step="1">
+          <div class="unit">мм</div>
+        </div>
+        <div class="field">
+          <label><span class="var v-b">b</span> Профиль</label>
+          <input type="number" id="p1" value="55" min="1" step="1">
+          <div class="unit">%</div>
+        </div>
+        <div class="field">
+          <label><span class="var v-c">c</span> Посадочный диаметр</label>
+          <input type="number" id="d1" value="16" min="1" step="0.5">
+          <div class="unit">дюймы (″)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Что посчитать?</h2>
+      <div class="btns">
+        <button onclick="calc('wheel')">🔘 Диаметр колеса</button>
+        <button class="gold" onclick="calc('side')">📏 Высота боковины</button>
+        <button class="violet" onclick="calc('rim')">⚙️ Диаметр диска</button>
+        <button class="coral" onclick="calc('cm')">📐 В сантиметрах</button>
+        <button class="blue" onclick="calc('radius')">⚪ Радиус колеса</button>
+      </div>
+
+      <div class="result" id="resOne">
+        <div class="label" id="resLabel"></div>
+        <div class="value" id="resValue"></div>
+        <div class="formula" id="resFormula"></div>
+        <div class="extra" id="resExtra"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- РЕЖИМ: ДВА КОЛЕСА -->
+  <div id="twoBlock" class="hidden">
+    <div class="card">
+      <h2>⚪ Колесо 1 (старое)</h2>
+      <div class="fields">
+        <div class="field"><label><span class="var v-a">a</span> Ширина</label><input type="number" id="w1a" value="205"><div class="unit">мм</div></div>
+        <div class="field"><label><span class="var v-b">b</span> Профиль</label><input type="number" id="p1a" value="55"><div class="unit">%</div></div>
+        <div class="field"><label><span class="var v-c">c</span> Диаметр</label><input type="number" id="d1a" value="16"><div class="unit">″</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>⚫ Колесо 2 (новое)</h2>
+      <div class="fields">
+        <div class="field"><label><span class="var v-a">a</span> Ширина</label><input type="number" id="w2a" value="215"><div class="unit">мм</div></div>
+        <div class="field"><label><span class="var v-b">b</span> Профиль</label><input type="number" id="p2a" value="60"><div class="unit">%</div></div>
+        <div class="field"><label><span class="var v-c">c</span> Диаметр</label><input type="number" id="d2a" value="16"><div class="unit">″</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <button style="width:100%;font-family:Georgia,serif;font-size:16px;padding:16px;border-radius:14px;cursor:pointer;background:linear-gradient(135deg,var(--teal),#0e7a63);color:#fff;border:none;transition:.2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''" onclick="compare()">🔍 Сравнить колёса</button>
+
+      <table class="compare" id="cmpTable">
+        <thead>
+          <tr><th></th><th>⚪ Колесо 1</th><th>⚫ Колесо 2</th><th>Разница</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Высота боковины</td><td class="val" id="c_s1"></td><td class="val" id="c_s2"></td><td class="diff" id="c_sd"></td></tr>
+          <tr><td>Диаметр диска</td><td class="val" id="c_r1"></td><td class="val" id="c_r2"></td><td class="diff" id="c_rd"></td></tr>
+          <tr><td>Полный диаметр</td><td class="val" id="c_d1"></td><td class="val" id="c_d2"></td><td class="diff" id="c_dd"></td></tr>
+          <tr><td>Радиус колеса</td><td class="val" id="c_ra1"></td><td class="val" id="c_ra2"></td><td class="diff" id="c_rad"></td></tr>
+          <tr><td>Длина окружности</td><td class="val" id="c_c1"></td><td class="val" id="c_c2"></td><td class="diff" id="c_cd"></td></tr>
+        </tbody>
+      </table>
+
+      <div class="verdict" id="verdict"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ ШПАРГАЛКА ═══ -->
+<aside class="cheat-panel" id="cheatPanel">
+  <div class="cheat-head">
+    <h2>📐 Шпаргалка</h2>
+    <button class="cheat-close" onclick="toggleCheat()">✕</button>
+  </div>
+
+  <div class="cheat-logo">
+    <div class="logo-pyramid">
+      <div class="logo-row"><span class="logo-dot"></span></div>
+      <div class="logo-row"><span class="logo-dot dim"></span><span class="logo-dot"></span></div>
+      <div class="logo-row"><span class="logo-dot"></span><span class="logo-dot dim"></span><span class="logo-dot"></span></div>
+    </div>
+    <div class="logo-title">ΤΕΤΡΑΚΤΥΣ</div>
+    <div class="logo-sub">ТЕТРАКТИС</div>
+  </div>
+
+  <div class="marking">
+    <div class="marking-label">Маркировка</div>
+    <div class="marking-code">
+      <span class="m-a">205</span><span class="m-sep">/</span><span class="m-b">55</span>
+      <span class="m-r"> R</span><span class="m-c">16</span>
+    </div>
+    <div class="marking-legend">
+      <div class="mk-row"><span class="mk-dot sym-a">a</span><span><b>ширина</b> — мм</span></div>
+      <div class="mk-row"><span class="mk-dot sym-b">b</span><span><b>профиль</b> — % от ширины</span></div>
+      <div class="mk-row"><span class="mk-dot sym-c">c</span><span><b>посадочный диаметр</b> — дюймы</span></div>
+    </div>
+  </div>
+
+  <div class="vars-list">
+    <h3>Обозначения</h3>
+    <div class="var-row"><span class="sym sym-a">a</span><span><b>ширина</b></span><span class="unit-tag">мм</span></div>
+    <div class="var-row"><span class="sym sym-b">b</span><span><b>профиль</b></span><span class="unit-tag">%</span></div>
+    <div class="var-row"><span class="sym sym-c">c</span><span><b>диаметр диска</b></span><span class="unit-tag">″</span></div>
+    <div class="var-row"><span class="sym sym-H">H</span><span><b>высота боковины</b></span><span class="unit-tag">мм</span></div>
+    <div class="var-row"><span class="sym sym-d">d</span><span><b>диаметр диска</b></span><span class="unit-tag">мм</span></div>
+    <div class="var-row"><span class="sym sym-D">D</span><span><b>полный диаметр</b></span><span class="unit-tag">мм</span></div>
+    <div class="var-row"><span class="sym sym-R">R</span><span><b>радиус колеса</b></span><span class="unit-tag">мм</span></div>
+  </div>
+
+  <div class="formula-card fc-blue">
+    <div class="fc-head"><span class="fc-icon">⚙️</span> Диаметр диска (мм)</div>
+    <div class="formula-display">
+      <span class="sym sym-d">d</span><span class="op">=</span><span class="sym sym-c">c</span><span class="op">·</span><span>25,4</span>
+    </div>
+  </div>
+
+  <div class="formula-card fc-mint">
+    <div class="fc-head"><span class="fc-icon">📏</span> Высота боковины</div>
+    <div class="formula-display">
+      <span class="sym sym-H">H</span><span class="op">=</span>
+      <span class="frac">
+        <span class="num"><span class="sym sym-a">a</span> <span class="op">·</span> <span class="sym sym-b">b</span></span>
+        <span class="den">100</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="formula-card fc-gold">
+    <div class="fc-head"><span class="fc-icon">📐</span> Двойная высота боковины</div>
+    <div class="formula-display">
+      <span>2</span><span class="sym sym-H">H</span><span class="op">=</span>
+      <span class="frac">
+        <span class="num"><span class="sym sym-a">a</span> <span class="op">·</span> <span class="sym sym-b">b</span></span>
+        <span class="den">100</span>
+      </span>
+      <span class="op">·</span><span>2</span>
+    </div>
+  </div>
+
+  <div class="formula-card fc-coral">
+    <div class="fc-head"><span class="fc-icon">🔘</span> Полный диаметр колеса</div>
+    <div class="formula-display">
+      <span class="sym sym-D">D</span><span class="op">=</span><span class="sym sym-d">d</span><span class="op">+</span><span>2</span><span class="sym sym-H">H</span>
+    </div>
+  </div>
+
+  <div class="formula-card fc-teal">
+    <div class="fc-head"><span class="fc-icon">⚪</span> Радиус колеса</div>
+    <div class="formula-display">
+      <span class="sym sym-R">R</span><span class="op">=</span>
+      <span class="frac">
+        <span class="num"><span class="sym sym-D">D</span></span>
+        <span class="den">2</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="tip">
+    <b>⚠️ Важно:</b> 1 дюйм = 25,4 мм.<br>
+    Если <b>D</b> двух колёс отличается больше чем на 2% — спидометр будет врать.
+  </div>
+</aside>
+
+<script>
+const $ = id => document.getElementById(id);
+const PI = Math.PI;
+const INCH = 25.4;
+
+function toggleCheat(){
+  const open = $('cheatPanel').classList.toggle('open');
+  document.body.classList.toggle('cheat-open', open);
+  $('cheatBtn').classList.toggle('active', open);
+}
+
+function setMode(m){
+  $('modeOne').classList.toggle('active', m==='one');
+  $('modeTwo').classList.toggle('active', m==='two');
+  $('oneBlock').classList.toggle('hidden', m!=='one');
+  $('twoBlock').classList.toggle('hidden', m!=='two');
+}
+
+function side(a,b){ return a * b / 100; }
+function rim(c){ return c * INCH; }
+function wheel(a,b,c){ return 2*side(a,b) + rim(c); }
+function radius(a,b,c){ return wheel(a,b,c) / 2; }
+function fmt(x){ return (Math.round(x*10)/10).toFixed(1); }
+
+function calc(type){
+  const a = +$('w1').value, b = +$('p1').value, c = +$('d1').value;
+  if(!(a>0 && b>0 && c>0)){ alert('Заполни все поля положительными числами'); return; }
+
+  const H = side(a,b), d = rim(c), D = wheel(a,b,c), R = radius(a,b,c), C = PI*D;
+  const box = $('resOne');
+  let label='', value='', formula='', extra='';
+
+  if(type==='wheel'){
+    label = '🔘 Полный диаметр колеса (D)';
+    value = fmt(D) + ' <small>мм</small>';
+    formula = `D = d + 2H = ${fmt(d)} + ${fmt(2*H)} = ${fmt(D)} мм`;
+    extra = `в сантиметрах: ${fmt(D/10)} см · радиус R = ${fmt(R)} мм`;
+  }
+  if(type==='side'){
+    label = '📏 Высота боковины (H)';
+    value = fmt(H) + ' <small>мм</small>';
+    formula = `H = (a·b)/100 = (${a}·${b})/100 = ${fmt(H)} мм`;
+    extra = `двойная 2H = ${fmt(2*H)} мм`;
+  }
+  if(type==='rim'){
+    label = '⚙️ Диаметр диска (d)';
+    value = fmt(d) + ' <small>мм</small>';
+    formula = `d = c · 25,4 = ${c} · 25,4 = ${fmt(d)} мм`;
+    extra = `в сантиметрах: ${fmt(d/10)} см`;
+  }
+  if(type==='cm'){
+    label = '📐 Полный диаметр в см';
+    value = fmt(D/10) + ' <small>см</small>';
+    formula = `D = ${fmt(D)} мм = ${fmt(D/10)} см`;
+    extra = `длина окружности: ${fmt(C)} мм ≈ ${fmt(C/10)} см`;
+  }
+  if(type==='radius'){
+    label = '⚪ Радиус колеса (R)';
+    value = fmt(R) + ' <small>мм</small>';
+    formula = `R = D/2 = ${fmt(D)}/2 = ${fmt(R)} мм`;
+    extra = `в сантиметрах: ${fmt(R/10)} см`;
+  }
+
+  $('resLabel').textContent = label;
+  $('resValue').innerHTML = value;
+  $('resFormula').textContent = formula;
+  $('resExtra').textContent = extra;
+  box.classList.add('show');
+}
+
+function compare(){
+  const a1=+$('w1a').value, b1=+$('p1a').value, c1=+$('d1a').value;
+  const a2=+$('w2a').value, b2=+$('p2a').value, c2=+$('d2a').value;
+  if(!(a1>0&&b1>0&&c1>0&&a2>0&&b2>0&&c2>0)){ alert('Заполни все поля обоих колёс'); return; }
+
+  const H1=side(a1,b1), R1=rim(c1), D1=wheel(a1,b1,c1), Ra1=radius(a1,b1,c1), C1=PI*D1;
+  const H2=side(a2,b2), R2=rim(c2), D2=wheel(a2,b2,c2), Ra2=radius(a2,b2,c2), C2=PI*D2;
+
+  const diff = (x,y)=> x-y;
+  const cls = v => Math.abs(v) < 0.05 ? 'ok' : (Math.abs(v) < 5 ? 'warn' : 'bad');
+  const set = (id, txt, c)=>{ const el=$(id); el.textContent=txt; el.className='diff '+(c||''); };
+
+  $('c_s1').textContent = fmt(H1)+' мм';
+  $('c_s2').textContent = fmt(H2)+' мм';
+  $('c_r1').textContent = fmt(R1)+' мм';
+  $('c_r2').textContent = fmt(R2)+' мм';
+  $('c_d1').textContent = fmt(D1)+' мм';
+  $('c_d2').textContent = fmt(D2)+' мм';
+  $('c_ra1').textContent = fmt(Ra1)+' мм';
+  $('c_ra2').textContent = fmt(Ra2)+' мм';
+  $('c_c1').textContent = fmt(C1)+' мм';
+  $('c_c2').textContent = fmt(C2)+' мм';
+
+  set('c_sd', (diff(H2,H1)>=0?'+':'')+fmt(diff(H2,H1))+' мм', cls(diff(H2,H1)));
+  set('c_rd', (diff(R2,R1)>=0?'+':'')+fmt(diff(R2,R1))+' мм', cls(diff(R2,R1)));
+  set('c_dd', (diff(D2,D1)>=0?'+':'')+fmt(diff(D2,D1))+' мм', cls(diff(D2,D1)));
+  set('c_rad', (diff(Ra2,Ra1)>=0?'+':'')+fmt(diff(Ra2,Ra1))+' мм', cls(diff(Ra2,Ra1)));
+  set('c_cd', (diff(C2,C1)>=0?'+':'')+fmt(diff(C2,C1))+' мм', cls(diff(C2,C1)));
+
+  $('cmpTable').classList.add('show');
+
+  const pct = Math.abs(diff(D2,D1)) / D1 * 100;
+  const v = $('verdict');
+  v.classList.add('show');
+
+  if(pct < 0.1){
+    v.className = 'verdict show ok';
+    v.textContent = `✅ Колёса практически одинаковые (разница ${fmt(pct)}%). Спидометр не изменится.`;
+  } else if(pct <= 2){
+    v.className = 'verdict show warn';
+    v.textContent = `⚠️ Разница диаметров ${fmt(pct)}% — допустимо, но спидометр будет немного врать (${fmt(diff(D2,D1))} мм).`;
+  } else {
+    v.className = 'verdict show bad';
+    v.textContent = `❌ Разница диаметров ${fmt(pct)}% — слишком много! Спидометр будет врать, возможен контакт с арками. Разница: ${fmt(diff(D2,D1))} мм.`;
+  }
+}
+</script>
+</body>
+</html>
