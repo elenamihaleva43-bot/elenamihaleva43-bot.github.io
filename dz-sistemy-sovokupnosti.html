@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ΤΕΤΡΑΚΤΥΣ · ДЗ · Системы и совокупности</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c; --teal-dark:#16a085; --teal-deep:#0e7c66;
+    --mint:#7fffd4; --coral:#ff6b6b;
+    --gold:#f4d35e; --gold-light:#ffe89a;
+    --text:#e8f8f5; --text-soft:#b8d8d0;
+    --ok:#2ecc71; --err:#ff6b6b;
+  }
+  body{
+    font-family: Georgia, "Times New Roman", serif;
+    color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(26,188,156,0.22), transparent 55%),
+      radial-gradient(ellipse at 85% 90%, rgba(127,255,212,0.15), transparent 55%),
+      radial-gradient(ellipse at 50% 50%, rgba(244,211,94,0.06), transparent 70%),
+      linear-gradient(160deg, #0a2a33 0%, #0d3b47 50%, #134e5e 100%);
+    background-attachment: fixed;
+    min-height:100vh; overflow-x:hidden;
+    line-height:1.6;
+  }
+
+  .wrap{position:relative;z-index:1;max-width:820px;margin:0 auto;padding:14px;padding-top:100px;padding-bottom:80px;}
+
+  /* ── ЛОГОТИП ── */
+  .logo-mini{
+    position:fixed; top:14px; left:16px; z-index:100;
+    display:flex;align-items:center;gap:10px;
+    background: rgba(255,255,255,0.05);
+    border:1.5px solid rgba(26,188,156,0.35);
+    border-radius:16px; padding:10px 14px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    font-family:'Times New Roman',serif;
+    user-select:none; cursor:default;
+  }
+  .logo-dots{font-size:11px;line-height:1.15;letter-spacing:2px;font-weight:bold;color:var(--teal);}
+  .logo-txt{font-size:15px;letter-spacing:2px;font-weight:700;color:var(--teal);}
+  .logo-txt small{display:block;font-size:11px;letter-spacing:3px;font-weight:400;color:var(--teal);opacity:.85;font-style:normal;}
+
+  /* ── ДАТА ── */
+  .top-fixed{
+    position:fixed; top:14px; right:16px; z-index:100;
+    display:flex;gap:8px;align-items:center;
+  }
+  .chip{
+    background: rgba(255,255,255,0.05);
+    border:1.5px solid rgba(26,188,156,0.35);
+    border-radius:20px;padding:8px 16px;
+    font-weight:700;font-size:14px;white-space:nowrap;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    color:var(--text);
+  }
+  .chip.date{font-family:"Courier New",monospace;}
+
+  /* ── ЗАГОЛОВОК ── */
+  .title{
+    text-align:center; margin: 20px auto 30px;
+  }
+  .title h1{
+    font-size: 28px; color:var(--mint);
+    text-shadow: 0 0 24px rgba(127,255,212,0.35);
+    margin-bottom:8px;
+  }
+  .title .sub{color:var(--text-soft); font-size:14.5px; font-style:italic;}
+
+  /* ── КАРТОЧКА ── */
+  .card{
+    background: rgba(255,255,255,0.04);
+    border:1.5px solid rgba(26,188,156,0.4);
+    border-radius:22px;padding:22px 24px;margin-bottom:18px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+  .card.accent{border-top:6px solid var(--teal);}
+  .card.accent-g{border-top:6px solid var(--gold);}
+
+  h2{font-size:19px;color:var(--mint);margin:0 0 12px;font-family:"Times New Roman",serif;}
+  p{line-height:1.65;margin-bottom:10px;font-size:15.5px;color:var(--text);}
+
+  /* ── ИНСТРУКЦИЯ ── */
+  .instructions{
+    background: rgba(26,188,156,0.10);
+    border-left:5px solid var(--teal);
+    border-radius:14px;padding:14px 18px;margin:10px 0;
+    font-size:15px;line-height:1.7;
+  }
+  .instructions b{color:var(--mint);}
+  .instructions ol{margin:8px 0 0 22px;}
+  .instructions li{margin-bottom:6px;}
+
+  /* ── ПОЛЕ ИМЕНИ ── */
+  .name-row{
+    display:flex;gap:10px;align-items:center;margin:14px 0;
+  }
+  .name-row label{font-size:15px;color:var(--mint);font-weight:bold;white-space:nowrap;}
+  .name-row input{
+    flex:1;
+    padding:12px 16px;border-radius:14px;
+    background: rgba(255,255,255,0.06);
+    border:1.5px solid rgba(26,188,156,0.5);
+    color:var(--text);font-family: Georgia, serif;font-size:16px;
+    outline:none;transition:all .18s;
+  }
+  .name-row input:focus{border-color:var(--mint);background:rgba(26,188,156,0.12);}
+
+  /* ── ЗАДАНИЯ ── */
+  .task{
+    background: rgba(255,255,255,0.03);
+    border:1.5px solid rgba(26,188,156,0.3);
+    border-radius:18px;
+    padding:18px 20px;
+    margin-bottom:16px;
+    transition: all .2s;
+  }
+  .task:hover{ border-color: var(--mint); }
+  .task-head{
+    display:flex;align-items:center;gap:12px;margin-bottom:14px;
+  }
+  .task-num{
+    font-family:"Courier New",monospace; font-weight:bold;
+    color:#04231d; font-size:15px;
+    background: linear-gradient(135deg, #1abc9c, #16a085);
+    padding:6px 14px; border-radius:12px;
+    flex-shrink:0;
+    align-self: flex-start;
+  }
+  .task-text{
+    flex:1;
+    font-family:"Cambria Math","Times New Roman",serif;
+  }
+  /* фигурная / квадратная скобка */
+  .bracket{
+    display:flex;
+    align-items: stretch;
+    gap: 6px;
+    font-size: 20px;
+  }
+  .bracket-symbol{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:"Times New Roman",serif;
+    font-size: 62px;
+    font-weight: 300;
+    line-height: 1;
+    color: var(--gold);
+    flex-shrink: 0;
+    width: 24px;
+    padding-bottom: 4px;
+  }
+  .bracket-lines{
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    font-size: 19px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .bracket-lines .line{white-space: nowrap;}
+
+  /* ── ПОЛЕ ОТВЕТА + ⌨ ── */
+  .task-answer{
+    display:flex;gap:8px;align-items:center;
+    margin-top:12px;
+  }
+  .task-answer label{
+    font-size:14px;color:var(--text-soft);white-space:nowrap;
+  }
+  .task-answer input{
+    flex:1;
+    padding:11px 14px;border-radius:12px;
+    background: rgba(255,255,255,0.06);
+    border:1.5px solid rgba(26,188,156,0.45);
+    color:var(--text);font-family:"Courier New", monospace;font-size:15px;
+    outline:none;transition: all .18s;
+  }
+  .task-answer input:focus{border-color:var(--mint);background:rgba(26,188,156,0.12);}
+  .task-answer input.locked{opacity:.75;cursor:not-allowed;}
+  .task-answer input.ok{border-color:var(--ok);background:rgba(46,204,113,0.12);}
+  .task-answer input.err{border-color:var(--err);background:rgba(255,107,107,0.12);}
+  .btn-kbd{
+    flex-shrink:0;
+    width:44px;height:44px;
+    border-radius:12px;
+    background: rgba(255,255,255,0.05);
+    border:1.5px solid rgba(26,188,156,0.45);
+    color:var(--mint);
+    font-size:20px;
+    cursor:pointer;
+    transition: all .18s;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .btn-kbd:hover{
+    background:rgba(26,188,156,0.15);
+    border-color:var(--mint);
+    transform:translateY(-2px);
+  }
+  .btn-kbd.active{
+    background: linear-gradient(135deg, #1abc9c, #16a085);
+    color:#04231d;
+    border-color:transparent;
+  }
+
+  .task-verdict{
+    font-size:14px;font-weight:bold;min-width:36px;text-align:right;
+  }
+  .task-verdict.ok{color:var(--ok);}
+  .task-verdict.err{color:var(--err);}
+
+  /* ── МИНИ-КЛАВИАТУРА ── */
+  .mini-kbd{
+    display:none;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-top:10px;
+    padding:10px 12px;
+    background: rgba(10,42,51,0.5);
+    border:1.5px solid rgba(26,188,156,0.4);
+    border-radius:14px;
+  }
+  .mini-kbd.show{display:flex;}
+  .kbd-key{
+    min-width:40px;height:38px;
+    padding:0 12px;
+    border-radius:10px;
+    background: rgba(255,255,255,0.06);
+    border:1.5px solid rgba(26,188,156,0.4);
+    color:var(--text);
+    font-family:"Cambria Math","Times New Roman",serif;
+    font-size:18px;
+    cursor:pointer;
+    transition: all .15s;
+    display:flex;align-items:center;justify-content:center;
+    user-select:none;
+  }
+  .kbd-key:hover{
+    background: linear-gradient(135deg, #1abc9c, #16a085);
+    color:#04231d;
+    border-color:transparent;
+    transform:translateY(-2px);
+  }
+  .kbd-key:active{transform:scale(0.94);}
+
+  .task-correct{
+    display:none;
+    margin-top:10px;
+    padding:10px 14px;
+    background:rgba(46,204,113,0.10);
+    border-left:3px solid var(--ok);
+    border-radius:10px;
+    color:#b8f0ce;
+    font-size:14.5px;
+    font-family:"Cambria Math", serif;
+  }
+  .task-correct.show{display:block;}
+
+  /* ── КНОПКИ ── */
+  .btnrow{
+    display:flex;gap:10px;flex-wrap:wrap;justify-content:center;
+    margin-top:20px;
+  }
+  button.big{
+    font-family: Georgia, serif;font-size:15.5px;font-weight:700;
+    cursor:pointer;border:none;border-radius:14px;
+    padding:13px 22px;color:#04231d;
+    background: linear-gradient(135deg, #1abc9c, #16a085);
+    transition:.2s;
+    box-shadow: 0 6px 20px rgba(26,188,156,0.3);
+  }
+  button.big:hover{transform:translateY(-2px); box-shadow: 0 8px 28px rgba(26,188,156,0.45);}
+  button.big:active{transform:translateY(1px);}
+  button.big.l{
+    background: linear-gradient(135deg, #f4d35e, #ffe89a);
+    color:#3a2e05;
+    box-shadow: 0 6px 20px rgba(244,211,94,0.35);
+  }
+  button.big.l:hover{box-shadow: 0 8px 28px rgba(244,211,94,0.5);}
+  button.big.d{
+    background: rgba(255,255,255,0.06);
+    color:var(--text-soft);
+    border:1.5px solid rgba(26,188,156,0.4);
+    box-shadow:none;
+  }
+  button.big.d:hover{background:rgba(26,188,156,0.15); color:var(--mint); box-shadow:none;}
+  button.big:disabled{opacity:.5;cursor:default;transform:none!important;}
+
+  /* ── СЧЁТЧИК ── */
+  .score-box{
+    display:none;
+    text-align:center;
+    padding:16px;
+    border-radius:16px;
+    background:rgba(26,188,156,0.12);
+    border:1.5px solid rgba(26,188,156,0.4);
+    margin-top:20px;
+    font-size:18px;
+    font-weight:bold;
+    color:var(--mint);
+  }
+  .score-box.show{display:block;}
+  .score-box .big-num{
+    font-family:"Courier New",monospace;
+    font-size:28px; color:var(--gold);
+    margin:0 6px;
+  }
+
+  /* ── РЕЗУЛЬТАТ ── */
+  .result-box{
+    display:none;
+    margin-top:18px;
+    padding:16px 18px;
+    background:rgba(10,42,51,0.6);
+    border:1.5px solid rgba(26,188,156,0.4);
+    border-radius:16px;
+    font-family:"Courier New", monospace;
+    font-size:14px;
+    white-space:pre-wrap;
+    color:var(--text);
+    line-height:1.55;
+    max-height:400px; overflow-y:auto;
+  }
+  .result-box.show{display:block;}
+
+  /* ── ТОСТ ── */
+  .toast{
+    position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(80px);
+    background: linear-gradient(135deg, #1abc9c, #16a085);
+    color:#04231d;
+    padding:14px 26px;
+    border-radius:16px;
+    font-family: Georgia, serif; font-weight:bold; font-size:15px;
+    box-shadow: 0 12px 40px rgba(26,188,156,0.5);
+    opacity:0;
+    transition: all .35s cubic-bezier(.3,.9,.4,1);
+    z-index:200; pointer-events:none;
+    max-width:90vw; text-align:center;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  @media (max-width: 600px){
+    .wrap{padding-top:90px;}
+    .logo-mini{padding:8px 10px;}
+    .logo-txt{font-size:13px;}
+    .title h1{font-size:22px;}
+    .bracket-symbol{font-size:52px; width:20px;}
+    .bracket-lines{font-size:16px;}
+    .chip{padding:6px 12px; font-size:13px;}
+    .name-row{flex-wrap:wrap;}
+    .name-row label{width:100%;}
+    button.big{font-size:14px; padding:11px 16px;}
+    .kbd-key{min-width:36px; height:34px; padding:0 9px; font-size:16px;}
+    .btn-kbd{width:40px; height:40px; font-size:18px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ЛОГОТИП -->
+<div class="logo-mini">
+  <div class="logo-dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="logo-txt">ΤΕΤΡΑΚΤΥΣ<small>Школа Елены Михалевой</small></div>
+</div>
+
+<!-- ДАТА -->
+<div class="top-fixed">
+  <div class="chip date" id="dateChip">📅 —</div>
+</div>
+
+<div class="wrap">
+  <div class="title">
+    <h1>📐 Домашнее задание · Системы и совокупности</h1>
+    <div class="sub">8 заданий</div>
+  </div>
+
+  <!-- ИНСТРУКЦИЯ + ИМЯ -->
+  <div class="card accent">
+    <h2>📋 Инструкция</h2>
+    <div class="instructions">
+      <b>Как выполнять:</b>
+      <ol>
+        <li>Реши каждое задание в тетради.</li>
+        <li>Впиши ответ в поле рядом.</li>
+        <li>Если нужны специальные значки — нажми кнопку <b>⌨</b> рядом с полем.</li>
+        <li>Нажми <b>«✅ Проверить все ответы»</b> внизу.</li>
+      </ol>
+    </div>
+    <div class="name-row">
+      <label for="studentName">👤 Имя ученика:</label>
+      <input type="text" id="studentName" placeholder="введи своё имя" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЯ -->
+  <div class="card accent-g">
+    <h2>📚 Задания</h2>
+
+    <!-- 1 -->
+    <div class="task" data-idx="0">
+      <div class="task-head">
+        <div class="task-num">1</div>
+        <div class="task-text">
+          <div class="bracket">
+            <div class="bracket-symbol">{</div>
+            <div class="bracket-lines">
+              <div class="line">x² − 9 ≤ 0</div>
+              <div class="line">x + 1 &gt; 0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="task-answer">
+        <label>Ответ:</label>
+        <input type="text" data-ans="0" autocomplete="off">
+        <button class="btn-kbd" data-kbd="0" title="Вставить знак">⌨</button>
+        <div class="task-verdict" data-vd="0"></div>
+      </div>
+      <div class="mini-kbd" data-kbd-panel="0"></div>
+      <div class="task-correct" data-correct="0"></div>
+    </div>
+
+    <!-- 2 -->
+    <div class="task" data-idx="1">
+      <div class="task-head">
+        <div class="task-num">2</div>
+        <div class="task-text">
+          <div class="bracket">
+            <div class="bracket-symbol">{</div>
+            <div class="bracket-lines">
+              <div class="line">x² − 5x &gt; 0</div>
+              <div class="line">x − 7 &lt; 0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="task-answer">
+        <label>Ответ:</label>
+        <input type="text" data-ans="1" autocomplete="off">
+        <button class="btn-kbd" data-kbd="1" title="Вставить знак">⌨</button>
+        <div class="task-verdict" data-vd="1"></div>
+      </div>
+      <div class="mini-kbd" data-kbd-panel="1"></div>
+      <div class="task-correct" data-correct="1"></div>
+    </div>
+
+    <!-- 3 -->
+    <div class="task" data-idx="2">
+      <div class="task-head">
+        <div class="task-num">3</div>
+        <div class="task-text">
+          <div class="bracket">
+            <div class="bracket-symbol">{</div>
+            <div class="bracket-lines">
+              <div class="line">2x² − 5x + 2 ≤ 0</div>
+              <div class="line">x − 1 &gt; 0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="task-answer">
+        <label>Ответ:</label>
+        <input type="text" data-ans="2" autocomplete="off">
+        <button class="btn-kbd" data-kbd="2" title="Вставить знак">⌨</button>
+        <div class="task-verdict" data-vd="2"></div>
+      </div>
+      <div class="mini-kbd" data-kbd-panel="2"></div>
+      <div class="task-correct" data-correct="2"></div>
+    </div>
+
+    <!-- 4 -->
+    <div class="task" data-idx="3">
+      <div class="task-head">
+        <div class="task-num">4</div>
+        <div class="task-text">
+          <div class="bracket">
+            <div class="bracket-symbol">{</div>
+            <div class="bracket-lines">
+              <div class="line">x² − 4 ≥ 0</div>
+              <div class="line">x² − 16 &lt; 0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="task-answer">
+        <label>Ответ:</label>
+        <input type="text" data-ans="3" autocomplete="off">
+        <button class="btn-kbd" data-kbd="3" title="Вставить знак">⌨</button>
+        <div class="task-verdict" data-vd="3"></div>
+      </div>
+      <div class="mini-kbd" data-kbd-panel="3"></div>
+      <div class="task-correct" data-correct="3"></div>
+    </div>
+
+    <!-- 5 -->
+    <div class="task" data-idx="4">
+      <div class="task-head">
+        <div class="task-num">5</div>
+        <div class="task-text">
+          <div class="bracket">
+            <div class="bracket-symbol">[</div>
+            <div class="bracket-lines">
+              <div class="line">x² − 5x + 6 &gt; 0</div>
+              <div class="line">x² − 4 ≤ 0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="task-answer">
+        <label>Ответ:</label>
+        <input type="text" data-ans="4" autocomplete="off">
+        <button class="btn-kbd" data-kbd="4" title="Вставить знак">⌨</button>
+        <div class="task-verdict" data-vd="4"></div>
+      </div>
+      <div class="mini-kbd" data-kbd-panel="4"></div>
+      <div class="task-correct" data-correct="4"></div>
+    </div>
+
+    <!-- 6 -->
+    <div class="task" data-idx="5">
+      <div class="task-head">
+        <div class="task-num">6</div>
+        <div class="task-text">
+          <div class="bracket">
+            <div class="bracket-symbol">[</div>
+            <div class="bracket-lines">
+              <div class="line">x² − 3x − 10 ≥ 0</div>
+              <div class="line">x² + 4x − 5 &lt; 0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="task-answer">
+        <label>Ответ:</label>
+        <input type="text" data-ans="5" autocomplete="off">
+        <button class="btn-kbd" data-kbd="5" title="Вставить знак">⌨</button>
+        <div class="task-verdict" data-vd="5"></div>
+      </div>
+      <div class="mini-kbd" data-kbd-panel="5"></div>
+      <div class="task-correct" data-correct="5"></div>
+    </div>
+
+    <!-- 7 -->
+    <div class="task" data-idx="6">
+      <div class="task-head">
+        <div class="task-num">7</div>
+        <div class="task-text">
+          <div class="bracket">
+            <div class="bracket-symbol">{</div>
+            <div class="bracket-lines">
+              <div class="line">x² + 5 &gt; 0</div>
+              <div class="line">x − 4 &lt; 0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="task-answer">
+        <label>Ответ:</label>
+        <input type="text" data-ans="6" autocomplete="off">
+        <button class="btn-kbd" data-kbd="6" title="Вставить знак">⌨</button>
+        <div class="task-verdict" data-vd="6"></div>
+      </div>
+      <div class="mini-kbd" data-kbd-panel="6"></div>
+      <div class="task-correct" data-correct="6"></div>
+    </div>
+
+    <!-- 8 -->
+    <div class="task" data-idx="7">
+      <div class="task-head">
+        <div class="task-num">8</div>
+        <div class="task-text">
+          <div class="bracket">
+            <div class="bracket-symbol">[</div>
+            <div class="bracket-lines">
+              <div class="line">x² + 7 &lt; 0</div>
+              <div class="line">x − 2 &gt; 0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="task-answer">
+        <label>Ответ:</label>
+        <input type="text" data-ans="7" autocomplete="off">
+        <button class="btn-kbd" data-kbd="7" title="Вставить знак">⌨</button>
+        <div class="task-verdict" data-vd="7"></div>
+      </div>
+      <div class="mini-kbd" data-kbd-panel="7"></div>
+      <div class="task-correct" data-correct="7"></div>
+    </div>
+
+    <!-- КНОПКИ -->
+    <div class="btnrow">
+      <button class="big" id="btnCheck">✅ Проверить все ответы</button>
+    </div>
+
+    <div class="score-box" id="scoreBox">
+      Правильно: <span class="big-num" id="scoreNum">0</span> из <span class="big-num" id="scoreTotal">8</span>
+    </div>
+
+    <div class="btnrow" id="afterCheck" style="display:none;">
+      <button class="big d" id="btnRetry">🔄 Попробовать снова</button>
+      <button class="big l" id="btnForm">📩 Сформировать ответ для учителя</button>
+      <button class="big" id="btnCopy">📋 Скопировать ответы</button>
+      <button class="big" id="btnMax">💬 Отправить учителю в Макс</button>
+    </div>
+
+    <div class="result-box" id="resultBox"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ЗДЕСЬ БУДЕТ ЧАСТЬ 2: ВЕСЬ СКРИПТ -->
+<script>
+/* ═══════════════════════════════════════════
+   ДАТА
+   ═══════════════════════════════════════════ */
+(function(){
+  const d = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  document.getElementById('dateChip').textContent =
+    `📅 ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`;
+})();
+
+/* ═══════════════════════════════════════════
+   ИМЯ УЧЕНИКА (localStorage)
+   ═══════════════════════════════════════════ */
+const nameInput = document.getElementById('studentName');
+const savedName = localStorage.getItem('tetraktis_student_name') || '';
+if (savedName) nameInput.value = savedName;
+nameInput.addEventListener('input', () => {
+  localStorage.setItem('tetraktis_student_name', nameInput.value.trim());
+});
+
+/* ═══════════════════════════════════════════
+   МИНИ-КЛАВИАТУРА (значки)
+   ═══════════════════════════════════════════ */
+const KEYS = [
+  '∞', '∪', '∅', 'ℝ',
+  '≤', '≥', '<', '>',
+  '(', ')', '[', ']',
+  '{', '}', ';', '−'
+];
+
+document.querySelectorAll('.mini-kbd').forEach(panel => {
+  KEYS.forEach(k => {
+    const btn = document.createElement('div');
+    btn.className = 'kbd-key';
+    btn.textContent = k;
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      const idx = panel.dataset.kbdPanel;
+      const input = document.querySelector(`input[data-ans="${idx}"]`);
+      if (!input || input.disabled) return;
+
+      const start = input.selectionStart ?? input.value.length;
+      const end = input.selectionEnd ?? input.value.length;
+      const val = input.value;
+      input.value = val.slice(0, start) + k + val.slice(end);
+      const newPos = start + k.length;
+      input.focus();
+      try { input.setSelectionRange(newPos, newPos); } catch(err){}
+    });
+    panel.appendChild(btn);
+  });
+});
+
+document.querySelectorAll('.btn-kbd').forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.preventDefault();
+    const idx = btn.dataset.kbd;
+    const panel = document.querySelector(`.mini-kbd[data-kbd-panel="${idx}"]`);
+    const isOpen = panel.classList.contains('show');
+
+    document.querySelectorAll('.mini-kbd').forEach(p => p.classList.remove('show'));
+    document.querySelectorAll('.btn-kbd').forEach(b => b.classList.remove('active'));
+
+    if (!isOpen){
+      panel.classList.add('show');
+      btn.classList.add('active');
+    }
+  });
+});
+
+/* ═══════════════════════════════════════════
+   БАНК ЗАДАНИЙ (эталоны)
+   ═══════════════════════════════════════════ */
+const TASKS = [
+  {
+    text:'{ x² − 9 ≤ 0; x + 1 > 0 }',
+    answer:'(−1; 3]',
+    solution:'x² − 9 ≤ 0 → [−3; 3]. x + 1 > 0 → (−1; +∞). Пересечение: (−1; 3].'
+  },
+  {
+    text:'{ x² − 5x > 0; x − 7 < 0 }',
+    answer:'(−∞; 0) ∪ (5; 7)',
+    solution:'x² − 5x > 0 → (−∞; 0) ∪ (5; +∞). x − 7 < 0 → (−∞; 7). Пересечение: (−∞; 0) ∪ (5; 7).'
+  },
+  {
+    text:'{ 2x² − 5x + 2 ≤ 0; x − 1 > 0 }',
+    answer:'(1; 2]',
+    solution:'2x² − 5x + 2 ≤ 0 → [1/2; 2]. x > 1 → (1; +∞). Пересечение: (1; 2].'
+  },
+  {
+    text:'{ x² − 4 ≥ 0; x² − 16 < 0 }',
+    answer:'[−4; −2] ∪ [2; 4)',
+    solution:'x² ≥ 4 → (−∞; −2] ∪ [2; +∞). x² < 16 → (−4; 4). Пересечение: [−4; −2] ∪ [2; 4).'
+  },
+  {
+    text:'[ x² − 5x + 6 > 0; x² − 4 ≤ 0 ]',
+    answer:'ℝ',
+    solution:'x² − 5x + 6 > 0 → (−∞; 2) ∪ (3; +∞). x² − 4 ≤ 0 → [−2; 2]. Объединение: ℝ.'
+  },
+  {
+    text:'[ x² − 3x − 10 ≥ 0; x² + 4x − 5 < 0 ]',
+    answer:'(−∞; −5] ∪ (−5; 1) ∪ [5; +∞)'.replace('(−5; 1) ∪ ','(−5; 1) ∪ '),
+    solution:'x² − 3x − 10 ≥ 0 → (−∞; −2] ∪ [5; +∞). x² + 4x − 5 < 0 → (−5; 1). Объединение: (−∞; −2] ∪ [5; +∞) ∪ (−5; 1) = (−5; 1) ∪ (−∞; −2] ∪ [5; +∞).'
+  },
+  {
+    text:'{ x² + 5 > 0; x − 4 < 0 }',
+    answer:'(−∞; 4)',
+    solution:'x² + 5 > 0 — верно всегда. Система сводится ко второму: x < 4.'
+  },
+  {
+    text:'[ x² + 7 < 0; x − 2 > 0 ]',
+    answer:'(2; +∞)',
+    solution:'x² + 7 < 0 — невозможно. Совокупность сводится ко второму: x > 2.'
+  }
+];
+
+/* Правильные ответы (для 6-го задания — без накладок) */
+TASKS[5].answer = '(−5; 1) ∪ (−∞; −2] ∪ [5; +∞)';
+
+/* ═══════════════════════════════════════════
+   ПРОВЕРКА
+   ═══════════════════════════════════════════ */
+function normalize(s){
+  return s.toLowerCase()
+    .replace(/\s+/g,'')
+    .replace(/−/g,'-')
+    .replace(/;/g,',')
+    .replace(/[()[\]{}]/g,'')
+    .replace(/∪/g,'|')
+    .replace(/,/g,'|')
+    .replace(/\+∞/g,'+inf')
+    .replace(/∞/g,'inf');
+}
+
+function isAllReals(s){
+  return /^(r|ℝ|всечисла|любое)$/i.test(s);
+}
+function isEmpty(s){
+  return /^(∅|пусто|нетрешений|нетрешения)$/i.test(s);
+}
+
+/* Сравнение множеств интервалов (для устойчивости к порядку) */
+function canonical(s){
+  const parts = s.toLowerCase()
+    .replace(/\s+/g,'')
+    .replace(/−/g,'-')
+    .replace(/∪/g,',')
+    .split(',')
+    .map(x => x.replace(/[()[\]{}]/g,''));
+  parts.sort();
+  return parts.join('|');
+}
+
+function checkOne(userVal, expected){
+  if (!userVal) return false;
+  const nU = normalize(userVal);
+  const nE = normalize(expected);
+  if (nU === nE) return true;
+  if (isAllReals(nU) && isAllReals(nE)) return true;
+  if (isEmpty(nU) && isEmpty(nE)) return true;
+  // порядок промежутков не важен
+  if (canonical(userVal) === canonical(expected)) return true;
+  return false;
+}
+
+/* ═══════════════════════════════════════════
+   СОСТОЯНИЕ
+   ═══════════════════════════════════════════ */
+let checked = false;
+let score = 0;
+
+/* ═══════════════════════════════════════════
+   ПРОВЕРКА
+   ═══════════════════════════════════════════ */
+document.getElementById('btnCheck').addEventListener('click', () => {
+  if (checked) return;
+
+  document.querySelectorAll('.mini-kbd').forEach(p => p.classList.remove('show'));
+  document.querySelectorAll('.btn-kbd').forEach(b => b.classList.remove('active'));
+
+  const inputs = document.querySelectorAll('input[data-ans]');
+  let emptyCount = 0;
+  inputs.forEach(inp => { if (!inp.value.trim()) emptyCount++; });
+
+  if (emptyCount === inputs.length){
+    showToast('⚠️ Впиши хотя бы один ответ');
+    return;
+  }
+
+  score = 0;
+
+  inputs.forEach(inp => {
+    const idx = +inp.dataset.ans;
+    const t = TASKS[idx];
+    const vd = document.querySelector(`.task-verdict[data-vd="${idx}"]`);
+    const cor = document.querySelector(`.task-correct[data-correct="${idx}"]`);
+    const userVal = inp.value.trim();
+
+    inp.classList.remove('ok','err');
+    vd.classList.remove('ok','err');
+    cor.classList.remove('show');
+
+    if (!userVal){
+      inp.classList.add('err');
+      vd.textContent = '—';
+      vd.classList.add('err');
+      return;
+    }
+
+    if (checkOne(userVal, t.answer)){
+      inp.classList.add('ok');
+      vd.textContent = '✅';
+      vd.classList.add('ok');
+      score++;
+    } else {
+      inp.classList.add('err');
+      vd.textContent = '❌';
+      vd.classList.add('err');
+      cor.innerHTML = `💡 Правильный ответ: <b>${t.answer}</b><br><span style="color:var(--text-soft);font-size:13.5px;">${t.solution}</span>`;
+      cor.classList.add('show');
+    }
+
+    inp.classList.add('locked');
+    inp.disabled = true;
+  });
+
+  document.querySelectorAll('.btn-kbd').forEach(b => {
+    b.disabled = true;
+    b.style.opacity = '0.5';
+    b.style.cursor = 'not-allowed';
+  });
+
+  document.getElementById('scoreNum').textContent = score;
+  document.getElementById('scoreBox').classList.add('show');
+  document.getElementById('afterCheck').style.display = 'flex';
+
+  if (score === TASKS.length){
+    showToast('🎉 Отлично! Все 8 верно!');
+  } else if (score >= TASKS.length * 0.75){
+    showToast(`👍 Хорошо! ${score} из ${TASKS.length}`);
+  } else {
+    showToast(`💪 Есть над чем поработать: ${score} из ${TASKS.length}`);
+  }
+
+  checked = true;
+});
+
+/* ═══════════════════════════════════════════
+   СБРОС
+   ═══════════════════════════════════════════ */
+document.getElementById('btnRetry').addEventListener('click', () => {
+  checked = false;
+  score = 0;
+
+  document.querySelectorAll('input[data-ans]').forEach(inp => {
+    inp.value = '';
+    inp.classList.remove('ok','err','locked');
+    inp.disabled = false;
+  });
+  document.querySelectorAll('.task-verdict').forEach(v => {
+    v.textContent = '';
+    v.classList.remove('ok','err');
+  });
+  document.querySelectorAll('.task-correct').forEach(c => {
+    c.classList.remove('show');
+    c.innerHTML = '';
+  });
+  document.querySelectorAll('.btn-kbd').forEach(b => {
+    b.disabled = false;
+    b.style.opacity = '';
+    b.style.cursor = '';
+  });
+  document.querySelectorAll('.mini-kbd').forEach(p => p.classList.remove('show'));
+  document.querySelectorAll('.btn-kbd').forEach(b => b.classList.remove('active'));
+
+  document.getElementById('scoreBox').classList.remove('show');
+  document.getElementById('afterCheck').style.display = 'none';
+  document.getElementById('resultBox').classList.remove('show');
+  document.getElementById('resultBox').textContent = '';
+
+  showToast('🔄 Попробуй ещё раз!');
+  window.scrollTo({ top: 300, behavior: 'smooth' });
+});
+
+/* ═══════════════════════════════════════════
+   ФОРМИРОВАНИЕ ОТВЕТА
+   ═══════════════════════════════════════════ */
+function buildResultText(){
+  const name = (document.getElementById('studentName').value.trim() || 'Ученик');
+  const d = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const dateStr = `${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+
+  const lines = [];
+  lines.push('📐 ОТВЕТЫ · ДЗ · Системы и совокупности неравенств');
+  lines.push(`Дата: ${dateStr}`);
+  lines.push(`Ученик: ${name}`);
+  lines.push('');
+  lines.push(`Правильно: ${score} из ${TASKS.length}`);
+  lines.push('');
+
+  document.querySelectorAll('input[data-ans]').forEach(inp => {
+    const idx = +inp.dataset.ans;
+    const t = TASKS[idx];
+    const userVal = inp.value.trim() || '—';
+    const mark = checkOne(userVal, t.answer) ? '✅' : '❌';
+    lines.push(`Задание ${idx+1}. ${t.text}`);
+    lines.push(`   Ответ: ${userVal}  ${mark}`);
+    if (!checkOne(userVal, t.answer)){
+      lines.push(`   Правильно: ${t.answer}`);
+    }
+    lines.push('');
+  });
+
+  return lines.join('\n');
+}
+
+document.getElementById('btnForm').addEventListener('click', () => {
+  if (!checked){
+    showToast('⚠️ Сначала нажми «Проверить все ответы»');
+    return;
+  }
+  const text = buildResultText();
+  const box = document.getElementById('resultBox');
+  box.textContent = text;
+  box.classList.add('show');
+  box.scrollIntoView({behavior:'smooth', block:'center'});
+  showToast('📩 Ответ сформирован — скопируй или отправь');
+});
+
+/* ═══════════════════════════════════════════
+   СКОПИРОВАТЬ
+   ═══════════════════════════════════════════ */
+document.getElementById('btnCopy').addEventListener('click', async () => {
+  if (!checked){
+    showToast('⚠️ Сначала нажми «Проверить все ответы»');
+    return;
+  }
+  const text = buildResultText();
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast('✅ Ответы скопированы!');
+  } catch (e) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      showToast('✅ Ответы скопированы!');
+    } catch (err){
+      showToast('❌ Не удалось скопировать');
+    }
+    document.body.removeChild(ta);
+  }
+});
+
+/* ═══════════════════════════════════════════
+   МАКС
+   ═══════════════════════════════════════════ */
+const MAX_URL = 'https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes';
+
+document.getElementById('btnMax').addEventListener('click', async () => {
+  if (!checked){
+    showToast('⚠️ Сначала нажми «Проверить все ответы»');
+    return;
+  }
+  const text = buildResultText();
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch (e){
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch(err){}
+    document.body.removeChild(ta);
+  }
+  window.open(MAX_URL, '_blank');
+  showToast('📋 Ответы скопированы · вставь в чат Макс');
+});
+
+/* ═══════════════════════════════════════════
+   ТОСТ
+   ═══════════════════════════════════════════ */
+let toastTimer = null;
+function showToast(text){
+  const t = document.getElementById('toast');
+  t.textContent = text;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ═══════════════════════════════════════════
+   ENTER → следующий input
+   ═══════════════════════════════════════════ */
+document.querySelectorAll('input[data-ans]').forEach(inp => {
+  inp.addEventListener('keydown', e => {
+    if (e.key === 'Enter'){
+      e.preventDefault();
+      const all = Array.from(document.querySelectorAll('input[data-ans]'));
+      const idx = all.indexOf(inp);
+      if (idx < all.length - 1) all[idx+1].focus();
+      else document.getElementById('btnCheck').click();
+    }
+  });
+});
+</script>
+
+</body>
+</html>
