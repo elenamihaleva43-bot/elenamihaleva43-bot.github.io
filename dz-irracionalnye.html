@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>ДЗ · Иррациональные уравнения · ΤΕΤΡΑΚΤΥΣ</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--coral:#ff6b6b;
+    --gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass:rgba(255,255,255,0.04);--glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{min-height:100vh;font-family:Georgia,'Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.06),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;padding:20px;overflow-x:hidden;}
+
+  .logo{position:fixed;top:18px;left:18px;z-index:1000;display:flex;align-items:center;gap:12px;
+    padding:10px 18px 10px 14px;background:rgba(10,42,51,0.65);
+    backdrop-filter:blur(10px);border:1.5px solid rgba(26,188,156,0.45);
+    border-radius:16px;box-shadow:0 6px 24px rgba(0,0,0,0.35);}
+  .logo-dots{font-family:'Courier New',monospace;color:var(--teal);font-size:11px;line-height:1.05;letter-spacing:1px;}
+  .logo-text{display:flex;flex-direction:column;line-height:1.1;}
+  .logo-gr{font-family:'Times New Roman',serif;color:var(--teal);font-size:17px;letter-spacing:2px;font-weight:700;}
+  .logo-ru{font-family:'Times New Roman',serif;color:var(--text-soft);font-size:12px;letter-spacing:3px;}
+
+  .topbar{position:fixed;top:18px;right:18px;z-index:1000;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+  .date-badge,.timer-badge,.score-badge{font-family:'Courier New',monospace;background:rgba(10,42,51,0.65);
+    height:46px;border-radius:14px;display:flex;align-items:center;padding:0 16px;
+    backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(0,0,0,0.35);
+    font-weight:700;letter-spacing:1px;font-size:16px;}
+  .date-badge{border:1.5px solid rgba(127,255,212,0.45);color:var(--mint);}
+  .timer-badge{border:1.5px solid rgba(244,211,94,0.55);color:var(--gold);cursor:pointer;}
+  .score-badge{border:1.5px solid rgba(26,188,156,0.55);color:var(--teal);}
+  .btn-icon{width:46px;height:46px;border-radius:14px;background:rgba(10,42,51,0.65);
+    border:1.5px solid rgba(26,188,156,0.45);color:var(--teal);font-size:20px;cursor:pointer;
+    backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(0,0,0,0.35);
+    transition:.2s;display:flex;align-items:center;justify-content:center;}
+  .btn-icon:hover{transform:translateY(-2px);border-color:var(--mint);color:var(--mint);}
+  .btn-pdf{height:46px;padding:0 18px;border-radius:14px;
+    background:linear-gradient(135deg,#f4d35e,#c9a32b);color:#2a1f00;border:none;cursor:pointer;
+    font-family:'Times New Roman',serif;font-weight:700;font-size:14px;letter-spacing:1px;text-transform:uppercase;
+    display:flex;align-items:center;gap:8px;box-shadow:0 6px 24px rgba(244,211,94,0.4);transition:.2s;}
+  .btn-pdf:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(244,211,94,0.55);}
+  .btn-pdf:disabled{opacity:.6;cursor:wait;transform:none;}
+
+  .wrap{max-width:900px;margin:100px auto 40px;}
+  .card{background:var(--glass);border:1.5px solid var(--glass-brd);
+    border-radius:20px;backdrop-filter:blur(10px);box-shadow:0 8px 30px rgba(0,0,0,0.3);
+    padding:26px 28px;margin-bottom:20px;}
+
+  h1{font-family:'Times New Roman',serif;font-size:28px;color:var(--teal);
+    letter-spacing:1px;margin-bottom:8px;}
+  h1 .num{color:var(--gold);margin-right:8px;}
+  .subtitle{color:var(--text-soft);font-style:italic;font-size:15px;}
+
+  .name-field{display:flex;flex-direction:column;gap:8px;padding:18px 20px;
+    background:rgba(26,188,156,0.06);border:1.5px solid rgba(26,188,156,0.3);
+    border-radius:14px;margin-bottom:20px;}
+  .name-field label{font-family:'Times New Roman',serif;color:var(--gold);font-size:14px;
+    letter-spacing:1.5px;text-transform:uppercase;font-weight:700;}
+  .name-input{width:100%;background:rgba(10,42,51,0.5);border:1.5px solid rgba(26,188,156,0.4);
+    border-radius:10px;padding:12px 16px;color:var(--text);
+    font-family:Georgia,'Times New Roman',serif;font-size:16px;outline:none;transition:.2s;}
+  .name-input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+  .name-input::placeholder{color:var(--text-soft);opacity:.5;}
+  .name-hint{font-size:12px;color:var(--text-soft);font-style:italic;letter-spacing:.5px;}
+
+  .soft{color:var(--text-soft);margin-bottom:18px;line-height:1.7;font-size:15px;}
+
+  /* ═══ ЗАДАНИЕ ═══ */
+  .task-item{
+    display:flex;flex-direction:column;gap:12px;
+    padding:16px 18px;margin-bottom:12px;
+    background:rgba(255,255,255,0.02);
+    border:1.5px solid rgba(26,188,156,0.25);
+    border-radius:14px;transition:.2s;
+  }
+  .task-item:hover{border-color:rgba(26,188,156,0.5);}
+  .task-item.correct{border-color:var(--ok);background:rgba(46,204,113,0.06);}
+  .task-item.wrong{border-color:var(--err);background:rgba(255,107,107,0.06);}
+  .task-row{display:flex;align-items:center;gap:14px;}
+  .task-num{
+    display:inline-flex;align-items:center;justify-content:center;
+    min-width:34px;height:34px;
+    background:linear-gradient(135deg,var(--teal),var(--teal-dark));
+    color:#04231d;border-radius:9px;
+    font-family:'Courier New',monospace;font-weight:700;
+    font-size:15px;flex-shrink:0;
+  }
+  .task-item.correct .task-num{background:linear-gradient(135deg,#2ecc71,#27ae60);color:#fff;}
+  .task-item.wrong .task-num{background:linear-gradient(135deg,#ff6b6b,#c0392b);color:#fff;}
+  .task-text{
+    flex:1;font-family:'Cambria Math','Times New Roman',serif;
+    font-size:19px;font-style:italic;color:var(--mint);
+  }
+  .answer-block{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding-left:48px;}
+  .answer-input{
+    flex:1;min-width:180px;padding:11px 14px;border-radius:11px;
+    background:rgba(10,42,51,0.5);border:1.5px solid rgba(26,188,156,0.4);
+    color:var(--text);font-family:'Courier New',monospace;font-size:15px;
+    outline:none;transition:.2s;
+  }
+  .answer-input:focus{border-color:var(--mint);background:rgba(26,188,156,0.1);
+    box-shadow:0 0 0 3px rgba(127,255,212,0.12);}
+  .answer-input.locked{opacity:.75;cursor:not-allowed;}
+  .answer-input.correct{border-color:var(--ok);background:rgba(46,204,113,0.15);color:#b8f0ce;}
+  .answer-input.wrong{border-color:var(--err);background:rgba(255,107,107,0.12);color:#ffc6c6;}
+  .btn-check{
+    padding:11px 22px;border:none;border-radius:11px;
+    background:linear-gradient(135deg,#1abc9c,#16a085);
+    color:#04231d;font-family:Georgia,serif;font-weight:700;font-size:14px;
+    cursor:pointer;transition:.2s;white-space:nowrap;
+  }
+  .btn-check:hover:not(:disabled){transform:translateY(-2px);}
+  .btn-check:disabled{opacity:.5;cursor:not-allowed;}
+  .task-verdict{font-size:14px;font-weight:700;font-style:italic;padding-left:48px;min-height:18px;}
+  .task-verdict.ok{color:var(--ok);}
+  .task-verdict.err{color:var(--err);}
+
+  /* Дроби в задачах */
+  .frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;
+    font-family:'Cambria Math',serif;font-style:italic;
+    font-size:17px;line-height:1.15;margin:0 4px;position:relative;top:-2px;}
+  .frac .num{border-bottom:1.5px solid currentColor;padding:0 6px 2px 6px;}
+  .frac .den{padding:2px 6px 0 6px;}
+
+  /* Корни */
+  .m{font-family:'Cambria Math','Times New Roman',serif;display:inline-flex;
+    align-items:center;gap:3px;vertical-align:middle;line-height:1;}
+  .root{display:inline-flex;align-items:stretch;vertical-align:middle;position:relative;
+    padding-left:1em;line-height:1;}
+  .root::before{content:"";position:absolute;left:0;top:0;bottom:0;width:1em;
+    background:currentColor;
+    -webkit-mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 100' preserveAspectRatio='none'><path d='M20 3 L20 6 L8 96 L3 55 L0 55' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/></svg>") left center/100% 100% no-repeat;
+            mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 100' preserveAspectRatio='none'><path d='M20 3 L20 6 L8 96 L3 55 L0 55' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/></svg>") left center/100% 100% no-repeat;}
+  .root::after{content:"";position:absolute;left:1em;right:0;top:0;height:2px;
+    background:currentColor;border-radius:1px;}
+  .root .rt{display:inline-block;padding:.15em .35em 0 .2em;line-height:1.15;}
+
+  .actions{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;padding:14px 0 4px;}
+  .btn-max{
+    height:54px;padding:0 28px;border-radius:14px;
+    background:linear-gradient(135deg,#1abc9c,#16a085);
+    color:#04231d;border:none;cursor:pointer;
+    font-family:'Times New Roman',serif;font-weight:700;font-size:15px;letter-spacing:1px;text-transform:uppercase;
+    display:flex;align-items:center;gap:8px;
+    box-shadow:0 6px 24px rgba(26,188,156,0.45);transition:.2s;text-decoration:none;
+  }
+  .btn-max:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(26,188,156,0.6);}
+  .btn-max:disabled{opacity:.5;cursor:not-allowed;}
+
+  .hint-block{margin-top:18px;padding:16px 20px;
+    background:rgba(26,188,156,0.08);border:1.5px solid rgba(26,188,156,0.3);
+    border-radius:12px;font-size:14px;line-height:1.7;color:var(--text);}
+  .hint-block b{color:var(--gold);font-family:'Times New Roman',serif;letter-spacing:1px;}
+  .hint-block .sub{margin-top:10px;padding-top:10px;border-top:1px dashed rgba(127,255,212,0.2);
+    font-size:13px;color:var(--text-soft);}
+  .hint-block .sub .phone{font-family:'Courier New',monospace;color:var(--mint);}
+
+  .footer{text-align:center;padding:30px 20px 20px;color:var(--text-soft);
+    font-size:13px;font-family:'Times New Roman',serif;letter-spacing:2px;}
+  .footer .f-logo{color:var(--teal);font-size:15px;margin-bottom:6px;}
+  .footer .f-sub{font-style:italic;opacity:.75;}
+
+  @media(max-width:700px){
+    .wrap{margin-top:180px;}
+    .topbar{gap:6px;}
+    .date-badge,.timer-badge,.score-badge{padding:0 10px;font-size:13px;height:42px;}
+    .btn-pdf{padding:0 12px;font-size:12px;height:42px;}
+    .btn-icon{width:42px;height:42px;font-size:17px;}
+    .task-text{font-size:17px;}
+    .answer-block{padding-left:0;}
+    .task-verdict{padding-left:0;}
+  }
+</style>
+</head>
+<body>
+
+<div class="logo">
+  <div class="logo-dots">●<br>●●<br>●●●<br>●●●●</div>
+  <div class="logo-text">
+    <span class="logo-gr">ΤΕΤΡΑΚΤΥΣ</span>
+    <span class="logo-ru">ТЕТРАКТИС</span>
+  </div>
+</div>
+
+<div class="topbar">
+  <div class="date-badge" id="dateBadge">--.--.----</div>
+  <div class="timer-badge" id="timer">00:00</div>
+  <div class="score-badge" id="scoreBadge">✓ 0 / 6</div>
+  <button class="btn-icon" id="soundBtn" title="Звук">🔊</button>
+  <button class="btn-pdf" id="pdfBtnTop">📄 PDF</button>
+</div>
+
+<div class="wrap">
+
+  <div class="card">
+    <h1><span class="num">ДЗ.</span>Иррациональные уравнения</h1>
+    <p class="subtitle">Домашнее задание · 6 заданий · автопроверка</p>
+  </div>
+
+  <div class="card">
+    <div class="name-field">
+      <label for="studentName">👤 Ваше имя и фамилия</label>
+      <input type="text" id="studentName" class="name-input" placeholder="Например: Иван Петров" autocomplete="off">
+      <div class="name-hint">Имя сохранится и попадёт в PDF.</div>
+    </div>
+
+    <p class="soft">
+      Решите уравнения в тетради, затем введите ответ в поле. Нажмите «Проверить» — <b>изменить ответ будет нельзя</b>.
+    </p>
+
+    <div id="tasksContainer"></div>
+
+    <div class="actions">
+      <button class="btn-pdf" id="pdfBtn">📄 Сохранить в PDF</button>
+      <a class="btn-max" id="maxBtn" href="https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes" target="_blank" rel="noopener">💬 Отправить учителю</a>
+    </div>
+
+    <div class="hint-block">
+      <b>💡 Как сдать ДЗ:</b><br>
+      1. Впишите имя и фамилию в поле выше.<br>
+      2. Решите уравнения в тетради, введите ответы на странице, нажмите «Проверить» у каждого.<br>
+      3. Нажмите <b>«📄 Сохранить в PDF»</b> — получите лист с вашими ответами и галочками.<br>
+      4. Нажмите <b>«💬 Отправить учителю»</b> — откроется страница с кнопкой «Отправить сообщение».<br>
+      5. Нажмите её — откроется личный чат с Еленой Александровной.<br>
+      6. Сфотографируйте решения в тетради и прикрепите фото к сообщению.
+      <div class="sub">
+        <b>Если страница не открылась</b> — напишите Елене Александровне напрямую: <span class="phone">+7 903 880-17-16</span>. Ваше ДЗ увидите только вы и учитель.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <div class="f-logo">ΤΕΤΡΑΚΤΥΣ · ТЕТРАКТИС</div>
+  <div class="f-sub">где математика превращается в приключение</div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   ЗАДАНИЯ — из irr4.html, пункты б
+   ═══════════════════════════════════════════════ */
+const TASKS = [
+  {id:1, html:'<span class="m"><span class="root"><span class="rt">5x² − 11</span></span> = 2x + 1</span>', answer:'6', plain:'√(5x²−11) = 2x+1'},
+  {id:2, html:'<span class="m"><span class="root"><span class="rt">2z − 1</span></span> = z − 8</span>', answer:'13', plain:'√(2z−1) = z−8'},
+  {id:3, html:'<span class="m"><span class="root"><span class="rt">z² − 18</span></span> = <span class="root"><span class="rt">5z − 4</span></span></span>', answer:'7', plain:'√(z²−18) = √(5z−4)'},
+  {id:4, html:'<span class="m">5<span class="root"><span class="rt">y</span></span> = 2y + 3</span>', answer:'1; 9/4', plain:'5√y = 2y+3'},
+  {id:5, html:'<span class="m">(y − 7)<span class="root"><span class="rt">y − 6</span></span> − <span class="root"><span class="rt">y − 8</span></span> = 0</span>', answer:'8', plain:'(y−7)√(y−6) − √(y−8) = 0'},
+  {id:6, html:'<span class="m"><span class="root"><span class="rt">x − 4</span></span> · <span class="root"><span class="rt">2x − 7</span></span> = 1</span>', answer:'4.5', plain:'√(x−4) · √(2x−7) = 1'}
+];
+
+/* ═══ СОСТОЯНИЕ ═══ */
+const STORAGE_KEY = 'dz_irr_answers_v1';
+const state = {};
+TASKS.forEach(t => state[t.id] = { value:'', checked:false, correct:false });
+
+/* Загружаем сохранённое */
+(function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return;
+    const saved = JSON.parse(raw);
+    for (const id in saved){
+      if (state[id]) state[id] = saved[id];
+    }
+  }catch(_){}
+})();
+function saveState(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(_){}
+}
+
+/* ═══ ПАРСЕР ОТВЕТА ═══ */
+function parseNum(str){
+  if(str===null||str===undefined)return NaN;
+  let s = String(str).trim().replace(/\s+/g,'').replace(/,/g,'.').replace(/−/g,'-').replace(/–/g,'-');
+  if(/^-?\d+(\.\d+)?\/-?\d+(\.\d+)?$/.test(s)){
+    const [a,b]=s.split('/').map(parseFloat);
+    if(b===0)return NaN;
+    return a/b;
+  }
+  return parseFloat(s);
+}
+function norm(s){
+  return String(s||'').trim().toLowerCase().replace(/\s+/g,'')
+    .replace(/−/g,'-').replace(/–/g,'-').replace(/х/gi,'x');
+}
+function checkAnswer(val, expected){
+  if (!val.trim()) return false;
+  const u = val.trim();
+  const e = expected.trim();
+  const nU = norm(u), nE = norm(e);
+
+  if (nE === 'нет' || nE === 'нетрешений'){
+    return nU === 'нет' || nU === 'нетрешений' || nU === 'пусто' || nU === '∅';
+  }
+
+  if (e.includes(';')){
+    const eParts = e.split(';').map(s=>s.trim()).filter(Boolean);
+    const uParts = u.split(';').map(s=>s.trim()).filter(Boolean);
+    if (uParts.length !== eParts.length) return false;
+    const eNums = eParts.map(parseNum).sort((a,b)=>a-b);
+    const uNums = uParts.map(parseNum).sort((a,b)=>a-b);
+    for (let i = 0; i < eNums.length; i++){
+      if (!isFinite(eNums[i]) || !isFinite(uNums[i])) return false;
+      if (Math.abs(eNums[i]-uNums[i]) > 0.001) return false;
+    }
+    return true;
+  }
+
+  const eNum = parseNum(e);
+  const uNum = parseNum(u);
+  if (isFinite(eNum) && isFinite(uNum)){
+    return Math.abs(eNum-uNum) < 0.001;
+  }
+  return nU === nE;
+}
+
+/* ═══ РЕНДЕР ЗАДАНИЙ ═══ */
+function renderTasks(){
+  const box = document.getElementById('tasksContainer');
+  box.innerHTML = '';
+  TASKS.forEach(t => {
+    const st = state[t.id];
+    const el = document.createElement('div');
+    el.className = 'task-item' + (st.checked ? (st.correct ? ' correct' : ' wrong') : '');
+    el.id = 'task-' + t.id;
+
+    let verdictHTML = '';
+    if (st.checked){
+      if (st.correct){
+        verdictHTML = '<div class="task-verdict ok">✓ Верно!</div>';
+      } else {
+        verdictHTML = `<div class="task-verdict err">✗ Неверно. Правильный ответ: ${t.answer}</div>`;
+      }
+    }
+
+    el.innerHTML = `
+      <div class="task-row">
+        <span class="task-num">${t.id}</span>
+        <span class="task-text">${t.html}</span>
+      </div>
+      <div class="answer-block">
+        <input type="text" class="answer-input ${st.checked ? (st.correct ? 'correct' : 'wrong') : ''}"
+               data-id="${t.id}"
+               placeholder="Введите ответ…"
+               autocomplete="off"
+               ${st.checked ? 'disabled' : ''}
+               value="${st.value.replace(/"/g,'&quot;')}">
+        <button class="btn-check" data-id="${t.id}" ${st.checked ? 'disabled' : ''}>Проверить</button>
+      </div>
+      ${verdictHTML}
+    `;
+    box.appendChild(el);
+  });
+
+  /* Обработчики */
+  box.querySelectorAll('.btn-check').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = +btn.dataset.id;
+      const inp = box.querySelector(`.answer-input[data-id="${id}"]`);
+      const val = inp.value.trim();
+      if (!val){
+        alert('Введите ответ перед проверкой');
+        return;
+      }
+      const task = TASKS.find(x => x.id === id);
+      const ok = checkAnswer(val, task.answer);
+      state[id].value = val;
+      state[id].checked = true;
+      state[id].correct = ok;
+      saveState();
+      updateScore();
+      renderTasks();
+      /* Озвучка результата */
+      if (ok) speak('Верно!');
+      else speak('Неверно');
+    });
+  });
+
+  /* Сохраняем значение в поле при вводе */
+  box.querySelectorAll('.answer-input').forEach(inp => {
+    inp.addEventListener('input', () => {
+      const id = +inp.dataset.id;
+      if (!state[id].checked){
+        state[id].value = inp.value;
+        saveState();
+      }
+    });
+  });
+}
+
+/* ═══ СЧЁТЧИК ═══ */
+function updateScore(){
+  let ok = 0;
+  TASKS.forEach(t => { if (state[t.id].checked && state[t.id].correct) ok++; });
+  document.getElementById('scoreBadge').textContent = '✓ ' + ok + ' / ' + TASKS.length;
+}
+
+/* ═══ ИМЯ ═══ */
+(function(){
+  const input = document.getElementById('studentName');
+  const KEY = 'tetraktys_student_name';
+  try{
+    const saved = localStorage.getItem(KEY);
+    if(saved) input.value = saved;
+  }catch(_){}
+  input.addEventListener('input', function(){
+    try{ localStorage.setItem(KEY, input.value); }catch(_){}
+  });
+})();
+
+/* ═══ ДАТА ═══ */
+(function(){
+  const el = document.getElementById('dateBadge');
+  function updateDate(){
+    const d = new Date();
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yyyy = d.getFullYear();
+    el.textContent = dd + '.' + mm + '.' + yyyy;
+  }
+  updateDate();
+  setInterval(updateDate, 60000);
+})();
+
+/* ═══ ТАЙМЕР ═══ */
+(function(){
+  const el = document.getElementById('timer');
+  let seconds = 0;
+  let running = true;
+  function tick(){
+    if(!running) return;
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    el.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+    seconds++;
+    setTimeout(tick, 1000);
+  }
+  tick();
+  el.addEventListener('click', function(){
+    running = !running;
+    el.style.opacity = running ? '1' : '0.5';
+    if(running) tick();
+  });
+})();
+
+/* ═══ ЗВУК ═══ */
+let soundEnabled = true;
+function speak(text){
+  if(!soundEnabled) return;
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ru-RU';
+  u.rate = 1.05;
+  u.pitch = 1.1;
+  window.speechSynthesis.speak(u);
+}
+(function(){
+  const btn = document.getElementById('soundBtn');
+  btn.addEventListener('click', function(){
+    soundEnabled = !soundEnabled;
+    btn.textContent = soundEnabled ? '🔊' : '🔇';
+    btn.style.color = soundEnabled ? '#1abc9c' : '#ff6b6b';
+    if(soundEnabled) speak('Звук включён');
+  });
+})();
+
+/* ═══ PDF ═══ */
+(function(){
+  function translit(str){
+    const map = {
+      'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'e','ж':'zh','з':'z',
+      'и':'i','й':'y','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r',
+      'с':'s','т':'t','у':'u','ф':'f','х':'h','ц':'c','ч':'ch','ш':'sh','щ':'sch',
+      'ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya',
+      'А':'A','Б':'B','В':'V','Г':'G','Д':'D','Е':'E','Ё':'E','Ж':'Zh','З':'Z',
+      'И':'I','Й':'Y','К':'K','Л':'L','М':'M','Н':'N','О':'O','П':'P','Р':'R',
+      'С':'S','Т':'T','У':'U','Ф':'F','Х':'H','Ц':'C','Ч':'Ch','Ш':'Sh','Щ':'Sch',
+      'Ъ':'','Ы':'Y','Ь':'','Э':'E','Ю':'Yu','Я':'Ya'
+    };
+    return str.split('').map(c => map[c] !== undefined ? map[c] : c).join('');
+  }
+
+  function buildPDF(){
+    if(!window.jspdf || !window.jspdf.jsPDF){
+      alert('Не удалось загрузить библиотеку PDF.');
+      return;
+    }
+    const btns = [document.getElementById('pdfBtn'), document.getElementById('pdfBtnTop')];
+    btns.forEach(b => { if(b){ b.disabled = true; } });
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageW = pdf.internal.pageSize.getWidth();
+    const margin = 15;
+
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(18);
+    pdf.setTextColor(26, 188, 156);
+    pdf.text('TETRAKTYS', margin, 20);
+
+    pdf.setFontSize(10);
+    pdf.setTextColor(120, 140, 140);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text('TETRAKTIS', margin, 25);
+
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(13);
+    pdf.setTextColor(30, 40, 40);
+    pdf.text('DZ. Irratsionalnye uravneniya', margin, 38);
+
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(11);
+    pdf.setTextColor(80, 90, 90);
+    pdf.text('6 zadaniy s avtoproverkoy', margin, 44);
+
+    pdf.setDrawColor(26, 188, 156);
+    pdf.setLineWidth(0.6);
+    pdf.line(margin, 48, pageW - margin, 48);
+
+    pdf.setFontSize(12);
+    pdf.setTextColor(30, 40, 40);
+    const studentName = (document.getElementById('studentName').value || '').trim();
+    const nameLine = studentName ? translit(studentName) : '______________________';
+    pdf.text('Uchenik: ' + nameLine, margin, 58);
+
+    const d = new Date();
+    const dd = String(d.getDate()).padStart(2,'0');
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const yyyy = d.getFullYear();
+    pdf.text('Data:    ' + dd + '.' + mm + '.' + yyyy, margin, 65);
+
+    let y = 82;
+    const lineH = 9;
+
+    TASKS.forEach(t => {
+      const st = state[t.id];
+      const mark = st.checked ? (st.correct ? '[V]' : '[X]') : '[ ]';
+
+      /* Задание */
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(12);
+      if (st.checked && st.correct) pdf.setTextColor(46, 180, 100);
+      else if (st.checked && !st.correct) pdf.setTextColor(220, 80, 80);
+      else pdf.setTextColor(30, 40, 40);
+      pdf.text(mark + '  ' + t.id + '.  ' + t.plain, margin, y);
+      y += lineH;
+
+      /* Ответ ученика */
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(11);
+      pdf.setTextColor(90, 100, 100);
+      const userAns = st.value || '—';
+      pdf.text('    Otvet: ' + translit(userAns), margin + 4, y);
+      y += lineH;
+
+      /* Правильный ответ при ошибке */
+      if (st.checked && !st.correct){
+        pdf.setTextColor(220, 80, 80);
+        pdf.text('    Pravilno: ' + t.answer, margin + 4, y);
+        y += lineH;
+      }
+
+      y += 2;
+
+      if (y > 260){
+        pdf.addPage();
+        y = 30;
+      }
+    });
+
+    /* Итог */
+    let ok = 0, total = TASKS.length;
+    TASKS.forEach(t => { if (state[t.id].checked && state[t.id].correct) ok++; });
+    y += 6;
+    pdf.setDrawColor(26, 188, 156);
+    pdf.setLineWidth(0.5);
+    pdf.line(margin, y, pageW - margin, y);
+    y += 8;
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(13);
+    pdf.setTextColor(26, 188, 156);
+    pdf.text('Itog: ' + ok + ' / ' + total, margin, y);
+
+    pdf.setFontSize(9);
+    pdf.setTextColor(150, 160, 160);
+    pdf.text('TETRAKTYS - gde matematika prevrashchaetsya v priklyuchenie',
+             pageW / 2, 285, { align: 'center' });
+
+    const safeName = studentName ? translit(studentName).replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-') : 'uchenik';
+    pdf.save('dz-irr_' + safeName + '_' + dd + '-' + mm + '-' + yyyy + '.pdf');
+
+    btns.forEach(b => { if(b){ b.disabled = false; } });
+  }
+
+  const btn1 = document.getElementById('pdfBtn');
+  const btn2 = document.getElementById('pdfBtnTop');
+  if(btn1) btn1.addEventListener('click', buildPDF);
+  if(btn2) btn2.addEventListener('click', buildPDF);
+})();
+
+/* ═══ СТАРТ ═══ */
+renderTasks();
+updateScore();
+</script>
+</body>
+</html>
