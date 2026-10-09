@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>ΤΕΤΡΑΚΤΥΣ · ДЗ · Уравнения</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c; --teal-dark:#16a085; --teal-deep:#0e7c66;
+    --mint:#7fffd4; --coral:#ff6b6b;
+    --gold:#f4d35e; --gold-light:#ffe89a;
+    --text:#e8f8f5; --text-soft:#b8d8d0;
+    --ok:#2ecc71; --err:#ff6b6b;
+  }
+  body{
+    font-family: Georgia, "Times New Roman", serif;
+    color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(26,188,156,0.22), transparent 55%),
+      radial-gradient(ellipse at 85% 90%, rgba(127,255,212,0.15), transparent 55%),
+      radial-gradient(ellipse at 50% 50%, rgba(244,211,94,0.06), transparent 70%),
+      linear-gradient(160deg, #0a2a33 0%, #0d3b47 50%, #134e5e 100%);
+    background-attachment: fixed;
+    min-height:100vh; overflow-x:hidden;
+    line-height:1.6;
+  }
+
+  .wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:14px;padding-top:100px;padding-bottom:80px;}
+
+  .logo-mini{
+    position:fixed; top:14px; left:16px; z-index:100;
+    display:flex;align-items:center;gap:10px;
+    background: rgba(255,255,255,0.05);
+    border:1.5px solid rgba(26,188,156,0.35);
+    border-radius:16px; padding:10px 14px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    font-family:'Times New Roman',serif;
+  }
+  .logo-dots{font-size:11px;line-height:1.15;letter-spacing:2px;font-weight:bold;color:var(--teal);}
+  .logo-txt{font-size:15px;letter-spacing:2px;font-weight:700;color:var(--teal);}
+  .logo-txt small{display:block;font-size:11px;letter-spacing:3px;font-weight:400;color:var(--teal);opacity:.85;font-style:normal;}
+
+  .home-btn{
+    position:fixed; top:84px; left:16px; z-index:100;
+    display:inline-flex; align-items:center; gap:6px;
+    padding:9px 16px; border-radius:12px;
+    background: rgba(255,255,255,0.05);
+    border:1.5px solid rgba(26,188,156,0.35);
+    color:var(--mint); text-decoration:none;
+    font-family:'Georgia',serif; font-size:13px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    transition: all .25s; white-space:nowrap;
+  }
+  .home-btn:hover{
+    background:rgba(26,188,156,0.18);
+    border-color:var(--mint);
+    transform:translateY(-2px);
+  }
+
+  .top-fixed{
+    position:fixed; top:14px; right:16px; z-index:100;
+    display:flex;gap:8px;align-items:center;
+  }
+  .chip{
+    background: rgba(255,255,255,0.05);
+    border:1.5px solid rgba(26,188,156,0.35);
+    border-radius:20px;padding:8px 16px;
+    font-weight:700;font-size:14px;white-space:nowrap;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    color:var(--text);
+    font-family:"Courier New", monospace;
+  }
+  .chip.date{font-family: Georgia, serif; font-size:13px;}
+
+  .title{text-align:center; margin: 20px auto 26px;}
+  .title h1{
+    font-size: clamp(22px, 3.5vw, 28px);
+    color:var(--mint);
+    text-shadow: 0 0 24px rgba(127,255,212,0.35);
+    margin-bottom:8px;
+  }
+  .title p{color:var(--text-soft); font-size:14.5px; font-style:italic;}
+
+  .card{
+    background: rgba(255,255,255,0.04);
+    border:1.5px solid rgba(26,188,156,0.4);
+    border-radius:20px;
+    padding:22px 26px;
+    margin-bottom:20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+  .card h2{
+    font-family:'Times New Roman',serif;
+    font-size:19px;
+    color: var(--mint);
+    margin-bottom:14px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .card h2 .num-badge{
+    font-family:"Courier New",monospace;
+    font-weight:bold;
+    color:#04231d;
+    font-size:13px;
+    background: linear-gradient(135deg,#1abc9c,#16a085);
+    padding:5px 12px;
+    border-radius:11px;
+  }
+
+  .instructions{
+    background: rgba(26,188,156,0.10);
+    border-left:5px solid var(--teal);
+    border-radius:14px;
+    padding:14px 18px;
+    margin:10px 0;
+    font-size:15px;
+    line-height:1.7;
+  }
+  .instructions b{color:var(--mint);}
+  .instructions ol{margin:8px 0 0 22px;}
+  .instructions li{margin-bottom:6px;}
+
+  .name-row{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    margin:14px 0 0;
+  }
+  .name-row label{
+    font-size:15px;
+    color:var(--mint);
+    font-weight:bold;
+    white-space:nowrap;
+  }
+  .name-row input{
+    flex:1;
+    padding:12px 16px;
+    border-radius:14px;
+    background: rgba(255,255,255,0.06);
+    border:1.5px solid rgba(26,188,156,0.5);
+    color:var(--text);
+    font-family: Georgia, serif;
+    font-size:16px;
+    outline:none;
+    transition: all .18s;
+  }
+  .name-row input:focus{
+    border-color:var(--mint);
+    background:rgba(26,188,156,0.12);
+  }
+
+  .task{
+    background: rgba(255,255,255,0.03);
+    border:1.5px solid rgba(26,188,156,0.3);
+    border-radius:18px;
+    padding:18px 20px;
+    margin-bottom:16px;
+    transition: all .2s;
+  }
+  .task:hover{ border-color: var(--mint); }
+  .task.solved-ok{ border-color: rgba(46,204,113,0.6); background: rgba(46,204,113,0.04); }
+  .task.solved-err{ border-color: rgba(255,107,107,0.6); background: rgba(255,107,107,0.04); }
+
+  .task-head{
+    display:flex; align-items:center; gap:12px;
+    margin-bottom:12px;
+  }
+  .task-num{
+    font-family:"Courier New",monospace;
+    font-weight:bold;
+    color:#04231d;
+    font-size:14px;
+    background: linear-gradient(135deg,#1abc9c,#16a085);
+    padding:6px 13px;
+    border-radius:11px;
+    flex-shrink:0;
+    white-space:nowrap;
+  }
+
+  .task-text{
+    font-size:15.5px;
+    color: var(--text);
+    line-height:1.7;
+    margin-bottom:10px;
+  }
+  .task-eq{
+    font-family:'Cambria Math','Times New Roman',serif;
+    font-size:23px;
+    color: var(--gold-light);
+    font-style:italic;
+    text-align:center;
+    padding:12px 16px;
+    margin:12px 0;
+    background: rgba(244,211,94,0.08);
+    border-left:4px solid var(--gold);
+    border-radius:0 12px 12px 0;
+    letter-spacing:0.5px;
+    line-height:1.4;
+  }
+
+  .answer-row{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    margin-top:12px;
+    flex-wrap:wrap;
+  }
+  .answer-row label{
+    font-size:14px;
+    color: var(--text-soft);
+    white-space:nowrap;
+  }
+  .answer-row input{
+    flex:1;
+    min-width:160px;
+    padding:11px 14px;
+    border-radius:12px;
+    background: rgba(255,255,255,0.06);
+    border:1.5px solid rgba(26,188,156,0.45);
+    color: var(--text);
+    font-family:'Courier New',monospace;
+    font-size:15px;
+    outline:none;
+    transition: all .18s;
+  }
+  .answer-row input:focus{
+    border-color:var(--mint);
+    background:rgba(26,188,156,0.12);
+  }
+  .answer-row input:disabled{
+    opacity:.85;
+    cursor:not-allowed;
+  }
+  .answer-row input.ok{
+    border-color: var(--ok);
+    background: rgba(46,204,113,0.12);
+    color:#d4ffe3;
+  }
+  .answer-row input.err{
+    border-color: var(--err);
+    background: rgba(255,107,107,0.12);
+    color:#ffc9c9;
+  }
+
+  .btn-answer{
+    padding:11px 20px;
+    border:none;
+    border-radius:12px;
+    background: linear-gradient(135deg,#1abc9c,#16a085);
+    color:#04231d;
+    font-family: Georgia, serif;
+    font-size:14px;
+    font-weight:bold;
+    cursor:pointer;
+    transition: all .18s;
+    box-shadow: 0 6px 18px rgba(26,188,156,0.35);
+    letter-spacing:0.5px;
+    white-space:nowrap;
+  }
+  .btn-answer:hover{transform:translateY(-2px);}
+  .btn-answer:disabled{
+    opacity:0.5;
+    cursor:not-allowed;
+    transform:none;
+  }
+
+  .verdict-mark{
+    font-size:22px;
+    min-width:30px;
+    text-align:center;
+    flex-shrink:0;
+  }
+
+  .btnrow{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin-top:22px;
+  }
+  button.big{
+    font-family: Georgia, serif;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+    border:none;
+    border-radius:16px;
+    padding:16px 30px;
+    color:#04231d;
+    background: linear-gradient(135deg, #1abc9c, #16a085);
+    transition:.2s;
+    box-shadow: 0 8px 28px rgba(26,188,156,0.4);
+    letter-spacing:0.5px;
+  }
+  button.big:hover{transform:translateY(-2px); box-shadow: 0 12px 36px rgba(26,188,156,0.55);}
+  button.big:active{transform:translateY(1px);}
+
+  .toast{
+    position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(80px);
+    background: linear-gradient(135deg, #1abc9c, #16a085);
+    color:#04231d;
+    padding:14px 26px;
+    border-radius:16px;
+    font-family: Georgia, serif;
+    font-weight:bold;
+    font-size:15px;
+    box-shadow: 0 12px 40px rgba(26,188,156,0.5);
+    opacity:0;
+    transition: all .35s cubic-bezier(.3,.9,.4,1);
+    z-index:200;
+    pointer-events:none;
+    max-width:90vw;
+    text-align:center;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  .footer{
+    text-align:center;
+    padding: 40px 20px 20px;
+    color:var(--text-soft);
+    font-size:13px;
+    font-family:'Times New Roman',serif;
+    letter-spacing:2px;
+  }
+  .footer .f-logo{color:var(--teal); font-size:15px; margin-bottom:6px;}
+  .footer .f-sub{font-style:italic; opacity:.75;}
+
+  @media (max-width: 700px){
+    .wrap{padding-top:120px;}
+    .logo-mini{padding:8px 10px;}
+    .logo-txt{font-size:13px;}
+    .home-btn{top:76px; left:12px; font-size:12px; padding:7px 12px;}
+    .title h1{font-size:20px;}
+    .chip{padding:6px 12px; font-size:12px;}
+    .card{padding:18px 18px;}
+    .task-eq{font-size:19px; padding:10px 12px;}
+    .name-row{flex-wrap:wrap;}
+    .name-row label{width:100%;}
+    button.big{font-size:14px; padding:13px 20px;}
+    .answer-row{flex-wrap:wrap;}
+    .btn-answer{width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<div class="logo-mini">
+  <div class="logo-dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="logo-txt">ΤΕΤΡΑΚΤΥΣ<small>Школа Елены Михалевой</small></div>
+</div>
+
+<a href="index.html" class="home-btn">🏠 На главную</a>
+
+<div class="top-fixed">
+  <div class="chip date" id="dateChip">📅 —</div>
+</div>
+
+<div class="wrap">
+  <div class="title">
+    <h1>✏️ Домашнее задание · Уравнения</h1>
+    <p>10 заданий · ввод ответа · отправка учителю</p>
+  </div>
+
+  <!-- ИНСТРУКЦИЯ + ИМЯ -->
+  <div class="card">
+    <h2><span class="num-badge">📋</span>Инструкция</h2>
+    <div class="instructions">
+      <b>Как выполнять:</b>
+      <ol>
+        <li>Реши каждое уравнение <b>в тетради</b> с полным решением.</li>
+        <li>Впиши ответ в поле рядом и нажми <b>«✅ Ответить»</b>.</li>
+        <li><b>Изменить ответ нельзя</b> — вводи внимательно.</li>
+        <li>Если корней несколько — пиши их <b>через точку с запятой</b> в любом порядке, например: <b>2; -3</b> или <b>-3; 2</b>.</li>
+        <li>Десятичные дроби — через запятую или точку, например: <b>1,5</b> или <b>1.5</b>.</li>
+        <li>В конце нажми <b>«📩 Отправить учителю в Макс»</b> — ответы с отметками скопируются, прикрепи фото решения в чате.</li>
+      </ol>
+    </div>
+    <div class="name-row">
+      <label for="studentName">👤 Имя ученика:</label>
+      <input type="text" id="studentName" placeholder="введи своё имя" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- ЗАДАНИЯ -->
+  <div class="card">
+    <h2><span class="num-badge">📚</span>Задания</h2>
+
+    <!-- №1 -->
+    <div class="task" data-task="1">
+      <div class="task-head"><div class="task-num">№1</div></div>
+      <div class="task-text">Решите уравнение:</div>
+      <div class="task-eq">x² − 7x + 12 = 0</div>
+      <div class="answer-row">
+        <label>Ответ:</label>
+        <input type="text" data-ans="1" placeholder="введи ответ" autocomplete="off">
+        <button class="btn-answer" data-check="1">✅ Ответить</button>
+        <span class="verdict-mark" data-mark="1"></span>
+      </div>
+    </div>
+
+    <!-- №2 -->
+    <div class="task" data-task="2">
+      <div class="task-head"><div class="task-num">№2</div></div>
+      <div class="task-text">Решите уравнение:</div>
+      <div class="task-eq">5x − 9 = 3x + 7</div>
+      <div class="answer-row">
+        <label>Ответ:</label>
+        <input type="text" data-ans="2" placeholder="введи ответ" autocomplete="off">
+        <button class="btn-answer" data-check="2">✅ Ответить</button>
+        <span class="verdict-mark" data-mark="2"></span>
+      </div>
+    </div>
+
+    <!-- №3 -->
+    <div class="task" data-task="3">
+      <div class="task-head"><div class="task-num">№3</div></div>
+      <div class="task-text">Решите уравнение:</div>
+      <div class="task-eq">x² − 16 = 0</div>
+      <div class="answer-row">
+        <label>Ответ:</label>
+        <input type="text" data-ans="3" placeholder="введи ответ" autocomplete="off">
+        <button class="btn-answer" data-check="3">✅ Ответить</button>
+        <span class="verdict-mark" data-mark="3"></span>
+      </div>
+    </div>
+
+    <!-- №4 -->
+    <div class="task" data-task="4">
+      <div class="task-head"><div class="task-num">№4</div></div>
+      <div class="task-text">Решите уравнение:</div>
+      <div class="task-eq">4(x − 3) = 2(x + 5)</div>
+      <div class="answer-row">
+        <label>Ответ:</label>
+        <input type="text" data-ans="4" placeholder="введи ответ" autocomplete="off">
+        <button class="btn-answer" data-check="4">✅ Ответить</button>
+        <span class="verdict-mark" data-mark="4"></span>
+      </div>
+    </div>
+
+    <!-- №5 -->
+    <div class="task" data-task="5">
+      <div class="task-head"><div class="task-num">№5</div></div>
+      <div class="task-text">Решите уравнение:</div>
+      <div class="task-eq">2x² − 8x = 0</div>
+      <div class="answer-row">
+        <label>Ответ:</label>
+        <input type="text" data-ans="5" placeholder="введи ответ" autocomplete="off">
+        <button class="btn-answer" data-check="5">✅ Ответить</button>
+        <span class="verdict-mark" data-mark="5"></span>
+      </div>
+    </div>
+
+    <!-- №6 -->
+    <div class="task" data-task="6">
+      <div class="task-head"><div class="task-num">№6</div></div>
+      <div class="task-text">Решите уравнение:</div>
+      <div class="task-eq">7x = 42</div>
+      <div class="answer-row">
+        <label>Ответ:</label>
+        <input type="text" data-ans="6" placeholder="введи ответ" autocomplete="off">
+        <button class="btn-answer" data-check="6">✅ Ответить</button>
+        <span class="verdict-mark" data-mark="6"></span>
+      </div>
+    </div>
+
+    <!-- №7 -->
+    <div class="task" data-task="7">
+      <div class="task-head"><div class="task-num">№7</div></div>
+      <div class="task-text">Решите уравнение:</div>
+      <div class="task-eq">x² + 5x − 14 = 0</div>
+      <div class="answer-row">
+        <label>Ответ:</label>
+        <input type="text" data-ans="7" placeholder="введи ответ" autocomplete="off">
+        <button class="btn-answer" data-check="7">✅ Ответить</button>
+        <span class="verdict-mark" data-mark="7"></span>
+      </div>
+    </div>
+
+    <!-- №8 -->
+    <div class="task" data-task="8">
+      <div class="task-head"><div class="task-num">№8</div></div>
+      <div class="task-text">Решите уравнение:</div>
+      <div class="task-eq">(x + 2)² = 9</div>
+      <div class="answer-row">
+        <label>Ответ:</label>
+        <input type="text" data-ans="8" placeholder="введи ответ" autocomplete="off">
+        <button class="btn-answer" data-check="8">✅ Ответить</button>
+        <span class="verdict-mark" data-mark="8"></span>
+      </div>
+    </div>
+
+    <!-- №9 -->
+    <div class="task" data-task="9">
+      <div class="task-head"><div class="task-num">№9</div></div>
+      <div class="task-text">Решите уравнение:</div>
+      <div class="task-eq">3(x + 1) = 2(x − 4) + 5</div>
+      <div class="answer-row">
+        <label>Ответ:</label>
+        <input type="text" data-ans="9" placeholder="введи ответ" autocomplete="off">
+        <button class="btn-answer" data-check="9">✅ Ответить</button>
+        <span class="verdict-mark" data-mark="9"></span>
+      </div>
+    </div>
+
+    <!-- №10 -->
+    <div class="task" data-task="10">
+      <div class="task-head"><div class="task-num">№10</div></div>
+      <div class="task-text">Решите уравнение:</div>
+      <div class="task-eq">3x² − 27 = 0</div>
+      <div class="answer-row">
+        <label>Ответ:</label>
+        <input type="text" data-ans="10" placeholder="введи ответ" autocomplete="off">
+        <button class="btn-answer" data-check="10">✅ Ответить</button>
+        <span class="verdict-mark" data-mark="10"></span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="btnrow">
+    <button class="big" id="btnMax">📩 Отправить учителю в Макс</button>
+  </div>
+
+  <div class="footer">
+    <div class="f-logo">ΤΕΤΡΑΚΤΥΣ · ΤΕΤРАКТИС</div>
+    <div class="f-sub">где математика превращается в приключение</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── ДАТА ── */
+(function(){
+  const days = ['ВС','ПН','ВТ','СР','ЧТ','ПТ','СБ'];
+  function upd(){
+    const d = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    document.getElementById('dateChip').textContent =
+      `📅 ${days[d.getDay()]} ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`;
+  }
+  upd(); setInterval(upd, 60000);
+})();
+
+/* ── ИМЯ ── */
+const nameInput = document.getElementById('studentName');
+const savedName = localStorage.getItem('tetraktis_student_name') || '';
+if (savedName) nameInput.value = savedName;
+nameInput.addEventListener('input', () => {
+  localStorage.setItem('tetraktis_student_name', nameInput.value.trim());
+});
+
+/* ── ОТВЕТЫ ── */
+const ANSWERS = {
+  1:  { type: 'roots', values: [3, 4] },
+  2:  { type: 'number', value: 8 },
+  3:  { type: 'roots', values: [-4, 4] },
+  4:  { type: 'number', value: 11 },
+  5:  { type: 'roots', values: [0, 4] },
+  6:  { type: 'number', value: 6 },
+  7:  { type: 'roots', values: [-7, 2] },
+  8:  { type: 'roots', values: [-5, 1] },
+  9:  { type: 'number', value: 0 },
+  10: { type: 'roots', values: [-3, 3] }
+};
+
+/* ── НОРМАЛИЗАЦИЯ ── */
+function normalizeNumber(s){
+  return String(s).trim()
+    .replace(/[−–—]/g, '-')
+    .replace(/,/g, '.')
+    .replace(/\s+/g, '');
+}
+
+function parseRoots(s){
+  let str = String(s).trim()
+    .replace(/[−–—]/g, '-')
+    .replace(/(\d),(\d)/g, '$1.$2')
+    .replace(/\s+/g, ' ');
+  const parts = str.split(/[;]+/).map(p => p.trim()).filter(Boolean);
+  const final = [];
+  for (const p of parts){
+    const sub = p.split(/,(?=\s*-?\d)/).map(x => x.trim()).filter(Boolean);
+    for (const x of sub) final.push(x);
+  }
+  const nums = [];
+  for (const p of final){
+    const n = parseFloat(p);
+    if (isNaN(n)) return null;
+    nums.push(n);
+  }
+  return nums;
+}
+
+function checkAnswer(taskId, userVal){
+  const ans = ANSWERS[taskId];
+  if (!ans) return false;
+
+  if (ans.type === 'number'){
+    const s = normalizeNumber(userVal).toLowerCase();
+    const n = parseFloat(s);
+    if (isNaN(n)) return false;
+    return Math.abs(n - ans.value) < 1e-6;
+  }
+
+  if (ans.type === 'roots'){
+    const s = String(userVal).trim().toLowerCase();
+    if (s === 'нет корней' || s === 'неткорней') return ans.values.length === 0;
+    const nums = parseRoots(userVal);
+    if (!nums) return false;
+    if (nums.length !== ans.values.length) return false;
+    const a = nums.slice().sort((x,y)=>x-y);
+    const b = ans.values.slice().sort((x,y)=>x-y);
+    for (let i=0;i<a.length;i++){
+      if (Math.abs(a[i]-b[i]) > 1e-6) return false;
+    }
+    return true;
+  }
+  return false;
+}
+
+/* ── СОСТОЯНИЕ ── */
+const taskState = {};
+
+/* ── КНОПКИ «ОТВЕТИТЬ» ── */
+document.querySelectorAll('.btn-answer').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const id = btn.dataset.check;
+    const task = document.querySelector(`.task[data-task="${id}"]`);
+    const input = task.querySelector(`input[data-ans="${id}"]`);
+    const mark = task.querySelector(`.verdict-mark[data-mark="${id}"]`);
+    const val = input.value.trim();
+
+    if (!val){
+      showToast('⚠️ Впиши ответ');
+      input.focus();
+      return;
+    }
+
+    const correct = checkAnswer(id, val);
+    taskState[id] = correct ? 'ok' : 'err';
+
+    input.disabled = true;
+    input.classList.remove('ok', 'err');
+    input.classList.add(correct ? 'ok' : 'err');
+
+    btn.disabled = true;
+    btn.textContent = correct ? '✅ Принято' : '📌 Принято';
+
+    mark.textContent = correct ? '✅' : '❌';
+    mark.style.color = correct ? 'var(--ok)' : 'var(--err)';
+
+    task.classList.remove('solved-ok', 'solved-err');
+    task.classList.add(correct ? 'solved-ok' : 'solved-err');
+
+    showToast(correct ? '✅ Верно! Ответ принят' : '📌 Ответ принят. Проверь себя в тетради');
+  });
+});
+
+document.querySelectorAll('input[data-ans]').forEach(inp => {
+  inp.addEventListener('keydown', e => {
+    if (e.key === 'Enter'){
+      e.preventDefault();
+      const id = inp.dataset.ans;
+      const btn = document.querySelector(`.btn-answer[data-check="${id}"]`);
+      if (btn && !btn.disabled) btn.click();
+    }
+  });
+});
+
+/* ── ТЕКСТ ── */
+const TASK_TITLES = {
+  1:  'x² − 7x + 12 = 0',
+  2:  '5x − 9 = 3x + 7',
+  3:  'x² − 16 = 0',
+  4:  '4(x − 3) = 2(x + 5)',
+  5:  '2x² − 8x = 0',
+  6:  '7x = 42',
+  7:  'x² + 5x − 14 = 0',
+  8:  '(x + 2)² = 9',
+  9:  '3(x + 1) = 2(x − 4) + 5',
+  10: '3x² − 27 = 0'
+};
+
+function buildText(){
+  const name = (nameInput.value.trim() || 'Ученик');
+  const days = ['ВС','ПН','ВТ','СР','ЧТ','ПТ','СБ'];
+  const d = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const dateStr = `${days[d.getDay()]} ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`;
+
+  const lines = [];
+  lines.push('✏️ ДЗ · Уравнения');
+  lines.push(`Ученик: ${name}`);
+  lines.push(`Дата: ${dateStr}`);
+  lines.push('');
+  lines.push('━━━ Ответы ━━━');
+
+  let correctCount = 0;
+  for (let i = 1; i <= 10; i++){
+    const input = document.querySelector(`input[data-ans="${i}"]`);
+    const val = input.value.trim() || '—';
+    const state = taskState[i];
+    let mark = '—';
+    if (state === 'ok'){ mark = '✅'; correctCount++; }
+    else if (state === 'err'){ mark = '❌'; }
+    lines.push(`№${i}. ${TASK_TITLES[i]}`);
+    lines.push(`   Ответ: ${val}  ${mark}`);
+  }
+
+  lines.push('');
+  lines.push(`Итого верно: ${correctCount} из 10`);
+  lines.push('');
+  lines.push('Решение — в тетради (фото прикрепляю отдельно).');
+  return lines.join('\n');
+}
+
+/* ── МАКС ── */
+const MAX_URL = 'https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes';
+
+document.getElementById('btnMax').addEventListener('click', async () => {
+  if (!nameInput.value.trim()){
+    showToast('⚠️ Впиши своё имя');
+    nameInput.focus();
+    return;
+  }
+
+  const answered = Object.keys(taskState).length;
+  if (answered === 0){
+    showToast('⚠️ Ответь хотя бы на одно задание');
+    return;
+  }
+
+  const text = buildText();
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch (e) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch(err){}
+    document.body.removeChild(ta);
+  }
+
+  window.open(MAX_URL, '_blank');
+  showToast('📋 Ответы скопированы · прикрепи фото решения в чате Макс');
+});
+
+/* ── ТОСТ ── */
+let toastTimer = null;
+function showToast(text){
+  const t = document.getElementById('toast');
+  t.textContent = text;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+
+</body>
+</html>
