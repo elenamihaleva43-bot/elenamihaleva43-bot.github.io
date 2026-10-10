@@ -1,0 +1,1718 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>ΤΕΤΡΑΚΤΥΣ · Тренажёр · Логарифмы</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c; --teal-dark:#16a085; --teal-deep:#0e7c66;
+    --mint:#7fffd4; --coral:#ff6b6b;
+    --gold:#f4d35e; --gold-light:#ffe89a;
+    --text:#e8f8f5; --text-soft:#b8d8d0;
+    --ok:#2ecc71; --err:#ff6b6b;
+  }
+  html,body{
+    min-height:100vh;
+    font-family: Georgia, "Times New Roman", serif;
+    color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(26,188,156,0.22), transparent 55%),
+      radial-gradient(ellipse at 85% 90%, rgba(127,255,212,0.15), transparent 55%),
+      radial-gradient(ellipse at 50% 50%, rgba(244,211,94,0.06), transparent 70%),
+      linear-gradient(160deg, #0a2a33 0%, #0d3b47 50%, #134e5e 100%);
+    background-attachment: fixed;
+    overflow-x:hidden;
+    line-height:1.6;
+  }
+  body{transition:padding-right .35s cubic-bezier(.4,0,.2,1);}
+  body.cheat-open{padding-right:min(420px, 92vw);}
+
+  .bg-symbols{
+    position:fixed; inset:0;
+    z-index:0; pointer-events:none; overflow:hidden;
+  }
+  .bg-symbols span{
+    position:absolute;
+    font-family:'Cambria Math','Times New Roman',serif;
+    font-style:italic;
+    color:rgba(127,255,212,0.10);
+    user-select:none;
+    will-change:transform;
+  }
+  @keyframes floatY{
+    0%,100%{ transform:translateY(0) rotate(0deg); }
+    50%{ transform:translateY(-40px) rotate(6deg); }
+  }
+  @keyframes floatY2{
+    0%,100%{ transform:translateY(0) rotate(0deg); }
+    50%{ transform:translateY(30px) rotate(-5deg); }
+  }
+
+  .wrap{
+    position:relative;z-index:1;max-width:820px;
+    margin:0 auto;padding:14px;
+    padding-top:100px;padding-bottom:80px;
+  }
+
+  .logo-mini{
+    position:fixed; top:14px; left:16px; z-index:100;
+    display:flex;align-items:center;gap:10px;
+    background: rgba(10,42,51,0.7);
+    border:1.5px solid rgba(26,188,156,0.35);
+    border-radius:16px; padding:10px 14px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    font-family:'Times New Roman',serif;
+  }
+  .logo-dots{font-size:11px;line-height:1.15;letter-spacing:2px;font-weight:bold;color:var(--teal);}
+  .logo-txt{font-size:15px;letter-spacing:2px;font-weight:700;color:var(--teal);}
+  .logo-txt small{display:block;font-size:11px;letter-spacing:3px;font-weight:400;color:var(--teal);opacity:.85;font-style:normal;}
+
+  .home-btn{
+    position:fixed; top:84px; left:16px; z-index:100;
+    display:inline-flex; align-items:center; gap:6px;
+    padding:9px 16px; border-radius:12px;
+    background: rgba(10,42,51,0.7);
+    border:1.5px solid rgba(26,188,156,0.35);
+    color:var(--mint); text-decoration:none;
+    font-family:'Georgia',serif; font-size:13px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    transition: all .25s; white-space:nowrap;
+  }
+  .home-btn:hover{
+    background:rgba(26,188,156,0.18);
+    border-color:var(--mint);
+    transform:translateY(-2px);
+  }
+
+  .top-fixed{
+    position:fixed; top:14px; right:16px; z-index:100;
+    display:flex;gap:8px;align-items:center;
+  }
+  .chip{
+    background: rgba(10,42,51,0.75);
+    border:1.5px solid rgba(26,188,156,0.35);
+    border-radius:20px;padding:8px 16px;
+    font-weight:700;font-size:14px;white-space:nowrap;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    color:var(--text);
+    font-family:"Courier New", monospace;
+  }
+  .chip.date{font-family: Georgia, serif; font-size:13px;}
+
+  .icon-btn{
+    width:40px; height:40px;
+    display:inline-flex;align-items:center;justify-content:center;
+    background: rgba(10,42,51,0.75);
+    border:1.5px solid rgba(26,188,156,0.35);
+    border-radius:12px;
+    color:var(--mint); font-size:18px;
+    cursor:pointer; transition: all .2s;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+  }
+  .icon-btn:hover{
+    background:rgba(26,188,156,0.18);
+    border-color:var(--mint);
+    transform:translateY(-2px);
+  }
+  .icon-btn.muted{opacity:.55;}
+
+  .title{text-align:center; margin: 20px auto 22px;}
+  .title h1{
+    font-size: clamp(22px, 3.5vw, 28px);
+    color:var(--mint);
+    text-shadow: 0 0 24px rgba(127,255,212,0.35);
+    margin-bottom:8px;
+    animation: titleGlow 3s ease-in-out infinite;
+  }
+  @keyframes titleGlow{
+    0%,100%{ text-shadow: 0 0 24px rgba(127,255,212,0.35); }
+    50%    { text-shadow: 0 0 36px rgba(127,255,212,0.6), 0 0 60px rgba(127,255,212,0.25); }
+  }
+  .title p{color:var(--text-soft); font-size:14.5px; font-style:italic;}
+
+  .ladder{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    margin-top:16px;
+    position:relative;
+  }
+  .ladder::before{
+    content:"";
+    position:absolute;
+    left:26px; top:20px; bottom:20px;
+    width:2px;
+    background: linear-gradient(180deg, var(--teal), rgba(26,188,156,0.15));
+    border-radius:2px;
+  }
+  .step{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:16px 20px 16px 20px;
+    border-radius:16px;
+    background: rgba(255,255,255,0.04);
+    border:1.5px solid rgba(26,188,156,0.4);
+    cursor:pointer;
+    transition: all .25s;
+    text-align:left;
+    font-family:inherit;
+    color:var(--text);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    position:relative;
+    z-index:1;
+  }
+  .step:hover{
+    border-color:var(--mint);
+    background: rgba(26,188,156,0.1);
+    transform:translateX(4px);
+    box-shadow: 0 10px 28px rgba(26,188,156,0.3);
+  }
+  .step .badge{
+    font-family:'Courier New',monospace;
+    font-weight:bold;
+    color:#04231d;
+    font-size:16px;
+    background: linear-gradient(135deg,#1abc9c,#16a085);
+    padding:8px 14px;
+    border-radius:12px;
+    flex-shrink:0;
+    min-width:42px;
+    text-align:center;
+    box-shadow: 0 4px 12px rgba(26,188,156,0.35);
+  }
+  .step .name{
+    font-size:16px;
+    color:var(--mint);
+    font-weight:bold;
+    flex:1;
+  }
+  .step .check{
+    font-size:18px;
+    color:var(--ok);
+    opacity:0;
+    transition:opacity .3s;
+  }
+  .step.passed .check{opacity:1;}
+  .step.passed{
+    border-color: rgba(46,204,113,0.55);
+    background: rgba(46,204,113,0.05);
+  }
+
+  .status{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    flex-wrap:wrap;
+    background: rgba(255,255,255,0.04);
+    border:1.5px solid rgba(26,188,156,0.4);
+    border-radius:16px;
+    padding:14px 18px;
+    margin-bottom:18px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+  .status .lvl{
+    font-family:'Times New Roman',serif;
+    font-size:16px;
+    color:var(--gold-light);
+    font-weight:bold;
+    flex:1;
+    min-width:0;
+  }
+  .status .hearts{
+    display:flex; gap:6px;
+    font-size:22px;
+    flex-shrink:0;
+  }
+  .status .hearts .heart{
+    display:inline-block;
+    transition: all .35s cubic-bezier(.3,.9,.4,1);
+  }
+  .status .hearts .heart.lost{
+    opacity:.25;
+    filter:grayscale(1);
+    transform:scale(.85);
+  }
+  .status .hearts .heart.pulse{
+    animation: heartPulse 1.2s ease-in-out infinite;
+  }
+  @keyframes heartPulse{
+    0%,100%{ transform:scale(1); }
+    50%{ transform:scale(1.12); }
+  }
+  .status .hearts .heart.pop{
+    animation: heartPop .5s cubic-bezier(.3,.9,.4,1);
+  }
+  @keyframes heartPop{
+    0%{ transform:scale(1); }
+    30%{ transform:scale(1.4) rotate(-10deg); }
+    60%{ transform:scale(.8) rotate(8deg); }
+    100%{ transform:scale(.85); }
+  }
+  .status .progress{
+    font-family:'Courier New',monospace;
+    font-size:14px;
+    color:var(--mint);
+    font-weight:bold;
+    flex-shrink:0;
+  }
+
+  .progress-bar{
+    position:relative;
+    height:12px;
+    background: rgba(0,0,0,0.35);
+    border-radius:8px;
+    overflow:hidden;
+    margin-bottom:18px;
+    border:1px solid rgba(26,188,156,0.25);
+  }
+  .progress-bar .fill{
+    position:relative;
+    height:100%;
+    background: linear-gradient(90deg, var(--teal-deep), var(--teal), var(--mint));
+    background-size: 200% 100%;
+    border-radius:8px;
+    transition: width .5s cubic-bezier(.3,.9,.4,1);
+    box-shadow: 0 0 14px rgba(127,255,212,0.5);
+    animation: progressFlow 3s linear infinite;
+  }
+  @keyframes progressFlow{
+    0%{ background-position: 100% 0; }
+    100%{ background-position: -100% 0; }
+  }
+  .progress-bar .spark{
+    position:absolute;
+    top:50%; width:6px; height:6px;
+    margin-top:-3px;
+    background: radial-gradient(circle, #fff, var(--mint));
+    border-radius:50%;
+    box-shadow: 0 0 8px rgba(255,255,255,0.8);
+    pointer-events:none;
+    animation: sparkFly 1.6s linear infinite;
+  }
+  @keyframes sparkFly{
+    0%{ left:0%; opacity:0; }
+    20%{ opacity:1; }
+    100%{ left:100%; opacity:0; }
+  }
+
+  .task-card{
+    background: rgba(255,255,255,0.04);
+    border:1.5px solid rgba(26,188,156,0.4);
+    border-radius:20px;
+    padding:26px 26px 22px;
+    margin-bottom:18px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    transition: all .25s;
+    position:relative;
+    overflow:hidden;
+  }
+  .task-card.flying{
+    animation: flyIn .5s cubic-bezier(.3,.9,.4,1);
+  }
+  @keyframes flyIn{
+    0%{ opacity:0; transform: translateY(40px) rotate(-1.5deg) scale(.95); }
+    100%{ opacity:1; transform: translateY(0) rotate(0) scale(1); }
+  }
+  .task-card.shake{animation: shake .5s;}
+  @keyframes shake{
+    0%,100%{transform:translateX(0)}
+    15%{transform:translateX(-10px)}
+    30%{transform:translateX(10px)}
+    45%{transform:translateX(-7px)}
+    60%{transform:translateX(7px)}
+    80%{transform:translateX(-3px)}
+  }
+  .task-card.correct{
+    border-color: rgba(46,204,113,0.65);
+    background: rgba(46,204,113,0.07);
+  }
+  .task-card.wrong{
+    border-color: rgba(255,107,107,0.65);
+    background: rgba(255,107,107,0.07);
+  }
+
+  .task-label{
+    text-align:center;
+    font-family:'Times New Roman',serif;
+    font-size:14px;
+    color:var(--text-soft);
+    letter-spacing:2px;
+    margin-bottom:14px;
+    text-transform:uppercase;
+  }
+
+  .log{
+    font-family:'Cambria Math','Times New Roman',serif;
+    font-style:italic;
+    white-space:nowrap;
+  }
+  .log .base{
+    font-size:0.6em;
+    vertical-align:sub;
+    color: var(--mint);
+    margin-right:1px;
+  }
+
+  .task-eq{
+    font-family:'Cambria Math','Times New Roman',serif;
+    font-size:clamp(26px, 5.5vw, 40px);
+    color: var(--gold-light);
+    font-style:italic;
+    text-align:center;
+    padding:18px 16px;
+    margin:0 auto 22px;
+    background: rgba(244,211,94,0.06);
+    border-left:4px solid var(--gold);
+    border-radius:0 14px 14px 0;
+    letter-spacing:0.5px;
+    line-height:1.3;
+    max-width:560px;
+    word-break:break-word;
+  }
+  .task-eq .op{ color: var(--text-soft); font-style:normal; padding:0 4px; }
+  .task-eq .pow{
+    display:inline-block;
+    vertical-align:baseline;
+    position:relative;
+    line-height:1;
+  }
+  .task-eq .pow > .p-base{
+    font-style:italic;
+  }
+  .task-eq .pow > .p-exp{
+    display:inline-block;
+    vertical-align:super;
+    font-size:0.62em;
+    margin-left:1px;
+    line-height:1;
+    position:relative;
+    top:-0.15em;
+  }
+  .task-eq .frac{
+    display:inline-flex;
+    flex-direction:column;
+    align-items:center;
+    vertical-align:middle;
+    margin:0 4px;
+  }
+  .task-eq .frac .num{
+    padding:4px 14px;
+    border-bottom:2px solid currentColor;
+    line-height:1.3;
+  }
+  .task-eq .frac .den{
+    padding:4px 14px;
+    line-height:1.3;
+  }
+  .task-eq .frac .num .log,
+  .task-eq .frac .den .log{ font-size:0.9em; }
+
+  .answer-area{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  .answer-area input{
+    width: 200px;
+    padding:14px 18px;
+    border-radius:14px;
+    background: rgba(255,255,255,0.06);
+    border:1.5px solid rgba(26,188,156,0.5);
+    color: var(--text);
+    font-family:'Courier New',monospace;
+    font-size:20px;
+    font-weight:bold;
+    outline:none;
+    text-align:center;
+    letter-spacing:1px;
+    transition: all .18s;
+  }
+  .answer-area input:focus{
+    border-color:var(--mint);
+    background:rgba(26,188,156,0.12);
+    box-shadow:0 0 0 4px rgba(127,255,212,0.15);
+  }
+  .answer-area input:disabled{opacity:.9; cursor:not-allowed;}
+  .answer-area input.ok{
+    border-color: var(--ok);
+    background: rgba(46,204,113,0.15);
+    color:#d4ffe3;
+  }
+  .answer-area input.err{
+    border-color: var(--err);
+    background: rgba(255,107,107,0.15);
+    color:#ffc9c9;
+  }
+
+  .btn-check{
+    padding:14px 28px;
+    border:none;
+    border-radius:14px;
+    background: linear-gradient(135deg,#1abc9c,#16a085);
+    color:#04231d;
+    font-family: Georgia, serif;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    transition: all .18s;
+    box-shadow: 0 6px 20px rgba(26,188,156,0.4);
+    letter-spacing:0.5px;
+    white-space:nowrap;
+    animation: btnBreath 3s ease-in-out infinite;
+  }
+  @keyframes btnBreath{
+    0%,100%{ box-shadow: 0 6px 20px rgba(26,188,156,0.4); }
+    50%    { box-shadow: 0 6px 26px rgba(26,188,156,0.7); }
+  }
+  .btn-check:hover{transform:translateY(-2px); animation:none; box-shadow:0 10px 26px rgba(26,188,156,0.6);}
+  .btn-check:disabled{
+    opacity:0.5;
+    cursor:not-allowed;
+    transform:none;
+    animation:none;
+  }
+
+  .feedback{
+    text-align:center;
+    margin-top:16px;
+    font-size:15px;
+    min-height:24px;
+    letter-spacing:0.5px;
+  }
+  .feedback.ok{color:var(--ok); font-weight:bold; animation: popIn .3s;}
+  .feedback.err{color:var(--err); font-weight:bold;}
+  @keyframes popIn{
+    0%{ transform:scale(.8); opacity:0; }
+    60%{ transform:scale(1.08); }
+    100%{ transform:scale(1); opacity:1; }
+  }
+  .feedback b{color:var(--gold-light);}
+
+  .sparkle{
+    position:absolute;
+    left:50%; top:50%;
+    width:12px; height:12px;
+    margin-left:-6px; margin-top:-6px;
+    border-radius:50%;
+    background: radial-gradient(circle, #ffffff, var(--ok));
+    box-shadow: 0 0 20px rgba(46,204,113,0.9);
+    pointer-events:none;
+    animation: sparkleOut .8s ease-out forwards;
+  }
+  @keyframes sparkleOut{
+    0%{ transform: scale(0); opacity:1; }
+    100%{ transform: scale(20); opacity:0; }
+  }
+
+  .screen{display:none;}
+  .screen.active{display:block; animation: fadeIn .4s;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none}}
+
+  .start-card{
+    background: rgba(255,255,255,0.04);
+    border:1.5px solid rgba(26,188,156,0.4);
+    border-radius:20px;
+    padding:28px 26px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+  .start-card h2{
+    font-family:'Times New Roman',serif;
+    font-size:22px;
+    color:var(--mint);
+    margin-bottom:10px;
+    text-align:center;
+  }
+  .start-card p{
+    font-size:15px;
+    color: var(--text-soft);
+    line-height:1.7;
+    margin-bottom:10px;
+    text-align:center;
+  }
+  .start-card .rules{
+    text-align:left;
+    display:inline-block;
+    margin: 16px auto 6px;
+    background: rgba(26,188,156,0.08);
+    border-left:4px solid var(--teal);
+    padding:14px 22px;
+    border-radius:0 12px 12px 0;
+    font-size:15px;
+    color: var(--text);
+    list-style:none;
+  }
+  .start-card .rules li{
+    margin:6px 0;
+    padding-left:22px;
+    position:relative;
+  }
+  .start-card .rules li::before{
+    content:"→";
+    position:absolute; left:0;
+    color:var(--mint);
+    font-weight:bold;
+  }
+  .start-card .rules b{color:var(--gold-light);}
+
+  .finish-card{
+    background: rgba(255,255,255,0.04);
+    border:1.5px solid rgba(26,188,156,0.4);
+    border-radius:20px;
+    padding:32px 28px;
+    text-align:center;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+  .finish-card .big-emoji{
+    font-size:64px;
+    margin-bottom:10px;
+    display:block;
+    animation: bounceEmoji 1s ease-in-out infinite;
+  }
+  @keyframes bounceEmoji{
+    0%,100%{ transform:translateY(0) rotate(-5deg); }
+    50%    { transform:translateY(-12px) rotate(5deg); }
+  }
+  .finish-card h2{
+    font-family:'Times New Roman',serif;
+    font-size:26px;
+    color:var(--mint);
+    margin-bottom:14px;
+  }
+  .finish-card p{
+    font-size:16px;
+    color: var(--text);
+    line-height:1.7;
+    margin-bottom:10px;
+  }
+
+  .btn-big{
+    font-family: Georgia, serif;
+    font-size:17px;
+    font-weight:700;
+    cursor:pointer;
+    border:none;
+    border-radius:16px;
+    padding:16px 34px;
+    color:#04231d;
+    background: linear-gradient(135deg, #1abc9c, #16a085);
+    transition:.2s;
+    box-shadow: 0 8px 28px rgba(26,188,156,0.4);
+    letter-spacing:0.5px;
+    margin-top:10px;
+  }
+  .btn-big:hover{transform:translateY(-2px); box-shadow: 0 12px 36px rgba(26,188,156,0.55);}
+  .btn-big.ghost{
+    background: rgba(255,255,255,0.06);
+    color: var(--mint);
+    border:1.5px solid rgba(26,188,156,0.4);
+    box-shadow: none;
+  }
+  .btn-big.ghost:hover{
+    background: rgba(26,188,156,0.15);
+  }
+
+  .btn-row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin-top:14px;
+  }
+
+  .mascot{
+    position:fixed;
+    bottom:20px; left:20px;
+    width:110px; height:110px;
+    z-index:1100;
+    pointer-events:none;
+    transition:transform .4s cubic-bezier(.3,.9,.4,1);
+    filter: drop-shadow(0 8px 20px rgba(0,0,0,0.45));
+  }
+  .mascot.happy{ transform: translateY(-10px) rotate(-4deg); }
+  .mascot.sad{ transform: translateY(4px) rotate(3deg); }
+  .mascot.celebrate{ animation: mascotJump .9s ease-in-out infinite; }
+  @keyframes mascotJump{
+    0%,100%{ transform:translateY(0) rotate(0); }
+    50%    { transform:translateY(-20px) rotate(-6deg); }
+  }
+  .mascot .eye{
+    transform-origin: center center;
+    animation: blink 4s ease-in-out infinite;
+  }
+  @keyframes blink{
+    0%, 92%, 100%{ transform: scaleY(1); }
+    95%          { transform: scaleY(0.1); }
+  }
+
+  .fireworks{
+    position:fixed; inset:0;
+    pointer-events:none;
+    z-index:80;
+    overflow:hidden;
+  }
+  .firework-star{
+    position:absolute;
+    left:50%; top:50%;
+    font-size:24px;
+    animation: fireworkFly 1.5s ease-out forwards;
+    will-change: transform, opacity;
+  }
+  @keyframes fireworkFly{
+    0%{ opacity:1; transform:translate(0,0) scale(.4); }
+    100%{ opacity:0; transform: translate(var(--dx), var(--dy)) scale(1.3) rotate(var(--rot)); }
+  }
+
+  .toast{
+    position:fixed; bottom:150px; left:50%;
+    transform:translateX(-50%) translateY(80px);
+    background: linear-gradient(135deg, #1abc9c, #16a085);
+    color:#04231d;
+    padding:14px 26px;
+    border-radius:16px;
+    font-family: Georgia, serif;
+    font-weight:bold;
+    font-size:15px;
+    box-shadow: 0 12px 40px rgba(26,188,156,0.5);
+    opacity:0;
+    transition: all .35s cubic-bezier(.3,.9,.4,1);
+    z-index:200;
+    pointer-events:none;
+    max-width:90vw;
+    text-align:center;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+  .toast.err{
+    background: linear-gradient(135deg, #ff6b6b, #d94a4a);
+    color:#2a0a0a;
+    box-shadow: 0 12px 40px rgba(255,107,107,0.5);
+  }
+
+  .cheat-panel{
+    position:fixed; top:0; right:0;
+    height:100vh; width:min(420px,92vw);
+    background: linear-gradient(160deg, #0d3b47 0%, #134e5e 100%);
+    border-left:2px solid var(--mint);
+    box-shadow:-20px 0 60px rgba(0,0,0,0.5);
+    transform:translateX(105%);
+    transition: transform .35s cubic-bezier(.4,0,.2,1);
+    z-index:1000;
+    overflow-y:auto;
+    padding:24px 22px 40px;
+  }
+  .cheat-panel.open{ transform: translateX(0); }
+  .cheat-head{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:18px;
+  }
+  .cheat-head h2{
+    font-size:20px; color:var(--mint);
+    font-weight:normal; letter-spacing:1px;
+  }
+  .cheat-close{
+    font-size:20px; cursor:pointer; color:var(--coral);
+    background:none; border:none;
+    width:38px; height:38px; border-radius:10px;
+    transition:.2s;
+  }
+  .cheat-close:hover{
+    background:rgba(255,107,107,0.15);
+    transform: rotate(90deg);
+  }
+
+  .cheat-section{
+    background: rgba(0,0,0,0.25);
+    border-radius:14px;
+    padding:14px 16px;
+    margin-bottom:12px;
+    border-left:4px solid var(--teal);
+  }
+  .cheat-section h3{
+    font-size:12px; color:var(--mint);
+    letter-spacing:2px; font-weight:normal;
+    text-transform:uppercase;
+    margin-bottom:10px;
+  }
+  .cheat-formula{
+    font-family:'Cambria Math','Times New Roman',serif;
+    font-size:18px;
+    color:var(--gold-light);
+    text-align:center;
+    padding:6px 0;
+    line-height:1.5;
+  }
+  .cheat-formula .log{ font-style:italic; }
+  .cheat-formula .log .base{
+    font-size:0.6em;
+    vertical-align:sub;
+    color: var(--mint);
+  }
+  .cheat-formula .frac{
+    display:inline-flex;
+    flex-direction:column;
+    align-items:center;
+    vertical-align:middle;
+    margin:0 4px;
+    font-size:0.85em;
+  }
+  .cheat-formula .frac .num{
+    padding:1px 10px;
+    border-bottom:1.5px solid currentColor;
+    line-height:1.2;
+  }
+  .cheat-formula .frac .den{
+    padding:1px 10px;
+    line-height:1.2;
+  }
+  .cheat-formula .note{
+    display:block;
+    font-size:13px;
+    color:var(--text-soft);
+    font-style:italic;
+    margin-top:6px;
+    font-family: Georgia, serif;
+  }
+  .cheat-section.warn{ border-left-color: var(--coral); }
+  .cheat-section.warn h3{ color:var(--coral); }
+
+  .footer{
+    text-align:center;
+    padding: 40px 20px 20px;
+    color:var(--text-soft);
+    font-size:13px;
+    font-family:'Times New Roman',serif;
+    letter-spacing:2px;
+  }
+  .footer .f-logo{color:var(--teal); font-size:15px; margin-bottom:6px;}
+  .footer .f-sub{font-style:italic; opacity:.75;}
+
+  @media (max-width: 700px){
+    .wrap{padding-top:120px;}
+    .logo-mini{padding:8px 10px;}
+    .logo-txt{font-size:13px;}
+    .home-btn{top:76px; left:12px; font-size:12px; padding:7px 12px;}
+    .title h1{font-size:20px;}
+    .chip{padding:6px 12px; font-size:12px;}
+    .task-card{padding:20px 18px;}
+    .task-eq{font-size:24px; padding:14px 12px;}
+    .answer-area input{width:160px; font-size:18px;}
+    .btn-check{font-size:15px; padding:12px 22px; width:100%;}
+    .status{padding:12px 14px;}
+    .status .lvl{font-size:14px;}
+    .step{padding:14px 16px;}
+    .step .badge{font-size:14px; padding:6px 10px; min-width:36px;}
+    .step .name{font-size:15px;}
+    .mascot{width:80px; height:80px; bottom:12px; left:12px;}
+    body.cheat-open{padding-right:0;}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-symbols" id="bgSymbols"></div>
+
+<div class="logo-mini">
+  <div class="logo-dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="logo-txt">ΤΕΤΡΑΚΤΥΣ<small>Школа Елены Михалевой</small></div>
+</div>
+
+<a href="index.html" class="home-btn">🏠 На главную</a>
+
+<div class="top-fixed">
+  <button class="icon-btn" id="soundBtn" title="Звук">🔊</button>
+  <button class="icon-btn" id="cheatBtn" title="Шпаргалка">📖</button>
+  <div class="chip date" id="dateChip">📅 —</div>
+</div>
+
+<div class="wrap">
+
+  <div class="screen active" id="screen-start">
+    <div class="title">
+      <h1>🎯 Тренажёр · Логарифмы</h1>
+      <p>выбери уровень · 10 заданий · 3 жизни</p>
+    </div>
+
+    <div class="start-card">
+      <h2>Как играть?</h2>
+      <p>Реши 10 заданий. Ошибёшься три раза — уровень начнётся заново, но с новыми заданиями.</p>
+      <ul class="rules">
+        <li>Ответ — целое число или дробь.</li>
+        <li>Дробь можно писать как <b>3/2</b>, <b>1,5</b> или <b>1.5</b>.</li>
+        <li>Кнопка «Проверить» — после ответа.</li>
+        <li>Enter тоже проверяет.</li>
+      </ul>
+      <div class="ladder" id="ladder"></div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-game">
+    <div class="status">
+      <div class="lvl" id="lvlName">—</div>
+      <div class="progress">Задание <span id="taskNum">1</span> / 10</div>
+      <div class="hearts" id="hearts">
+        <span class="heart pulse">❤️</span>
+        <span class="heart pulse">❤️</span>
+        <span class="heart pulse">❤️</span>
+      </div>
+    </div>
+
+    <div class="progress-bar">
+      <div class="fill" id="progressFill" style="width:0%"></div>
+      <div class="spark"></div>
+    </div>
+
+    <div class="task-card" id="taskCard">
+      <div class="task-label">Вычислите</div>
+      <div class="task-eq" id="taskEq"></div>
+      <div class="answer-area">
+        <input type="text" id="answerInput" placeholder="ответ" autocomplete="off">
+        <button class="btn-check" id="btnCheck">Проверить</button>
+      </div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-big ghost" id="btnBack">← К выбору уровня</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-finish">
+    <div class="finish-card">
+      <span class="big-emoji" id="finishEmoji">🏆</span>
+      <h2 id="finishTitle">Уровень пройден!</h2>
+      <p id="finishText">Отличная работа.</p>
+      <div class="btn-row">
+        <button class="btn-big" id="btnAgain">🔄 Пройти заново</button>
+        <button class="btn-big ghost" id="btnToMenu">← К выбору уровня</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="f-logo">ΤΕΤΡΑΚΤΥΣ · ΤΕΤРАКТИС</div>
+    <div class="f-sub">где математика превращается в приключение</div>
+  </div>
+</div>
+
+<svg class="mascot" id="mascot" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <path d="M18 92 Q4 88 8 74 Q10 84 22 84 Z" fill="#1abc9c" stroke="#0e7c66" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M8 74 L4 68 L14 70 Z" fill="#f4d35e" stroke="#c9a63d" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M30 58 Q14 52 16 40 Q26 46 34 54 Z" fill="#16a085" stroke="#0e7c66" stroke-width="2" stroke-linejoin="round" opacity="0.9"/>
+  <path d="M90 58 Q106 52 104 40 Q94 46 86 54 Z" fill="#16a085" stroke="#0e7c66" stroke-width="2" stroke-linejoin="round" opacity="0.9"/>
+  <ellipse cx="60" cy="72" rx="32" ry="28" fill="#7fffd4" stroke="#16a085" stroke-width="2.5"/>
+  <ellipse cx="60" cy="80" rx="20" ry="17" fill="#e8fff5" opacity="0.55"/>
+  <ellipse cx="60" cy="42" rx="28" ry="26" fill="#7fffd4" stroke="#16a085" stroke-width="2.5"/>
+  <path d="M40 22 L34 6 L48 18 Z" fill="#f4d35e" stroke="#c9a63d" stroke-width="1.8" stroke-linejoin="round"/>
+  <path d="M80 22 L86 6 L72 18 Z" fill="#f4d35e" stroke="#c9a63d" stroke-width="1.8" stroke-linejoin="round"/>
+  <path d="M48 14 Q60 4 72 14 Q66 12 60 16 Q54 12 48 14 Z" fill="#f4d35e" opacity="0.85"/>
+  <ellipse class="eye" cx="48" cy="42" rx="6.5" ry="7" fill="#fff" stroke="#0e7c66" stroke-width="1.8"/>
+  <ellipse class="eye" cx="72" cy="42" rx="6.5" ry="7" fill="#fff" stroke="#0e7c66" stroke-width="1.8"/>
+  <circle cx="48" cy="43" r="3.2" fill="#04231d"/>
+  <circle cx="72" cy="43" r="3.2" fill="#04231d"/>
+  <circle cx="49" cy="42" r="1.1" fill="#fff"/>
+  <circle cx="73" cy="42" r="1.1" fill="#fff"/>
+  <g id="sadBrows" style="display:none;">
+    <line x1="41" y1="32" x2="54" y2="36" stroke="#0e7c66" stroke-width="2.2" stroke-linecap="round"/>
+    <line x1="79" y1="32" x2="66" y2="36" stroke="#0e7c66" stroke-width="2.2" stroke-linecap="round"/>
+  </g>
+  <circle cx="55" cy="54" r="1.5" fill="#0e7c66" opacity="0.7"/>
+  <circle cx="65" cy="54" r="1.5" fill="#0e7c66" opacity="0.7"/>
+  <path id="smile" d="M48 58 Q60 66 72 58" stroke="#0e7c66" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <circle id="blushL" cx="40" cy="52" r="4" fill="#ff6b6b" opacity="0"/>
+  <circle id="blushR" cx="80" cy="52" r="4" fill="#ff6b6b" opacity="0"/>
+</svg>
+
+<div class="fireworks" id="fireworks"></div>
+<div class="toast" id="toast"></div>
+
+<aside class="cheat-panel" id="cheatPanel">
+  <div class="cheat-head">
+    <h2>📖 Свойства логарифмов</h2>
+    <button class="cheat-close" id="cheatClose">✕</button>
+  </div>
+
+  <div class="cheat-section">
+    <h3>Определение</h3>
+    <div class="cheat-formula">
+      log<span class="base">a</span> b = c &nbsp;⇔&nbsp; a<sup>c</sup> = b
+      <span class="note">a &gt; 0, a ≠ 1, b &gt; 0</span>
+    </div>
+  </div>
+
+  <div class="cheat-section">
+    <h3>Основное тождество</h3>
+    <div class="cheat-formula">
+      a<sup>log<span class="base">a</span> b</sup> = b
+      <span class="note">логарифм и степень «съедают» друг друга</span>
+    </div>
+  </div>
+
+  <div class="cheat-section">
+    <h3>Простейшие значения</h3>
+    <div class="cheat-formula">
+      log<span class="base">a</span> 1 = 0
+      <br>
+      log<span class="base">a</span> a = 1
+    </div>
+  </div>
+
+  <div class="cheat-section">
+    <h3>Логарифм произведения</h3>
+    <div class="cheat-formula">
+      log<span class="base">a</span> (xy) = log<span class="base">a</span> x + log<span class="base">a</span> y
+    </div>
+  </div>
+
+  <div class="cheat-section">
+    <h3>Логарифм частного</h3>
+    <div class="cheat-formula">
+      log<span class="base">a</span> <span class="frac"><span class="num">x</span><span class="den">y</span></span> = log<span class="base">a</span> x − log<span class="base">a</span> y
+    </div>
+  </div>
+
+  <div class="cheat-section">
+    <h3>Логарифм степени</h3>
+    <div class="cheat-formula">
+      log<span class="base">a</span> (x<sup>n</sup>) = n · log<span class="base">a</span> x
+      <span class="note">степень можно выносить вперёд</span>
+    </div>
+  </div>
+
+  <div class="cheat-section">
+    <h3>Переход к новому основанию</h3>
+    <div class="cheat-formula">
+      log<span class="base">a</span> b = <span class="frac"><span class="num">log<span class="base">c</span> b</span><span class="den">log<span class="base">c</span> a</span></span>
+    </div>
+  </div>
+
+  <div class="cheat-section">
+    <h3>Следствие</h3>
+    <div class="cheat-formula">
+      log<span class="base">a</span> b = <span class="frac"><span class="num">1</span><span class="den">log<span class="base">b</span> a</span></span>
+    </div>
+  </div>
+
+  <div class="cheat-section">
+    <h3>Десятичный и натуральный</h3>
+    <div class="cheat-formula">
+      lg x = log<span class="base">10</span> x
+      <br>
+      ln x = log<span class="base">e</span> x
+      <span class="note">e ≈ 2,718…</span>
+    </div>
+  </div>
+
+  <div class="cheat-section warn">
+    <h3>Важно помнить</h3>
+    <div class="cheat-formula" style="font-size:15px; text-align:left;">
+      • a &gt; 0, a ≠ 1<br>
+      • b &gt; 0 (аргумент)<br>
+      • x &gt; 0, y &gt; 0 в свойствах суммы и разности
+    </div>
+  </div>
+</aside>
+
+<script>
+(function(){
+  const days = ['ВС','ПН','ВТ','СР','ЧТ','ПТ','СБ'];
+  function upd(){
+    const d = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    document.getElementById('dateChip').textContent =
+      `📅 ${days[d.getDay()]} ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`;
+  }
+  upd(); setInterval(upd, 60000);
+})();
+
+(function(){
+  const symbols = ['log', 'ln', '∫', 'π', '√', '∑', '∞', 'eˣ', '∂', 'θ', 'λ', 'Δ'];
+  const container = document.getElementById('bgSymbols');
+  const count = 14;
+  for(let i = 0; i < count; i++){
+    const span = document.createElement('span');
+    span.textContent = symbols[i % symbols.length];
+    span.style.left = (Math.random() * 100) + 'vw';
+    span.style.top = (Math.random() * 100) + 'vh';
+    span.style.fontSize = (28 + Math.random() * 42) + 'px';
+    span.style.opacity = (0.05 + Math.random() * 0.12);
+    const dur = (12 + Math.random() * 16) + 's';
+    const anim = (i % 2 === 0) ? 'floatY' : 'floatY2';
+    span.style.animation = `${anim} ${dur} ease-in-out infinite`;
+    span.style.animationDelay = (Math.random() * -20) + 's';
+    container.appendChild(span);
+  }
+})();
+
+const Sound = (function(){
+  let ctx = null;
+  let muted = localStorage.getItem('tetraktis_muted') === '1';
+  function ensureCtx(){
+    if(!ctx){
+      try { ctx = new (window.AudioContext || window.webkitAudioContext)(); }
+      catch(e){ ctx = null; }
+    }
+    if(ctx && ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  }
+  function tone(freq, dur, type, gain, delay){
+    if(muted) return;
+    const c = ensureCtx();
+    if(!c) return;
+    const t0 = c.currentTime + (delay || 0);
+    const osc = c.createOscillator();
+    const g = c.createGain();
+    osc.type = type || 'sine';
+    osc.frequency.value = freq;
+    g.gain.setValueAtTime(0, t0);
+    g.gain.linearRampToValueAtTime(gain || 0.15, t0 + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+    osc.connect(g); g.connect(c.destination);
+    osc.start(t0); osc.stop(t0 + dur + 0.05);
+  }
+  return {
+    correct(){ tone(880, 0.18, 'sine', 0.18); tone(1320, 0.22, 'sine', 0.12, 0.09); },
+    wrong(){ tone(220, 0.25, 'sawtooth', 0.10); tone(140, 0.35, 'sawtooth', 0.10, 0.08); },
+    levelUp(){ [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.28, 'sine', 0.15, i * 0.11)); },
+    levelFail(){ [440, 349, 262].forEach((f, i) => tone(f, 0.35, 'sine', 0.13, i * 0.16)); },
+    toggle(){
+      muted = !muted;
+      localStorage.setItem('tetraktis_muted', muted ? '1' : '0');
+      return !muted;
+    },
+    isMuted(){ return muted; }
+  };
+})();
+
+const soundBtn = document.getElementById('soundBtn');
+function updateSoundBtn(){
+  soundBtn.textContent = Sound.isMuted() ? '🔇' : '🔊';
+  soundBtn.classList.toggle('muted', Sound.isMuted());
+}
+updateSoundBtn();
+soundBtn.addEventListener('click', () => {
+  Sound.toggle();
+  updateSoundBtn();
+});
+
+function rnd(a, b){ return a + Math.floor(Math.random()*(b-a+1)); }
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function gcd(a, b){ return b === 0 ? a : gcd(b, a % b); }
+
+function shuffleArray(arr){
+  const a = arr.slice();
+  for(let i = a.length-1; i > 0; i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function getDivisors(P){
+  const res = [];
+  for(let d = 1; d * d <= P; d++){
+    if(P % d === 0){
+      res.push(d);
+      if(d !== P/d) res.push(P/d);
+    }
+  }
+  return res.sort((a,b) => a-b);
+}
+function isNiceNumber(n){
+  if(Number.isInteger(n)) return String(n).length <= 4;
+  const s = n.toFixed(1);
+  const v = parseFloat(s);
+  if(Math.abs(v - n) > 1e-9) return false;
+  const [intPart] = s.split('.');
+  return intPart.length <= 4;
+}
+function fmtNum(n){
+  if(Number.isInteger(n)) return String(n);
+  return n.toFixed(1).replace('.', ',');
+}
+function logExpr(a, b){
+  if(a === 10) return `<span class="log">lg ${b}</span>`;
+  return `<span class="log">log<span class="base">${a}</span> ${b}</span>`;
+}
+function logExprForExp(a, b){
+  return `<span class="log">log<span class="base">${a}</span> ${b}</span>`;
+}
+function powExpr(a, expHtml){
+  return `<span class="pow"><span class="p-base">${a}</span><span class="p-exp">${expHtml}</span></span>`;
+}
+function parseAnswer(s){
+  s = String(s).trim().replace(/\s+/g, '').replace(',', '.');
+  const m = s.match(/^(-?\d+)\/(\d+)$/);
+  if(m){
+    const a = parseInt(m[1], 10);
+    const b = parseInt(m[2], 10);
+    if(b === 0) return null;
+    return a / b;
+  }
+  const v = parseFloat(s);
+  return isNaN(v) ? null : v;
+}
+function isPowerOf(a, b){
+  if(b <= 0 || a <= 1) return false;
+  let x = a;
+  while(x <= b){
+    if(x === b) return true;
+    x *= a;
+  }
+  return false;
+}
+function pickNonPowerOneDigit(a){
+  const cands = [];
+  for(let b = 2; b <= 9; b++){
+    if(!isPowerOf(a, b)) cands.push(b);
+  }
+  if(cands.length === 0) return null;
+  return cands[Math.floor(Math.random()*cands.length)];
+}
+
+const LEVELS = [
+  {
+    name: 'Определение логарифма',
+    generate: function(used){
+      const a = pick([2,3,4,5,10]);
+      const k = rnd(1,5);
+      const b = Math.pow(a, k);
+      const key = `def-${a}-${k}`;
+      if(used.has(key)) return null;
+      used.add(key);
+      return { display: logExpr(a, b), answer: k, answerText: String(k), key };
+    }
+  },
+  {
+    name: 'Свойство степени',
+    generate: function(used){
+      const subtype = Math.random() < 0.55 ? 'ratio' : 'whole';
+      if(subtype === 'ratio'){
+        const a = pick([2, 3, 5]);
+        const n = rnd(2, 3);
+        let m = rnd(1, 4);
+        if(m === n) m = m + 1;
+        const base = Math.pow(a, n);
+        const arg  = Math.pow(a, m);
+        if(base > 2000 || arg > 100000) return null;
+        const g = gcd(m, n);
+        const num = m / g;
+        const den = n / g;
+        const ans = num / den;
+        const key = `r-${a}-${n}-${m}`;
+        if(used.has(key)) return null;
+        used.add(key);
+        return { display: logExpr(base, arg), answer: ans, answerText: `${num}/${den}`, key };
+      } else {
+        const a = pick([2, 3, 5]);
+        const m = rnd(1, 3);
+        const n = rnd(2, 4);
+        const x = Math.pow(a, m);
+        const xn = Math.pow(x, n);
+        if(xn > 1e9) return null;
+        const ans = m * n;
+        const key = `w-${a}-${m}-${n}`;
+        if(used.has(key)) return null;
+        used.add(key);
+        return { display: logExpr(a, powExpr(x, n)), answer: ans, answerText: String(ans), key };
+      }
+    }
+  },
+  {
+    name: 'Основное логарифмическое тождество',
+    generate: function(used){
+      const subtype = rnd(1, 4);
+      if(subtype === 1){
+        const a = pick([2,3,4,5,6,7]);
+        const b = pickNonPowerOneDigit(a);
+        if(b === null) return null;
+        const key = `idt-${a}-${b}`;
+        if(used.has(key)) return null;
+        used.add(key);
+        return { display: powExpr(a, logExprForExp(a, b)), answer: b, answerText: String(b), key };
+      } else if(subtype === 2){
+        const a = pick([2,3,4,5]);
+        const b = pickNonPowerOneDigit(a);
+        if(b === null) return null;
+        const k = rnd(2, 3);
+        const ans = Math.pow(b, k);
+        if(ans > 1000) return null;
+        const key = `k4-${a}-${b}-${k}`;
+        if(used.has(key)) return null;
+        used.add(key);
+        return { display: powExpr(a, `${k} · ${logExprForExp(a, b)}`), answer: ans, answerText: String(ans), key };
+      } else if(subtype === 3){
+        const a = pick([2,3,4,5]);
+        const b = pickNonPowerOneDigit(a);
+        if(b === null) return null;
+        const c = rnd(1, 3);
+        const ans = Math.pow(a, c) * b;
+        if(ans > 5000) return null;
+        const key = `k5-${a}-${b}-${c}`;
+        if(used.has(key)) return null;
+        used.add(key);
+        return { display: powExpr(a, `${c} + ${logExprForExp(a, b)}`), answer: ans, answerText: String(ans), key };
+      } else {
+        const a = pick([2, 3, 5]);
+        const m = rnd(2, 3);
+        const base = Math.pow(a, m);
+        if(base > 200) return null;
+        const b = pickNonPowerOneDigit(a);
+        if(b === null) return null;
+        const ans = Math.pow(b, m);
+        if(ans > 1000) return null;
+        const key = `k6-${a}-${m}-${b}`;
+        if(used.has(key)) return null;
+        used.add(key);
+        return { display: powExpr(base, logExprForExp(a, b)), answer: ans, answerText: String(ans), key };
+      }
+    }
+  },
+  {
+    name: 'Сумма и разность логарифмов',
+    generate: function(used){
+      const a = pick([2, 3, 5, 6, 7]);
+      const op = Math.random() < 0.5 ? '+' : '-';
+      const kList = shuffleArray([2, 3, 4, 5]);
+      let result = null;
+      for(const k of kList){
+        const P = Math.pow(a, k);
+        const divisors = getDivisors(P).filter(d => d >= 2 && d < P);
+        if(divisors.length === 0) continue;
+        const shuffled = shuffleArray(divisors);
+        for(const x of shuffled){
+          const y = P / x;
+          if(isPowerOf(a, x)) continue;
+          if(isPowerOf(a, y)) continue;
+          if(x > 9999 || y > 9999) continue;
+          if(!isNiceNumber(x) || !isNiceNumber(y)) continue;
+          if(x === y) continue;
+          result = { x, y, k };
+          break;
+        }
+        if(result) break;
+      }
+      if(!result) return null;
+      const { x, y, k } = result;
+      const key = `s6-${a}-${x}-${y}-${op}`;
+      if(used.has(key)) return null;
+      used.add(key);
+      let display;
+      if(op === '+'){
+        display = `${logExpr(a, fmtNum(x))} <span class="op">+</span> ${logExpr(a, fmtNum(y))}`;
+      } else {
+        const X = Math.max(x, y), Y = Math.min(x, y);
+        display = `${logExpr(a, fmtNum(X))} <span class="op">−</span> ${logExpr(a, fmtNum(Y))}`;
+      }
+      return { display, answer: k, answerText: String(k), key };
+    }
+  },
+  {
+    name: 'Переход к новому основанию',
+    generate: function(used){
+      const subtype = Math.random() < 0.6 ? 'n' : 'frac';
+      const a = pick([2, 3, 4, 5, 6, 7]);
+      const b = pickNonPowerOneDigit(a);
+      if(b === null) return null;
+      const n = rnd(2, 3);
+      const aN = Math.pow(a, n);
+      if(aN > 1000) return null;
+      let numBase, denBase, ans, answerText;
+      if(subtype === 'n'){
+        numBase = a; denBase = aN; ans = n; answerText = String(n);
+      } else {
+        numBase = aN; denBase = a; ans = 1 / n; answerText = `1/${n}`;
+      }
+      const key = `nb-${a}-${n}-${b}-${subtype}`;
+      if(used.has(key)) return null;
+      used.add(key);
+      const display = `<span class="frac">
+        <span class="num">${logExpr(numBase, b)}</span>
+        <span class="den">${logExpr(denBase, b)}</span>
+      </span>`;
+      return { display, answer: ans, answerText, key };
+    }
+  },
+  {
+    name: 'Комбо: всё вместе',
+    _pattern: [],
+    _buildPattern: function(){
+      const base = [1, 2, 3, 4, 5, 1, 2, 3, 4, 5];
+      for(let attempt = 0; attempt < 100; attempt++){
+        const tmp = base.slice();
+        for(let i = tmp.length-1; i > 0; i--){
+          const j = Math.floor(Math.random()*(i+1));
+          [tmp[i], tmp[j]] = [tmp[j], tmp[i]];
+        }
+        let ok = true;
+        for(let i = 1; i < tmp.length; i++){
+          if(tmp[i] === tmp[i-1]){ ok = false; break; }
+        }
+        if(ok){ this._pattern = tmp; return; }
+      }
+      this._pattern = base;
+    },
+    generate: function(used, idx){
+      if(this._pattern.length === 0) this._buildPattern();
+      const type = this._pattern[idx % 10];
+      let display, answer, answerText, key;
+
+      if(type === 1){
+        const a = pick([2, 3, 5]);
+        const p = rnd(1, 3);
+        const q = rnd(1, 3);
+        const zBase = rnd(1, 2);
+        const z = Math.pow(a, zBase);
+        const x = Math.pow(a, p) * z;
+        const y = Math.pow(a, q);
+        if(x > 99999 || y > 99999 || z > 99999) return null;
+        const ans = p + q;
+        key = `c1-${a}-${p}-${q}-${zBase}`;
+        if(used.has(key)) return null;
+        used.add(key);
+        display = `${logExpr(a, x)} <span class="op">+</span> ${logExpr(a, y)} <span class="op">−</span> ${logExpr(a, z)}`;
+        answer = ans; answerText = String(ans);
+      } else if(type === 2){
+        const a = pick([2, 3, 5]);
+        const p = rnd(1, 3);
+        const n = rnd(2, 3);
+        const q = rnd(1, 3);
+        const x = Math.pow(a, p);
+        const y = Math.pow(a, q);
+        const xn = Math.pow(x, n);
+        if(xn > 99999) return null;
+        const ans = p * n + q;
+        key = `c2-${a}-${p}-${n}-${q}`;
+        if(used.has(key)) return null;
+        used.add(key);
+        display = `${logExpr(a, powExpr(x, n))} <span class="op">+</span> ${logExpr(a, y)}`;
+        answer = ans; answerText = String(ans);
+      } else if(type === 3){
+        const a = pick([2, 3]);
+        const b = pickNonPowerOneDigit(a);
+        const c = pickNonPowerOneDigit(a);
+        if(b === null || c === null) return null;
+        if(b * c > 100) return null;
+        key = `c3-${a}-${b}-${c}`;
+        if(used.has(key)) return null;
+        used.add(key);
+        display = powExpr(a, `${logExprForExp(a, b)} + ${logExprForExp(a, c)}`);
+        answer = b * c; answerText = String(answer);
+      } else if(type === 4){
+        const a = pick([2, 3, 5]);
+        const p = rnd(1, 3);
+        const x = Math.pow(a, p);
+        const n = rnd(3, 4);
+        const m = rnd(1, 2);
+        if(n <= m) return null;
+        const xn = Math.pow(x, n);
+        const xm = Math.pow(x, m);
+        if(xn > 99999 || xm > 99999) return null;
+        const ans = p * (n - m);
+        key = `c4-${a}-${p}-${n}-${m}`;
+        if(used.has(key)) return null;
+        used.add(key);
+        display = `${logExpr(a, powExpr(x, n))} <span class="op">−</span> ${logExpr(a, powExpr(x, m))}`;
+        answer = ans; answerText = String(ans);
+      } else {
+        const n = rnd(1, 3);
+        const m = rnd(1, 3);
+        const a = pick([2, 3, 5]);
+        const x = Math.pow(10, n);
+        const y = Math.pow(a, m);
+        key = `c5-${n}-${m}-${a}`;
+        if(used.has(key)) return null;
+        used.add(key);
+        display = `${logExpr(10, x)} <span class="op">+</span> ${logExpr(a, y)}`;
+        answer = n + m; answerText = String(answer);
+      }
+      return { display, answer, answerText, key };
+    }
+  }
+];
+
+const state = {
+  level: 0,
+  taskInLevel: 0,
+  lives: 3,
+  used: new Set(),
+  currentTask: null
+};
+
+const passedLevels = new Set(
+  (localStorage.getItem('tetraktis_log_passed') || '').split(',').filter(Boolean).map(Number)
+);
+
+const $ = id => document.getElementById(id);
+const screenStart  = $('screen-start');
+const screenGame   = $('screen-game');
+const screenFinish = $('screen-finish');
+const mascot = $('mascot');
+
+function showScreen(id){
+  [screenStart, screenGame, screenFinish].forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function renderLadder(){
+  const ladder = $('ladder');
+  ladder.innerHTML = '';
+  LEVELS.forEach((lvl, i) => {
+    const step = document.createElement('button');
+    step.className = 'step' + (passedLevels.has(i) ? ' passed' : '');
+    step.innerHTML = `
+      <span class="badge">${i+1}</span>
+      <span class="name">${lvl.name}</span>
+      <span class="check">✓</span>
+    `;
+    step.addEventListener('click', () => startLevel(i));
+    ladder.appendChild(step);
+  });
+}
+
+function updateStatus(){
+  const lvl = LEVELS[state.level];
+  $('lvlName').textContent = lvl.name;
+  $('taskNum').textContent = state.taskInLevel + 1;
+  const hearts = document.querySelectorAll('.heart');
+  hearts.forEach((h, i) => {
+    const lost = i >= state.lives;
+    if(lost && !h.classList.contains('lost')){
+      h.classList.remove('pulse');
+      h.classList.add('pop');
+      setTimeout(() => h.classList.remove('pop'), 600);
+    }
+    h.classList.toggle('lost', lost);
+  });
+  $('progressFill').style.width = (state.taskInLevel / 10 * 100) + '%';
+}
+
+function mascotReaction(kind){
+  mascot.classList.remove('happy', 'sad', 'celebrate');
+  const smile = $('smile');
+  const sadBrows = $('sadBrows');
+  const blushL = $('blushL');
+  const blushR = $('blushR');
+  smile.style.display = '';
+  sadBrows.style.display = 'none';
+  blushL.setAttribute('opacity', '0');
+  blushR.setAttribute('opacity', '0');
+
+  if(kind === 'happy'){
+    mascot.classList.add('happy');
+    blushL.setAttribute('opacity', '0.7');
+    blushR.setAttribute('opacity', '0.7');
+  } else if(kind === 'sad'){
+    mascot.classList.add('sad');
+    smile.style.display = 'none';
+    sadBrows.style.display = '';
+  } else if(kind === 'celebrate'){
+    mascot.classList.add('celebrate');
+    blushL.setAttribute('opacity', '0.8');
+    blushR.setAttribute('opacity', '0.8');
+  }
+}
+
+function firework(){
+  const container = $('fireworks');
+  const symbols = ['✦', '✧', '★', '⭐', '✨', '💫'];
+  const colors = ['#7fffd4', '#f4d35e', '#ff6b6b', '#1abc9c', '#ffe89a'];
+  const N = 36;
+  for(let i = 0; i < N; i++){
+    const el = document.createElement('span');
+    el.className = 'firework-star';
+    el.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+    el.style.color = colors[Math.floor(Math.random()*colors.length)];
+    el.style.fontSize = (18 + Math.random()*22) + 'px';
+    const angle = (Math.PI * 2 * i / N) + (Math.random() - 0.5) * 0.5;
+    const dist = 180 + Math.random() * 260;
+    el.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+    el.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+    el.style.setProperty('--rot', (Math.random()*720 - 360) + 'deg');
+    el.style.animationDelay = (Math.random() * 0.3) + 's';
+    container.appendChild(el);
+    setTimeout(() => el.remove(), 2000);
+  }
+}
+
+function sparkle(el){
+  const s = document.createElement('div');
+  s.className = 'sparkle';
+  el.appendChild(s);
+  setTimeout(() => s.remove(), 900);
+}
+
+function startLevel(idx){
+  state.level = idx;
+  state.taskInLevel = 0;
+  state.lives = 3;
+  state.used.clear();
+  if(LEVELS[idx]._pattern) LEVELS[idx]._pattern = [];
+  showScreen('screen-game');
+  document.querySelectorAll('.heart').forEach(h => {
+    h.classList.remove('lost', 'pop');
+    h.classList.add('pulse');
+  });
+  nextTask();
+  mascotReaction('idle');
+}
+
+function nextTask(){
+  const lvl = LEVELS[state.level];
+  let task = null;
+  let attempts = 0;
+  while(!task && attempts < 500){
+    task = lvl.generate(state.used, state.taskInLevel);
+    attempts++;
+  }
+  if(!task){
+    state.used.clear();
+    task = lvl.generate(state.used, state.taskInLevel);
+  }
+  state.currentTask = task;
+  $('taskEq').innerHTML = task.display;
+  const input = $('answerInput');
+  input.value = '';
+  input.disabled = false;
+  input.classList.remove('ok', 'err');
+  input.focus();
+  $('btnCheck').disabled = false;
+  $('btnCheck').textContent = 'Проверить';
+  $('feedback').textContent = '';
+  $('feedback').className = 'feedback';
+  const card = $('taskCard');
+  card.classList.remove('correct', 'wrong', 'shake');
+  card.classList.remove('flying');
+  void card.offsetWidth;
+  card.classList.add('flying');
+  updateStatus();
+}
+
+function checkAnswer(){
+  const raw = $('answerInput').value.trim();
+  if(raw === ''){ showToast('⚠️ Впиши ответ', true); return; }
+  const val = parseAnswer(raw);
+  if(val === null){ showToast('⚠️ Введи число или дробь', true); return; }
+
+  const correct = Math.abs(val - state.currentTask.answer) < 1e-6;
+  const input = $('answerInput');
+  const card = $('taskCard');
+  const fb = $('feedback');
+
+  input.disabled = true;
+  $('btnCheck').disabled = true;
+
+  if(correct){
+    input.classList.add('ok');
+    card.classList.add('correct');
+    fb.textContent = '✅ Верно!';
+    fb.className = 'feedback ok';
+    sparkle(card);
+    Sound.correct();
+    mascotReaction('happy');
+    state.taskInLevel++;
+    setTimeout(() => {
+      if(state.taskInLevel >= 10){
+        levelComplete();
+      } else {
+        nextTask();
+        mascotReaction('idle');
+      }
+    }, 750);
+  } else {
+    input.classList.add('err');
+    card.classList.add('wrong', 'shake');
+    fb.innerHTML = '❌ Неверно. Правильный ответ: <b>' + (state.currentTask.answerText || state.currentTask.answer) + '</b>';
+    fb.className = 'feedback err';
+    Sound.wrong();
+    mascotReaction('sad');
+    state.lives--;
+    updateStatus();
+    setTimeout(() => card.classList.remove('shake'), 550);
+    setTimeout(() => {
+      if(state.lives <= 0){
+        levelFailed();
+      } else {
+        nextTask();
+        mascotReaction('idle');
+      }
+    }, 1800);
+  }
+}
+
+function levelComplete(){
+  passedLevels.add(state.level);
+  localStorage.setItem('tetraktis_log_passed', Array.from(passedLevels).join(','));
+  renderLadder();
+  $('finishEmoji').textContent = '🏆';
+  $('finishTitle').textContent = 'Уровень пройден!';
+  $('finishText').textContent = `«${LEVELS[state.level].name}» — 10 из 10 верно.`;
+  showScreen('screen-finish');
+  firework();
+  Sound.levelUp();
+  mascotReaction('celebrate');
+  setTimeout(() => mascotReaction('idle'), 3000);
+}
+
+function levelFailed(){
+  $('finishEmoji').textContent = '💔';
+  $('finishTitle').textContent = 'Жизни закончились';
+  $('finishText').textContent = `«${LEVELS[state.level].name}» начнётся заново с новыми заданиями.`;
+  showScreen('screen-finish');
+  Sound.levelFail();
+  mascotReaction('sad');
+}
+
+let toastTimer = null;
+function showToast(text, isErr){
+  const t = $('toast');
+  t.textContent = text;
+  t.className = 'toast show' + (isErr ? ' err' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.className = 'toast', 2500);
+}
+
+const cheatPanel = $('cheatPanel');
+const cheatBtn = $('cheatBtn');
+function toggleCheat(){
+  const open = cheatPanel.classList.toggle('open');
+  document.body.classList.toggle('cheat-open', open);
+  cheatBtn.classList.toggle('active', open);
+}
+cheatBtn.addEventListener('click', toggleCheat);
+$('cheatClose').addEventListener('click', toggleCheat);
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape' && cheatPanel.classList.contains('open')){
+    toggleCheat();
+  }
+});
+
+$('btnCheck').addEventListener('click', checkAnswer);
+$('answerInput').addEventListener('keydown', e => {
+  if(e.key === 'Enter'){
+    e.preventDefault();
+    if(!$('btnCheck').disabled) checkAnswer();
+  }
+});
+$('btnBack').addEventListener('click', () => showScreen('screen-start'));
+$('btnAgain').addEventListener('click', () => startLevel(state.level));
+$('btnToMenu').addEventListener('click', () => showScreen('screen-start'));
+
+renderLadder();
+</script>
+
+</body>
+</html>
