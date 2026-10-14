@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Тренажёр · Квартира · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--mint:#7fffd4;--gold:#f4d35e;--gold-light:#ffe89a;
+    --coral:#ff6b6b;--text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass-brd:rgba(26,188,156,0.4);--ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{min-height:100vh;font-family:Georgia,'Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.06),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;padding:20px;overflow-x:hidden;display:flex;justify-content:center;}
+  .glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.5;}
+  .glow.g1{width:520px;height:520px;top:-120px;left:-120px;background:radial-gradient(circle,rgba(26,188,156,0.55),transparent 70%);}
+  .glow.g2{width:600px;height:600px;bottom:-200px;right:-180px;background:radial-gradient(circle,rgba(127,255,212,0.4),transparent 70%);}
+  .corner-logo{position:fixed;top:14px;left:16px;z-index:50;font-family:'Times New Roman',serif;text-align:center;line-height:1;padding:10px 18px 12px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(26,188,156,0.45);border-radius:14px;backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(0,0,0,0.35);}
+  .corner-logo .dots{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:16px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:4px;}
+  .corner-logo .ru{font-size:10px;letter-spacing:3px;color:var(--text-soft);margin-top:2px;}
+  .top-right{position:fixed;top:14px;right:16px;z-index:50;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+  .date-badge,.home-btn{display:flex;align-items:center;justify-content:center;height:46px;padding:0 16px;border-radius:14px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(127,255,212,0.45);color:var(--mint);backdrop-filter:blur(10px);font-weight:700;font-family:'Courier New',monospace;font-size:15px;}
+  .home-btn{width:46px;padding:0;font-size:20px;text-decoration:none;cursor:pointer;transition:0.2s;}
+  .home-btn:hover{background:rgba(26,188,156,0.25);}
+  .app{max-width:1100px;width:100%;background:rgba(255,255,255,0.04);border:1.5px solid var(--glass-brd);border-radius:24px;padding:28px 30px;backdrop-filter:blur(12px);box-shadow:0 12px 50px rgba(0,0,0,0.5);position:relative;z-index:2;margin-top:50px;}
+  .header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:1px solid rgba(26,188,156,0.2);padding-bottom:14px;margin-bottom:20px;}
+  .header-title{font-size:14px;color:var(--text-soft);font-style:italic;}
+  h1{font-size:clamp(20px,2.8vw,26px);color:var(--mint);letter-spacing:1.5px;text-align:center;margin-bottom:6px;}
+  .subtitle{text-align:center;font-size:14px;color:var(--text-soft);font-style:italic;margin-bottom:20px;}
+  .name-block{background:linear-gradient(135deg,rgba(244,211,94,0.12),rgba(26,188,156,0.08));border:1.5px solid var(--gold);border-radius:14px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .name-block label{font-size:15px;color:var(--gold-light);font-weight:700;white-space:nowrap;}
+  .name-block input{flex:1;min-width:200px;padding:10px 14px;border-radius:10px;border:2px solid rgba(244,211,94,0.4);background:rgba(0,0,0,0.3);color:#fff;font-family:Georgia,serif;font-size:16px;outline:none;}
+  .name-block input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(244,211,94,0.25);}
+  .name-block input::placeholder{color:#a89a6a;font-style:italic;}
+  .intro-block{background:rgba(255,255,255,0.03);border-radius:16px;padding:18px 22px;margin-bottom:20px;border-left:4px solid var(--teal);font-size:15px;line-height:1.75;color:var(--text);}
+  .intro-block b{color:var(--mint);}
+  .intro-block .signature{display:block;text-align:right;font-size:13px;color:var(--text-soft);font-style:italic;margin-top:10px;}
+  .condition-block{background:rgba(26,188,156,0.06);border-radius:16px;padding:18px 22px;margin-bottom:20px;border-left:4px solid var(--mint);font-size:15px;line-height:1.75;color:var(--text);}
+  .condition-block b{color:var(--mint);}
+  .graph-wrap{background:#f7fcfa;border-radius:14px;border:1.5px solid rgba(26,188,156,0.3);padding:6px;margin:12px 0;text-align:center;}
+  .graph-wrap svg{display:block;width:100%;max-width:820px;height:auto;margin:0 auto;}
+  .task-block{background:rgba(0,0,0,0.2);border-radius:16px;padding:18px 22px;margin-bottom:16px;border-left:4px solid var(--mint);transition:0.3s;}
+  .task-block.correct{border-left-color:var(--ok);background:rgba(46,204,113,0.08);}
+  .task-block.wrong{border-left-color:var(--err);background:rgba(255,107,107,0.08);}
+  .task-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
+  .task-num{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;background:linear-gradient(135deg,var(--gold),#c9a32b);color:#2a1f00;border-radius:10px;font-family:'Courier New',monospace;font-weight:700;font-size:15px;flex-shrink:0;}
+  .task-title{font-size:14px;color:var(--mint);font-weight:700;letter-spacing:1px;text-transform:uppercase;padding-top:8px;flex:1;}
+  .task-mark{font-size:20px;font-weight:800;flex-shrink:0;padding-top:4px;}
+  .task-mark.ok{color:var(--ok);}
+  .task-mark.err{color:var(--err);}
+  .task-question{font-size:16px;color:var(--text);margin-bottom:12px;line-height:1.7;}
+  .task-question b{color:var(--mint);}
+  .answer-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .answer-row label{font-size:15px;color:var(--gold-light);font-weight:700;min-width:110px;}
+  .answer-row input{flex:1;min-width:180px;padding:11px 14px;border-radius:10px;border:1.5px solid var(--glass-brd);background:rgba(10,42,51,0.5);color:var(--text);font-family:'Cambria Math',serif;font-size:16px;outline:none;}
+  .answer-row input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+  .answer-row input::placeholder{color:var(--text-soft);opacity:0.5;font-style:italic;}
+  .answer-row input.correct{border-color:var(--ok);background:rgba(46,204,113,0.15);}
+  .answer-row input.wrong{border-color:var(--err);background:rgba(255,107,107,0.15);}
+  .answer-row input:disabled{opacity:0.9;cursor:default;}
+  .correct-answer-note{margin-top:10px;font-size:14px;color:var(--ok);font-style:italic;display:none;}
+  .correct-answer-note.show{display:block;}
+  .correct-answer-note b{color:var(--mint);}
+  .shop-table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px;}
+  .shop-table th{background:rgba(26,188,156,0.15);color:var(--mint);padding:8px 6px;border:1px solid rgba(26,188,156,0.3);text-align:center;font-weight:700;}
+  .shop-table td{padding:7px 6px;border:1px solid rgba(26,188,156,0.2);color:var(--text);text-align:center;}
+  .btn-check{width:100%;padding:16px 32px;font-size:18px;font-weight:700;font-family:inherit;letter-spacing:1px;border:none;border-radius:16px;background:linear-gradient(135deg,#f4d35e,#c9a32b);color:#2a1f00;cursor:pointer;transition:0.3s;box-shadow:0 6px 24px rgba(244,211,94,0.4);margin-top:16px;}
+  .btn-check:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(244,211,94,0.55);}
+  .btn-check:disabled{opacity:0.5;cursor:default;transform:none;}
+  .btn-new{width:100%;padding:16px 32px;font-size:16px;font-weight:700;font-family:inherit;letter-spacing:1px;border:2px solid var(--mint);border-radius:16px;background:transparent;color:var(--mint);cursor:pointer;transition:0.25s;margin-top:12px;}
+  .btn-new:hover{background:rgba(26,188,156,0.15);}
+  .summary-box{display:none;background:linear-gradient(135deg,rgba(26,188,156,0.15),rgba(244,211,94,0.10));border:2px solid var(--mint);border-radius:16px;padding:20px 24px;margin-top:20px;text-align:center;}
+  .summary-box.show{display:block;animation:fade 0.5s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .summary-title{font-size:16px;color:var(--mint);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:14px;}
+  .summary-stats{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:10px;}
+  .summary-stat{display:flex;flex-direction:column;align-items:center;gap:4px;}
+  .summary-stat .num{font-family:'Courier New',monospace;font-size:38px;font-weight:800;color:var(--gold);line-height:1;}
+  .summary-stat .lbl{font-size:12px;color:var(--text-soft);letter-spacing:1.5px;text-transform:uppercase;}
+  .summary-stat .num.ok{color:var(--ok);}
+  .summary-stat .num.err{color:var(--err);}
+  .summary-line{font-size:15px;color:var(--text);margin-top:8px;font-style:italic;}
+  .interactive-panel{background:rgba(26,188,156,0.08);border:1.5px dashed var(--mint);border-radius:12px;padding:14px 18px;margin-top:10px;}
+  .selected-room-info{font-size:15px;color:var(--gold-light);font-weight:700;margin-bottom:10px;min-height:24px;transition:color 0.2s;}
+  .selected-room-info.active{color:var(--mint);}
+  .room-select-wrapper{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+  .room-select-wrapper label{font-size:15px;color:var(--gold-light);font-weight:700;}
+  .room-select-wrapper select{flex:1;min-width:180px;padding:10px 14px;border-radius:10px;border:1.5px solid var(--glass-brd);background:rgba(10,42,51,0.7);color:var(--text);font-family:Georgia,serif;font-size:15px;outline:none;cursor:pointer;}
+  .room-select-wrapper select:focus{border-color:var(--mint);}
+  .room-select-wrapper select:disabled{opacity:0.5;cursor:not-allowed;}
+  .clickable-zone{cursor:pointer;fill:rgba(26,188,156,0.01);stroke:transparent;stroke-width:2;transition:all 0.2s;}
+  .clickable-zone:hover{fill:rgba(127,255,212,0.15);stroke:var(--mint);stroke-dasharray:4,3;}
+  .clickable-zone.selected{fill:rgba(127,255,212,0.25);stroke:var(--mint);stroke-dasharray:none;}
+  .room-label{font-family:Georgia,serif;font-size:13px;font-weight:700;fill:#1abc9c;text-anchor:middle;pointer-events:none;}
+  .room-label.correct{fill:#2ecc71;}
+  .room-label.wrong{fill:#ff6b6b;}
+  @media(max-width:700px){
+    .app{padding:18px 14px;margin-top:40px;}
+    .name-block{flex-direction:column;align-items:stretch;gap:8px;}
+    .name-block label{text-align:center;}
+    .task-block{padding:14px 16px;}
+    .answer-row label{min-width:80px;font-size:13px;}
+    .summary-stat .num{font-size:28px;}
+    .shop-table{font-size:12px;}
+    .shop-table th,.shop-table td{padding:5px 4px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div><div class="glow g2"></div>
+
+<div class="corner-logo">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+</div>
+
+<div class="top-right">
+  <div class="date-badge" id="dateDisplay">📅 00.00.0000</div>
+  <a class="home-btn" href="glava.html" title="На главную">🏠</a>
+</div>
+
+<div class="app">
+
+  <div class="header">
+    <div class="header-title">Тренажёр · Квартира · 5 заданий</div>
+    <div style="font-size:13px;color:var(--text-soft);">ОГЭ · математика</div>
+  </div>
+
+  <h1>🏠 Квартира</h1>
+  <div class="subtitle">Реши 5 заданий по плану · «Новая задача» — другой вариант</div>
+
+  <div class="name-block">
+    <label for="studentName">👤 Имя ученика:</label>
+    <input type="text" id="studentName" placeholder="Введи своё имя и фамилию..." maxlength="60" autocomplete="off">
+  </div>
+
+  <div class="intro-block">
+    <b>🏠 Как работать:</b><br>
+    • В задании 1 <b>кликай по комнатам на плане</b> и подписывай их.<br>
+    • Задания 2–5 — впиши число-ответ.<br>
+    • Когда всё готово — нажми <b>«Проверить всё»</b>.<br>
+    • Хочешь ещё — нажми <b>🔄 Новая задача</b>.
+    <span class="signature">ΤΕΤΡΑΚΤΥΣ · Школа математики Елены Михалевой</span>
+  </div>
+
+  <div id="content"></div>
+
+  <button class="btn-check" id="btnCheck">✅ Проверить всё</button>
+  <button class="btn-new" id="btnNew">🔄 Новая задача</button>
+
+  <div class="summary-box" id="summaryBox">
+    <div class="summary-title">📊 Результат</div>
+    <div class="summary-stats">
+      <div class="summary-stat"><span class="num ok" id="statOk">0</span><span class="lbl">✅ верно</span></div>
+      <div class="summary-stat"><span class="num err" id="statErr">0</span><span class="lbl">❌ неверно</span></div>
+      <div class="summary-stat"><span class="num" id="statPercent">0%</span><span class="lbl">📊 процент</span></div>
+    </div>
+    <div class="summary-line" id="summaryLine">—</div>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   ПЛАНЫ (A и B)
+   ============================================================ */
+const PLAN_A = {
+  name: 'A',
+  description: 'Вход в квартиру находится в коридоре. <b>Слева</b> от входа в квартиру находится санузел, а в противоположном конце коридора – дверь в кладовую. Рядом с кладовой находится спальня, из которой можно пройти на одну из застеклённых лоджий. Самое большое по площади помещение – гостиная, откуда можно попасть в коридор и на кухню. Из кухни также можно попасть на застеклённую лоджию.',
+  roles: {
+    1: 'санузел', 2: 'коридор', 3: 'кладовая', 4: 'спальня',
+    5: 'лоджия', 6: 'гостиная', 7: 'кухня', 8: 'лоджия'
+  },
+  cells: { 'санузел': 30, 'коридор': 115, 'кладовая': 25, 'кухня': 99, 'лоджия_большая': 44, 'гостиная': 156, 'спальня': 90, 'лоджия_малая': 30 }
+};
+
+const PLAN_B = {
+  name: 'B',
+  description: 'Вход в квартиру находится в коридоре. <b>Справа</b> от входа в квартиру находится санузел, а в противоположном конце коридора – дверь в кладовую. Рядом с кладовой находится спальня, из которой можно пройти на одну из застеклённых лоджий. Самое большое по площади помещение – гостиная, откуда можно попасть в коридор и на кухню. Из кухни также можно попасть на застеклённую лоджию.',
+  roles: {
+    1: 'гостиная', 2: 'лоджия', 3: 'лоджия', 4: 'санузел',
+    5: 'коридор', 6: 'кухня', 7: 'кладовая', 8: 'спальня'
+  },
+  cells: { 'гостиная': 156, 'лоджия_большая': 44, 'лоджия_малая': 30, 'санузел': 30, 'коридор': 115, 'кухня': 90, 'кладовая': 25, 'спальня': 99 }
+};
+
+/* ============================================================
+   УТИЛИТЫ
+   ============================================================ */
+function randInt(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
+function pick(arr){ return arr[randInt(0, arr.length - 1)]; }
+function fmtNum(n){ return String(n).replace('.', ','); }
+function round1(n){ return Math.round(n * 10) / 10; }
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i = a.length - 1; i > 0; i--){
+    const j = randInt(0, i);
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* ============================================================
+   SVG ПЛАНЫ
+   ============================================================ */
+const SVG_A = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 870 450" style="background:#f7fcfa;border-radius:10px;display:block;width:100%;max-width:820px;height:auto;margin:0 auto;">
+<rect x="15" y="15" width="820" height="420" fill="#f5f0e8"/>
+<g stroke="#cccccc" stroke-width="0.6"><line x1="15" y1="15" x2="15" y2="415"/><line x1="35" y1="15" x2="35" y2="415"/><line x1="55" y1="15" x2="55" y2="415"/><line x1="75" y1="15" x2="75" y2="415"/><line x1="95" y1="15" x2="95" y2="415"/><line x1="115" y1="15" x2="115" y2="415"/><line x1="135" y1="15" x2="135" y2="415"/><line x1="155" y1="15" x2="155" y2="415"/><line x1="175" y1="15" x2="175" y2="415"/><line x1="195" y1="15" x2="195" y2="415"/><line x1="215" y1="15" x2="215" y2="415"/><line x1="235" y1="15" x2="235" y2="415"/><line x1="255" y1="15" x2="255" y2="415"/><line x1="275" y1="15" x2="275" y2="415"/><line x1="295" y1="15" x2="295" y2="415"/><line x1="315" y1="15" x2="315" y2="415"/><line x1="335" y1="15" x2="335" y2="415"/><line x1="355" y1="15" x2="355" y2="415"/><line x1="375" y1="15" x2="375" y2="415"/><line x1="395" y1="15" x2="395" y2="415"/><line x1="415" y1="15" x2="415" y2="415"/><line x1="435" y1="15" x2="435" y2="415"/><line x1="455" y1="15" x2="455" y2="415"/><line x1="475" y1="15" x2="475" y2="415"/><line x1="495" y1="15" x2="495" y2="415"/><line x1="515" y1="15" x2="515" y2="415"/><line x1="535" y1="15" x2="535" y2="415"/><line x1="555" y1="15" x2="555" y2="415"/><line x1="575" y1="15" x2="575" y2="415"/><line x1="595" y1="15" x2="595" y2="415"/><line x1="615" y1="15" x2="615" y2="415"/><line x1="635" y1="15" x2="635" y2="415"/><line x1="655" y1="15" x2="655" y2="415"/><line x1="675" y1="15" x2="675" y2="415"/><line x1="695" y1="15" x2="695" y2="415"/><line x1="715" y1="15" x2="715" y2="415"/><line x1="735" y1="15" x2="735" y2="415"/><line x1="755" y1="15" x2="755" y2="415"/><line x1="775" y1="15" x2="775" y2="415"/><line x1="795" y1="15" x2="795" y2="415"/><line x1="815" y1="15" x2="815" y2="415"/><line x1="835" y1="15" x2="835" y2="415"/><line x1="15" y1="15" x2="835" y2="15"/><line x1="15" y1="35" x2="835" y2="35"/><line x1="15" y1="55" x2="835" y2="55"/><line x1="15" y1="75" x2="835" y2="75"/><line x1="15" y1="95" x2="835" y2="95"/><line x1="15" y1="115" x2="835" y2="115"/><line x1="15" y1="135" x2="835" y2="135"/><line x1="15" y1="155" x2="835" y2="155"/><line x1="15" y1="175" x2="835" y2="175"/><line x1="15" y1="195" x2="835" y2="195"/><line x1="15" y1="215" x2="835" y2="215"/><line x1="15" y1="235" x2="835" y2="235"/><line x1="15" y1="255" x2="835" y2="255"/><line x1="15" y1="275" x2="835" y2="275"/><line x1="15" y1="295" x2="835" y2="295"/><line x1="15" y1="315" x2="835" y2="315"/><line x1="15" y1="335" x2="835" y2="335"/><line x1="15" y1="355" x2="835" y2="355"/><line x1="15" y1="375" x2="835" y2="375"/><line x1="15" y1="395" x2="835" y2="395"/><line x1="15" y1="415" x2="835" y2="415"/></g>
+<rect x="15" y="15" width="820" height="400" fill="none" stroke="#000" stroke-width="1.5"/>
+<rect x="35" y="35" width="660" height="360" fill="none" stroke="#000" stroke-width="2.5"/>
+<line x1="35" y1="35" x2="235" y2="35" stroke="#f5f0e8" stroke-width="3"/><rect x="35" y="34.67" width="200" height="3.33" fill="none" stroke="#000" stroke-width="1.2"/>
+<line x1="35" y1="95" x2="55" y2="95" stroke="#000" stroke-width="1.5"/><line x1="55" y1="95" x2="135" y2="95" stroke="#000" stroke-width="1.2"/><line x1="135" y1="95" x2="155" y2="95" stroke="#000" stroke-width="1.5"/>
+<rect x="155" y="90" width="40" height="10" fill="#f5f0e8"/><line x1="155" y1="95" x2="175" y2="115" stroke="#000" stroke-width="1.2"/><line x1="195" y1="95" x2="235" y2="95" stroke="#000" stroke-width="1.5"/>
+<line x1="235" y1="35" x2="235" y2="95" stroke="#000" stroke-width="1.5"/>
+<circle cx="135" cy="65" r="18" fill="none" stroke="#000" stroke-width="1.5"/><text x="135" y="65" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#000" text-anchor="middle" dominant-baseline="central">8</text>
+<line x1="35" y1="95" x2="35" y2="275" stroke="#000" stroke-width="1.5"/>
+<line x1="235" y1="95" x2="235" y2="165" stroke="#000" stroke-width="1.5"/><line x1="235" y1="205" x2="235" y2="275" stroke="#000" stroke-width="1.5"/><line x1="235" y1="165" x2="215" y2="185" stroke="#000" stroke-width="1.2"/>
+<line x1="35" y1="275" x2="155" y2="275" stroke="#000" stroke-width="1.5"/><line x1="195" y1="275" x2="235" y2="275" stroke="#000" stroke-width="1.5"/><line x1="155" y1="275" x2="175" y2="295" stroke="#000" stroke-width="1.2"/>
+<circle cx="135" cy="185" r="18" fill="none" stroke="#000" stroke-width="1.5"/><text x="135" y="185" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#000" text-anchor="middle" dominant-baseline="central">4</text>
+<line x1="35" y1="275" x2="35" y2="395" stroke="#000" stroke-width="1.5"/><line x1="135" y1="275" x2="135" y2="395" stroke="#000" stroke-width="1.5"/><line x1="35" y1="395" x2="135" y2="395" stroke="#000" stroke-width="1.5"/>
+<circle cx="85" cy="335" r="18" fill="none" stroke="#000" stroke-width="1.5"/><text x="85" y="335" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#000" text-anchor="middle" dominant-baseline="central">1</text>
+<line x1="235" y1="35" x2="475" y2="35" stroke="#000" stroke-width="1.5"/><line x1="235" y1="35" x2="235" y2="165" stroke="#000" stroke-width="1.5"/><line x1="235" y1="205" x2="235" y2="295" stroke="#000" stroke-width="1.5"/><line x1="475" y1="35" x2="475" y2="295" stroke="#000" stroke-width="1.5"/><line x1="235" y1="295" x2="475" y2="295" stroke="#000" stroke-width="1.5"/>
+<circle cx="355" cy="165" r="18" fill="none" stroke="#000" stroke-width="1.5"/><text x="355" y="165" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#000" text-anchor="middle" dominant-baseline="central">6</text>
+<line x1="475" y1="35" x2="695" y2="35" stroke="#f5f0e8" stroke-width="3"/><rect x="475" y="34.67" width="220" height="3.33" fill="none" stroke="#000" stroke-width="1.2"/>
+<line x1="475" y1="115" x2="535" y2="115" stroke="#000" stroke-width="1.5"/><rect x="535" y="110" width="40" height="10" fill="#f5f0e8"/><line x1="535" y1="115" x2="555" y2="125" stroke="#000" stroke-width="1.2"/><line x1="575" y1="115" x2="595" y2="115" stroke="#000" stroke-width="1.5"/><line x1="595" y1="115" x2="655" y2="115" stroke="#000" stroke-width="1.2"/><line x1="655" y1="115" x2="695" y2="115" stroke="#000" stroke-width="1.5"/>
+<line x1="695" y1="35" x2="695" y2="115" stroke="#000" stroke-width="1.5"/>
+<circle cx="585" cy="75" r="18" fill="none" stroke="#000" stroke-width="1.5"/><text x="585" y="75" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#000" text-anchor="middle" dominant-baseline="central">5</text>
+<line x1="475" y1="115" x2="475" y2="295" stroke="#000" stroke-width="1.5"/><line x1="695" y1="115" x2="695" y2="295" stroke="#000" stroke-width="1.5"/><line x1="475" y1="295" x2="555" y2="295" stroke="#000" stroke-width="1.5"/><line x1="555" y1="295" x2="575" y2="315" stroke="#000" stroke-width="1.2"/><line x1="595" y1="295" x2="695" y2="295" stroke="#000" stroke-width="1.5"/>
+<circle cx="585" cy="205" r="18" fill="none" stroke="#000" stroke-width="1.5"/><text x="585" y="205" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#000" text-anchor="middle" dominant-baseline="central">7</text>
+<line x1="595" y1="295" x2="595" y2="395" stroke="#000" stroke-width="1.5"/><line x1="695" y1="295" x2="695" y2="395" stroke="#000" stroke-width="1.5"/><line x1="595" y1="395" x2="695" y2="395" stroke="#000" stroke-width="1.5"/>
+<circle cx="645" cy="345" r="18" fill="none" stroke="#000" stroke-width="1.5"/><text x="645" y="345" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#000" text-anchor="middle" dominant-baseline="central">3</text>
+<line x1="135" y1="275" x2="135" y2="395" stroke="#000" stroke-width="1.5"/><line x1="135" y1="395" x2="595" y2="395" stroke="#000" stroke-width="1.5"/><line x1="595" y1="295" x2="595" y2="395" stroke="#000" stroke-width="1.5"/><line x1="135" y1="275" x2="235" y2="275" stroke="#000" stroke-width="1.5"/><line x1="235" y1="275" x2="235" y2="295" stroke="#000" stroke-width="1.5"/><line x1="235" y1="295" x2="595" y2="295" stroke="#000" stroke-width="1.5"/>
+<circle cx="365" cy="345" r="18" fill="none" stroke="#000" stroke-width="1.5"/><text x="365" y="345" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#000" text-anchor="middle" dominant-baseline="central">2</text>
+<rect x="355" y="290" width="40" height="10" fill="#f5f0e8"/><line x1="355" y1="295" x2="375" y2="305" stroke="#000" stroke-width="1.2"/>
+<rect x="130" y="325" width="10" height="40" fill="#f5f0e8"/><line x1="135" y1="325" x2="125" y2="345" stroke="#000" stroke-width="1.2"/>
+<rect x="590" y="325" width="10" height="40" fill="#f5f0e8"/><line x1="595" y1="325" x2="585" y2="345" stroke="#000" stroke-width="1.2"/>
+<rect x="470" y="135" width="10" height="40" fill="#f5f0e8"/><line x1="475" y1="135" x2="465" y2="155" stroke="#000" stroke-width="1.2"/>
+<rect x="415" y="390" width="40" height="10" fill="#f5f0e8"/><line x1="415" y1="395" x2="435" y2="405" stroke="#000" stroke-width="1.2"/>
+<line x1="715" y1="170" x2="735" y2="170" stroke="#000" stroke-width="1.2"/><rect x="735" y="169" width="40" height="2" fill="none" stroke="#000" stroke-width="1.2"/><line x1="775" y1="170" x2="795" y2="170" stroke="#000" stroke-width="1.2"/>
+<text x="755" y="185" font-family="Arial,sans-serif" font-size="12" fill="#000" text-anchor="middle" font-weight="bold">окно</text>
+<line x1="715" y1="90" x2="735" y2="90" stroke="#000" stroke-width="0.8"/><line x1="775" y1="90" x2="795" y2="90" stroke="#000" stroke-width="0.8"/><line x1="775" y1="90" x2="735" y2="110" stroke="#000" stroke-width="0.8"/>
+<text x="755" y="125" font-family="Arial,sans-serif" font-size="12" fill="#000" text-anchor="middle" font-weight="bold">дверь</text>
+<line x1="735" y1="270" x2="755" y2="270" stroke="#000" stroke-width="1.2"/><line x1="735" y1="267" x2="735" y2="273" stroke="#000" stroke-width="1"/><line x1="755" y1="267" x2="755" y2="273" stroke="#000" stroke-width="1"/>
+<text x="745" y="285" font-family="Arial,sans-serif" font-size="11" fill="#000" text-anchor="middle">0,4 м</text>
+</svg>`;
+
+const SVG_B = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 870 450" style="background:#f7fcfa;border-radius:10px;display:block;width:100%;max-width:820px;height:auto;margin:0 auto;">
+<rect x="15" y="15" width="820" height="420" fill="#f5f0e8"/>
+<g stroke="#cccccc" stroke-width="0.6"><line x1="15" y1="15" x2="15" y2="415"/><line x1="35" y1="15" x2="35" y2="415"/><line x1="55" y1="15" x2="55" y2="415"/><line x1="75" y1="15" x2="75" y2="415"/><line x1="95" y1="15" x2="95" y2="415"/><line x1="115" y1="15" x2="115" y2="415"/><line x1="135" y1="15" x2="135" y2="415"/><line x1="155" y1="15" x2="155" y2="415"/><line x1="175" y1="15" x2="175" y2="415"/><line x1="195" y1="15" x2="195" y2="415"/><line x1="215" y1="15" x2="215" y2="415"/><line x1="235" y1="15" x2="235" y2="415"/><line x1="255" y1="15" x2="255" y2="415"/><line x1="275" y1="15" x2="275" y2="415"/><line x1="295" y1="15" x2="295" y2="415"/><line x1="315" y1="15" x2="315" y2="415"/><line x1="335" y1="15" x2="335" y2="415"/><line x1="355" y1="15" x2="355" y2="415"/><line x1="375" y1="15" x2="375" y2="415"/><line x1="395" y1="15" x2="395" y2="415"/><line x1="415" y1="15" x2="415" y2="415"/><line x1="435" y1="15" x2="435" y2="415"/><line x1="455" y1="15" x2="455" y2="415"/><line x1="475" y1="15" x2="475" y2="415"/><line x1="495" y1="15" x2="495" y2="415"/><line x1="515" y1="15" x2="515" y2="415"/><line x1="535" y1="15" x2="535" y2="415"/><line x1="555" y1="15" x2="555" y2="415"/><line x1="575" y1="15" x2="575" y2="415"/><line x1="595" y1="15" x2="595" y2="415"/><line x1="615" y1="15" x2="615" y2="415"/><line x1="635" y1="15" x2="635" y2="415"/><line x1="655" y1="15" x2="655" y2="415"/><line x1="675" y1="15" x2="675" y2="415"/><line x1="695" y1="15" x2="695" y2="415"/><line x1="715" y1="15" x2="715" y2="415"/><line x1="735" y1="15" x2="735" y2="415"/><line x1="755" y1="15" x2="755" y2="415"/><line x1="775" y1="15" x2="775" y2="415"/><line x1="795" y1="15" x2="795" y2="415"/><line x1="815" y1="15" x2="815" y2="415"/><line x1="835" y1="15" x2="835" y2="415"/><line x1="15" y1="15" x2="835" y2="15"/><line x1="15" y1="35" x2="835" y2="35"/><line x1="15" y1="55" x2="835" y2="55"/><line x1="15" y1="75" x2="835" y2="75"/><line x1="15" y1="95" x2="835" y2="95"/><line x1="15" y1="115" x2="835" y2="115"/><line x1="15" y1="135" x2="835" y2="135"/><line x1="15" y1="155" x2="835" y2="155"/><line x1="15" y1="175" x2="835" y2="175"/><line x1="15" y1="195" x2="835" y2="195"/><line x1="15" y1="215" x2="835" y2="215"/><line x1="15" y1="235" x2="835" y2="235"/><line x1="15" y1="255" x2="835" y2="255"/><line x1="15" y1="275" x2="835" y2="275"/><line x1="15" y1="295" x2="835" y2="295"/><line x1="15" y1="315" x2="835" y2="315"/><line x1="15" y1="335" x2="835" y2="335"/><line x1="15" y1="355" x2="835" y2="355"/><line x1="15" y1="375" x2="835" y2="375"/><line x1="15" y1="395" x2="835" y2="395"/><line x1="15" y1="415" x2="835" y2="415"/></g>
+<rect x="15" y="15" width="820" height="400" fill="none" stroke="#000" stroke-width="1.5"/>
+<rect x="35" y="35" width="660" height="360" fill="none" stroke="#000" stroke-width="2.5"/>
+<line x1="35" y1="35" x2="255" y2="35" stroke="#f5f0e8" stroke-width="3"/><rect x="35" y="34.67" width="220" height="3.33" fill="none" stroke="#000" stroke-width="1.2"/>
+<line x1="35" y1="115" x2="255" y2="115" stroke="#f5f0e8" stroke-width="3"/><rect x="55" y="114.67" width="80" height="3.33" fill="none" stroke="#000" stroke-width="1.2"/><rect x="155" y="105" width="40" height="20" fill="#f5f0e8"/><line x1="155" y1="115" x2="175" y2="135" stroke="#000" stroke-width="1.2"/><line x1="155" y1="115" x2="195" y2="115" stroke="#f5f0e8" stroke-width="3"/><line x1="195" y1="115" x2="255" y2="115" stroke="#000" stroke-width="1.5"/><line x1="35" y1="115" x2="55" y2="115" stroke="#000" stroke-width="1.5"/><line x1="255" y1="35" x2="255" y2="115" stroke="#000" stroke-width="1.5"/>
+<circle cx="145" cy="75" r="18" fill="none" stroke="#000" stroke-width="1.5"/><text x="145" y="75" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#000" text-anchor="middle" dominant-baseline="central">2</text>
+<rect x="35" y="115" width="220" height="180" fill="none" stroke="#000" stroke-width="1.5"/><circle cx="145" cy="205" r="18" fill="none" stroke="#000" stroke-width="1.5"/><text x="145" y="205" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#000" text-anchor="middle" dominant-baseline="central">8</text>
+<rect x="35" y="295" width="80" height="100" fill="none" stroke="#000" stroke-width="1.5"/><circle cx="75" cy="345" r="18" fill="none" stroke="#000" stroke-width="1.5"/><text x="75" y="345" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#000" text-anchor="middle" dominant-baseline="central">7</text>
+<rect x="255" y="35" width="240" height="260" fill="none" stroke="#000" stroke-width="1.5"/><circle cx="375" cy="165" r="18" fill="none" stroke="#000" stroke-width="1.5"/><text x="375" y="165" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#000" text-anchor="middle" dominant-baseline="central">1</text><line x1="375" y1="295" x2="415" y2="295" stroke="#f5f0e8" stroke-width="3"/><rect x="375" y="285" width="40" height="20" fill="#f5f0e8"/><line x1="375" y1="295" x2="395" y2="305" stroke="#000" stroke-width="1.2"/>
+<line x1="495" y1="35" x2="695" y2="35" stroke="#f5f0e8" stroke-width="3"/><rect x="495" y="34.67" width="200" height="3.33" fill="none" stroke="#000" stroke-width="1.2"/><line x1="495" y1="95" x2="695" y2="95" stroke="#f5f0e8" stroke-width="3"/><rect x="615" y="94.67" width="60" height="3.33" fill="none" stroke="#000" stroke-width="1.2"/><rect x="555" y="85" width="40" height="20" fill="#f5f0e8"/><line x1="555" y1="95" x2="575" y2="105" stroke="#000" stroke-width="1.2"/><line x1="555" y1="95" x2="595" y2="95" stroke="#f5f0e8" stroke-width="3"/><line x1="495" y1="95" x2="555" y2="95" stroke="#000" stroke-width="1.5"/><line x1="595" y1="95" x2="615" y2="95" stroke="#000" stroke-width="1.5"/><line x1="675" y1="95" x2="695" y2="95" stroke="#000" stroke-width="1.5"/><line x1="495" y1="35" x2="495" y2="95" stroke="#000" stroke-width="1.5"/><line x1="695" y1="35" x2="695" y2="95" stroke="#000" stroke-width="1.5"/>
+<circle cx="595" cy="65" r="18" fill="none" stroke="#000" stroke-width="1.5"/><text x="595" y="65" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#000" text-anchor="middle" dominant-baseline="central">3</text>
+<rect x="495" y="95" width="200" height="180" fill="none" stroke="#000" stroke-width="1.5"/><circle cx="595" cy="185" r="18" fill="none" stroke="#000" stroke-width="1.5"/><text x="595" y="185" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#000" text-anchor="middle" dominant-baseline="central">6</text>
+<rect x="595" y="275" width="100" height="120" fill="none" stroke="#000" stroke-width="1.5"/><circle cx="645" cy="335" r="18" fill="none" stroke="#000" stroke-width="1.5"/><text x="645" y="335" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#000" text-anchor="middle" dominant-baseline="central">4</text>
+<circle cx="500" cy="335" r="18" fill="none" stroke="#000" stroke-width="1.5"/><text x="500" y="335" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#000" text-anchor="middle" dominant-baseline="central">5</text>
+<rect x="195" y="285" width="60" height="20" fill="#f5f0e8"/><line x1="195" y1="295" x2="235" y2="305" stroke="#000" stroke-width="1.2"/>
+<rect x="485" y="135" width="20" height="40" fill="#f5f0e8"/><line x1="495" y1="135" x2="485" y2="155" stroke="#000" stroke-width="1.2"/>
+<rect x="535" y="265" width="40" height="20" fill="#f5f0e8"/><line x1="535" y1="275" x2="555" y2="285" stroke="#000" stroke-width="1.2"/>
+<rect x="585" y="325" width="20" height="40" fill="#f5f0e8"/><line x1="595" y1="325" x2="585" y2="345" stroke="#000" stroke-width="1.2"/>
+<rect x="105" y="325" width="20" height="40" fill="#f5f0e8"/><line x1="115" y1="325" x2="105" y2="345" stroke="#000" stroke-width="1.2"/>
+<rect x="415" y="385" width="40" height="20" fill="#f5f0e8"/><line x1="415" y1="395" x2="435" y2="405" stroke="#000" stroke-width="1.2"/>
+<line x1="715" y1="170" x2="735" y2="170" stroke="#000" stroke-width="1.2"/><rect x="735" y="169" width="40" height="2" fill="none" stroke="#000" stroke-width="1.2"/><line x1="775" y1="170" x2="795" y2="170" stroke="#000" stroke-width="1.2"/><text x="755" y="185" font-family="Arial,sans-serif" font-size="12" fill="#000" text-anchor="middle" font-weight="bold">окно</text>
+<line x1="715" y1="90" x2="735" y2="90" stroke="#000" stroke-width="0.8"/><line x1="775" y1="90" x2="795" y2="90" stroke="#000" stroke-width="0.8"/><line x1="775" y1="90" x2="735" y2="110" stroke="#000" stroke-width="0.8"/><text x="755" y="125" font-family="Arial,sans-serif" font-size="12" fill="#000" text-anchor="middle" font-weight="bold">дверь</text>
+<line x1="735" y1="270" x2="755" y2="270" stroke="#000" stroke-width="1.2"/><line x1="735" y1="267" x2="735" y2="273" stroke="#000" stroke-width="1"/><line x1="755" y1="267" x2="755" y2="273" stroke="#000" stroke-width="1"/><text x="745" y="285" font-family="Arial,sans-serif" font-size="11" fill="#000" text-anchor="middle">0,4 м</text>
+</svg>`;
+
+/* ============================================================
+   ГЕНЕРАЦИЯ
+   ============================================================ */
+let state = null;
+let checked = false;
+let lastPlan = null;
+let selectedRoom = null;
+let userLabels = {};
+
+function generateTask(){
+  let plan;
+  do {
+    plan = Math.random() < 0.5 ? 'A' : 'B';
+  } while (plan === lastPlan);
+  lastPlan = plan;
+
+  const P = plan === 'A' ? PLAN_A : PLAN_B;
+
+  const roleByDigit = {};
+  for(const pos in P.roles){
+    roleByDigit[pos] = P.roles[pos];
+  }
+  const digitByRole = {};
+  for(const pos in P.roles){
+    digitByRole[P.roles[pos]] = pos;
+  }
+
+  const uniqueRoles = [...new Set(Object.values(P.roles))];
+
+  const roomForArea = pick(uniqueRoles);
+  let cells2;
+  if (roomForArea === 'лоджия') cells2 = 44;
+  else cells2 = P.cells[roomForArea];
+  const task2Correct = round1(cells2 * 0.16);
+
+  let roomA, roomB, cellsA, cellsB, areaA, areaB, diffPercent;
+  let attempts = 0;
+  let found = false;
+  while (!found && attempts < 100){
+    attempts++;
+    do {
+      roomA = pick(uniqueRoles);
+      roomB = pick(uniqueRoles);
+    } while (roomA === roomB);
+    cellsA = roomA === 'лоджия' ? 44 : P.cells[roomA];
+    cellsB = roomB === 'лоджия' ? 44 : P.cells[roomB];
+    areaA = cellsA * 0.16;
+    areaB = cellsB * 0.16;
+    const raw = Math.abs(areaA - areaB) / Math.min(areaA, areaB) * 100;
+    const rawTimes10 = raw * 10;
+    if (Math.abs(rawTimes10 - Math.round(rawTimes10)) < 0.01){
+      diffPercent = Math.round(raw * 10) / 10;
+      found = true;
+    }
+  }
+  if (!found) diffPercent = Math.round(Math.abs(areaA - areaB) / Math.min(areaA, areaB) * 1000) / 10;
+
+  const roomALabel = roomA === 'лоджия' ? 'большой лоджии' : roomA;
+  const roomBLabel = roomB === 'лоджия' ? 'большой лоджии' : roomB;
+
+  const isTile = Math.random() < 0.5;
+  let task4Correct, task4Text;
+  const room4 = pick(uniqueRoles);
+  const cells4 = room4 === 'лоджия' ? 44 : P.cells[room4];
+  const area4 = cells4 * 0.16;
+  if (isTile){
+    const tiles = Math.ceil(area4 / 0.16);
+    task4Correct = Math.ceil(tiles / 12);
+    task4Text = `Плитка для пола размером 40 см на 40 см продаётся в упаковках по 12 штук. Сколько упаковок плитки понадобилось, чтобы выложить пол ${room4 === 'лоджия' ? 'большой лоджии' : room4}?`;
+  } else {
+    const boards = Math.ceil(area4 / 0.16);
+    task4Correct = Math.ceil(boards / 12);
+    task4Text = `Паркетная доска размером 20 см на 80 см продаётся в упаковках по 12 штук. Сколько упаковок паркетной доски понадобилось, чтобы выложить пол ${room4 === 'лоджия' ? 'большой лоджии' : room4}?`;
+  }
+
+  const tech = {
+    text: 'В квартире планируется заменить электрическую плиту. Характеристики электроплит, условия подключения и доставки приведены в таблице. Планируется купить электрическую плиту шириной 50 см с духовкой объёмом не менее 52 л. Сколько рублей будет стоить наиболее дешёвый подходящий вариант вместе с подключением и доставкой?',
+    table: [
+      ['А', 50, 280, 8890, 1700, 'бесплатно', '85×50×54'],
+      ['Б', 50, 300, 9790, 750, 10, '85×50×54'],
+      ['В', 50, 250, 11690, 700, 10, '85×60×60'],
+      ['Г', 52, 250, 17490, 800, 10, '85×60×60'],
+      ['Д', 70, 275, 17990, 1400, 'бесплатно', '85×60×45'],
+      ['Е', 58, 250, 18890, 1500, 'бесплатно', '85×50×60'],
+      ['Ж', 54, 270, 18900, 750, 15, '85×50×60'],
+      ['З', 46, 250, 20990, 750, 10, '87×50×60'],
+      ['И', 70, 275, 21690, 1500, 'бесплатно', '85×50×60'],
+      ['К', 67, 250, 22990, 1500, 'бесплатно', '85×50×60']
+    ],
+    columns: ['Модель', 'Объём духовки (л)', 'Макс. темп. (°С)', 'Стоимость плиты (руб.)', 'Подключение (руб.)', 'Доставка (% от стоимости)', 'Габариты (высота × ширина × глубина, см)'],
+    filter: (row) => row[6].split('×')[1] === '50' && row[1] >= 52,
+    calc: (row) => {
+      const price = row[3] + row[4];
+      const delivery = row[5] === 'бесплатно' ? 0 : row[3] * row[5] / 100;
+      return price + delivery;
+    }
+  };
+  const suitable = tech.table.filter(tech.filter);
+  const costs = suitable.map(row => tech.calc(row));
+  const task5Correct = Math.min(...costs);
+
+  return {
+    plan: plan,
+    P: P,
+    roleByDigit: roleByDigit,
+    digitByRole: digitByRole,
+    svg: plan === 'A' ? SVG_A : SVG_B,
+    task2: { room: roomForArea === 'лоджия' ? 'большая лоджия' : roomForArea, correct: task2Correct },
+    task3: { roomA: roomALabel, roomB: roomBLabel, correct: diffPercent },
+    task4: { text: task4Text, correct: task4Correct },
+    task5: { tech: tech, correct: task5Correct }
+  };
+}
+
+/* ============================================================
+   ИНТЕРАКТИВ
+   ============================================================ */
+function wireInteractiveLabels(){
+  selectedRoom = null;
+  userLabels = {};
+  const info = document.getElementById('selectedRoomInfo');
+  if(info){ info.textContent = '👆 Выбери комнату на плане'; info.classList.remove('active'); }
+  const sel = document.getElementById('roomSelect');
+  if(sel){ sel.value = ''; sel.disabled = true; }
+
+  const svg = document.querySelector('#content .graph-wrap svg');
+  if(!svg) return;
+
+  const texts = svg.querySelectorAll('text');
+  texts.forEach(t => {
+    const txt = t.textContent.trim();
+    if(/^[1-8]$/.test(txt)){
+      const cx = parseFloat(t.getAttribute('x'));
+      const cy = parseFloat(t.getAttribute('y'));
+      const zone = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      zone.setAttribute('cx', cx);
+      zone.setAttribute('cy', cy);
+      zone.setAttribute('r', 28);
+      zone.setAttribute('class', 'clickable-zone');
+      zone.setAttribute('data-digit', txt);
+      svg.appendChild(zone);
+    }
+  });
+
+  const zones = svg.querySelectorAll('.clickable-zone');
+  zones.forEach(zone => {
+    zone.addEventListener('click', (e) => {
+      e.stopPropagation();
+      zones.forEach(z => z.classList.remove('selected'));
+      zone.classList.add('selected');
+      selectedRoom = zone.dataset.digit;
+      const info = document.getElementById('selectedRoomInfo');
+      info.textContent = `Выбрана комната ${selectedRoom}. Выбери название:`;
+      info.classList.add('active');
+      const sel = document.getElementById('roomSelect');
+      sel.disabled = false;
+      sel.focus();
+    });
+  });
+
+  if(sel){
+    sel.addEventListener('change', function(){
+      if(!selectedRoom || !this.value) return;
+      const role = this.value;
+      userLabels[selectedRoom] = role;
+      this.value = '';
+      this.disabled = true;
+      zones.forEach(z => z.classList.remove('selected'));
+      renderRoomLabel(selectedRoom, role);
+      const info = document.getElementById('selectedRoomInfo');
+      info.textContent = '👆 Выбери следующую комнату';
+      info.classList.remove('active');
+      selectedRoom = null;
+    });
+  }
+}
+
+function renderRoomLabel(digitStr, role){
+  const svg = document.querySelector('#content .graph-wrap svg');
+  if(!svg) return;
+  const old = svg.querySelector('.room-label[data-digit="' + digitStr + '"]');
+  if(old) old.remove();
+  let cx = null, cy = null;
+  svg.querySelectorAll('text').forEach(t => {
+    const txt = t.textContent.trim();
+    if(txt === digitStr && cx === null){
+      cx = parseFloat(t.getAttribute('x'));
+      cy = parseFloat(t.getAttribute('y'));
+    }
+  });
+  if(cx === null) return;
+  const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  label.setAttribute('x', cx);
+  label.setAttribute('y', cy + 38);
+  label.setAttribute('class', 'room-label');
+  label.setAttribute('data-digit', digitStr);
+  label.textContent = role;
+  svg.appendChild(label);
+}
+
+function checkInteractiveLabels(state){
+  const svg = document.querySelector('#content .graph-wrap svg');
+  if(!svg) return false;
+  const roleByDigitStr = {};
+  for(const k in state.roleByDigit){
+    roleByDigitStr[String(k)] = state.roleByDigit[k];
+  }
+  svg.querySelectorAll('.room-label').forEach(el => {
+    el.classList.remove('correct', 'wrong');
+  });
+  let allOk = true;
+  let filledCount = 0;
+  for(let digit = 1; digit <= 8; digit++){
+    const key = String(digit);
+    const userRole = userLabels[key];
+    const correctRole = roleByDigitStr[key];
+    if(!userRole){ allOk = false; continue; }
+    filledCount++;
+    const labelEl = svg.querySelector('.room-label[data-digit="' + key + '"]');
+    if(labelEl){
+      if(userRole === correctRole) labelEl.classList.add('correct');
+      else { labelEl.classList.add('wrong'); allOk = false; }
+    }
+  }
+  if(filledCount < 8) allOk = false;
+  return allOk;
+}
+
+/* ============================================================
+   РЕНДЕР
+   ============================================================ */
+function render(){
+  const s = state;
+
+  let svg = s.svg;
+
+  const t2 = s.task2;
+  const t3 = s.task3;
+  const t4 = s.task4;
+  const t5 = s.task5;
+
+  let techTable = '<table class="shop-table"><thead><tr>' + t5.tech.columns.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>';
+  t5.tech.table.forEach(row => {
+    techTable += '<tr>' + row.map(c => `<td>${typeof c === 'number' ? fmtNum(c) : c}</td>`).join('') + '</tr>';
+  });
+  techTable += '</tbody></table>';
+
+  const roomOptions = ['санузел','коридор','кладовая','кухня','гостиная','спальня','лоджия']
+    .map(r => `<option value="${r}">${r}</option>`).join('');
+
+  let html = `
+    <div class="condition-block">
+      На рисунке изображён план двухкомнатной квартиры в многоэтажном жилом доме. Сторона одной клетки на плане соответствует <b>0,4 м</b>, а условные обозначения двери и окна приведены в правой части рисунка. ${s.P.description}
+      <div class="graph-wrap">${svg}</div>
+    </div>
+
+    <div class="task-block" id="task-1">
+      <div class="task-header">
+        <span class="task-num">1</span>
+        <span class="task-title">Подпиши комнаты</span>
+        <span class="task-mark" id="mark-1"></span>
+      </div>
+      <div class="task-question">
+        Пользуясь описанием и планом, подпиши каждую комнату: <b>кликни по цифре</b> на плане и выбери название из списка.
+      </div>
+      <div class="interactive-panel">
+        <div class="selected-room-info" id="selectedRoomInfo">👆 Выбери комнату на плане</div>
+        <div class="room-select-wrapper">
+          <label for="roomSelect">Название:</label>
+          <select id="roomSelect" disabled>
+            <option value="">— выбери —</option>
+            ${roomOptions}
+          </select>
+        </div>
+      </div>
+      <div class="correct-answer-note" id="note-1"></div>
+    </div>
+
+    <div class="task-block" id="task-2">
+      <div class="task-header">
+        <span class="task-num">2</span>
+        <span class="task-title">Площадь</span>
+        <span class="task-mark" id="mark-2"></span>
+      </div>
+      <div class="task-question">
+        Найдите площадь <b>${t2.room}</b>. Ответ дайте в квадратных метрах.
+      </div>
+      <div class="answer-row">
+        <label>Ответ (кв. м):</label>
+        <input type="text" id="ans-2" placeholder="введи число" autocomplete="off">
+      </div>
+      <div class="correct-answer-note" id="note-2"></div>
+    </div>
+
+    <div class="task-block" id="task-3">
+      <div class="task-header">
+        <span class="task-num">3</span>
+        <span class="task-title">Проценты</span>
+        <span class="task-mark" id="mark-3"></span>
+      </div>
+      <div class="task-question">
+        На сколько процентов площадь <b>${t3.roomA}</b> больше площади <b>${t3.roomB}</b>?
+      </div>
+      <div class="answer-row">
+        <label>Ответ (%):</label>
+        <input type="text" id="ans-3" placeholder="введи число" autocomplete="off">
+      </div>
+      <div class="correct-answer-note" id="note-3"></div>
+    </div>
+
+    <div class="task-block" id="task-4">
+      <div class="task-header">
+        <span class="task-num">4</span>
+        <span class="task-title">Плитка / паркет</span>
+        <span class="task-mark" id="mark-4"></span>
+      </div>
+      <div class="task-question">${t4.text}</div>
+      <div class="answer-row">
+        <label>Ответ:</label>
+        <input type="text" id="ans-4" placeholder="введи число" autocomplete="off">
+      </div>
+      <div class="correct-answer-note" id="note-4"></div>
+    </div>
+
+    <div class="task-block" id="task-5">
+      <div class="task-header">
+        <span class="task-num">5</span>
+        <span class="task-title">Техника</span>
+        <span class="task-mark" id="mark-5"></span>
+      </div>
+      <div class="task-question">${t5.tech.text}</div>
+      ${techTable}
+      <div class="answer-row">
+        <label>Ответ (руб.):</label>
+        <input type="text" id="ans-5" placeholder="введи число" autocomplete="off">
+      </div>
+      <div class="correct-answer-note" id="note-5"></div>
+    </div>
+  `;
+
+  document.getElementById('content').innerHTML = html;
+  wireInteractiveLabels();
+}
+
+/* ============================================================
+   ПРОВЕРКА
+   ============================================================ */
+function normAnswer(s){
+  return String(s||'').trim().replace(/\s+/g,'').replace(',','.').replace(/[°%кмминлГБгбрубсмкв]+$/gi,'').replace(/^0+(?=\d)/,'');
+}
+function checkNumeric(userAns, correctAns){
+  const u = normAnswer(userAns);
+  const c = normAnswer(correctAns);
+  if(!u) return false;
+  if(u === c) return true;
+  const un = parseFloat(u), cn = parseFloat(c);
+  if(!isNaN(un) && !isNaN(cn) && Math.abs(un - cn) < 0.01) return true;
+  return false;
+}
+
+document.getElementById('btnCheck').addEventListener('click', function(){
+  if(checked) return;
+  const name = document.getElementById('studentName').value.trim();
+  if(!name){ alert('Введи имя ученика!'); return; }
+
+  const s = state;
+  let okCount = 0, errCount = 0;
+
+  const task1Ok = checkInteractiveLabels(s);
+  document.getElementById('mark-1').textContent = task1Ok ? '✅' : '❌';
+  document.getElementById('mark-1').className = 'task-mark ' + (task1Ok ? 'ok' : 'err');
+  document.getElementById('task-1').classList.add(task1Ok ? 'correct' : 'wrong');
+  if(!task1Ok){
+    const pairs = Object.keys(s.roleByDigit)
+      .map(d => d + ' — ' + s.roleByDigit[d]).join(', ');
+    document.getElementById('note-1').innerHTML = 'Правильно: <b>' + pairs + '</b>';
+    document.getElementById('note-1').classList.add('show');
+  }
+  if(task1Ok) okCount++; else errCount++;
+
+  const answers = { 2: s.task2.correct, 3: s.task3.correct, 4: s.task4.correct, 5: s.task5.correct };
+  [2,3,4,5].forEach(n => {
+    const inp = document.getElementById('ans-'+n);
+    const val = inp.value.trim();
+    const isOk = checkNumeric(val, answers[n]);
+    inp.classList.add(isOk ? 'correct' : 'wrong');
+    inp.disabled = true;
+    document.getElementById('mark-'+n).textContent = isOk ? '✅' : '❌';
+    document.getElementById('mark-'+n).className = 'task-mark ' + (isOk ? 'ok' : 'err');
+    document.getElementById('task-'+n).classList.add(isOk ? 'correct' : 'wrong');
+    if(!isOk){
+      document.getElementById('note-'+n).innerHTML = 'Правильный ответ: <b>' + fmtNum(answers[n]) + '</b>';
+      document.getElementById('note-'+n).classList.add('show');
+    }
+    if(isOk) okCount++; else errCount++;
+  });
+
+  const sel = document.getElementById('roomSelect');
+  if(sel) sel.disabled = true;
+
+  const percent = Math.round(okCount / 5 * 100);
+  document.getElementById('statOk').textContent = okCount;
+  document.getElementById('statErr').textContent = errCount;
+  document.getElementById('statPercent').textContent = percent + '%';
+
+  let line = '';
+  if(percent >= 90) line = '🌟 Великолепно! Почти всё верно!';
+  else if(percent >= 70) line = '👍 Хороший результат!';
+  else if(percent >= 50) line = '💪 Есть над чем поработать';
+  else line = '📚 Стоит повторить тему';
+  document.getElementById('summaryLine').textContent = line;
+  document.getElementById('summaryBox').classList.add('show');
+
+  checked = true;
+  this.disabled = true;
+  this.textContent = '✓ Проверено';
+  this.style.background = 'linear-gradient(135deg,#2ecc71,#27ae60)';
+  this.style.color = '#fff';
+
+  document.getElementById('summaryBox').scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+document.getElementById('btnNew').addEventListener('click', function(){
+  startNew();
+});
+
+function startNew(){
+  checked = false;
+  const btn = document.getElementById('btnCheck');
+  btn.disabled = false;
+  btn.textContent = '✅ Проверить всё';
+  btn.style.background = '';
+  btn.style.color = '';
+  document.getElementById('summaryBox').classList.remove('show');
+
+  state = generateTask();
+  render();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+(function(){
+  const el = document.getElementById('dateDisplay');
+  const d = new Date();
+  el.textContent = '📅 ' + d.toLocaleDateString('ru-RU',{day:'2-digit',month:'long',year:'numeric'});
+})();
+
+startNew();
+</script>
+</body>
+</html>
