@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ΤΕΤΡΑΚΤΥΣ · ДЗ · Дробно-рациональные уравнения</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --teal:#1abc9c;
+  --teal-dark:#16a085;
+  --teal-deep:#0e7c66;
+  --mint:#7fffd4;
+  --coral:#ff6b6b;
+  --gold:#f4d35e;
+  --gold-light:#ffe89a;
+  --text:#e8f8f5;
+  --text-soft:#b8d8d0;
+  --ok:#2ecc71;
+  --err:#ff6b6b;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{min-height:100%;}
+body{
+  font-family:Georgia,'Times New Roman',serif;
+  color:var(--text);
+  background:
+    radial-gradient(ellipse at 15% 10%, rgba(26,188,156,0.22), transparent 55%),
+    radial-gradient(ellipse at 85% 90%, rgba(127,255,212,0.15), transparent 55%),
+    radial-gradient(ellipse at 50% 50%, rgba(244,211,94,0.06), transparent 70%),
+    linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+  background-attachment:fixed;
+  padding:18px 14px 40px;
+}
+.wrap{max-width:1000px;margin:0 auto;}
+
+/* ШАПКА (фиксированная) */
+.top{
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:14px;flex-wrap:wrap;
+  padding:12px 18px;margin-bottom:18px;
+  background:rgba(10,42,51,0.85);
+  border:1.5px solid rgba(26,188,156,0.4);
+  border-radius:20px;
+  backdrop-filter:blur(14px);
+  box-shadow:0 10px 30px rgba(0,0,0,0.35);
+}
+.brand{display:flex;align-items:center;gap:12px;}
+.brand .dots{
+  font-family:'Courier New',monospace;
+  font-size:10px;line-height:1.15;font-weight:700;
+  color:var(--mint);
+  background:rgba(26,188,156,0.12);
+  border:1.5px solid rgba(26,188,156,0.5);
+  border-radius:10px;padding:4px 7px;
+  white-space:pre;
+}
+.brand .ttl{font-family:'Times New Roman',serif;letter-spacing:2px;}
+.brand .ttl .gr{font-size:18px;font-weight:700;color:var(--mint);display:block;}
+.brand .ttl .ru{font-size:11px;font-weight:600;color:var(--gold);letter-spacing:2px;}
+.brand .ttl .sub{font-size:10px;font-style:italic;color:var(--text-soft);}
+
+.top-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.chip{
+  font-family:'Courier New',monospace;font-size:13px;color:var(--text-soft);
+  background:rgba(10,42,51,0.6);
+  border:1.5px solid rgba(26,188,156,0.35);
+  border-radius:12px;padding:6px 12px;
+  white-space:nowrap;
+}
+.chip.ok{color:var(--ok);border-color:rgba(46,204,113,0.5);}
+.chip.err{color:var(--err);border-color:rgba(255,107,107,0.5);}
+.home-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:42px;height:42px;font-size:20px;text-decoration:none;
+  background:linear-gradient(135deg,var(--teal),var(--teal-dark));
+  color:#04231d;border-radius:14px;
+  box-shadow:0 6px 18px rgba(26,188,156,0.35);
+  transition:.25s;
+}
+.home-btn:hover{transform:translateY(-3px);}
+
+/* ЗАГОЛОВОК */
+h1.page-title{
+  font-family:'Times New Roman',serif;
+  text-align:center;font-size:28px;
+  color:var(--mint);
+  text-shadow:0 0 18px rgba(127,255,212,0.45);
+  margin:6px 0 4px;
+}
+.page-sub{text-align:center;color:var(--text-soft);font-size:14px;font-style:italic;margin-bottom:18px;}
+
+/* КАРТОЧКА ИНСТРУКЦИИ */
+.card{
+  background:rgba(255,255,255,0.04);
+  border:1.5px solid rgba(26,188,156,0.4);
+  border-radius:20px;
+  backdrop-filter:blur(10px);
+  padding:18px 20px;
+  margin-bottom:18px;
+}
+.card h3{
+  font-family:'Times New Roman',serif;font-size:17px;
+  color:var(--gold);margin-bottom:10px;letter-spacing:.5px;
+}
+.card p{color:var(--text-soft);font-size:14px;line-height:1.7;margin-bottom:6px;}
+.card ul{margin-left:20px;color:var(--text-soft);font-size:14px;line-height:1.8;}
+.card ul li::marker{color:var(--mint);}
+.name-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px;}
+.name-row label{font-size:14px;color:var(--text-soft);}
+.name-input{
+  flex:1;min-width:200px;
+  font-family:Georgia,serif;font-size:15px;color:var(--text);
+  background:rgba(10,42,51,0.55);
+  border:1.5px solid rgba(26,188,156,0.45);
+  border-radius:12px;padding:10px 14px;outline:none;transition:.25s;
+}
+.name-input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+
+/* ПРОГРЕСС-БАР */
+.progress-card{
+  background:rgba(255,255,255,0.04);
+  border:1.5px solid rgba(26,188,156,0.4);
+  border-radius:20px;
+  backdrop-filter:blur(10px);
+  padding:16px 20px;margin-bottom:18px;
+}
+.progress-head{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:10px;font-size:14px;color:var(--text-soft);}
+.progress-head .nums{font-family:'Courier New',monospace;}
+.progress-head .ok-n{color:var(--ok);font-weight:700;}
+.progress-head .err-n{color:var(--err);font-weight:700;}
+.bar{
+  height:12px;border-radius:8px;overflow:hidden;
+  background:rgba(10,42,51,0.6);
+  border:1px solid rgba(26,188,156,0.3);
+}
+.bar-fill{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,var(--teal),var(--mint),var(--gold));
+  transition:width .4s ease;
+  box-shadow:0 0 12px rgba(127,255,212,0.5);
+}
+
+/* ЗАДАНИЯ */
+.task{
+  background:rgba(255,255,255,0.04);
+  border:1.5px solid rgba(26,188,156,0.4);
+  border-radius:20px;
+  backdrop-filter:blur(10px);
+  padding:18px 20px;margin-bottom:14px;
+  transition:.25s;
+}
+.task:hover{border-color:rgba(127,255,212,0.6);}
+.task.done{border-color:var(--ok);box-shadow:0 0 0 1px rgba(46,204,113,0.3);}
+.task.fail{border-color:var(--err);box-shadow:0 0 0 1px rgba(255,107,107,0.3);}
+
+.task-head{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.task-num{
+  font-family:'Courier New',monospace;font-weight:700;font-size:14px;
+  color:#04231d;background:linear-gradient(135deg,var(--teal),var(--teal-dark));
+  min-width:44px;height:34px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;padding:0 10px;
+}
+.task-eq{
+  font-family:'Cambria Math','Times New Roman',serif;
+  font-size:22px;color:var(--mint);line-height:1.5;
+  padding:4px 2px 14px;
+}
+
+.frac{display:inline-block;text-align:center;vertical-align:middle;margin:0 4px;}
+.frac .num{display:block;border-bottom:1.7px solid currentColor;padding:0 6px 2px;}
+.frac .den{display:block;padding:2px 6px 0;}
+
+.answer-row{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch;}
+.answer{
+  flex:1;min-width:180px;
+  font-family:'Courier New',monospace;font-size:17px;
+  color:var(--text);
+  background:rgba(10,42,51,0.55);
+  border:1.5px solid rgba(26,188,156,0.45);
+  border-radius:14px;padding:12px 14px;outline:none;transition:.25s;
+}
+.answer:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+.answer.ok{border-color:var(--ok);box-shadow:0 0 0 3px rgba(46,204,113,0.18);}
+.answer.bad{border-color:var(--err);box-shadow:0 0 0 3px rgba(255,107,107,0.18);}
+.answer:disabled{opacity:.9;cursor:not-allowed;}
+
+.btn{
+  cursor:pointer;user-select:none;
+  font-family:Georgia,serif;font-size:14px;font-weight:600;
+  padding:12px 18px;border-radius:14px;border:none;
+  color:#04231d;
+  background:linear-gradient(135deg,var(--teal),var(--teal-dark));
+  transition:.25s;white-space:nowrap;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(26,188,156,0.4);}
+.btn.ghost{
+  color:var(--text-soft);
+  background:rgba(255,255,255,0.05);
+  border:1.5px solid rgba(26,188,156,0.4);
+}
+.btn.ghost:hover{color:var(--text);border-color:var(--mint);}
+.btn.gold{background:linear-gradient(135deg,var(--gold),#d9b53c);}
+.btn.coral{background:linear-gradient(135deg,var(--coral),#c94a4a);color:#fff;}
+
+.verdict{margin-top:10px;font-size:15px;font-weight:600;min-height:22px;line-height:1.5;}
+.verdict.ok{color:var(--ok);}
+.verdict.bad{color:var(--err);}
+.verdict .ans{font-family:'Courier New',monospace;color:var(--gold-light);}
+
+/* НИЖНИЕ КНОПКИ */
+.bottom-bar{
+  display:flex;gap:12px;flex-wrap:wrap;justify-content:center;
+  margin-top:22px;
+}
+.hint{
+  background:rgba(255,255,255,0.04);
+  border:1.5px dashed rgba(26,188,156,0.4);
+  border-radius:20px;
+  padding:16px 20px;margin-top:20px;
+  color:var(--text-soft);font-size:13.5px;line-height:1.75;
+}
+.hint b{color:var(--mint);}
+.hint ol{margin-left:20px;}
+.hint ol li::marker{color:var(--gold);font-weight:700;}
+
+footer{
+  margin-top:34px;text-align:center;
+  color:var(--text-soft);font-size:13px;font-style:italic;letter-spacing:1px;
+}
+
+/* МОДАЛКА ПАРОЛЯ */
+.modal-bg{
+  display:none;position:fixed;inset:0;z-index:200;
+  background:rgba(4,20,25,0.75);backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;padding:20px;
+}
+.modal-bg.show{display:flex;}
+.modal{
+  background:linear-gradient(160deg,#0d3b47,#134e5e);
+  border:1.5px solid rgba(26,188,156,0.6);
+  border-radius:22px;
+  padding:26px 28px;
+  max-width:420px;width:100%;
+  box-shadow:0 20px 60px rgba(0,0,0,0.6);
+  text-align:center;
+}
+.modal h3{font-family:'Times New Roman',serif;color:var(--gold);font-size:20px;margin-bottom:8px;}
+.modal p{color:var(--text-soft);font-size:14px;margin-bottom:16px;}
+.modal input{
+  width:100%;
+  font-family:'Courier New',monospace;font-size:18px;letter-spacing:3px;
+  text-align:center;
+  color:var(--text);
+  background:rgba(10,42,51,0.6);
+  border:1.5px solid rgba(26,188,156,0.5);
+  border-radius:14px;padding:12px;outline:none;margin-bottom:14px;
+}
+.modal input:focus{border-color:var(--mint);}
+.modal .err-msg{color:var(--err);font-size:13px;min-height:18px;margin-bottom:10px;}
+.modal-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ФИКСИРОВАННАЯ ШАПКА -->
+  <div class="top">
+    <div class="brand">
+      <div class="dots">●
+● ●
+● ● ●
+● ● ● ●</div>
+      <div class="ttl">
+        <span class="gr">ΤΕΤΡΑΚΤΥΣ</span>
+        <span class="ru">ТЕТРАКТИС</span>
+        <span class="sub">Школа математики Елены Михалевой</span>
+      </div>
+    </div>
+    <div class="top-right">
+      <div class="chip" id="today">—</div>
+      <div class="chip" id="counter">✅ 0 / 19</div>
+      <a class="home-btn" href="glava.html" title="На главную главы">🏠</a>
+    </div>
+  </div>
+
+  <h1 class="page-title">ДЗ · Дробно-рациональные уравнения</h1>
+  <div class="page-sub">Столбик а · 19 заданий с автопроверкой</div>
+
+  <!-- ИМЯ + ИНСТРУКЦИЯ -->
+  <div class="card">
+    <h3>📖 Инструкция</h3>
+    <p>Реши уравнение и впиши ответ в поле. Несколько корней — через <b style="color:var(--mint)">точку с запятой</b> (например: <span style="font-family:'Courier New',monospace;color:var(--gold-light)">2; 3</span>).</p>
+    <p>Дроби пиши через <b style="color:var(--mint)">/</b> — например <span style="font-family:'Courier New',monospace;color:var(--gold-light)">1/2</span>. Можно и десятичной: <span style="font-family:'Courier New',monospace;color:var(--gold-light)">0,5</span>.</p>
+    <p>После нажатия «Проверить» ответ <b style="color:var(--coral)">изменить нельзя</b>.</p>
+    <div class="name-row">
+      <label for="studentName">👤 Имя ученика:</label>
+      <input type="text" class="name-input" id="studentName" placeholder="введи имя и фамилию" autocomplete="off" />
+    </div>
+  </div>
+
+  <!-- ПРОГРЕСС -->
+  <div class="progress-card">
+    <div class="progress-head">
+      <div>📊 Прогресс: <span class="nums" id="pTotal">0 / 19</span></div>
+      <div>✅ <span class="ok-n" id="pOk">0</span> &nbsp;·&nbsp; ❌ <span class="err-n" id="pErr">0</span></div>
+      <div><span class="nums" id="pPct">0%</span></div>
+    </div>
+    <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+  </div>
+
+  <!-- ЗАДАНИЯ -->
+  <div id="tasksWrap"></div>
+
+  <!-- НИЖНИЕ КНОПКИ -->
+  <div class="bottom-bar">
+    <button class="btn" id="pdfBtn">📄 Сохранить в PDF</button>
+    <button class="btn gold" id="sendBtn">💬 Отправить учителю</button>
+    <button class="btn coral" id="resetBtn">🔒 Очистить всё</button>
+  </div>
+
+  <!-- ПОДСКАЗКА -->
+  <div class="hint">
+    <b>Как сдать работу:</b>
+    <ol>
+      <li>Впиши имя ученика в поле сверху — оно сохранится автоматически.</li>
+      <li>Реши все задания и нажми «Проверить» под каждым.</li>
+      <li>Нажми «📄 Сохранить в PDF» — файл скачается.</li>
+      <li>Или нажми «💬 Отправить учителю» — откроется чат, прикрепи туда PDF или скопируй ответы.</li>
+    </ol>
+  </div>
+
+  <footer>Школа математики Елены Михалевой · ΤΕΤΡΑΚΤΥΣ</footer>
+</div>
+
+<!-- МОДАЛКА ПАРОЛЯ -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3>🔒 Очистить все ответы?</h3>
+    <p>Это действие сбросит все поля и вердикты. Введи пароль учителя.</p>
+    <input type="password" id="pwdInput" placeholder="••••" inputmode="numeric" />
+    <div class="err-msg" id="pwdErr"></div>
+    <div class="modal-actions">
+      <button class="btn" id="pwdOk">Подтвердить</button>
+      <button class="btn ghost" id="pwdCancel">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ ДАТА ============ */
+(function(){
+  const d = new Date();
+  const p = n => String(n).padStart(2,'0');
+  document.getElementById('today').textContent =
+    p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear();
+})();
+
+/* ============ ЗАДАНИЯ (столбик а) ============ */
+const TASKS = [
+  { n:'1а',  eqHtml:'<span class="frac"><span class="num">3</span><span class="den">7x</span></span> = <span class="frac"><span class="num">7x</span><span class="den">3</span></span>', ans:['3/7','-3/7'] },
+  { n:'2а',  eqHtml:'x² = <span class="frac"><span class="num">x² − 4</span><span class="den">x − 2</span></span>', ans:['-1'] },
+  { n:'3а',  eqHtml:'(x − 5)(x + 7) = <span class="frac"><span class="num">x − 5</span><span class="den">x + 7</span></span>', ans:['-8','-6','5'] },
+  { n:'4а',  eqHtml:'<span class="frac"><span class="num">1</span><span class="den">x²</span></span> − <span class="frac"><span class="num">1</span><span class="den">x</span></span> − 30 = 0', ans:['-1/5','1/6'] },
+  { n:'5а',  eqHtml:'<span class="frac"><span class="num">x² − 2x − 3</span><span class="den">x − 3</span></span> = x² − 5', ans:['-2','-5'] },
+  { n:'6а',  eqHtml:'<span class="frac"><span class="num">(2x + 3)²</span><span class="den">x − 1</span></span> = <span class="frac"><span class="num">25</span><span class="den">x − 1</span></span>', ans:['-4'] },
+  { n:'7а',  eqHtml:'<span class="frac"><span class="num">x − 2</span><span class="den">x²</span></span> = <span class="frac"><span class="num">x − 2</span><span class="den">4x</span></span>', ans:['2','4'] },
+  { n:'8а',  eqHtml:'4x + <span class="frac"><span class="num">3</span><span class="den">x</span></span> = <span class="frac"><span class="num">4x + 3</span><span class="den">x</span></span>', ans:['1'] },
+  { n:'9а',  eqHtml:'<span class="frac"><span class="num">x²</span><span class="den">x − 6</span></span> = <span class="frac"><span class="num">36</span><span class="den">x − 6</span></span>', ans:['-6'] },
+  { n:'10а', eqHtml:'<span class="frac"><span class="num">x − 4</span><span class="den">2x + 3</span></span> = <span class="frac"><span class="num">x − 4</span><span class="den">3x + 2</span></span>', ans:['1','4'] },
+  { n:'11а', eqHtml:'<span class="frac"><span class="num">x² − 16</span><span class="den">x² − 5x + 4</span></span> = 0', ans:['-4'] },
+  { n:'12а', eqHtml:'<span class="frac"><span class="num">(x − 2)(x − 3)(x + 11)</span><span class="den">x² + 9x − 22</span></span> = 0', ans:['3'] },
+  { n:'13а', eqHtml:'<span class="frac"><span class="num">(x − 2)(x − 3)</span><span class="den">x − 4</span></span> = <span class="frac"><span class="num">2</span><span class="den">x − 4</span></span>', ans:['1','6'] },
+  { n:'14а', eqHtml:'<span class="frac"><span class="num">(x − 8)(x² − 49)</span><span class="den">x − 8</span></span> = 15', ans:['-8'] },
+  { n:'15а', eqHtml:'<span class="frac"><span class="num">(2x + 3)²</span><span class="den">x − 1</span></span> = <span class="frac"><span class="num">25</span><span class="den">x − 1</span></span>', ans:['-4'] },
+  { n:'16а', eqHtml:'<span class="frac"><span class="num">x³ − 5x²</span><span class="den">x − 5</span></span> = 25', ans:['-5'] },
+  { n:'17а', eqHtml:'x² + 4x = <span class="frac"><span class="num">x² − 4</span><span class="den">x + 2</span></span>', ans:['-1'] },
+  { n:'18а', eqHtml:'x² = <span class="frac"><span class="num">4x − 8</span><span class="den">x − 2</span></span>', ans:['-2'] },
+  { n:'19а', eqHtml:'<span class="frac"><span class="num">(2x)²</span><span class="den">2x + 3</span></span> = <span class="frac"><span class="num">9</span><span class="den">2x + 3</span></span>', ans:['1.5','3/2'] }
+];
+
+/* ============ НОРМАЛИЗАЦИЯ ============ */
+function norm(s){
+  if(s == null) return '';
+  return String(s)
+    .replace(/\s+/g,'')
+    .replace(/−|–|—/g,'-')
+    .replace(/,/g,'.')
+    .replace(/х|Х/g,'x')
+    .replace(/[{}]/g,'[]')
+    .replace(/u|U/g,'∪')
+    .toLowerCase();
+}
+function parseSet(s){
+  s = norm(s);
+  if(!s) return [];
+  if(s==='нет'||s==='неткорней'||s==='н'||s==='[]'||s==='∅') return ['∅'];
+  if(s==='много'||s==='многорешений'||s==='∞'||s==='бесконечно') return ['∞'];
+  return s.split(';').filter(Boolean);
+}
+function sameNum(a,b){
+  a = a.replace(/[()\[\]]/g,'');
+  b = b.replace(/[()\[\]]/g,'');
+  if(a===b) return true;
+  const toNum = v => {
+    v = v.replace(/^\+/,'');
+    if(/^-?\d+(\.\d+)?$/.test(v)) return parseFloat(v);
+    const m = v.match(/^(-?\d+)\/(\d+)$/);
+    if(m) return parseInt(m[1])/parseInt(m[2]);
+    return null;
+  };
+  const na = toNum(a), nb = toNum(b);
+  return (na!==null && nb!==null && Math.abs(na-nb)<1e-9);
+}
+function checkAnswer(user, correct){
+  const u = parseSet(user);
+  const c = correct.slice();
+  if(u.length===0) return false;
+  if(c.length===1 && c[0]==='∅') return u.length===1 && u[0]==='∅';
+  if(u.length!==c.length) return false;
+  const used = new Array(c.length).fill(false);
+  for(const ui of u){
+    let found=false;
+    for(let i=0;i<c.length;i++){
+      if(used[i]) continue;
+      if(sameNum(ui, c[i])){ used[i]=true; found=true; break; }
+    }
+    if(!found) return false;
+  }
+  return true;
+}
+
+/* ============ РЕНДЕР ЗАДАНИЙ ============ */
+const wrap = document.getElementById('tasksWrap');
+const LS_KEY = 'tetraktus.drobirac.dz';
+
+function loadState(){
+  try{ return JSON.parse(localStorage.getItem(LS_KEY)) || { name:'', answers:{} }; }
+  catch(e){ return { name:'', answers:{} }; }
+}
+function saveState(st){
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(st)); }catch(e){}
+}
+let state = loadState();
+
+TASKS.forEach((t, i)=>{
+  const card = document.createElement('div');
+  card.className = 'task';
+  card.dataset.idx = i;
+  card.innerHTML =
+    '<div class="task-head"><div class="task-num">'+t.n+'</div></div>' +
+    '<div class="task-eq">'+t.eqHtml+'</div>' +
+    '<div class="answer-row">' +
+      '<input type="text" class="answer" data-idx="'+i+'" placeholder="введи ответ" autocomplete="off" spellcheck="false" />' +
+      '<button class="btn" data-check="'+i+'">✅ Проверить</button>' +
+    '</div>' +
+    '<div class="verdict" data-verdict="'+i+'"></div>';
+  wrap.appendChild(card);
+});
+
+/* восстановление состояния */
+const nameInput = document.getElementById('studentName');
+nameInput.value = state.name || '';
+nameInput.addEventListener('input', ()=>{
+  state.name = nameInput.value;
+  saveState(state);
+});
+
+TASKS.forEach((t, i)=>{
+  const saved = state.answers[t.n];
+  if(!saved) return;
+  const card = wrap.querySelector('.task[data-idx="'+i+'"]');
+  const inp = card.querySelector('.answer');
+  const v = card.querySelector('.verdict');
+  inp.value = saved.value || '';
+  inp.disabled = true;
+  if(saved.status === 'ok'){
+    inp.classList.add('ok');
+    card.classList.add('done');
+    v.className = 'verdict ok';
+    v.textContent = '✅ Верно!';
+  } else {
+    inp.classList.add('bad');
+    card.classList.add('fail');
+    v.className = 'verdict bad';
+    v.innerHTML = '❌ Неверно. Правильный ответ: <span class="ans">'+t.ans.join('; ')+'</span>';
+  }
+});
+
+/* обработка проверки */
+wrap.addEventListener('click', e=>{
+  const btn = e.target.closest('[data-check]');
+  if(!btn) return;
+  const i = parseInt(btn.dataset.check, 10);
+  const t = TASKS[i];
+  const card = wrap.querySelector('.task[data-idx="'+i+'"]');
+  const inp = card.querySelector('.answer');
+  const v = card.querySelector('.verdict');
+  if(inp.disabled) return;
+
+  if(checkAnswer(inp.value, t.ans)){
+    inp.classList.remove('bad'); inp.classList.add('ok');
+    inp.disabled = true;
+    card.classList.remove('fail'); card.classList.add('done');
+    v.className = 'verdict ok';
+    v.textContent = '✅ Верно!';
+    state.answers[t.n] = { value: inp.value, status:'ok' };
+  } else {
+    inp.classList.remove('ok'); inp.classList.add('bad');
+    inp.disabled = true;
+    card.classList.remove('done'); card.classList.add('fail');
+    v.className = 'verdict bad';
+    v.innerHTML = '❌ Неверно. Правильный ответ: <span class="ans">'+t.ans.join('; ')+'</span>';
+    state.answers[t.n] = { value: inp.value, status:'fail' };
+  }
+  saveState(state);
+  updateProgress();
+});
+
+/* ============ ПРОГРЕСС ============ */
+function updateProgress(){
+  let ok = 0, err = 0;
+  TASKS.forEach(t=>{
+    const s = state.answers[t.n];
+    if(s){ s.status === 'ok' ? ok++ : err++; }
+  });
+  const total = ok + err;
+  const pct = Math.round(total / TASKS.length * 100);
+  document.getElementById('pOk').textContent = ok;
+  document.getElementById('pErr').textContent = err;
+  document.getElementById('pTotal').textContent = total + ' / ' + TASKS.length;
+  document.getElementById('pPct').textContent = pct + '%';
+  document.getElementById('barFill').style.width = pct + '%';
+  document.getElementById('counter').textContent = '✅ ' + ok + ' / ' + TASKS.length;
+}
+updateProgress();
+
+/* ============ PDF ============ */
+document.getElementById('pdfBtn').addEventListener('click', ()=>{
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit:'pt', format:'a4' });
+  const W = doc.internal.pageSize.getWidth();
+  let y = 50;
+
+  doc.setFont('times','bold');
+  doc.setFontSize(18);
+  doc.setTextColor(20,120,100);
+  doc.text('ΤΕΤΡΑΚΤΥΣ · Школа математики Елены Михалевой', W/2, y, { align:'center' });
+  y += 22;
+  doc.setFontSize(14);
+  doc.setTextColor(40,40,40);
+  doc.text('ДЗ · Дробно-рациональные уравнения', W/2, y, { align:'center' });
+  y += 26;
+
+  doc.setFont('times','normal');
+  doc.setFontSize(11);
+  const d = new Date();
+  const p = n => String(n).padStart(2,'0');
+  doc.text('Дата: '+p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear(), 40, y); y += 16;
+  doc.text('Ученик: '+(state.name || '—'), 40, y); y += 22;
+
+  let ok = 0, err = 0;
+  TASKS.forEach(t=>{
+    const s = state.answers[t.n];
+    let mark = '— ';
+    let status = '';
+    if(s){
+      if(s.status === 'ok'){ mark = '✅ '; ok++; }
+      else { mark = '❌ '; err++; status = '  (верно: '+t.ans.join('; ')+')'; }
+    }
+    const line = mark + 'Задание ' + t.n + '. Ответ: ' + ((s && s.value) ? s.value : '—') + status;
+    const wrapped = doc.splitTextToSize(line, W - 80);
+    if(y + wrapped.length*14 > doc.internal.pageSize.getHeight() - 60){
+      doc.addPage(); y = 50;
+    }
+    wrapped.forEach(l=>{ doc.text(l, 40, y); y += 14; });
+  });
+
+  y += 12;
+  doc.setFont('times','bold');
+  doc.setTextColor(20,120,100);
+  doc.text('✅ Итог: '+ok+' из '+TASKS.length+' верно', 40, y);
+
+  const nameFile = (state.name || 'uchenik').toLowerCase()
+    .replace(/[^a-zа-я0-9]+/gi,'-')
+    .replace(/[а-я]/gi, ch => {
+      const map = {а:'a',б:'b',в:'v',г:'g',д:'d',е:'e',ё:'e',ж:'zh',з:'z',и:'i',й:'y',к:'k',л:'l',м:'m',н:'n',о:'o',п:'p',р:'r',с:'s',т:'t',у:'u',ф:'f',х:'h',ц:'c',ч:'ch',ш:'sh',щ:'sch',ъ:'',ы:'y',ь:'',э:'e',ю:'yu',я:'ya'};
+      return map[ch] || ch;
+    })
+    .replace(/-+/g,'-');
+  const dateStr = p(d.getDate())+'-'+p(d.getMonth()+1)+'-'+d.getFullYear();
+  doc.save('dz-drobi-rac-'+nameFile+'-'+dateStr+'.pdf');
+});
+
+/* ============ ОТПРАВКА УЧИТЕЛЮ ============ */
+document.getElementById('sendBtn').addEventListener('click', ()=>{
+  const d = new Date();
+  const p = n => String(n).padStart(2,'0');
+  const dt = p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes());
+
+  let ok = 0;
+  let body = '📐 ОТВЕТЫ · ДЗ · Дробно-рациональные уравнения\n';
+  body += 'Дата: ' + dt + '\n';
+  body += 'Ученик: ' + (state.name || '—') + '\n\n';
+  TASKS.forEach(t=>{
+    const s = state.answers[t.n];
+    const val = s ? s.value : '—';
+    if(s && s.status === 'ok') ok++;
+    body += 'Задание ' + t.n + '. Ответ: ' + val + '\n';
+  });
+  body += '\n✅ Итог: ' + ok + ' из ' + TASKS.length + ' верно';
+
+  navigator.clipboard.writeText(body).then(()=>{
+    const url = 'https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes';
+    window.open(url, '_blank');
+  }).catch(()=>{
+    const url = 'https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes';
+    window.open(url, '_blank');
+  });
+});
+
+/* ============ ОЧИСТКА С ПАРОЛЕМ ============ */
+const modalBg = document.getElementById('modalBg');
+const pwdInput = document.getElementById('pwdInput');
+const pwdErr = document.getElementById('pwdErr');
+const PASSWORD = '2810';
+
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  pwdInput.value = '';
+  pwdErr.textContent = '';
+  modalBg.classList.add('show');
+  setTimeout(()=>pwdInput.focus(), 100);
+});
+document.getElementById('pwdCancel').addEventListener('click', ()=>{
+  modalBg.classList.remove('show');
+});
+document.getElementById('pwdOk').addEventListener('click', tryReset);
+pwdInput.addEventListener('keydown', e=>{ if(e.key === 'Enter') tryReset(); });
+
+function tryReset(){
+  if(pwdInput.value.trim() !== PASSWORD){
+    pwdErr.textContent = 'Неверный пароль';
+    pwdInput.value = '';
+    return;
+  }
+  state.answers = {};
+  saveState(state);
+  TASKS.forEach((t, i)=>{
+    const card = wrap.querySelector('.task[data-idx="'+i+'"]');
+    const inp = card.querySelector('.answer');
+    const v = card.querySelector('.verdict');
+    inp.value = '';
+    inp.disabled = false;
+    inp.classList.remove('ok','bad');
+    card.classList.remove('done','fail');
+    v.className = 'verdict';
+    v.textContent = '';
+  });
+  updateProgress();
+  modalBg.classList.remove('show');
+}
+modalBg.addEventListener('click', e=>{
+  if(e.target === modalBg) modalBg.classList.remove('show');
+});
+</script>
+</body>
+</html>
