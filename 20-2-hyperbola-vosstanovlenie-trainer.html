@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Тренажёр · Восстановление гиперболы · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--coral:#ff6b6b;
+    --gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass:rgba(255,255,255,0.04);
+    --glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{
+    min-height:100%;
+    font-family:'Georgia','Times New Roman',serif;
+    color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(26,188,156,0.22), transparent 55%),
+      radial-gradient(ellipse at 85% 90%, rgba(127,255,212,0.15), transparent 55%),
+      radial-gradient(ellipse at 50% 50%, rgba(244,211,94,0.06), transparent 70%),
+      linear-gradient(160deg, #0a2a33 0%, #0d3b47 50%, #134e5e 100%);
+    background-attachment:fixed;
+    padding:20px 14px 60px;
+  }
+  .wrap{max-width:900px;margin:0 auto;}
+
+  .top{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:14px;flex-wrap:wrap;
+    padding:12px 18px;margin-bottom:20px;
+    background:rgba(10,42,51,0.75);
+    border:1.5px solid var(--glass-brd);
+    border-radius:20px;
+    backdrop-filter:blur(14px);
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+  }
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand .dots{
+    font-family:'Courier New',monospace;
+    font-size:10px;line-height:1.15;font-weight:700;
+    color:var(--mint);
+    background:rgba(26,188,156,0.12);
+    border:1.5px solid rgba(26,188,156,0.5);
+    border-radius:10px;padding:4px 7px;
+    white-space:pre;
+  }
+  .brand .ttl{font-family:'Times New Roman',serif;letter-spacing:2px;}
+  .brand .ttl .gr{font-size:16px;font-weight:700;color:var(--mint);display:block;}
+  .brand .ttl .ru{font-size:10px;font-weight:600;color:var(--gold);letter-spacing:2px;}
+  .top-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .chip{
+    font-family:'Courier New',monospace;font-size:14px;color:var(--text-soft);
+    background:rgba(10,42,51,0.6);
+    border:1.5px solid rgba(26,188,156,0.35);
+    border-radius:12px;padding:8px 14px;
+    white-space:nowrap;
+  }
+  .chip.timer{color:var(--mint);font-weight:700;font-size:16px;letter-spacing:1px;}
+  .chip.timer.warn{color:var(--coral);animation:pulse-warn 0.6s infinite alternate;}
+  @keyframes pulse-warn{from{opacity:1;}to{opacity:0.35;}}
+  .chip.lives{color:var(--coral);font-weight:700;font-size:15px;}
+
+  .screen{display:none;}
+  .screen.active{display:block;}
+
+  .start-card{
+    background:var(--glass);
+    border:1.5px solid var(--glass-brd);
+    border-radius:24px;
+    backdrop-filter:blur(14px);
+    box-shadow:0 12px 40px rgba(0,0,0,0.35);
+    padding:40px 32px;
+    text-align:center;
+  }
+  .start-card h1{
+    font-family:'Times New Roman',serif;
+    font-size:32px;
+    color:var(--mint);
+    text-shadow:0 0 20px rgba(127,255,212,0.4);
+    margin-bottom:12px;
+    letter-spacing:1px;
+  }
+  .start-card .sub{
+    font-size:16px;
+    color:var(--text-soft);
+    font-style:italic;
+    margin-bottom:24px;
+  }
+  .start-rules{
+    display:inline-block;
+    text-align:left;
+    background:rgba(26,188,156,0.08);
+    border:1px solid rgba(26,188,156,0.3);
+    border-radius:16px;
+    padding:18px 26px;
+    margin-bottom:28px;
+    font-size:15px;
+    line-height:1.9;
+    color:var(--text);
+  }
+  .start-rules .row{display:flex;gap:10px;align-items:flex-start;}
+  .start-rules .row .ico{flex-shrink:0;font-size:17px;line-height:1.7;}
+  .start-btn{
+    cursor:pointer;user-select:none;
+    display:inline-flex;align-items:center;gap:12px;
+    padding:18px 44px;
+    border-radius:18px;border:none;
+    background:linear-gradient(135deg,var(--teal),var(--teal-dark));
+    color:#04231d;
+    font-family:Georgia,serif;font-size:18px;font-weight:700;
+    letter-spacing:.7px;
+    box-shadow:0 10px 30px rgba(26,188,156,0.5);
+    transition:.25s;
+  }
+  .start-btn:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(26,188,156,0.7);}
+
+  .game-head{
+    display:flex;justify-content:space-between;align-items:center;
+    gap:14px;flex-wrap:wrap;
+    padding:14px 20px;margin-bottom:16px;
+    background:var(--glass);
+    border:1.5px solid var(--glass-brd);
+    border-radius:18px;
+    backdrop-filter:blur(10px);
+    font-size:15px;
+    color:var(--text-soft);
+  }
+  .game-head .progress{font-family:'Courier New',monospace;color:var(--mint);font-weight:700;}
+
+  .task-card{
+    background:var(--glass);
+    border:1.5px solid var(--glass-brd);
+    border-radius:24px;
+    backdrop-filter:blur(14px);
+    box-shadow:0 12px 40px rgba(0,0,0,0.35);
+    padding:24px 26px 22px;
+    text-align:center;
+  }
+  .task-card .q-label{
+    font-family:'Times New Roman',serif;
+    font-size:13px;
+    color:var(--gold);
+    letter-spacing:2px;
+    text-transform:uppercase;
+    margin-bottom:14px;
+  }
+  .task-question{
+    font-family:'Cambria Math','Times New Roman',serif;
+    font-size:19px;
+    color:var(--text);
+    line-height:1.7;
+    margin-bottom:18px;
+    padding:0 10px;
+  }
+  .task-question b{color:var(--mint);font-weight:700;}
+  .task-question .hl{color:var(--gold-light);font-weight:700;}
+
+  .task-graph{
+    background:#f7fcfa;
+    border-radius:16px;
+    padding:10px;
+    margin-bottom:18px;
+    max-width:440px;
+    margin-left:auto;margin-right:auto;
+  }
+  .task-graph svg{width:100%;height:auto;display:block;}
+
+  .frac{
+    display:inline-flex;flex-direction:column;
+    vertical-align:middle;text-align:center;
+    margin:0 3px;line-height:1.05;
+    font-family:'Cambria Math','Times New Roman',serif;
+    font-size:0.95em;
+  }
+  .frac .num{padding:0 6px 2px;border-bottom:1.6px solid currentColor;}
+  .frac .den{padding:2px 6px 0;}
+
+  .answer-block{
+    max-width:420px;
+    margin:0 auto;
+  }
+  .answer-input{
+    width:100%;
+    font-family:'Courier New',monospace;font-size:22px;font-weight:700;
+    color:var(--text);
+    background:rgba(10,42,51,0.6);
+    border:1.5px solid rgba(26,188,156,0.45);
+    border-radius:14px;
+    padding:14px 16px;
+    outline:none;
+    transition:.25s;
+    text-align:center;
+  }
+  .answer-input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+  .answer-input.ok{border-color:var(--ok);box-shadow:0 0 0 3px rgba(46,204,113,0.2);}
+  .answer-input.bad{border-color:var(--err);box-shadow:0 0 0 3px rgba(255,107,107,0.2);}
+  .answer-input:disabled{opacity:0.9;cursor:not-allowed;}
+
+  .check-btn{
+    cursor:pointer;user-select:none;
+    margin-top:14px;
+    padding:14px 42px;
+    border-radius:14px;border:none;
+    background:linear-gradient(135deg,var(--teal),var(--teal-dark));
+    color:#04231d;
+    font-family:Georgia,serif;font-size:17px;font-weight:700;
+    letter-spacing:.7px;
+    box-shadow:0 8px 24px rgba(26,188,156,0.45);
+    transition:.25s;
+  }
+  .check-btn:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 12px 32px rgba(26,188,156,0.6);}
+  .check-btn:disabled{opacity:0.4;cursor:not-allowed;}
+
+  .feedback{
+    margin-top:16px;
+    font-size:17px;
+    font-weight:700;
+    min-height:26px;
+    line-height:1.5;
+  }
+  .feedback.ok{color:var(--ok);}
+  .feedback.err{color:var(--err);}
+  .feedback .ans{
+    font-family:'Courier New',monospace;
+    color:var(--gold-light);
+  }
+
+  .finish-card{
+    background:var(--glass);
+    border:1.5px solid var(--glass-brd);
+    border-radius:24px;
+    backdrop-filter:blur(14px);
+    box-shadow:0 12px 40px rgba(0,0,0,0.35);
+    padding:44px 32px;
+    text-align:center;
+  }
+  .finish-card h2{
+    font-family:'Times New Roman',serif;
+    font-size:30px;
+    color:var(--mint);
+    text-shadow:0 0 20px rgba(127,255,212,0.4);
+    margin-bottom:22px;
+    letter-spacing:1px;
+  }
+  .finish-stats{
+    display:inline-flex;gap:30px;flex-wrap:wrap;justify-content:center;
+    margin-bottom:28px;
+    padding:22px 34px;
+    background:rgba(26,188,156,0.08);
+    border:1px solid rgba(26,188,156,0.35);
+    border-radius:18px;
+  }
+  .finish-stats .stat{text-align:center;}
+  .finish-stats .stat .v{
+    font-family:'Courier New',monospace;
+    font-size:34px;font-weight:700;
+    color:var(--gold);
+    line-height:1;
+    text-shadow:0 0 14px rgba(244,211,94,0.5);
+  }
+  .finish-stats .stat .l{
+    font-size:12px;color:var(--text-soft);
+    letter-spacing:1px;text-transform:uppercase;
+    margin-top:8px;
+  }
+  .finish-card .msg{
+    font-size:17px;color:var(--text-soft);font-style:italic;
+    margin-bottom:26px;line-height:1.6;
+  }
+  .restart-btn{
+    cursor:pointer;user-select:none;
+    padding:16px 38px;
+    border-radius:16px;border:none;
+    background:linear-gradient(135deg,var(--gold),#d9b53c);
+    color:#04231d;
+    font-family:Georgia,serif;font-size:16px;font-weight:700;
+    letter-spacing:.6px;
+    box-shadow:0 8px 24px rgba(244,211,94,0.45);
+    transition:.25s;
+  }
+  .restart-btn:hover{transform:translateY(-3px);}
+
+  footer{
+    margin-top:32px;text-align:center;
+    color:var(--text-soft);font-size:12px;font-style:italic;letter-spacing:1px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="brand">
+      <div class="dots">●
+● ●
+● ● ●
+● ● ● ●</div>
+      <div class="ttl">
+        <span class="gr">ΤΕΤΡΑΚΤΥΣ</span>
+        <span class="ru">ТЕТРАКТИС</span>
+      </div>
+    </div>
+    <div class="top-right">
+      <div class="chip timer" id="timerChip">⏱ 5:00</div>
+      <div class="chip lives" id="livesChip">❤️ ❤️ ❤️</div>
+      <div class="chip" id="scoreChip">✅ 0 / 5</div>
+    </div>
+  </div>
+
+  <!-- СТАРТ -->
+  <div class="screen active" id="screenStart">
+    <div class="start-card">
+      <h1>Тренажёр · Восстановление гиперболы</h1>
+      <div class="sub">По графику определи формулу · 5 заданий · 3 жизни · 5 минут</div>
+
+      <div class="start-rules">
+        <div class="row"><span class="ico">📊</span><span>Дан график гиперболы. По нему нужно найти ответ.</span></div>
+        <div class="row"><span class="ico">🔢</span><span>Введи <b>только число</b> — ответ.</span></div>
+        <div class="row"><span class="ico">❤️</span><span>3 жизни. Ошибка — минус жизнь. <b>Ответ уже не исправить.</b></span></div>
+        <div class="row"><span class="ico">⏱</span><span>5 минут. Последние 10 секунд — писк.</span></div>
+      </div>
+
+      <div>
+        <button class="start-btn" id="startBtn">▶ Начать</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ИГРА -->
+  <div class="screen" id="screenGame">
+    <div class="game-head">
+      <span>Задание <span class="progress" id="taskNum">1</span> из <span class="progress">5</span></span>
+      <span id="gameScore">Верно: 0</span>
+    </div>
+
+    <div class="task-card">
+      <div class="q-label">По рисунку найди ответ</div>
+      <div class="task-question" id="taskQuestion"></div>
+      <div class="task-graph">
+        <svg id="taskSvg" viewBox="0 0 500 420" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+
+      <div class="answer-block">
+        <input type="text" class="answer-input" id="answerInput" placeholder="введи число" autocomplete="off" spellcheck="false" />
+        <button class="check-btn" id="checkBtn">✓ Проверить</button>
+      </div>
+
+      <div class="feedback" id="feedback"></div>
+    </div>
+  </div>
+
+  <!-- ФИНАЛ -->
+  <div class="screen" id="screenFinish">
+    <div class="finish-card">
+      <h2 id="finishTitle">Игра завершена</h2>
+      <div class="finish-stats">
+        <div class="stat">
+          <div class="v" id="finishCorrect">0</div>
+          <div class="l">Верно</div>
+        </div>
+        <div class="stat">
+          <div class="v" id="finishTotal">5</div>
+          <div class="l">Всего</div>
+        </div>
+        <div class="stat">
+          <div class="v" id="finishTime">0:00</div>
+          <div class="l">Время</div>
+        </div>
+      </div>
+      <div class="msg" id="finishMsg"></div>
+      <button class="restart-btn" id="restartBtn">↻ Играть снова</button>
+    </div>
+  </div>
+
+  <footer>Школа математики Елены Михалевой · ΤΕΤΡΑΚΤΥΣ</footer>
+</div>
+
+<script>
+/* ПУЛ 15 ЗАДАНИЙ */
+const POOL = [
+  {k:3, m:0, n:1, qType:'findF', qValue:-40, answer:-0.075,
+   questionHTML:'На рисунке изображён график функции f(x) = k/x + a. Найдите f(−40).'},
+  {k:4, m:0, n:-2, qType:'findX', qValue:0, answer:2,
+   questionHTML:'На рисунке изображён график функции f(x) = k/x + a. Найдите, при каком значении x значение функции равно 0.'},
+  {k:6, m:0, n:1, qType:'findX', qValue:4, answer:2,
+   questionHTML:'На рисунке изображён график функции f(x) = k/x + a. Найдите, при каком значении x значение функции равно 4.'},
+  {k:-5, m:1, n:2, qType:'findA', aVal:-3, bVal:1, kNum:2, answer:-3,
+   questionHTML:'На рисунке изображён график функции f(x) = (kx + a)/(x + b). Найдите a.'},
+  {k:7, m:-2, n:3, qType:'findK', aVal:1, bVal:-2, kNum:3, answer:3,
+   questionHTML:'На рисунке изображён график функции f(x) = (kx + a)/(x + b). Найдите k.'},
+  {k:5, m:0, n:-3, qType:'findX', qValue:-8, answer:-1,
+   questionHTML:'На рисунке изображён график функции f(x) = k/x + a. Найдите, при каком значении x значение функции равно −8.'},
+  {k:8, m:0, n:2, qType:'findF', qValue:-4, answer:0,
+   questionHTML:'На рисунке изображён график функции f(x) = k/x + a. Найдите f(−4).'},
+  {k:-4, m:0, n:1, qType:'findX', qValue:2, answer:-4,
+   questionHTML:'На рисунке изображён график функции f(x) = k/x + a. Найдите, при каком значении x значение функции равно 2.'},
+  {k:-1, m:2, n:2, qType:'findA', aVal:5, bVal:2, kNum:2, answer:5,
+   questionHTML:'На рисунке изображён график функции f(x) = (kx + a)/(x + b). Найдите a.'},
+  {k:-5, m:1, n:4, qType:'findK', aVal:-1, bVal:1, kNum:4, answer:4,
+   questionHTML:'На рисунке изображён график функции f(x) = (kx + a)/(x + b). Найдите k.'},
+  {k:10, m:0, n:-2, qType:'findX', qValue:3, answer:2,
+   questionHTML:'На рисунке изображён график функции f(x) = k/x + a. Найдите, при каком значении x значение функции равно 3.'},
+  {k:-6, m:0, n:3, qType:'findF', qValue:2, answer:0,
+   questionHTML:'На рисунке изображён график функции f(x) = k/x + a. Найдите f(2).'},
+  {k:7, m:-1, n:5, qType:'findK', aVal:2, bVal:-1, kNum:5, answer:5,
+   questionHTML:'На рисунке изображён график функции f(x) = (kx + a)/(x + b). Найдите k.'},
+  {k:-16, m:3, n:3, qType:'findA', aVal:-7, bVal:3, kNum:3, answer:-7,
+   questionHTML:'На рисунке изображён график функции f(x) = (kx + a)/(x + b). Найдите a.'},
+  {k:12, m:0, n:4, qType:'findX', qValue:8, answer:3,
+   questionHTML:'На рисунке изображён график функции f(x) = k/x + a. Найдите, при каком значении x значение функции равно 8.'}
+];
+
+function goodPointFor(t){
+  const {k, m, n} = t;
+  for(let x = -8; x <= 8; x++){
+    if(x === -m) continue;
+    const y = k / (x + m) + n;
+    if(Number.isInteger(y) && Math.abs(y) <= 10){
+      return {x, y};
+    }
+  }
+  return null;
+}
+
+/* ЗВУК */
+let audioCtx = null;
+let audioReady = false;
+function initAudio(){
+  if(audioReady) return;
+  try{
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    audioReady = true;
+  }catch(e){ audioReady = false; }
+}
+function beep(freq, duration, type){
+  if(!audioReady) return;
+  try{
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = type || 'square';
+    o.frequency.value = freq;
+    o.connect(g); g.connect(audioCtx.destination);
+    const now = audioCtx.currentTime;
+    g.gain.setValueAtTime(0.14, now);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+    o.start(now); o.stop(now + duration);
+  }catch(e){}
+}
+function soundTick(){ beep(880, 0.08, 'square'); }
+function soundWrong(){ beep(180, 0.35, 'sawtooth'); }
+function soundRight(){ beep(660, 0.1, 'triangle'); setTimeout(()=>beep(880, 0.15, 'triangle'), 90); }
+function soundEnd(){ beep(120, 0.6, 'sawtooth'); setTimeout(()=>beep(80, 0.8, 'sawtooth'), 200); }
+document.addEventListener('pointerdown', initAudio, {once:true});
+
+/* ИГРА */
+let lives = 3;
+let correct = 0;
+let total = 5;
+let tasks = [];
+let currentTaskIdx = 0;
+let timeLeft = 300;
+let timerInterval = null;
+let finished = false;
+
+const $ = id => document.getElementById(id);
+
+function shuffle(a){
+  const arr = a.slice();
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+function pickTasks(){ return shuffle(POOL).slice(0, total); }
+
+/* SVG */
+function makeGrid(svgW, svgH, pad, X_MIN, X_MAX, Y_MIN, Y_MAX){
+  const px = x => pad + (x - X_MIN) / (X_MAX - X_MIN) * (svgW - 2*pad);
+  const py = y => svgH - pad - (y - Y_MIN) / (Y_MAX - Y_MIN) * (svgH - 2*pad);
+  return {px, py};
+}
+function drawGrid(px, py, X_MIN, X_MAX, Y_MIN, Y_MAX){
+  let s = '';
+  for(let x = Math.ceil(X_MIN); x <= Math.floor(X_MAX); x++){
+    s += `<line x1="${px(x)}" y1="${py(Y_MIN)}" x2="${px(x)}" y2="${py(Y_MAX)}" stroke="rgba(14,124,102,0.12)" stroke-width="1"/>`;
+  }
+  for(let y = Math.ceil(Y_MIN); y <= Math.floor(Y_MAX); y++){
+    s += `<line x1="${px(X_MIN)}" y1="${py(y)}" x2="${px(X_MAX)}" y2="${py(y)}" stroke="rgba(14,124,102,0.12)" stroke-width="1"/>`;
+  }
+  if(Y_MIN <= 0 && 0 <= Y_MAX){
+    s += `<line x1="${px(X_MIN)}" y1="${py(0)}" x2="${px(X_MAX)}" y2="${py(0)}" stroke="#0e7c66" stroke-width="1.8"/>`;
+    s += `<polygon points="${px(X_MAX)},${py(0)} ${px(X_MAX)-9},${py(0)-4.5} ${px(X_MAX)-9},${py(0)+4.5}" fill="#0e7c66"/>`;
+    s += `<text x="${px(X_MAX)-4}" y="${py(0)+18}" font-family="Georgia" font-size="14" fill="#0e7c66" text-anchor="end" font-style="italic">x</text>`;
+  }
+  if(X_MIN <= 0 && 0 <= X_MAX){
+    s += `<line x1="${px(0)}" y1="${py(Y_MIN)}" x2="${px(0)}" y2="${py(Y_MAX)}" stroke="#0e7c66" stroke-width="1.8"/>`;
+    s += `<polygon points="${px(0)},${py(Y_MAX)} ${px(0)-4.5},${py(Y_MAX)+9} ${px(0)+4.5},${py(Y_MAX)+9}" fill="#0e7c66"/>`;
+    s += `<text x="${px(0)+10}" y="${py(Y_MAX)+16}" font-family="Georgia" font-size="14" fill="#0e7c66" font-style="italic">y</text>`;
+  }
+  s += `<text x="${px(0)-6}" y="${py(0)+16}" font-family="'Courier New'" font-size="11" fill="#0e7c66" text-anchor="end">0</text>`;
+  for(let x = Math.ceil(X_MIN)+1; x <= Math.floor(X_MAX)-1; x++){
+    if(x === 0) continue;
+    s += `<line x1="${px(x)}" y1="${py(0)-2.5}" x2="${px(x)}" y2="${py(0)+2.5}" stroke="#0e7c66" stroke-width="1.3"/>`;
+    s += `<text x="${px(x)}" y="${py(0)+16}" font-family="'Courier New'" font-size="10" fill="#0e7c66" text-anchor="middle">${x}</text>`;
+  }
+  for(let y = Math.ceil(Y_MIN)+1; y <= Math.floor(Y_MAX)-1; y++){
+    if(y === 0) continue;
+    s += `<line x1="${px(0)-2.5}" y1="${py(y)}" x2="${px(0)+2.5}" y2="${py(y)}" stroke="#0e7c66" stroke-width="1.3"/>`;
+    s += `<text x="${px(0)-6}" y="${py(y)+4}" font-family="'Courier New'" font-size="10" fill="#0e7c66" text-anchor="end">${y}</text>`;
+  }
+  return s;
+}
+function drawHyperbola(px, py, k, m, n, X_MIN, X_MAX, Y_MIN, Y_MAX){
+  const step = 0.015;
+  let d1 = '', d2 = '';
+  let s1 = false, s2 = false;
+  for(let x = X_MIN; x <= X_MAX + step; x += step){
+    if(Math.abs(x + m) < 0.05) continue;
+    const y = k / (x + m) + n;
+    const inside = (y >= Y_MIN - 0.5 && y <= Y_MAX + 0.5);
+    const sx = px(x), sy = py(y);
+    if(x < -m){
+      if(inside){ if(!s1){ d1 += `M ${sx.toFixed(2)} ${sy.toFixed(2)}`; s1 = true; } else d1 += ` L ${sx.toFixed(2)} ${sy.toFixed(2)}`; }
+      else s1 = false;
+    } else {
+      if(inside){ if(!s2){ d2 += `M ${sx.toFixed(2)} ${sy.toFixed(2)}`; s2 = true; } else d2 += ` L ${sx.toFixed(2)} ${sy.toFixed(2)}`; }
+      else s2 = false;
+    }
+  }
+  let s = '';
+  if(d1) s += `<path d="${d1}" fill="none" stroke="#0e7c66" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>`;
+  if(d2) s += `<path d="${d2}" fill="none" stroke="#0e7c66" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>`;
+  return s;
+}
+function drawAsymptotes(px, py, m, n, X_MIN, X_MAX, Y_MIN, Y_MAX){
+  let s = '';
+  if(-m >= X_MIN && -m <= X_MAX){
+    s += `<line x1="${px(-m)}" y1="${py(Y_MIN)}" x2="${px(-m)}" y2="${py(Y_MAX)}" stroke="#7fffd4" stroke-width="2.2" stroke-dasharray="9 7" opacity="0.95"/>`;
+  }
+  if(n >= Y_MIN && n <= Y_MAX){
+    s += `<line x1="${px(X_MIN)}" y1="${py(n)}" x2="${px(X_MAX)}" y2="${py(n)}" stroke="#7fffd4" stroke-width="2.2" stroke-dasharray="9 7" opacity="0.95"/>`;
+  }
+  return s;
+}
+function drawPoint(px, py, x, y, color){
+  return `<circle cx="${px(x)}" cy="${py(y)}" r="5.5" fill="${color}" stroke="#fff" stroke-width="1.8"/>`;
+}
+
+function graphBounds(t){
+  const cx = -t.m, cy = t.n;
+  return {X_MIN: cx - 6, X_MAX: cx + 6, Y_MIN: cy - 6, Y_MAX: cy + 6};
+}
+
+function renderTask(){
+  const t = tasks[currentTaskIdx];
+  $('taskNum').textContent = (currentTaskIdx + 1);
+  $('taskQuestion').innerHTML = t.questionHTML;
+
+  const SVG_W = 500, SVG_H = 420, PAD = 40;
+  const {X_MIN, X_MAX, Y_MIN, Y_MAX} = graphBounds(t);
+  const {px, py} = makeGrid(SVG_W, SVG_H, PAD, X_MIN, X_MAX, Y_MIN, Y_MAX);
+  let svg = drawGrid(px, py, X_MIN, X_MAX, Y_MIN, Y_MAX);
+  if(t.m !== 0 || t.n !== 0){
+    svg += drawAsymptotes(px, py, t.m, t.n, X_MIN, X_MAX, Y_MIN, Y_MAX);
+  }
+  svg += drawHyperbola(px, py, t.k, t.m, t.n, X_MIN, X_MAX, Y_MIN, Y_MAX);
+  const gp = goodPointFor(t);
+  if(gp && gp.x >= X_MIN && gp.x <= X_MAX && gp.y >= Y_MIN && gp.y <= Y_MAX){
+    svg += drawPoint(px, py, gp.x, gp.y, '#0e7c66');
+  }
+  $('taskSvg').innerHTML = svg;
+
+  $('answerInput').value = '';
+  $('answerInput').disabled = false;
+  $('answerInput').classList.remove('ok', 'bad');
+  $('feedback').textContent = '';
+  $('feedback').className = 'feedback';
+  $('checkBtn').disabled = false;
+
+  setTimeout(()=> $('answerInput').focus(), 100);
+}
+
+function norm(s){
+  if(s == null) return '';
+  return String(s).trim()
+    .replace(/\s+/g,'')
+    .replace(/−|–|—/g,'-')
+    .replace(/,/g,'.');
+}
+function toNum(v){
+  v = v.replace(/^\+/,'');
+  if(/^-?\d+(\.\d+)?$/.test(v)) return parseFloat(v);
+  const m = v.match(/^(-?\d+)\/(\d+)$/);
+  if(m) return parseInt(m[1])/parseInt(m[2]);
+  return null;
+}
+function checkAnswer(user, correct){
+  const u = norm(user);
+  if(!u) return false;
+  const cu = norm(String(correct));
+  if(u === cu) return true;
+  const nu = toNum(u), nc = toNum(cu);
+  if(nu !== null && nc !== null && Math.abs(nu - nc) < 1e-9) return true;
+  return false;
+}
+function formatAnswer(num){
+  if(Number.isInteger(num)) return String(num);
+  return String(num).replace('.', ',');
+}
+
+/* ВАРИАНТ В: ошибся → показал правильный → через 1,5 сек следующее */
+$('checkBtn').addEventListener('click', ()=>{
+  if(finished) return;
+  initAudio();
+
+  const t = tasks[currentTaskIdx];
+  const input = $('answerInput');
+  const fb = $('feedback');
+
+  if(checkAnswer(input.value, t.answer)){
+    correct++;
+    $('scoreChip').textContent = '✅ ' + correct + ' / ' + total;
+    $('gameScore').textContent = 'Верно: ' + correct;
+    input.classList.add('ok');
+    input.disabled = true;
+    fb.className = 'feedback ok';
+    fb.textContent = '✓ Верно!';
+    soundRight();
+    $('checkBtn').disabled = true;
+    setTimeout(nextTask, 1500);
+  } else {
+    lives--;
+    updateLives();
+    input.classList.add('bad');
+    input.disabled = true;
+    fb.className = 'feedback err';
+    fb.innerHTML = '✗ Неверно. Правильный ответ: <span class="ans">' + formatAnswer(t.answer) + '</span>';
+    soundWrong();
+    $('checkBtn').disabled = true;
+    if(lives <= 0){
+      setTimeout(()=>endGame(false), 1500);
+    } else {
+      setTimeout(nextTask, 1500);
+    }
+  }
+});
+
+$('answerInput').addEventListener('keydown', e=>{
+  if(e.key === 'Enter') $('checkBtn').click();
+});
+
+function nextTask(){
+  currentTaskIdx++;
+  if(currentTaskIdx >= total){ endGame(true); return; }
+  renderTask();
+}
+
+function updateLives(){
+  const hearts = '❤️ '.repeat(Math.max(0, lives)).trim();
+  const empty = '🖤 '.repeat(Math.max(0, 3 - lives)).trim();
+  $('livesChip').textContent = (hearts + ' ' + empty).trim();
+}
+
+function formatTime(s){
+  const m = Math.floor(s / 60);
+  const ss = s % 60;
+  return m + ':' + String(ss).padStart(2, '0');
+}
+
+function startTimer(){
+  timeLeft = 300;
+  $('timerChip').classList.remove('warn');
+  $('timerChip').textContent = '⏱ ' + formatTime(timeLeft);
+  clearInterval(timerInterval);
+  timerInterval = setInterval(()=>{
+    timeLeft--;
+    $('timerChip').textContent = '⏱ ' + formatTime(Math.max(0, timeLeft));
+    if(timeLeft <= 10 && timeLeft > 0){
+      $('timerChip').classList.add('warn');
+      soundTick();
+    }
+    if(timeLeft <= 0){
+      clearInterval(timerInterval);
+      endGame(false);
+    }
+  }, 1000);
+}
+
+function endGame(win){
+  if(finished) return;
+  finished = true;
+  clearInterval(timerInterval);
+  $('timerChip').classList.remove('warn');
+  soundEnd();
+
+  const elapsed = 300 - Math.max(0, timeLeft);
+
+  $('finishCorrect').textContent = correct;
+  $('finishTotal').textContent = total;
+  $('finishTime').textContent = formatTime(Math.max(0, elapsed));
+
+  if(win && correct === total){
+    $('finishTitle').textContent = '🏆 Победа!';
+    $('finishMsg').textContent = 'Все 5 заданий верно! Отличная работа.';
+  } else if(win){
+    $('finishTitle').textContent = '✓ Готово';
+    $('finishMsg').textContent = 'Ты справился. Есть над чем поработать.';
+  } else if(lives <= 0){
+    $('finishTitle').textContent = '💔 Жизни кончились';
+    $('finishMsg').textContent = 'Попробуй ещё раз — теперь ты знаешь, где ошибаешься.';
+  } else {
+    $('finishTitle').textContent = '⏱ Время вышло';
+    $('finishMsg').textContent = 'Не успел. Потренируйся и попробуй снова.';
+  }
+
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $('screenFinish').classList.add('active');
+}
+
+function startGame(){
+  initAudio();
+  lives = 3;
+  correct = 0;
+  currentTaskIdx = 0;
+  finished = false;
+  tasks = pickTasks();
+
+  $('scoreChip').textContent = '✅ 0 / ' + total;
+  $('gameScore').textContent = 'Верно: 0';
+  updateLives();
+
+  renderTask();
+  startTimer();
+
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $('screenGame').classList.add('active');
+}
+
+$('startBtn').addEventListener('click', startGame);
+$('restartBtn').addEventListener('click', startGame);
+</script>
+</body>
+</html>
