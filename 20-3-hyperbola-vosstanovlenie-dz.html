@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>ДЗ · Восстановление гиперболы · ΤΕΤΡΑΚΤΥΣ</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--coral:#ff6b6b;
+    --gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass:rgba(255,255,255,0.04);
+    --glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{
+    min-height:100%;
+    font-family:'Georgia','Times New Roman',serif;
+    color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(26,188,156,0.22), transparent 55%),
+      radial-gradient(ellipse at 85% 90%, rgba(127,255,212,0.15), transparent 55%),
+      radial-gradient(ellipse at 50% 50%, rgba(244,211,94,0.06), transparent 70%),
+      linear-gradient(160deg, #0a2a33 0%, #0d3b47 50%, #134e5e 100%);
+    background-attachment:fixed;
+    padding:22px 16px 60px;
+  }
+  .wrap{max-width:950px;margin:0 auto;}
+
+  .top{
+    position:sticky;top:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    gap:14px;flex-wrap:wrap;
+    padding:12px 18px;margin-bottom:22px;
+    background:rgba(10,42,51,0.85);
+    border:1.5px solid var(--glass-brd);
+    border-radius:20px;
+    backdrop-filter:blur(14px);
+    box-shadow:0 10px 30px rgba(0,0,0,0.35);
+  }
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand .dots{
+    font-family:'Courier New',monospace;
+    font-size:10px;line-height:1.15;font-weight:700;
+    color:var(--mint);
+    background:rgba(26,188,156,0.12);
+    border:1.5px solid rgba(26,188,156,0.5);
+    border-radius:10px;padding:4px 7px;
+    white-space:pre;
+  }
+  .brand .ttl{font-family:'Times New Roman',serif;letter-spacing:2px;}
+  .brand .ttl .gr{font-size:16px;font-weight:700;color:var(--mint);display:block;}
+  .brand .ttl .ru{font-size:10px;font-weight:600;color:var(--gold);letter-spacing:2px;}
+  .brand .ttl .sub{font-size:10px;font-style:italic;color:var(--text-soft);}
+  .top-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .chip{
+    font-family:'Courier New',monospace;font-size:13px;color:var(--text-soft);
+    background:rgba(10,42,51,0.6);
+    border:1.5px solid rgba(26,188,156,0.35);
+    border-radius:12px;padding:6px 12px;
+    white-space:nowrap;
+  }
+
+  h1.page-title{
+    font-family:'Times New Roman',serif;
+    text-align:center;font-size:28px;
+    color:var(--mint);
+    text-shadow:0 0 18px rgba(127,255,212,0.45);
+    margin:6px 0 4px;
+  }
+  .page-sub{
+    text-align:center;color:var(--text-soft);
+    font-size:14px;font-style:italic;margin-bottom:22px;
+  }
+
+  .card{
+    background:var(--glass);
+    border:1.5px solid var(--glass-brd);
+    border-radius:20px;
+    backdrop-filter:blur(10px);
+    padding:18px 20px;
+    margin-bottom:18px;
+  }
+  .card h3{
+    font-family:'Times New Roman',serif;font-size:17px;
+    color:var(--gold);margin-bottom:10px;letter-spacing:.5px;
+  }
+  .card p{color:var(--text-soft);font-size:14px;line-height:1.7;margin-bottom:6px;}
+  .name-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px;}
+  .name-row label{font-size:14px;color:var(--text-soft);}
+  .name-input{
+    flex:1;min-width:200px;
+    font-family:Georgia,serif;font-size:15px;color:var(--text);
+    background:rgba(10,42,51,0.55);
+    border:1.5px solid rgba(26,188,156,0.45);
+    border-radius:12px;padding:10px 14px;outline:none;transition:.25s;
+  }
+  .name-input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+  .name-input::placeholder{color:rgba(184,216,208,0.4);font-style:italic;}
+
+  .progress-card{
+    background:var(--glass);
+    border:1.5px solid var(--glass-brd);
+    border-radius:20px;
+    backdrop-filter:blur(10px);
+    padding:16px 20px;margin-bottom:18px;
+  }
+  .progress-head{
+    display:flex;justify-content:space-between;flex-wrap:wrap;
+    gap:10px;margin-bottom:10px;font-size:14px;color:var(--text-soft);
+  }
+  .progress-head .nums{font-family:'Courier New',monospace;}
+  .progress-head .ok-n{color:var(--ok);font-weight:700;}
+  .progress-head .err-n{color:var(--err);font-weight:700;}
+  .bar{
+    height:12px;border-radius:8px;overflow:hidden;
+    background:rgba(10,42,51,0.6);
+    border:1px solid rgba(26,188,156,0.3);
+  }
+  .bar-fill{
+    height:100%;width:0%;
+    background:linear-gradient(90deg,var(--teal),var(--mint),var(--gold));
+    transition:width .4s ease;
+    box-shadow:0 0 12px rgba(127,255,212,0.5);
+  }
+
+  .task{
+    background:var(--glass);
+    border:1.5px solid rgba(26,188,156,0.4);
+    border-radius:20px;
+    backdrop-filter:blur(10px);
+    padding:22px 24px;margin-bottom:16px;
+    transition:.25s;
+  }
+  .task:hover{border-color:rgba(127,255,212,0.6);}
+  .task.done{border-color:var(--ok);box-shadow:0 0 0 1px rgba(46,204,113,0.3);}
+  .task.fail{border-color:var(--err);box-shadow:0 0 0 1px rgba(255,107,107,0.3);}
+
+  .task-head{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+  .task-num{
+    display:inline-flex;align-items:center;justify-content:center;
+    min-width:44px;height:34px;padding:0 12px;
+    border-radius:10px;
+    background:linear-gradient(135deg,var(--teal),var(--teal-dark));
+    color:#04231d;
+    font-family:'Courier New',monospace;font-weight:700;
+    font-size:14px;flex-shrink:0;
+  }
+  .task-text{
+    font-size:15px;
+    color:var(--text);
+    line-height:1.65;
+  }
+
+  .task-body{margin-top:14px;}
+
+  .task-graph{
+    background:#f7fcfa;
+    border-radius:16px;
+    padding:10px;
+    max-width:460px;
+    margin:0 auto 14px;
+  }
+  .task-graph svg{width:100%;height:auto;display:block;}
+
+  .frac{
+    display:inline-flex;flex-direction:column;
+    vertical-align:middle;text-align:center;
+    margin:0 4px;line-height:1.05;
+    font-family:'Cambria Math','Times New Roman',serif;
+    font-size:0.95em;
+  }
+  .frac .num{padding:0 6px 2px;border-bottom:1.6px solid currentColor;}
+  .frac .den{padding:2px 6px 0;}
+
+  .answer-row{
+    display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+    max-width:480px;margin:0 auto;
+  }
+  .answer{
+    flex:1;min-width:160px;
+    font-family:'Courier New',monospace;font-size:18px;
+    color:var(--text);
+    background:rgba(10,42,51,0.55);
+    border:1.5px solid rgba(26,188,156,0.45);
+    border-radius:14px;
+    padding:12px 14px;outline:none;transition:.25s;
+    text-align:center;
+  }
+  .answer:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+  .answer.ok{border-color:var(--ok);box-shadow:0 0 0 3px rgba(46,204,113,0.18);}
+  .answer.bad{border-color:var(--err);box-shadow:0 0 0 3px rgba(255,107,107,0.18);}
+  .answer:disabled{opacity:.9;cursor:not-allowed;}
+
+  .verdict{
+    margin-top:12px;text-align:center;
+    font-size:15px;font-weight:600;
+    min-height:22px;line-height:1.5;
+  }
+  .verdict.ok{color:var(--ok);}
+  .verdict.bad{color:var(--err);}
+  .verdict .ans{
+    font-family:'Courier New',monospace;
+    color:var(--gold-light);
+  }
+
+  .bottom-bar{
+    display:flex;gap:12px;flex-wrap:wrap;justify-content:center;
+    margin-top:22px;
+  }
+  .btn{
+    cursor:pointer;user-select:none;
+    font-family:Georgia,serif;font-size:15px;font-weight:600;
+    padding:14px 28px;border-radius:14px;border:none;
+    color:#04231d;
+    background:linear-gradient(135deg,var(--teal),var(--teal-dark));
+    transition:.25s;white-space:nowrap;
+    box-shadow:0 8px 20px rgba(26,188,156,0.35);
+  }
+  .btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 12px 26px rgba(26,188,156,0.5);}
+  .btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
+  .btn.ghost{
+    color:var(--text-soft);
+    background:rgba(255,255,255,0.05);
+    border:1.5px solid rgba(26,188,156,0.4);
+    box-shadow:none;
+  }
+  .btn.ghost:hover{color:var(--text);border-color:var(--mint);}
+  .btn.gold{background:linear-gradient(135deg,var(--gold),#d9b53c);box-shadow:0 8px 20px rgba(244,211,94,0.4);}
+  .btn.coral{background:linear-gradient(135deg,var(--coral),#c94a4a);color:#fff;box-shadow:0 8px 20px rgba(255,107,107,0.4);}
+  .btn.big{font-size:17px;padding:18px 44px;}
+
+  .hint{
+    background:var(--glass);
+    border:1.5px dashed rgba(26,188,156,0.4);
+    border-radius:20px;
+    padding:16px 20px;margin-top:20px;
+    color:var(--text-soft);font-size:13.5px;line-height:1.75;
+  }
+  .hint b{color:var(--mint);}
+  .hint ol{margin-left:20px;}
+  .hint ol li::marker{color:var(--gold);font-weight:700;}
+
+  footer{
+    margin-top:34px;text-align:center;
+    color:var(--text-soft);font-size:13px;font-style:italic;letter-spacing:1px;
+  }
+
+  .modal-bg{
+    display:none;position:fixed;inset:0;z-index:200;
+    background:rgba(4,20,25,0.75);backdrop-filter:blur(6px);
+    align-items:center;justify-content:center;padding:20px;
+  }
+  .modal-bg.show{display:flex;}
+  .modal{
+    background:linear-gradient(160deg,#0d3b47,#134e5e);
+    border:1.5px solid rgba(26,188,156,0.6);
+    border-radius:22px;
+    padding:26px 28px;
+    max-width:440px;width:100%;
+    box-shadow:0 20px 60px rgba(0,0,0,0.6);
+    text-align:center;
+  }
+  .modal h3{font-family:'Times New Roman',serif;color:var(--gold);font-size:20px;margin-bottom:8px;}
+  .modal p{color:var(--text-soft);font-size:14px;margin-bottom:16px;line-height:1.6;}
+  .modal p b{color:var(--coral);}
+  .modal input{
+    width:100%;
+    font-family:'Courier New',monospace;font-size:18px;letter-spacing:3px;
+    text-align:center;color:var(--text);
+    background:rgba(10,42,51,0.6);
+    border:1.5px solid rgba(26,188,156,0.5);
+    border-radius:14px;padding:12px;outline:none;margin-bottom:14px;
+  }
+  .modal input:focus{border-color:var(--mint);}
+  .modal .err-msg{color:var(--err);font-size:13px;min-height:18px;margin-bottom:10px;}
+  .modal-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="brand">
+      <div class="dots">●
+● ●
+● ● ●
+● ● ● ●</div>
+      <div class="ttl">
+        <span class="gr">ΤΕΤΡΑΚΤΥΣ</span>
+        <span class="ru">ТЕТРАКТИС</span>
+        <span class="sub">Школа математики Елены Михалевой</span>
+      </div>
+    </div>
+    <div class="top-right">
+      <div class="chip" id="today">—</div>
+      <div class="chip" id="counter">✅ 0 / 5</div>
+    </div>
+  </div>
+
+  <h1 class="page-title">ДЗ · Восстановление гиперболы</h1>
+  <div class="page-sub">5 заданий · по графику найди ответ</div>
+
+  <div class="card">
+    <h3>📖 Инструкция</h3>
+    <p>Внимательно посмотри на график и найди, что просят в задании.</p>
+    <p>Ответ — <b style="color:var(--mint)">только число</b>. Можно писать с запятой или точкой.</p>
+    <p><b style="color:var(--coral)">⚠ Сначала заполни ВСЕ поля, потом жми «Проверить» — после проверки ответы изменить нельзя.</b></p>
+    <div class="name-row">
+      <label for="studentName">👤 Имя ученика:</label>
+      <input type="text" class="name-input" id="studentName" placeholder="введи имя и фамилию" autocomplete="off" />
+    </div>
+  </div>
+
+  <div class="progress-card">
+    <div class="progress-head">
+      <div>📊 Прогресс: <span class="nums" id="pTotal">0 / 5</span></div>
+      <div>✅ <span class="ok-n" id="pOk">0</span> &nbsp;·&nbsp; ❌ <span class="err-n" id="pErr">0</span></div>
+      <div><span class="nums" id="pPct">0%</span></div>
+    </div>
+    <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+  </div>
+
+  <div id="tasksWrap"></div>
+
+  <div class="bottom-bar">
+    <button class="btn big" id="checkAllBtn">✅ Проверить все ответы</button>
+  </div>
+
+  <div class="bottom-bar" style="margin-top:14px;">
+    <button class="btn gold" id="pdfBtn">📄 Сохранить в PDF</button>
+    <button class="btn" id="sendBtn">💬 Отправить учителю</button>
+    <button class="btn coral" id="resetBtn">🔒 Очистить всё</button>
+  </div>
+
+  <div class="hint">
+    <b>Как сдать работу:</b>
+    <ol>
+      <li>Впиши имя — оно сохранится автоматически.</li>
+      <li>Заполни <b>все 5 полей</b> ответами.</li>
+      <li>Нажми «✅ Проверить все ответы» — увидишь результат.</li>
+      <li>Нажми «📄 Сохранить в PDF» — файл скачается.</li>
+      <li>Или нажми «💬 Отправить учителю» — откроется чат, прикрепи PDF.</li>
+    </ol>
+  </div>
+
+  <footer>Школа математики Елены Михалевой · ΤΕΤΡΑΚΤΥΣ</footer>
+</div>
+
+<!-- МОДАЛКА ПАРОЛЯ -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3>🔒 Очистить все ответы?</h3>
+    <p>Это действие сбросит все поля. Введи пароль учителя.</p>
+    <input type="password" id="pwdInput" placeholder="••••" inputmode="numeric" />
+    <div class="err-msg" id="pwdErr"></div>
+    <div class="modal-actions">
+      <button class="btn" id="pwdOk">Подтвердить</button>
+      <button class="btn ghost" id="pwdCancel">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<!-- МОДАЛКА ПРЕДУПРЕЖДЕНИЯ -->
+<div class="modal-bg" id="warnBg">
+  <div class="modal">
+    <h3>⚠ Не все поля заполнены</h3>
+    <p id="warnText">У тебя остались пустые поля. Ты уверен, что готов проверить ответы?</p>
+    <div class="modal-actions">
+      <button class="btn" id="warnYes">Да, проверить</button>
+      <button class="btn ghost" id="warnNo">Нет, вернуться</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ДАТА */
+(function(){
+  const d = new Date();
+  const p = n => String(n).padStart(2,'0');
+  document.getElementById('today').textContent =
+    p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear();
+})();
+
+/* SVG УТИЛИТЫ */
+function makeGrid(svgW, svgH, pad, X_MIN, X_MAX, Y_MIN, Y_MAX){
+  const px = x => pad + (x - X_MIN) / (X_MAX - X_MIN) * (svgW - 2*pad);
+  const py = y => svgH - pad - (y - Y_MIN) / (Y_MAX - Y_MIN) * (svgH - 2*pad);
+  return {px, py};
+}
+function drawGrid(px, py, X_MIN, X_MAX, Y_MIN, Y_MAX){
+  let s = '';
+  for(let x = Math.ceil(X_MIN); x <= Math.floor(X_MAX); x++){
+    s += `<line x1="${px(x)}" y1="${py(Y_MIN)}" x2="${px(x)}" y2="${py(Y_MAX)}" stroke="rgba(14,124,102,0.12)" stroke-width="1"/>`;
+  }
+  for(let y = Math.ceil(Y_MIN); y <= Math.floor(Y_MAX); y++){
+    s += `<line x1="${px(X_MIN)}" y1="${py(y)}" x2="${px(X_MAX)}" y2="${py(y)}" stroke="rgba(14,124,102,0.12)" stroke-width="1"/>`;
+  }
+  if(Y_MIN <= 0 && 0 <= Y_MAX){
+    s += `<line x1="${px(X_MIN)}" y1="${py(0)}" x2="${px(X_MAX)}" y2="${py(0)}" stroke="#0e7c66" stroke-width="1.8"/>`;
+    s += `<polygon points="${px(X_MAX)},${py(0)} ${px(X_MAX)-9},${py(0)-4.5} ${px(X_MAX)-9},${py(0)+4.5}" fill="#0e7c66"/>`;
+    s += `<text x="${px(X_MAX)-4}" y="${py(0)+18}" font-family="Georgia" font-size="14" fill="#0e7c66" text-anchor="end" font-style="italic">x</text>`;
+  }
+  if(X_MIN <= 0 && 0 <= X_MAX){
+    s += `<line x1="${px(0)}" y1="${py(Y_MIN)}" x2="${px(0)}" y2="${py(Y_MAX)}" stroke="#0e7c66" stroke-width="1.8"/>`;
+    s += `<polygon points="${px(0)},${py(Y_MAX)} ${px(0)-4.5},${py(Y_MAX)+9} ${px(0)+4.5},${py(Y_MAX)+9}" fill="#0e7c66"/>`;
+    s += `<text x="${px(0)+10}" y="${py(Y_MAX)+16}" font-family="Georgia" font-size="14" fill="#0e7c66" font-style="italic">y</text>`;
+  }
+  s += `<text x="${px(0)-6}" y="${py(0)+16}" font-family="'Courier New'" font-size="11" fill="#0e7c66" text-anchor="end">0</text>`;
+  for(let x = Math.ceil(X_MIN)+1; x <= Math.floor(X_MAX)-1; x++){
+    if(x === 0) continue;
+    s += `<line x1="${px(x)}" y1="${py(0)-2.5}" x2="${px(x)}" y2="${py(0)+2.5}" stroke="#0e7c66" stroke-width="1.3"/>`;
+    s += `<text x="${px(x)}" y="${py(0)+16}" font-family="'Courier New'" font-size="10" fill="#0e7c66" text-anchor="middle">${x}</text>`;
+  }
+  for(let y = Math.ceil(Y_MIN)+1; y <= Math.floor(Y_MAX)-1; y++){
+    if(y === 0) continue;
+    s += `<line x1="${px(0)-2.5}" y1="${py(y)}" x2="${px(0)+2.5}" y2="${py(y)}" stroke="#0e7c66" stroke-width="1.3"/>`;
+    s += `<text x="${px(0)-6}" y="${py(y)+4}" font-family="'Courier New'" font-size="10" fill="#0e7c66" text-anchor="end">${y}</text>`;
+  }
+  return s;
+}
+function drawHyperbola(px, py, k, m, n, X_MIN, X_MAX, Y_MIN, Y_MAX){
+  const step = 0.015;
+  let d1 = '', d2 = '';
+  let s1 = false, s2 = false;
+  for(let x = X_MIN; x <= X_MAX + step; x += step){
+    if(Math.abs(x + m) < 0.05) continue;
+    const y = k / (x + m) + n;
+    const inside = (y >= Y_MIN - 0.5 && y <= Y_MAX + 0.5);
+    const sx = px(x), sy = py(y);
+    if(x < -m){
+      if(inside){ if(!s1){ d1 += `M ${sx.toFixed(2)} ${sy.toFixed(2)}`; s1 = true; } else d1 += ` L ${sx.toFixed(2)} ${sy.toFixed(2)}`; }
+      else s1 = false;
+    } else {
+      if(inside){ if(!s2){ d2 += `M ${sx.toFixed(2)} ${sy.toFixed(2)}`; s2 = true; } else d2 += ` L ${sx.toFixed(2)} ${sy.toFixed(2)}`; }
+      else s2 = false;
+    }
+  }
+  let s = '';
+  if(d1) s += `<path d="${d1}" fill="none" stroke="#0e7c66" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>`;
+  if(d2) s += `<path d="${d2}" fill="none" stroke="#0e7c66" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>`;
+  return s;
+}
+function drawLine(px, py, kLine, bLine, X_MIN, X_MAX, Y_MIN, Y_MAX, color){
+  const x1 = X_MIN, y1 = kLine * x1 + bLine;
+  const x2 = X_MAX, y2 = kLine * x2 + bLine;
+  return `<line x1="${px(x1)}" y1="${py(y1)}" x2="${px(x2)}" y2="${py(y2)}" stroke="${color}" stroke-width="2.8" stroke-linecap="round"/>`;
+}
+function drawAsymptotes(px, py, m, n, X_MIN, X_MAX, Y_MIN, Y_MAX){
+  let s = '';
+  if(-m >= X_MIN && -m <= X_MAX){
+    s += `<line x1="${px(-m)}" y1="${py(Y_MIN)}" x2="${px(-m)}" y2="${py(Y_MAX)}" stroke="#7fffd4" stroke-width="2.2" stroke-dasharray="9 7" opacity="0.95"/>`;
+  }
+  if(n >= Y_MIN && n <= Y_MAX){
+    s += `<line x1="${px(X_MIN)}" y1="${py(n)}" x2="${px(X_MAX)}" y2="${py(n)}" stroke="#7fffd4" stroke-width="2.2" stroke-dasharray="9 7" opacity="0.95"/>`;
+  }
+  return s;
+}
+function drawPoint(px, py, x, y, color, label){
+  let s = `<circle cx="${px(x)}" cy="${py(y)}" r="5.5" fill="${color}" stroke="#fff" stroke-width="1.8"/>`;
+  if(label){
+    s += `<text x="${px(x) + 10}" y="${py(y) - 8}" font-family="Georgia" font-size="15" font-weight="700" fill="#0e7c66">${label}</text>`;
+  }
+  return s;
+}
+function goodPointFor(t){
+  const {k, m, n} = t;
+  for(let x = -8; x <= 8; x++){
+    if(x === -m) continue;
+    const y = k / (x + m) + n;
+    if(Number.isInteger(y) && Math.abs(y) <= 10){
+      return {x, y};
+    }
+  }
+  return null;
+}
+
+/* ДРОБИ */
+function F(num, den){
+  return `<span class="frac"><span class="num">${num}</span><span class="den">${den}</span></span>`;
+}
+
+/* 5 ЗАДАНИЙ (n — порядковый номер, он же — ключ) */
+const TASKS = [
+  {
+    n:1,
+    textHTML:`На рисунке изображён график функции f(x) = ${F('k','x')} + a. Найдите <b style="color:var(--mint)">f(−4)</b>.`,
+    k:8, m:0, n:2,
+    X_MIN:-5, X_MAX:5, Y_MIN:-3, Y_MAX:7,
+    goodPoint:{x:4, y:4},
+    answer:['0'],
+    answerDisplay:'f(−4) = 0'
+  },
+  {
+    n:2,
+    textHTML:`На рисунке изображён график функции f(x) = ${F('k','x')} + a. Найдите, при каком значении x значение функции равно <b style="color:var(--mint)">4</b>.`,
+    k:6, m:0, n:1,
+    X_MIN:-6, X_MAX:6, Y_MIN:-4, Y_MAX:6,
+    goodPoint:{x:3, y:3},
+    answer:['2'],
+    answerDisplay:'x = 2'
+  },
+  {
+    n:3,
+    textHTML:`На рисунке изображён график функции f(x) = ${F('kx + a','x + b')}. Найдите <b style="color:var(--mint)">a</b>.`,
+    k:-5, m:1, n:2,
+    X_MIN:-6, X_MAX:4, Y_MIN:-5, Y_MAX:7,
+    goodPoint:{x:0, y:-3},
+    answer:['-3'],
+    answerDisplay:'a = −3'
+  },
+  {
+    n:4,
+    textHTML:`На рисунке изображён график функции f(x) = ${F('kx + a','x + b')}. Найдите <b style="color:var(--mint)">k</b>.`,
+    k:7, m:-2, n:3,
+    X_MIN:-5, X_MAX:7, Y_MIN:-4, Y_MAX:8,
+    goodPoint:{x:1, y:-4},
+    answer:['3'],
+    answerDisplay:'k = 3'
+  },
+  {
+    n:5,
+    type:'combo',
+    textHTML:`На рисунке изображены графики функций y = ${F('6','x')} и y = x + 1. Они пересекаются в точках <b style="color:var(--mint)">A</b> и <b style="color:var(--mint)">B</b>. Точка A видна, точка B — за пределами. Найдите <b style="color:var(--mint)">абсциссу</b> точки B.`,
+    k:6, m:0, n:0,
+    lineK:1, lineB:1,
+    X_MIN:-1, X_MAX:6, Y_MIN:-1, Y_MAX:7,
+    pointA:{x:2, y:3},
+    pointOnLine:{x:4, y:5},
+    answer:['-3'],
+    answerDisplay:'x = −3'
+  }
+];
+
+/* РЕНДЕР */
+const wrap = document.getElementById('tasksWrap');
+
+TASKS.forEach((t, i)=>{
+  const block = document.createElement('div');
+  block.className = 'task';
+  block.dataset.idx = i;
+
+  const SVG_W = 500, SVG_H = 420, PAD = 40;
+  const {px, py} = makeGrid(SVG_W, SVG_H, PAD, t.X_MIN, t.X_MAX, t.Y_MIN, t.Y_MAX);
+  let svg = drawGrid(px, py, t.X_MIN, t.X_MAX, t.Y_MIN, t.Y_MAX);
+
+  if(t.type === 'combo'){
+    svg += drawLine(px, py, t.lineK, t.lineB, t.X_MIN, t.X_MAX, t.Y_MIN, t.Y_MAX, '#e07a5f');
+    svg += drawHyperbola(px, py, t.k, 0, 0, t.X_MIN, t.X_MAX, t.Y_MIN, t.Y_MAX);
+    svg += drawPoint(px, py, t.pointA.x, t.pointA.y, '#0e7c66', 'A');
+    svg += drawPoint(px, py, t.pointOnLine.x, t.pointOnLine.y, '#e07a5f', '');
+  } else {
+    if(t.m !== 0 || t.n !== 0){
+      svg += drawAsymptotes(px, py, t.m, t.n, t.X_MIN, t.X_MAX, t.Y_MIN, t.Y_MAX);
+    }
+    svg += drawHyperbola(px, py, t.k, t.m, t.n, t.X_MIN, t.X_MAX, t.Y_MIN, t.Y_MAX);
+    const gp = goodPointFor(t);
+    if(gp && gp.x >= t.X_MIN && gp.x <= t.X_MAX && gp.y >= t.Y_MIN && gp.y <= t.Y_MAX){
+      svg += drawPoint(px, py, gp.x, gp.y, '#0e7c66');
+    }
+  }
+
+  block.innerHTML = `
+    <div class="task-head">
+      <span class="task-num">${t.n}</span>
+      <div class="task-text">${t.textHTML}</div>
+    </div>
+    <div class="task-body">
+      <div class="task-graph">
+        <svg viewBox="0 0 ${SVG_W} ${SVG_H}" preserveAspectRatio="xMidYMid meet">${svg}</svg>
+      </div>
+      <div class="answer-row">
+        <input type="text" class="answer" data-idx="${i}" placeholder="введи число" autocomplete="off" spellcheck="false" />
+      </div>
+      <div class="verdict" data-verdict="${i}"></div>
+    </div>
+  `;
+  wrap.appendChild(block);
+});
+
+/* СОСТОЯНИЕ — новая версия ключа, чтобы старые данные не мешали */
+const LS_KEY = 'tetraktus.hyperbola.vosstanovlenie.dz.v2';
+function loadState(){
+  try{ return JSON.parse(localStorage.getItem(LS_KEY)) || { name:'', answers:{} }; }
+  catch(e){ return { name:'', answers:{} }; }
+}
+function saveState(st){
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(st)); }catch(e){}
+}
+let state = loadState();
+
+/* Единоразовая миграция: если старые ключи от предыдущей версии — сброс */
+try{
+  const oldKey = 'tetraktus.hyperbola.vosstanovlenie.dz';
+  if(localStorage.getItem(oldKey) && !localStorage.getItem(LS_KEY + '.migrated')){
+    /* не переносим — просто помечаем, что миграция сделана, оставляя новый ключ пустым */
+    localStorage.setItem(LS_KEY + '.migrated', '1');
+  }
+}catch(e){}
+
+const nameInput = document.getElementById('studentName');
+nameInput.value = state.name || '';
+nameInput.addEventListener('input', ()=>{
+  state.name = nameInput.value;
+  saveState(state);
+});
+
+/* Нормализация */
+function norm(s){
+  if(s == null) return '';
+  return String(s).trim()
+    .replace(/\s+/g,'')
+    .replace(/−|–|—/g,'-')
+    .replace(/,/g,'.');
+}
+function toNum(v){
+  v = v.replace(/^\+/,'');
+  if(/^-?\d+(\.\d+)?$/.test(v)) return parseFloat(v);
+  const m = v.match(/^(-?\d+)\/(\d+)$/);
+  if(m) return parseInt(m[1])/parseInt(m[2]);
+  return null;
+}
+function checkAnswer(user, correct){
+  const u = norm(user);
+  if(!u) return false;
+  for(const c of correct){
+    const cu = norm(c);
+    if(u === cu) return true;
+    const nu = toNum(u), nc = toNum(cu);
+    if(nu !== null && nc !== null && Math.abs(nu - nc) < 1e-9) return true;
+  }
+  return false;
+}
+
+/* Восстановление по индексу (idx), не по n — чтобы не сбивалось */
+TASKS.forEach((t, i)=>{
+  const saved = state.answers['idx_' + i];
+  if(!saved) return;
+  const block = wrap.querySelector('.task[data-idx="'+i+'"]');
+  const input = block.querySelector('.answer');
+  const verdict = block.querySelector('.verdict');
+  input.value = saved.value || '';
+  input.disabled = true;
+  if(saved.status === 'ok'){
+    input.classList.add('ok');
+    block.classList.add('done');
+    verdict.className = 'verdict ok';
+    verdict.textContent = '✅ Верно!';
+  } else {
+    input.classList.add('bad');
+    block.classList.add('fail');
+    verdict.className = 'verdict bad';
+    verdict.innerHTML = '❌ Неверно. Правильный ответ: <span class="ans">' + t.answerDisplay + '</span>';
+  }
+});
+
+/* Прогресс */
+function updateProgress(){
+  let ok = 0, err = 0;
+  TASKS.forEach((t, i)=>{
+    const s = state.answers['idx_' + i];
+    if(s){ s.status === 'ok' ? ok++ : err++; }
+  });
+  const total = ok + err;
+  const pct = Math.round(total / TASKS.length * 100);
+  document.getElementById('pOk').textContent = ok;
+  document.getElementById('pErr').textContent = err;
+  document.getElementById('pTotal').textContent = total + ' / ' + TASKS.length;
+  document.getElementById('pPct').textContent = pct + '%';
+  document.getElementById('barFill').style.width = pct + '%';
+  document.getElementById('counter').textContent = '✅ ' + ok + ' / ' + TASKS.length;
+}
+updateProgress();
+
+/* ПРОВЕРКА ВСЕХ */
+document.getElementById('checkAllBtn').addEventListener('click', ()=>{
+  const empty = [];
+  TASKS.forEach((t, i)=>{
+    const input = wrap.querySelector('.task[data-idx="'+i+'"] .answer');
+    if(input.disabled) return;
+    if(!input.value.trim()) empty.push(t.n);
+  });
+
+  if(empty.length > 0){
+    document.getElementById('warnText').innerHTML =
+      'У тебя не заполнены поля: <b>' + empty.join(', ') + '</b>.<br>Ты уверен, что готов проверить ответы?';
+    document.getElementById('warnBg').classList.add('show');
+    return;
+  }
+
+  doCheckAll();
+});
+
+document.getElementById('warnYes').addEventListener('click', ()=>{
+  document.getElementById('warnBg').classList.remove('show');
+  doCheckAll();
+});
+document.getElementById('warnNo').addEventListener('click', ()=>{
+  document.getElementById('warnBg').classList.remove('show');
+});
+
+function doCheckAll(){
+  TASKS.forEach((t, i)=>{
+    const block = wrap.querySelector('.task[data-idx="'+i+'"]');
+    const input = block.querySelector('.answer');
+    const verdict = block.querySelector('.verdict');
+    if(input.disabled) return;
+
+    if(checkAnswer(input.value, t.answer)){
+      input.classList.remove('bad'); input.classList.add('ok');
+      input.disabled = true;
+      block.classList.remove('fail'); block.classList.add('done');
+      verdict.className = 'verdict ok';
+      verdict.textContent = '✅ Верно!';
+      state.answers['idx_' + i] = { value: input.value, status:'ok' };
+    } else {
+      input.classList.remove('ok'); input.classList.add('bad');
+      input.disabled = true;
+      block.classList.remove('done'); block.classList.add('fail');
+      verdict.className = 'verdict bad';
+      verdict.innerHTML = '❌ Неверно. Правильный ответ: <span class="ans">' + t.answerDisplay + '</span>';
+      state.answers['idx_' + i] = { value: input.value, status:'fail' };
+    }
+  });
+  saveState(state);
+  updateProgress();
+  document.getElementById('checkAllBtn').disabled = true;
+  document.getElementById('checkAllBtn').textContent = '✓ Проверено';
+}
+
+/* PDF */
+document.getElementById('pdfBtn').addEventListener('click', ()=>{
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit:'pt', format:'a4' });
+  const W = doc.internal.pageSize.getWidth();
+  let y = 50;
+
+  doc.setFont('times','bold');
+  doc.setFontSize(18);
+  doc.setTextColor(20,120,100);
+  doc.text('ΤΕΤΡΑΚΤΥΣ · Школа математики Елены Михалевой', W/2, y, { align:'center' });
+  y += 22;
+  doc.setFontSize(14);
+  doc.setTextColor(40,40,40);
+  doc.text('ДЗ · Восстановление гиперболы', W/2, y, { align:'center' });
+  y += 26;
+
+  doc.setFont('times','normal');
+  doc.setFontSize(11);
+  const d = new Date();
+  const p = n => String(n).padStart(2,'0');
+  doc.text('Дата: '+p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear(), 40, y); y += 16;
+  doc.text('Ученик: '+(state.name || '—'), 40, y); y += 22;
+
+  let ok = 0, err = 0;
+  TASKS.forEach((t, i)=>{
+    const s = state.answers['idx_' + i];
+    let mark = '— ';
+    let status = '';
+    if(s){
+      if(s.status === 'ok'){ mark = '✅ '; ok++; }
+      else { mark = '❌ '; err++; status = '  (верно: '+t.answerDisplay+')'; }
+    }
+    const line = mark + 'Задание ' + t.n + '. Ответ: ' + ((s && s.value) ? s.value : '—') + status;
+    const wrapped = doc.splitTextToSize(line, W - 80);
+    if(y + wrapped.length*14 > doc.internal.pageSize.getHeight() - 60){
+      doc.addPage(); y = 50;
+    }
+    wrapped.forEach(l=>{ doc.text(l, 40, y); y += 14; });
+  });
+
+  y += 12;
+  doc.setFont('times','bold');
+  doc.setTextColor(20,120,100);
+  doc.text('✅ Итог: '+ok+' из '+TASKS.length+' верно', 40, y);
+
+  const nameFile = (state.name || 'uchenik').toLowerCase()
+    .replace(/[^a-zа-я0-9]+/gi,'-')
+    .replace(/[а-я]/gi, ch => {
+      const map = {а:'a',б:'b',в:'v',г:'g',д:'d',е:'e',ё:'e',ж:'zh',з:'z',и:'i',й:'y',к:'k',л:'l',м:'m',н:'n',о:'o',п:'p',р:'r',с:'s',т:'t',у:'u',ф:'f',х:'h',ц:'c',ч:'ch',ш:'sh',щ:'sch',ъ:'',ы:'y',ь:'',э:'e',ю:'yu',я:'ya'};
+      return map[ch] || ch;
+    })
+    .replace(/-+/g,'-');
+  const dateStr = p(d.getDate())+'-'+p(d.getMonth()+1)+'-'+d.getFullYear();
+  doc.save('dz-hyperbola-vosstanovlenie-'+nameFile+'-'+dateStr+'.pdf');
+});
+
+/* Отправка учителю — С ПОМЕТКАМИ И ПРАВИЛЬНЫМИ ОТВЕТАМИ */
+document.getElementById('sendBtn').addEventListener('click', ()=>{
+  const d = new Date();
+  const p = n => String(n).padStart(2,'0');
+  const dt = p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes());
+
+  let ok = 0;
+  let body = '📐 ОТВЕТЫ · ДЗ · Восстановление гиперболы\n';
+  body += 'Дата: ' + dt + '\n';
+  body += 'Ученик: ' + (state.name || '—') + '\n\n';
+
+  TASKS.forEach((t, i)=>{
+    const s = state.answers['idx_' + i];
+    let mark = '—';
+    let val = '—';
+    let extra = '';
+    if(s){
+      val = s.value || '—';
+      if(s.status === 'ok'){ mark = '✅'; ok++; }
+      else {
+        mark = '❌';
+        extra = '  (правильный: ' + t.answerDisplay + ')';
+      }
+    }
+    body += mark + ' Задание ' + t.n + '. Ответ: ' + val + extra + '\n';
+  });
+
+  body += '\n✅ Итог: ' + ok + ' из ' + TASKS.length + ' верно';
+
+  navigator.clipboard.writeText(body).then(()=>{
+    const url = 'https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes';
+    window.open(url, '_blank');
+  }).catch(()=>{
+    const url = 'https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes';
+    window.open(url, '_blank');
+  });
+});
+
+/* Пароль */
+const modalBg = document.getElementById('modalBg');
+const pwdInput = document.getElementById('pwdInput');
+const pwdErr = document.getElementById('pwdErr');
+const PASSWORD = '2810';
+
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  pwdInput.value = '';
+  pwdErr.textContent = '';
+  modalBg.classList.add('show');
+  setTimeout(()=>pwdInput.focus(), 100);
+});
+document.getElementById('pwdCancel').addEventListener('click', ()=>{
+  modalBg.classList.remove('show');
+});
+document.getElementById('pwdOk').addEventListener('click', tryReset);
+pwdInput.addEventListener('keydown', e=>{ if(e.key === 'Enter') tryReset(); });
+
+function tryReset(){
+  if(pwdInput.value.trim() !== PASSWORD){
+    pwdErr.textContent = 'Неверный пароль';
+    pwdInput.value = '';
+    return;
+  }
+  state.answers = {};
+  saveState(state);
+  TASKS.forEach((t, i)=>{
+    const block = wrap.querySelector('.task[data-idx="'+i+'"]');
+    const input = block.querySelector('.answer');
+    const verdict = block.querySelector('.verdict');
+    input.value = '';
+    input.disabled = false;
+    input.classList.remove('ok','bad');
+    block.classList.remove('done','fail');
+    verdict.className = 'verdict';
+    verdict.textContent = '';
+  });
+  updateProgress();
+  document.getElementById('checkAllBtn').disabled = false;
+  document.getElementById('checkAllBtn').textContent = '✅ Проверить все ответы';
+  modalBg.classList.remove('show');
+}
+modalBg.addEventListener('click', e=>{
+  if(e.target === modalBg) modalBg.classList.remove('show');
+});
+</script>
+</body>
+</html>
