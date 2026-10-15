@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Тренажёр · Тарифы · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--mint:#7fffd4;--gold:#f4d35e;--gold-light:#ffe89a;
+    --coral:#ff6b6b;--text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass-brd:rgba(26,188,156,0.4);--ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{min-height:100vh;font-family:Georgia,'Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.06),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;padding:20px;overflow-x:hidden;display:flex;justify-content:center;}
+  .glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.5;}
+  .glow.g1{width:520px;height:520px;top:-120px;left:-120px;background:radial-gradient(circle,rgba(26,188,156,0.55),transparent 70%);}
+  .glow.g2{width:600px;height:600px;bottom:-200px;right:-180px;background:radial-gradient(circle,rgba(127,255,212,0.4),transparent 70%);}
+  .corner-logo{position:fixed;top:14px;left:16px;z-index:50;font-family:'Times New Roman',serif;text-align:center;line-height:1;padding:10px 18px 12px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(26,188,156,0.45);border-radius:14px;backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(0,0,0,0.35);}
+  .corner-logo .dots{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:16px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:4px;}
+  .corner-logo .ru{font-size:10px;letter-spacing:3px;color:var(--text-soft);margin-top:2px;}
+  .top-right{position:fixed;top:14px;right:16px;z-index:50;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+  .date-badge,.home-btn{display:flex;align-items:center;justify-content:center;height:46px;padding:0 16px;border-radius:14px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(127,255,212,0.45);color:var(--mint);backdrop-filter:blur(10px);font-weight:700;font-family:'Courier New',monospace;font-size:15px;}
+  .home-btn{width:46px;padding:0;font-size:20px;text-decoration:none;cursor:pointer;transition:0.2s;}
+  .home-btn:hover{background:rgba(26,188,156,0.25);}
+  .app{max-width:1000px;width:100%;background:rgba(255,255,255,0.04);border:1.5px solid var(--glass-brd);border-radius:24px;padding:28px 30px;backdrop-filter:blur(12px);box-shadow:0 12px 50px rgba(0,0,0,0.5);position:relative;z-index:2;margin-top:50px;}
+  .header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:1px solid rgba(26,188,156,0.2);padding-bottom:14px;margin-bottom:20px;}
+  .header-title{font-size:14px;color:var(--text-soft);font-style:italic;}
+  h1{font-size:clamp(20px,2.8vw,26px);color:var(--mint);letter-spacing:1.5px;text-align:center;margin-bottom:6px;}
+  .subtitle{text-align:center;font-size:14px;color:var(--text-soft);font-style:italic;margin-bottom:20px;}
+  .name-block{background:linear-gradient(135deg,rgba(244,211,94,0.12),rgba(26,188,156,0.08));border:1.5px solid var(--gold);border-radius:14px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .name-block label{font-size:15px;color:var(--gold-light);font-weight:700;white-space:nowrap;}
+  .name-block input{flex:1;min-width:200px;padding:10px 14px;border-radius:10px;border:2px solid rgba(244,211,94,0.4);background:rgba(0,0,0,0.3);color:#fff;font-family:Georgia,serif;font-size:16px;outline:none;}
+  .name-block input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(244,211,94,0.25);}
+  .name-block input::placeholder{color:#a89a6a;font-style:italic;}
+  .intro-block{background:rgba(255,255,255,0.03);border-radius:16px;padding:18px 22px;margin-bottom:20px;border-left:4px solid var(--teal);font-size:15px;line-height:1.75;color:var(--text);}
+  .intro-block b{color:var(--mint);}
+  .intro-block .signature{display:block;text-align:right;font-size:13px;color:var(--text-soft);font-style:italic;margin-top:10px;}
+  .condition-block{background:rgba(26,188,156,0.06);border-radius:16px;padding:18px 22px;margin-bottom:20px;border-left:4px solid var(--mint);font-size:15px;line-height:1.75;color:var(--text);}
+  .condition-block b{color:var(--mint);}
+  .condition-block ul{margin:8px 0 8px 22px;}
+  .condition-block table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px;}
+  .condition-block table th{background:rgba(26,188,156,0.15);color:var(--mint);padding:8px 10px;border:1px solid rgba(26,188,156,0.3);text-align:left;font-weight:700;}
+  .condition-block table td{padding:7px 10px;border:1px solid rgba(26,188,156,0.2);color:var(--text);}
+  .graph-wrap{background:#f7fcfa;border-radius:14px;border:1.5px solid rgba(26,188,156,0.3);padding:8px;margin-bottom:12px;text-align:center;}
+  .graph-wrap svg{display:block;width:100%;max-width:640px;height:auto;margin:0 auto;}
+  .task-block{background:rgba(0,0,0,0.2);border-radius:16px;padding:18px 22px;margin-bottom:16px;border-left:4px solid var(--mint);transition:0.3s;}
+  .task-block.correct{border-left-color:var(--ok);background:rgba(46,204,113,0.08);}
+  .task-block.wrong{border-left-color:var(--err);background:rgba(255,107,107,0.08);}
+  .task-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
+  .task-num{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;background:linear-gradient(135deg,var(--gold),#c9a32b);color:#2a1f00;border-radius:10px;font-family:'Courier New',monospace;font-weight:700;font-size:15px;flex-shrink:0;}
+  .task-title{font-size:14px;color:var(--mint);font-weight:700;letter-spacing:1px;text-transform:uppercase;padding-top:8px;flex:1;}
+  .task-mark{font-size:20px;font-weight:800;flex-shrink:0;padding-top:4px;}
+  .task-mark.ok{color:var(--ok);}
+  .task-mark.err{color:var(--err);}
+  .task-question{font-size:16px;color:var(--text);margin-bottom:12px;line-height:1.7;}
+  .task-question b{color:var(--mint);}
+  .answer-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .answer-row label{font-size:15px;color:var(--gold-light);font-weight:700;min-width:110px;}
+  .answer-row input{flex:1;min-width:180px;padding:11px 14px;border-radius:10px;border:1.5px solid var(--glass-brd);background:rgba(10,42,51,0.5);color:var(--text);font-family:'Cambria Math',serif;font-size:16px;outline:none;}
+  .answer-row input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+  .answer-row input::placeholder{color:var(--text-soft);opacity:0.5;font-style:italic;}
+  .answer-row input.correct{border-color:var(--ok);background:rgba(46,204,113,0.15);}
+  .answer-row input.wrong{border-color:var(--err);background:rgba(255,107,107,0.15);}
+  .answer-row input:disabled{opacity:0.9;cursor:default;}
+  .correct-answer-note{margin-top:10px;font-size:14px;color:var(--ok);font-style:italic;display:none;}
+  .correct-answer-note.show{display:block;}
+  .correct-answer-note b{color:var(--mint);}
+  .table-task{width:100%;border-collapse:collapse;margin:10px 0;font-size:15px;}
+  .table-task th{background:rgba(26,188,156,0.15);color:var(--mint);padding:10px 8px;border:1px solid rgba(26,188,156,0.3);text-align:center;font-weight:700;}
+  .table-task td{padding:9px 8px;border:1px solid rgba(26,188,156,0.2);color:var(--text);text-align:center;}
+  .table-task input{width:80px;padding:8px;border-radius:8px;border:1.5px solid var(--glass-brd);background:rgba(10,42,51,0.5);color:var(--text);font-family:'Cambria Math',serif;font-size:16px;text-align:center;outline:none;}
+  .table-task input:focus{border-color:var(--mint);}
+  .table-task input.correct{border-color:var(--ok);background:rgba(46,204,113,0.15);}
+  .table-task input.wrong{border-color:var(--err);background:rgba(255,107,107,0.15);}
+  .table-task input:disabled{opacity:0.9;}
+  .new-tarif-table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px;}
+  .new-tarif-table th{background:rgba(26,188,156,0.15);color:var(--mint);padding:8px 10px;border:1px solid rgba(26,188,156,0.3);text-align:left;font-weight:700;}
+  .new-tarif-table td{padding:7px 10px;border:1px solid rgba(26,188,156,0.2);color:var(--text);}
+  .btn-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;}
+  .btn-check{flex:1;min-width:200px;padding:16px 32px;font-size:18px;font-weight:700;font-family:inherit;letter-spacing:1px;border:none;border-radius:16px;background:linear-gradient(135deg,#f4d35e,#c9a32b);color:#2a1f00;cursor:pointer;transition:0.3s;box-shadow:0 6px 24px rgba(244,211,94,0.4);}
+  .btn-check:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(244,211,94,0.55);}
+  .btn-check:disabled{opacity:0.5;cursor:default;transform:none;}
+  .btn-new{flex:1;min-width:200px;padding:16px 32px;font-size:16px;font-weight:700;font-family:inherit;letter-spacing:1px;border:2px solid var(--mint);border-radius:16px;background:transparent;color:var(--mint);cursor:pointer;transition:0.25s;}
+  .btn-new:hover{background:rgba(26,188,156,0.15);}
+  .summary-box{display:none;background:linear-gradient(135deg,rgba(26,188,156,0.15),rgba(244,211,94,0.10));border:2px solid var(--mint);border-radius:16px;padding:20px 24px;margin-top:20px;text-align:center;}
+  .summary-box.show{display:block;animation:fade 0.5s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .summary-title{font-size:16px;color:var(--mint);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:14px;}
+  .summary-stats{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:10px;}
+  .summary-stat{display:flex;flex-direction:column;align-items:center;gap:4px;}
+  .summary-stat .num{font-family:'Courier New',monospace;font-size:38px;font-weight:800;color:var(--gold);line-height:1;}
+  .summary-stat .lbl{font-size:12px;color:var(--text-soft);letter-spacing:1.5px;text-transform:uppercase;}
+  .summary-stat .num.ok{color:var(--ok);}
+  .summary-stat .num.err{color:var(--err);}
+  .summary-line{font-size:15px;color:var(--text);margin-top:8px;font-style:italic;}
+  @media(max-width:600px){
+    .app{padding:18px 14px;margin-top:40px;}
+    .name-block{flex-direction:column;align-items:stretch;gap:8px;}
+    .name-block label{text-align:center;}
+    .task-block{padding:14px 16px;}
+    .answer-row label{min-width:80px;font-size:13px;}
+    .summary-stat .num{font-size:28px;}
+    .condition-block table,.new-tarif-table,.table-task{font-size:12px;}
+    .condition-block table th,.condition-block table td,
+    .new-tarif-table th,.new-tarif-table td,
+    .table-task th,.table-task td{padding:5px 6px;}
+    .table-task input{width:50px;font-size:14px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div><div class="glow g2"></div>
+
+<div class="corner-logo">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+</div>
+
+<div class="top-right">
+  <div class="date-badge" id="dateDisplay">📅 00.00.0000</div>
+  <a class="home-btn" href="glava.html" title="На главную">🏠</a>
+</div>
+
+<div class="app">
+
+  <div class="header">
+    <div class="header-title">Тренажёр · Тарифы · 5 заданий</div>
+    <div style="font-size:13px;color:var(--text-soft);">ОГЭ · математика</div>
+  </div>
+
+  <h1>📊 Тренажёр «Тарифы»</h1>
+  <div class="subtitle">Реши 5 заданий по графику и тарифу · «Новая задача» — другие условия</div>
+
+  <div class="name-block">
+    <label for="studentName">👤 Имя ученика:</label>
+    <input type="text" id="studentName" placeholder="Введи своё имя и фамилию..." maxlength="60" autocomplete="off">
+  </div>
+
+  <div class="intro-block">
+    <b>📊 Как работать:</b><br>
+    • Прочитай условие и рассмотри <b>график</b>.<br>
+    • Реши 5 заданий. После ответа нажми <b>✅</b> рядом с заданием.<br>
+    • Если ошибся — увидишь правильный ответ.<br>
+    • Хочешь ещё — нажми <b>🔄 Новая задача</b>.
+    <span class="signature">ΤΕΤΡΑΚΤΥΣ · Школа математики Елены Михалевой</span>
+  </div>
+
+  <!-- УСЛОВИЕ + ГРАФИК -->
+  <div class="condition-block">
+    На рисунке точками показано количество минут исходящих вызовов и трафик мобильного интернета в гигабайтах, израсходованных абонентом в процессе пользования смартфоном, за каждый месяц 2019 года. Для удобства точки, соответствующие минутам и гигабайтам, соединены сплошными и пунктирными линиями соответственно.
+    <div class="graph-wrap" id="graphWrap">
+      <!-- SVG вставляется JS -->
+    </div>
+    В течение года абонент пользовался тарифом «Стандартный», абонентская плата по которому составляла <b>350 рублей</b> в месяц. При условии нахождения абонента на территории РФ в абонентскую плату тарифа «Стандартный» входит:
+    <ul>
+      <li>пакет минут, включающий <b>300 минут</b> исходящих вызовов;</li>
+      <li>пакет интернета, включающий <b>3 гигабайта</b> мобильного интернета;</li>
+      <li>пакет SMS, включающий <b>120 SMS</b> в месяц;</li>
+      <li>безлимитные бесплатные входящие вызовы.</li>
+    </ul>
+    <b>Стоимость сверх пакета:</b>
+    <table>
+      <thead><tr><th>Услуга</th><th>Стоимость</th></tr></thead>
+      <tbody>
+        <tr><td>Исходящие вызовы</td><td>3 руб./мин.</td></tr>
+        <tr><td>Мобильный интернет (пакет)</td><td>90 руб. за 0,5 ГБ</td></tr>
+        <tr><td>SMS</td><td>2 руб./шт.</td></tr>
+      </tbody>
+    </table>
+    Абонент не пользовался услугами связи в роуминге. За весь год абонент отправил <b>110 SMS</b>.
+  </div>
+
+  <!-- ЗАДАНИЯ -->
+  <div id="tasksContainer"></div>
+
+  <!-- КНОПКИ -->
+  <div class="btn-row" id="btnRow">
+    <button class="btn-check" id="btnCheck">✅ Проверить всё</button>
+    <button class="btn-new" id="btnNew">🔄 Новая задача</button>
+  </div>
+
+  <!-- ИТОГ -->
+  <div class="summary-box" id="summaryBox">
+    <div class="summary-title">📊 Результат</div>
+    <div class="summary-stats">
+      <div class="summary-stat"><span class="num ok" id="statOk">0</span><span class="lbl">✅ верно</span></div>
+      <div class="summary-stat"><span class="num err" id="statErr">0</span><span class="lbl">❌ неверно</span></div>
+      <div class="summary-stat"><span class="num" id="statPercent">0%</span><span class="lbl">📊 процент</span></div>
+    </div>
+    <div class="summary-line" id="summaryLine">—</div>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   ДАННЫЕ: два графика
+   ============================================================ */
+const GRAPHS = [
+  { // График А (из PDF)
+    minutes: [175, 275, 150, 350, 300, 325, 375, 325, 200, 200, 325, 350],
+    gb:      [2.5, 3.5, 2.0, 4.0, 2.75, 3.0, 1.0, 1.5, 2.75, 3.25, 3.75, 2.25]
+  },
+  { // График Б (наш)
+    minutes: [350, 325, 200, 200, 325, 375, 325, 300, 350, 150, 275, 175],
+    gb:      [2.25, 3.75, 3.25, 2.75, 1.5, 1.0, 3.0, 2.75, 4.0, 2.0, 3.5, 2.5]
+  }
+];
+
+/* Тариф «Стандартный» */
+const TARIF = {
+  abon: 350, min: 300, gb: 3, sms: 120,
+  priceMin: 3, priceGbPack: 90, gbPack: 0.5, priceSms: 2,
+  smsYear: 110
+};
+
+/* ============================================================
+   ДАТА
+   ============================================================ */
+(function(){
+  const el=document.getElementById('dateDisplay');
+  const d=new Date();
+  el.textContent='📅 '+d.toLocaleDateString('ru-RU',{day:'2-digit',month:'long',year:'numeric'});
+})();
+
+/* ============================================================
+   ИМЯ
+   ============================================================ */
+const nameInput = document.getElementById('studentName');
+const savedName = localStorage.getItem('trainer_tarify_name');
+if(savedName) nameInput.value = savedName;
+nameInput.addEventListener('input', ()=>{
+  localStorage.setItem('trainer_tarify_name', nameInput.value.trim());
+});
+
+/* ============================================================
+   УТИЛИТЫ
+   ============================================================ */
+function randInt(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
+function pick(arr){ return arr[randInt(0, arr.length - 1)]; }
+function fmtNum(n){ return String(n).replace('.', ','); }
+function round2(n){ return Math.round(n * 100) / 100; }
+
+/* Стоимость услуг в месяце */
+function monthCost(min, gb){
+  let cost = TARIF.abon;
+  const overMin = Math.max(0, min - TARIF.min);
+  cost += overMin * TARIF.priceMin;
+  const overGb = Math.max(0, gb - TARIF.gb);
+  const packs = Math.ceil(overGb / TARIF.gbPack - 1e-9);
+  cost += packs * TARIF.priceGbPack;
+  // SMS — за год 110, в пакете 120/мес → перерасхода нет
+  return cost;
+}
+
+/* Годовая стоимость по тарифу (используя массив месяцев) */
+function yearCost(minutes, gb){
+  let total = 0;
+  for(let i = 0; i < 12; i++) total += monthCost(minutes[i], gb[i]);
+  return total;
+}
+
+/* ============================================================
+   ГЕНЕРАЦИЯ ЗАДАНИЙ
+   ============================================================ */
+let state = {};
+
+function generateTasks(){
+  const graphIdx = randInt(0, 1);
+  const G = GRAPHS[graphIdx];
+  const minutes = G.minutes.slice();
+  const gb = G.gb.slice();
+
+  const tasks = [];
+
+  // ===== Задание 1: таблица сопоставления =====
+  // Выбираем 4 значения из одного ряда (ГБ или минуты)
+  const useGb = Math.random() < 0.5;
+  const source = useGb ? gb : minutes;
+  // Берём 4 уникальных значения из source
+  const uniqueVals = [...new Set(source)];
+  // Перемешиваем
+  const shuffled = uniqueVals.sort(() => Math.random() - 0.5);
+  const targetVals = shuffled.slice(0, Math.min(4, shuffled.length));
+  // Сортируем для красоты
+  targetVals.sort((a,b) => b - a);
+
+  // Находим правильные месяцы для каждого значения
+  const correctMonths = targetVals.map(v => {
+    const idx = source.indexOf(v);
+    return idx + 1; // месяц
+  });
+
+  tasks.push({
+    type: 'match',
+    useGb,
+    targetVals,
+    correctMonths,
+    correctAnswer: correctMonths.join('')
+  });
+
+  // ===== Задание 2: сколько потратил в месяце X =====
+  const monthIdx = randInt(0, 11);
+  const monthNames = ['январе','феврале','марте','апреле','мае','июне','июле','августе','сентябре','октябре','ноябре','декабре'];
+  const cost = monthCost(minutes[monthIdx], gb[monthIdx]);
+  tasks.push({
+    type: 'monthcost',
+    monthIdx,
+    monthName: monthNames[monthIdx],
+    minutes: minutes[monthIdx],
+    gb: gb[monthIdx],
+    correctAnswer: String(cost)
+  });
+
+  // ===== Задание 3: min/max минут или ГБ =====
+  const useGb3 = Math.random() < 0.5;
+  const isMax = Math.random() < 0.5;
+  const arr3 = useGb3 ? gb : minutes;
+  const extreme = isMax ? Math.max(...arr3) : Math.min(...arr3);
+  tasks.push({
+    type: 'extreme',
+    useGb: useGb3,
+    isMax,
+    correctAnswer: fmtNum(extreme),
+    extremeRaw: extreme
+  });
+
+  // ===== Задание 4: проценты =====
+  const ptype = pick(['down2018','up2019','up2020']);
+  let q4 = '';
+  let correct4 = '';
+
+  if(ptype === 'down2018'){
+    // 2018 = 500, на сколько % снизилась в 2019 (350)
+    const oldPrice = pick([500, 550, 600, 700]);
+    const newPrice = TARIF.abon;
+    correct4 = String(round2((oldPrice - newPrice) / oldPrice * 100));
+    q4 = `Известно, что в 2018 году абонентская плата по тарифу «Стандартный» составляла <b>${oldPrice} рублей</b>. На сколько процентов снизилась абонентская плата в 2019 году по сравнению с 2018 годом?`;
+  } else if(ptype === 'up2019'){
+    // 2019 выросла на X% по сравнению с 2018, сколько было в 2018?
+    const pct = pick([25, 40, 50, 75]);
+    // 350 = X * (1 + pct/100) → X = 350 / (1 + pct/100)
+    const oldPrice = round2(TARIF.abon / (1 + pct / 100));
+    correct4 = String(oldPrice);
+    q4 = `Известно, что в 2019 году абонентская плата по тарифу «Стандартный» выросла на <b>${pct}%</b> по сравнению с 2018 годом. Сколько рублей составляла абонентская плата в 2018 году?`;
+  } else {
+    // В 2020 повысилась на X% → сколько стала?
+    const pct = pick([10, 20, 30, 40, 50]);
+    const newPrice = round2(TARIF.abon * (1 + pct / 100));
+    correct4 = String(newPrice);
+    q4 = `В 2020 году абонентская плата по тарифу «Стандартный» повысилась на <b>${pct}%</b>. Сколько рублей составила абонентская плата в 2020 году?`;
+  }
+  tasks.push({ type: 'percent', question: q4, correctAnswer: correct4 });
+
+  // ===== Задание 5: переход на новый тариф =====
+  // Параметры нового тарифа
+  const newAbon = pick([430, 440, 450, 460, 470]);
+  const newMin = pick([400, 450, 500]);
+  const newGb = pick([4, 5, 6]);
+  const newMinPrice = pick([3, 4, 5]);
+  const newGbPrice = pick([150, 160, 180, 200]);
+  const newSmsPrice = 2;
+
+  // Считаем: сколько потратил бы по новому тарифу за год
+  let newYearCost = 0;
+  for(let i = 0; i < 12; i++){
+    let c = newAbon;
+    const overMin = Math.max(0, minutes[i] - newMin);
+    c += overMin * newMinPrice;
+    const overGb = Math.max(0, gb[i] - newGb);
+    const packs = Math.ceil(overGb / 0.5 - 1e-9);
+    c += packs * newGbPrice;
+    newYearCost += c;
+  }
+
+  const oldYearCost = yearCost(minutes, gb);
+  const willSwitch = newYearCost < oldYearCost;
+  const correctAnswer5 = willSwitch ? String(newAbon) : String(TARIF.abon);
+
+  tasks.push({
+    type: 'switch',
+    newAbon, newMin, newGb, newMinPrice, newGbPrice, newSmsPrice,
+    willSwitch,
+    oldYearCost,
+    newYearCost,
+    correctAnswer: correctAnswer5
+  });
+
+  return { graphIdx, minutes, gb, tasks };
+}
+
+/* ============================================================
+   РЕНДЕР ГРАФИКА (SVG)
+   ============================================================ */
+function renderGraph(minutes, gb){
+  // Переводим в y-координаты
+  // y = 390 - (значение / максимум) * 360
+  // для минут: max = 400, для ГБ: max = 4
+  const X = [103.3, 146.7, 190, 233.3, 276.7, 320, 363.3, 406.7, 450, 493.3, 536.7, 580];
+  const yMin = minutes.map(v => round2(390 - (v / 400) * 360));
+  const yGb  = gb.map(v => round2(390 - (v / 4) * 360));
+
+  const pointsM = yMin.map((y, i) => `${X[i]},${y}`).join(' ');
+  const pointsG = yGb.map((y, i) => `${X[i]},${y}`).join(' ');
+
+  return `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" style="background:#ffffff;border-radius:12px;">
+      <style>
+        .g-grid{stroke:#d8d8d8;stroke-width:0.6;}
+        .g-grid-th{stroke:#a8a8a8;stroke-width:1.1;}
+        .g-grid-half{stroke:#e0e0e0;stroke-width:0.6;stroke-dasharray:3,3;}
+        .g-axis{stroke:#222;stroke-width:1.6;}
+        .g-tick{stroke:#222;stroke-width:1;}
+        .g-lbl-yl{font-family:Georgia,serif;font-size:12px;fill:#222;text-anchor:end;}
+        .g-lbl-yr{font-family:Georgia,serif;font-size:12px;fill:#222;text-anchor:start;}
+        .g-lbl-x{font-family:Georgia,serif;font-size:12px;fill:#222;text-anchor:middle;}
+        .g-lbl-ax{font-family:Georgia,serif;font-size:13px;fill:#222;font-weight:bold;}
+        .g-legend{font-family:Georgia,serif;font-size:12px;fill:#222;}
+        .g-line-m{stroke:#c0392b;stroke-width:2.2;fill:none;stroke-linejoin:round;stroke-linecap:round;}
+        .g-line-g{stroke:#2c3e9e;stroke-width:2.2;fill:none;stroke-linejoin:round;stroke-linecap:round;stroke-dasharray:7,5;}
+        .g-grid-vert{stroke:#e8e8e8;stroke-width:0.5;}
+        .g-grid-vert-th{stroke:#c8c8c8;stroke-width:1;}
+      </style>
+      <rect x="0" y="0" width="640" height="480" fill="#ffffff"/>
+      <g class="g-grid">
+        <line x1="60" y1="75" x2="580" y2="75"/><line x1="60" y1="120" x2="580" y2="120"/>
+        <line x1="60" y1="165" x2="580" y2="165"/><line x1="60" y1="210" x2="580" y2="210"/>
+        <line x1="60" y1="255" x2="580" y2="255"/><line x1="60" y1="300" x2="580" y2="300"/>
+        <line x1="60" y1="345" x2="580" y2="345"/>
+      </g>
+      <g class="g-grid-half">
+        <line x1="60" y1="52.5" x2="580" y2="52.5"/><line x1="60" y1="97.5" x2="580" y2="97.5"/>
+        <line x1="60" y1="142.5" x2="580" y2="142.5"/><line x1="60" y1="187.5" x2="580" y2="187.5"/>
+        <line x1="60" y1="232.5" x2="580" y2="232.5"/><line x1="60" y1="277.5" x2="580" y2="277.5"/>
+        <line x1="60" y1="322.5" x2="580" y2="322.5"/><line x1="60" y1="367.5" x2="580" y2="367.5"/>
+      </g>
+      <g class="g-grid-th">
+        <line x1="60" y1="30" x2="580" y2="30"/><line x1="60" y1="390" x2="580" y2="390"/>
+      </g>
+      <g class="g-grid-vert">
+        <line x1="103.3" y1="30" x2="103.3" y2="390"/><line x1="146.7" y1="30" x2="146.7" y2="390"/>
+        <line x1="190" y1="30" x2="190" y2="390"/><line x1="233.3" y1="30" x2="233.3" y2="390"/>
+        <line x1="276.7" y1="30" x2="276.7" y2="390"/><line x1="320" y1="30" x2="320" y2="390"/>
+        <line x1="363.3" y1="30" x2="363.3" y2="390"/><line x1="406.7" y1="30" x2="406.7" y2="390"/>
+        <line x1="450" y1="30" x2="450" y2="390"/><line x1="493.3" y1="30" x2="493.3" y2="390"/>
+        <line x1="536.7" y1="30" x2="536.7" y2="390"/>
+      </g>
+      <g class="g-grid-vert-th">
+        <line x1="60" y1="30" x2="60" y2="390"/><line x1="580" y1="30" x2="580" y2="390"/>
+      </g>
+      <line x1="60" y1="20" x2="60" y2="400" class="g-axis"/>
+      <polygon points="60,14 55,24 65,24" fill="#222"/>
+      <line x1="580" y1="20" x2="580" y2="400" class="g-axis"/>
+      <polygon points="580,14 575,24 585,24" fill="#222"/>
+      <line x1="50" y1="390" x2="600" y2="390" class="g-axis"/>
+      <polygon points="600,390 592,385 592,395" fill="#222"/>
+      <g class="g-lbl-yl">
+        <line x1="54" y1="390" x2="60" y2="390" class="g-tick"/><text x="50" y="394">0</text>
+        <line x1="54" y1="345" x2="60" y2="345" class="g-tick"/><text x="50" y="349">50</text>
+        <line x1="54" y1="300" x2="60" y2="300" class="g-tick"/><text x="50" y="304">100</text>
+        <line x1="54" y1="255" x2="60" y2="255" class="g-tick"/><text x="50" y="259">150</text>
+        <line x1="54" y1="210" x2="60" y2="210" class="g-tick"/><text x="50" y="214">200</text>
+        <line x1="54" y1="165" x2="60" y2="165" class="g-tick"/><text x="50" y="169">250</text>
+        <line x1="54" y1="120" x2="60" y2="120" class="g-tick"/><text x="50" y="124">300</text>
+        <line x1="54" y1="75" x2="60" y2="75" class="g-tick"/><text x="50" y="79">350</text>
+        <line x1="54" y1="30" x2="60" y2="30" class="g-tick"/><text x="50" y="34">400</text>
+      </g>
+      <g class="g-lbl-yr">
+        <line x1="580" y1="390" x2="586" y2="390" class="g-tick"/><text x="590" y="394">0</text>
+        <line x1="580" y1="345" x2="586" y2="345" class="g-tick"/><text x="590" y="349">0,5</text>
+        <line x1="580" y1="300" x2="586" y2="300" class="g-tick"/><text x="590" y="304">1</text>
+        <line x1="580" y1="255" x2="586" y2="255" class="g-tick"/><text x="590" y="259">1,5</text>
+        <line x1="580" y1="210" x2="586" y2="210" class="g-tick"/><text x="590" y="214">2</text>
+        <line x1="580" y1="165" x2="586" y2="165" class="g-tick"/><text x="590" y="169">2,5</text>
+        <line x1="580" y1="120" x2="586" y2="120" class="g-tick"/><text x="590" y="124">3</text>
+        <line x1="580" y1="75" x2="586" y2="75" class="g-tick"/><text x="590" y="79">3,5</text>
+        <line x1="580" y1="30" x2="586" y2="30" class="g-tick"/><text x="590" y="34">4</text>
+      </g>
+      <g class="g-lbl-x">
+        ${[0,1,2,3,4,5,6,7,8,9,10,11,12].map((m, i) => {
+          const x = i === 0 ? 60 : X[i-1];
+          return `<line x1="${x}" y1="390" x2="${x}" y2="396" class="g-tick"/><text x="${x}" y="412">${m}</text>`;
+        }).join('')}
+      </g>
+      <text x="320" y="438" class="g-lbl-ax" text-anchor="middle">месяц</text>
+      <g>
+        <line x1="200" y1="12" x2="230" y2="12" class="g-line-m"/>
+        <text x="236" y="16" class="g-legend">Минуты</text>
+        <line x1="360" y1="12" x2="390" y2="12" class="g-line-g"/>
+        <text x="396" y="16" class="g-legend">Гигабайты</text>
+      </g>
+      <polyline class="g-line-m" points="${pointsM}"/>
+      <polyline class="g-line-g" points="${pointsG}"/>
+    </svg>
+  `;
+}
+
+/* ============================================================
+   РЕНДЕР ЗАДАНИЙ
+   ============================================================ */
+function renderTasks(state){
+  const { tasks } = state;
+  const container = document.getElementById('tasksContainer');
+  let html = '';
+
+  tasks.forEach((t, i) => {
+    const n = i + 1;
+
+    if(t.type === 'match'){
+      // Таблица: значения → месяцы
+      const headerTitle = t.useGb ? 'Мобильный интернет' : 'Исходящие вызовы';
+      const unit = t.useGb ? ' ГБ' : ' мин.';
+      html += `
+        <div class="task-block" id="task-${n}">
+          <div class="task-header">
+            <span class="task-num">${n}</span>
+            <span class="task-title">Таблица соответствия</span>
+            <span class="task-mark" id="mark-${n}"></span>
+          </div>
+          <div class="task-question">
+            Определите, какие месяцы соответствуют указанному в таблице ${t.useGb ? 'трафику мобильного интернета' : 'количеству исходящих вызовов'}. В ответ запишите числа, соответствующие номерам месяцев, <b>без пробелов и запятых</b> (например, 51118).
+          </div>
+          <table class="table-task">
+            <thead>
+              <tr><th>${headerTitle}</th>${t.targetVals.map(v => `<th>${fmtNum(v)}${unit}</th>`).join('')}</tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><b>Номер месяца</b></td>
+                ${t.targetVals.map((_, j) => `<td><input type="text" id="match-${n}-${j}" maxlength="2" placeholder="?"></td>`).join('')}
+              </tr>
+            </tbody>
+          </table>
+          <div class="answer-row" style="margin-top:10px;">
+            <label>Ответ:</label>
+            <input type="text" id="ans-${n}" placeholder="последовательность цифр" autocomplete="off">
+          </div>
+          <div class="correct-answer-note" id="note-${n}"></div>
+        </div>
+      `;
+    }
+    else if(t.type === 'monthcost'){
+      html += `
+        <div class="task-block" id="task-${n}">
+          <div class="task-header">
+            <span class="task-num">${n}</span>
+            <span class="task-title">Расходы за месяц</span>
+            <span class="task-mark" id="mark-${n}"></span>
+          </div>
+          <div class="task-question">
+            Сколько рублей потратил абонент на услуги связи в <b>${t.monthName}</b>?
+          </div>
+          <div class="answer-row">
+            <label>Ответ (руб.):</label>
+            <input type="text" id="ans-${n}" placeholder="введи число" autocomplete="off">
+          </div>
+          <div class="correct-answer-note" id="note-${n}"></div>
+        </div>
+      `;
+    }
+    else if(t.type === 'extreme'){
+      const what = t.useGb ? 'трафик мобильного интернета в гигабайтах' : 'количество минут исходящих вызовов';
+      const which = t.isMax ? 'наибольший' : 'наименьший';
+      html += `
+        <div class="task-block" id="task-${n}">
+          <div class="task-header">
+            <span class="task-num">${n}</span>
+            <span class="task-title">${t.isMax ? 'Максимум' : 'Минимум'}</span>
+            <span class="task-mark" id="mark-${n}"></span>
+          </div>
+          <div class="task-question">
+            Какой ${which} ${what} за месяц был в 2019 году?
+          </div>
+          <div class="answer-row">
+            <label>Ответ${t.useGb ? ' (ГБ)' : ' (мин)'}:</label>
+            <input type="text" id="ans-${n}" placeholder="введи число" autocomplete="off">
+          </div>
+          <div class="correct-answer-note" id="note-${n}"></div>
+        </div>
+      `;
+    }
+    else if(t.type === 'percent'){
+      html += `
+        <div class="task-block" id="task-${n}">
+          <div class="task-header">
+            <span class="task-num">${n}</span>
+            <span class="task-title">Проценты</span>
+            <span class="task-mark" id="mark-${n}"></span>
+          </div>
+          <div class="task-question">${t.question}</div>
+          <div class="answer-row">
+            <label>Ответ:</label>
+            <input type="text" id="ans-${n}" placeholder="введи число" autocomplete="off">
+          </div>
+          <div class="correct-answer-note" id="note-${n}"></div>
+        </div>
+      `;
+    }
+    else if(t.type === 'switch'){
+      html += `
+        <div class="task-block" id="task-${n}">
+          <div class="task-header">
+            <span class="task-num">${n}</span>
+            <span class="task-title">Переход на новый тариф</span>
+            <span class="task-mark" id="mark-${n}"></span>
+          </div>
+          <div class="task-question">
+            В конце 2019 года оператор связи предложил абоненту перейти на новый тариф, условия которого приведены в таблице.
+          </div>
+          <table class="new-tarif-table">
+            <thead><tr><th>Условия тарифа</th><th>Значение</th></tr></thead>
+            <tbody>
+              <tr><td>Стоимость перехода на тариф</td><td>0 руб.</td></tr>
+              <tr><td>Абонентская плата в месяц</td><td>${t.newAbon} руб.</td></tr>
+              <tr><td colspan="2"><b>В абонентскую плату включены пакеты:</b></td></tr>
+              <tr><td>пакет исходящих вызовов</td><td>${t.newMin} минут</td></tr>
+              <tr><td>пакет мобильного интернета</td><td>${t.newGb} ГБ</td></tr>
+              <tr><td>пакет SMS</td><td>120 SMS</td></tr>
+              <tr><td colspan="2"><b>После расходования пакетов:</b></td></tr>
+              <tr><td>входящие вызовы</td><td>0 руб./мин.</td></tr>
+              <tr><td>исходящие вызовы</td><td>${t.newMinPrice} руб./мин.</td></tr>
+              <tr><td>мобильный интернет (пакет)</td><td>${t.newGbPrice} руб. за 0,5 ГБ</td></tr>
+              <tr><td>SMS</td><td>${t.newSmsPrice} руб./шт.</td></tr>
+            </tbody>
+          </table>
+          <div class="task-question">
+            Абонент решает, перейти ли ему на новый тариф, посчитав, сколько бы он потратил на услуги связи за 2019 г., если бы пользовался им. Если получится меньше, чем он потратил фактически за 2019 г., то абонент примет решение сменить тариф.<br><br>
+            <b>Перейдёт ли абонент на новый тариф? В ответе запишите ежемесячную абонентскую плату по тарифу, который выберет абонент на 2020 год.</b>
+          </div>
+          <div class="answer-row">
+            <label>Ответ (руб.):</label>
+            <input type="text" id="ans-${n}" placeholder="введи число" autocomplete="off">
+          </div>
+          <div class="correct-answer-note" id="note-${n}"></div>
+        </div>
+      `;
+    }
+  });
+
+  container.innerHTML = html;
+}
+
+/* ============================================================
+   НОРМАЛИЗАЦИЯ
+   ============================================================ */
+function normAnswer(s){
+  return String(s||'').trim().replace(/\s+/g,'').replace(',','.').replace(/[°%рубминштГБгб]+$/gi,'').replace(/^0+(?=\d)/,'');
+}
+function checkNumeric(userAns, correctAns){
+  const u = normAnswer(userAns);
+  const c = normAnswer(correctAns);
+  if(!u) return false;
+  if(u === c) return true;
+  const un = parseFloat(u), cn = parseFloat(c);
+  if(!isNaN(un) && !isNaN(cn) && Math.abs(un - cn) < 0.01) return true;
+  return false;
+}
+
+/* ============================================================
+   ПРОВЕРКА
+   ============================================================ */
+let checked = false;
+
+document.getElementById('btnCheck').addEventListener('click', function(){
+  if(checked) return;
+
+  const name = nameInput.value.trim();
+  if(!name){ alert('Введи имя ученика!'); nameInput.focus(); return; }
+
+  const { tasks } = state;
+  let okCount = 0, errCount = 0;
+  const results = [];
+
+  tasks.forEach((t, i) => {
+    const n = i + 1;
+    const block = document.getElementById('task-'+n);
+    const mark = document.getElementById('mark-'+n);
+    const note = document.getElementById('note-'+n);
+
+    let isOk = false;
+    let userVal = '';
+
+    if(t.type === 'match'){
+      // Проверяем каждое поле таблицы отдельно
+      let allFieldsOk = true;
+      t.correctMonths.forEach((cm, j) => {
+        const inp = document.getElementById('match-'+n+'-'+j);
+        const v = inp.value.trim();
+        inp.disabled = true;
+        if(v === String(cm)){
+          inp.classList.add('correct');
+        } else {
+          inp.classList.add('wrong');
+          allFieldsOk = false;
+        }
+      });
+      // И общий ответ
+      const ansInp = document.getElementById('ans-'+n);
+      userVal = ansInp.value.trim();
+      const isAnsOk = (userVal === t.correctAnswer);
+      ansInp.disabled = true;
+      ansInp.classList.add(isAnsOk ? 'correct' : 'wrong');
+      isOk = allFieldsOk && isAnsOk;
+      if(!isOk){
+        note.innerHTML = 'Правильный ответ: <b>' + t.correctAnswer + '</b>';
+        note.classList.add('show');
+      }
+    } else {
+      const inp = document.getElementById('ans-'+n);
+      userVal = inp.value.trim();
+      isOk = checkNumeric(userVal, t.correctAnswer);
+      inp.disabled = true;
+      inp.classList.add(isOk ? 'correct' : 'wrong');
+      if(!isOk){
+        note.innerHTML = 'Правильный ответ: <b>' + fmtNum(t.correctAnswer) + '</b>';
+        note.classList.add('show');
+      }
+    }
+
+    mark.textContent = isOk ? '✅' : '❌';
+    mark.className = 'task-mark ' + (isOk ? 'ok' : 'err');
+    block.classList.add(isOk ? 'correct' : 'wrong');
+
+    results.push({ n, type: t.type, user: userVal, correct: t.correctAnswer, ok: isOk });
+    if(isOk) okCount++; else errCount++;
+  });
+
+  const percent = Math.round(okCount / tasks.length * 100);
+  document.getElementById('statOk').textContent = okCount;
+  document.getElementById('statErr').textContent = errCount;
+  document.getElementById('statPercent').textContent = percent + '%';
+
+  let line = '';
+  if(percent >= 90) line = '🌟 Великолепно! Почти всё верно!';
+  else if(percent >= 70) line = '👍 Хороший результат!';
+  else if(percent >= 50) line = '💪 Есть над чем поработать';
+  else line = '📚 Стоит повторить тему';
+  document.getElementById('summaryLine').textContent = line;
+  document.getElementById('summaryBox').classList.add('show');
+
+  checked = true;
+  this.disabled = true;
+  this.textContent = '✓ Проверено';
+  this.style.background = 'linear-gradient(135deg,#2ecc71,#27ae60)';
+  this.style.color = '#fff';
+  this.style.boxShadow = '0 6px 24px rgba(46,204,113,0.4)';
+
+  document.getElementById('summaryBox').scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+/* ============================================================
+   НОВАЯ ЗАДАЧА
+   ============================================================ */
+document.getElementById('btnNew').addEventListener('click', function(){
+  startNewTask();
+});
+
+/* ============================================================
+   СТАРТ
+   ============================================================ */
+function startNewTask(){
+  checked = false;
+  const checkBtn = document.getElementById('btnCheck');
+  checkBtn.disabled = false;
+  checkBtn.textContent = '✅ Проверить всё';
+  checkBtn.style.background = '';
+  checkBtn.style.color = '';
+  checkBtn.style.boxShadow = '';
+  document.getElementById('summaryBox').classList.remove('show');
+
+  state = generateTasks();
+
+  // Рендер графика
+  document.getElementById('graphWrap').innerHTML = renderGraph(state.minutes, state.gb);
+
+  // Рендер заданий
+  renderTasks(state);
+
+  // Скролл вверх
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// Старт
+startNewTask();
+</script>
+</body>
+</html>
