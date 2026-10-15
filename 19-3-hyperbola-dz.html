@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>ΤΕΤΡΑΚΤΥΣ · ДЗ · Гипербола</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--coral:#ff6b6b;
+    --gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass:rgba(255,255,255,0.04);
+    --glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{
+    min-height:100%;
+    font-family:'Georgia','Times New Roman',serif;
+    color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(26,188,156,0.22), transparent 55%),
+      radial-gradient(ellipse at 85% 90%, rgba(127,255,212,0.15), transparent 55%),
+      radial-gradient(ellipse at 50% 50%, rgba(244,211,94,0.06), transparent 70%),
+      linear-gradient(160deg, #0a2a33 0%, #0d3b47 50%, #134e5e 100%);
+    background-attachment:fixed;
+    padding:22px 16px 60px;
+  }
+  .wrap{max-width:900px;margin:0 auto;}
+
+  /* ШАПКА */
+  .top{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:14px;flex-wrap:wrap;
+    padding:14px 18px;margin-bottom:26px;
+    background:rgba(10,42,51,0.75);
+    border:1.5px solid var(--glass-brd);
+    border-radius:20px;
+    backdrop-filter:blur(14px);
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+  }
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand .dots{
+    font-family:'Courier New',monospace;
+    font-size:10px;line-height:1.15;font-weight:700;
+    color:var(--mint);
+    background:rgba(26,188,156,0.12);
+    border:1.5px solid rgba(26,188,156,0.5);
+    border-radius:10px;padding:4px 7px;
+    white-space:pre;
+  }
+  .brand .ttl{font-family:'Times New Roman',serif;letter-spacing:2px;}
+  .brand .ttl .gr{font-size:18px;font-weight:700;color:var(--mint);display:block;}
+  .brand .ttl .ru{font-size:11px;font-weight:600;color:var(--gold);letter-spacing:2px;}
+  .brand .ttl .sub{font-size:10px;font-style:italic;color:var(--text-soft);}
+  .top-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .chip{
+    font-family:'Courier New',monospace;font-size:13px;color:var(--text-soft);
+    background:rgba(10,42,51,0.6);
+    border:1.5px solid rgba(26,188,156,0.35);
+    border-radius:12px;padding:6px 12px;
+    white-space:nowrap;
+  }
+
+  /* ЗАГОЛОВОК */
+  h1.page-title{
+    font-family:'Times New Roman',serif;
+    text-align:center;font-size:30px;
+    color:var(--mint);
+    text-shadow:0 0 18px rgba(127,255,212,0.45);
+    margin:6px 0 4px;
+  }
+  .page-sub{
+    text-align:center;color:var(--text-soft);
+    font-size:15px;font-style:italic;margin-bottom:26px;
+  }
+
+  /* ИМЯ */
+  .name-card{
+    background:var(--glass);
+    border:1.5px solid var(--glass-brd);
+    border-radius:20px;
+    backdrop-filter:blur(10px);
+    padding:16px 20px;
+    margin-bottom:20px;
+  }
+  .name-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
+  .name-row label{font-size:15px;color:var(--text-soft);font-weight:600;}
+  .name-input{
+    flex:1;min-width:220px;
+    font-family:Georgia,serif;font-size:16px;color:var(--text);
+    background:rgba(10,42,51,0.55);
+    border:1.5px solid rgba(26,188,156,0.45);
+    border-radius:12px;padding:11px 15px;outline:none;transition:.25s;
+  }
+  .name-input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+  .name-input::placeholder{color:rgba(184,216,208,0.4);font-style:italic;}
+
+  /* ИНСТРУКЦИЯ */
+  .hint{
+    background:var(--glass);
+    border:1.5px dashed rgba(26,188,156,0.4);
+    border-radius:20px;
+    padding:20px 24px;
+    margin-bottom:24px;
+    color:var(--text-soft);
+    font-size:14.5px;
+    line-height:1.75;
+  }
+  .hint b{color:var(--mint);}
+  .hint ol{margin:8px 0 0 20px;}
+  .hint ol li{margin-bottom:6px;}
+  .hint ol li::marker{color:var(--gold);font-weight:700;}
+
+  /* ЗАДАНИЯ */
+  .task{
+    background:var(--glass);
+    border:1.5px solid var(--glass-brd);
+    border-radius:20px;
+    backdrop-filter:blur(10px);
+    padding:22px 26px;
+    margin-bottom:14px;
+    transition:.25s;
+  }
+  .task:hover{border-color:rgba(127,255,212,0.6);}
+  .task-head{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+  .task-num{
+    font-family:'Courier New',monospace;font-weight:700;font-size:15px;
+    color:#04231d;background:linear-gradient(135deg,var(--teal),var(--teal-dark));
+    min-width:46px;height:36px;border-radius:11px;
+    display:inline-flex;align-items:center;justify-content:center;
+    padding:0 12px;flex-shrink:0;
+  }
+  .task-text{font-size:15px;color:var(--text-soft);font-style:italic;}
+  .task-eq{
+    font-family:'Cambria Math','Times New Roman',serif;
+    font-size:34px;
+    color:var(--mint);
+    text-align:center;
+    padding:8px 4px 4px;
+    line-height:1.6;
+    display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;
+  }
+  .frac{
+    display:inline-flex;flex-direction:column;
+    vertical-align:middle;text-align:center;
+    margin:0 5px;line-height:1.05;
+    font-family:'Cambria Math','Times New Roman',serif;
+  }
+  .frac .num{padding:0 9px 3px;border-bottom:2px solid currentColor;}
+  .frac .den{padding:3px 9px 0;}
+
+  /* КНОПКА */
+  .send-wrap{text-align:center;margin-top:26px;}
+  .send-btn{
+    cursor:pointer;user-select:none;
+    display:inline-flex;align-items:center;gap:12px;
+    padding:18px 42px;
+    border-radius:18px;
+    border:none;
+    background:linear-gradient(135deg,var(--teal),var(--teal-dark));
+    color:#04231d;
+    font-family:Georgia,serif;
+    font-size:17px;font-weight:700;
+    letter-spacing:.6px;
+    transition:.28s;
+    box-shadow:0 10px 28px rgba(26,188,156,0.45);
+  }
+  .send-btn:hover{
+    transform:translateY(-4px);
+    box-shadow:0 16px 38px rgba(26,188,156,0.65);
+  }
+  .send-btn:active{transform:translateY(-1px);}
+  .send-btn .ico{font-size:22px;}
+
+  footer{
+    margin-top:38px;text-align:center;
+    color:var(--text-soft);font-size:13px;font-style:italic;letter-spacing:1px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ШАПКА -->
+  <div class="top">
+    <div class="brand">
+      <div class="dots">●
+● ●
+● ● ●
+● ● ● ●</div>
+      <div class="ttl">
+        <span class="gr">ΤΕΤΡΑΚΤΥΣ</span>
+        <span class="ru">ТЕТРАКТИС</span>
+        <span class="sub">Школа математики Елены Михалевой</span>
+      </div>
+    </div>
+    <div class="top-right">
+      <div class="chip" id="today">—</div>
+    </div>
+  </div>
+
+  <h1 class="page-title">Домашнее задание</h1>
+  <div class="page-sub">Гипербола · построить графики сдвигами</div>
+
+  <!-- ИМЯ -->
+  <div class="name-card">
+    <div class="name-row">
+      <label for="studentName">👤 Имя ученика:</label>
+      <input type="text" class="name-input" id="studentName" placeholder="введи имя и фамилию" autocomplete="off" />
+    </div>
+  </div>
+
+  <!-- ИНСТРУКЦИЯ -->
+  <div class="hint">
+    <b>Как выполнить:</b>
+    <ol>
+      <li>Построй график каждой функции <b>в тетради</b> — сдвигами, как на уроке.</li>
+      <li>Найди центр новой системы <b>(−m; n)</b>, проведи асимптоты, построй ветви.</li>
+      <li>Сфотографируй работу и отправь учителю — кнопка ниже.</li>
+    </ol>
+  </div>
+
+  <!-- ЗАДАНИЯ -->
+  <div class="task">
+    <div class="task-head"><span class="task-num">1</span><span class="task-text">Постройте график функции</span></div>
+    <div class="task-eq">
+      y =
+      <span class="frac"><span class="num">3</span><span class="den">x + 1</span></span>
+    </div>
+  </div>
+
+  <div class="task">
+    <div class="task-head"><span class="task-num">2</span><span class="task-text">Постройте график функции</span></div>
+    <div class="task-eq">
+      y =
+      <span class="frac"><span class="num">2</span><span class="den">x + 2</span></span>
+    </div>
+  </div>
+
+  <div class="task">
+    <div class="task-head"><span class="task-num">3</span><span class="task-text">Постройте график функции</span></div>
+    <div class="task-eq">
+      y = −
+      <span class="frac"><span class="num">1</span><span class="den">x + 3</span></span>
+      + 2
+    </div>
+  </div>
+
+  <div class="task">
+    <div class="task-head"><span class="task-num">4</span><span class="task-text">Постройте график функции</span></div>
+    <div class="task-eq">
+      y =
+      <span class="frac"><span class="num">2</span><span class="den">x − 1</span></span>
+    </div>
+  </div>
+
+  <div class="task">
+    <div class="task-head"><span class="task-num">5</span><span class="task-text">Постройте график функции</span></div>
+    <div class="task-eq">
+      y =
+      <span class="frac"><span class="num">3</span><span class="den">x − 2</span></span>
+      − 1
+    </div>
+  </div>
+
+  <!-- КНОПКА -->
+  <div class="send-wrap">
+    <button class="send-btn" id="sendBtn">
+      <span class="ico">💬</span>
+      Отправить учителю в Макс
+    </button>
+  </div>
+
+  <footer>Школа математики Елены Михалевой · ΤΕΤΡΑΚΤΥΣ</footer>
+</div>
+
+<script>
+/* ДАТА */
+(function(){
+  const d = new Date();
+  const p = n => String(n).padStart(2,'0');
+  document.getElementById('today').textContent =
+    p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear();
+})();
+
+/* ИМЯ */
+(function(){
+  const input = document.getElementById('studentName');
+  const KEY = 'tetraktus.hyperbola.dz.name';
+  try{ input.value = localStorage.getItem(KEY) || ''; }catch(e){}
+  input.addEventListener('input', ()=>{
+    try{ localStorage.setItem(KEY, input.value); }catch(e){}
+  });
+})();
+
+/* КНОПКА — открывает чат Макс */
+document.getElementById('sendBtn').addEventListener('click', ()=>{
+  const url = 'https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes';
+  window.open(url, '_blank');
+});
+</script>
+</body>
+</html>
