@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Тренажёр · Гипербола · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--coral:#ff6b6b;
+    --gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass:rgba(255,255,255,0.04);
+    --glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{
+    min-height:100%;
+    font-family:'Georgia','Times New Roman',serif;
+    color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(26,188,156,0.22), transparent 55%),
+      radial-gradient(ellipse at 85% 90%, rgba(127,255,212,0.15), transparent 55%),
+      radial-gradient(ellipse at 50% 50%, rgba(244,211,94,0.06), transparent 70%),
+      linear-gradient(160deg, #0a2a33 0%, #0d3b47 50%, #134e5e 100%);
+    background-attachment:fixed;
+    padding:20px 14px 60px;
+  }
+  .wrap{max-width:1000px;margin:0 auto;}
+
+  .top{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:14px;flex-wrap:wrap;
+    padding:12px 18px;margin-bottom:20px;
+    background:rgba(10,42,51,0.75);
+    border:1.5px solid var(--glass-brd);
+    border-radius:20px;
+    backdrop-filter:blur(14px);
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+  }
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand .dots{
+    font-family:'Courier New',monospace;
+    font-size:10px;line-height:1.15;font-weight:700;
+    color:var(--mint);
+    background:rgba(26,188,156,0.12);
+    border:1.5px solid rgba(26,188,156,0.5);
+    border-radius:10px;padding:4px 7px;
+    white-space:pre;
+  }
+  .brand .ttl{font-family:'Times New Roman',serif;letter-spacing:2px;}
+  .brand .ttl .gr{font-size:16px;font-weight:700;color:var(--mint);display:block;}
+  .brand .ttl .ru{font-size:10px;font-weight:600;color:var(--gold);letter-spacing:2px;}
+  .top-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .chip{
+    font-family:'Courier New',monospace;font-size:14px;color:var(--text-soft);
+    background:rgba(10,42,51,0.6);
+    border:1.5px solid rgba(26,188,156,0.35);
+    border-radius:12px;padding:8px 14px;
+    white-space:nowrap;
+  }
+  .chip.timer{color:var(--mint);font-weight:700;font-size:16px;letter-spacing:1px;}
+  .chip.timer.warn{color:var(--coral);animation:pulse-warn 0.6s infinite alternate;}
+  @keyframes pulse-warn{from{opacity:1;}to{opacity:0.35;}}
+  .chip.lives{color:var(--coral);font-weight:700;font-size:15px;}
+
+  .screen{display:none;}
+  .screen.active{display:block;}
+
+  .start-card{
+    background:var(--glass);
+    border:1.5px solid var(--glass-brd);
+    border-radius:24px;
+    backdrop-filter:blur(14px);
+    box-shadow:0 12px 40px rgba(0,0,0,0.35);
+    padding:40px 32px;
+    text-align:center;
+  }
+  .start-card h1{
+    font-family:'Times New Roman',serif;
+    font-size:34px;
+    color:var(--mint);
+    text-shadow:0 0 20px rgba(127,255,212,0.4);
+    margin-bottom:12px;
+    letter-spacing:1px;
+  }
+  .start-card .sub{
+    font-size:16px;
+    color:var(--text-soft);
+    font-style:italic;
+    margin-bottom:24px;
+  }
+  .start-rules{
+    display:inline-block;
+    text-align:left;
+    background:rgba(26,188,156,0.08);
+    border:1px solid rgba(26,188,156,0.3);
+    border-radius:16px;
+    padding:18px 26px;
+    margin-bottom:28px;
+    font-size:15px;
+    line-height:1.9;
+    color:var(--text);
+  }
+  .start-rules .row{display:flex;gap:10px;align-items:flex-start;}
+  .start-rules .row .ico{flex-shrink:0;font-size:17px;line-height:1.7;}
+  .start-btn{
+    cursor:pointer;user-select:none;
+    display:inline-flex;align-items:center;gap:12px;
+    padding:18px 44px;
+    border-radius:18px;border:none;
+    background:linear-gradient(135deg,var(--teal),var(--teal-dark));
+    color:#04231d;
+    font-family:Georgia,serif;font-size:18px;font-weight:700;
+    letter-spacing:.7px;
+    box-shadow:0 10px 30px rgba(26,188,156,0.5);
+    transition:.25s;
+  }
+  .start-btn:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(26,188,156,0.7);}
+
+  .game-head{
+    display:flex;justify-content:space-between;align-items:center;
+    gap:14px;flex-wrap:wrap;
+    padding:14px 20px;margin-bottom:16px;
+    background:var(--glass);
+    border:1.5px solid var(--glass-brd);
+    border-radius:18px;
+    backdrop-filter:blur(10px);
+    font-size:15px;
+    color:var(--text-soft);
+  }
+  .game-head .progress{font-family:'Courier New',monospace;color:var(--mint);font-weight:700;}
+
+  .task-card{
+    background:var(--glass);
+    border:1.5px solid var(--glass-brd);
+    border-radius:24px;
+    backdrop-filter:blur(14px);
+    box-shadow:0 12px 40px rgba(0,0,0,0.35);
+    padding:30px 30px 26px;
+    text-align:center;
+  }
+  .task-card .q-label{
+    font-family:'Times New Roman',serif;
+    font-size:13px;
+    color:var(--gold);
+    letter-spacing:2px;
+    text-transform:uppercase;
+    margin-bottom:14px;
+  }
+  .task-formula{
+    font-family:'Cambria Math','Times New Roman',serif;
+    font-size:46px;
+    color:var(--mint);
+    text-shadow:0 0 16px rgba(127,255,212,0.35);
+    margin-bottom:28px;
+    line-height:1.5;
+    display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;
+  }
+  .frac{
+    display:inline-flex;flex-direction:column;
+    vertical-align:middle;text-align:center;
+    margin:0 6px;line-height:1.05;
+    font-family:'Cambria Math','Times New Roman',serif;
+  }
+  .frac .num{padding:0 12px 4px;border-bottom:2.5px solid currentColor;}
+  .frac .den{padding:4px 12px 0;}
+
+  .inputs-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+    margin-bottom:22px;
+  }
+  @media (max-width:640px){ .inputs-row{grid-template-columns:1fr;} }
+
+  .input-block{
+    background:rgba(26,188,156,0.06);
+    border:1.5px solid rgba(26,188,156,0.3);
+    border-radius:18px;
+    padding:16px 18px;
+  }
+  .input-block .ib-label{
+    font-family:'Times New Roman',serif;
+    font-size:13px;
+    color:var(--mint);
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    margin-bottom:12px;
+    text-align:center;
+  }
+  .dir-row{
+    display:flex;gap:8px;justify-content:center;
+    margin-bottom:12px;
+  }
+  .dir-btn{
+    cursor:pointer;user-select:none;
+    flex:1;
+    padding:11px 14px;
+    border-radius:12px;
+    border:1.5px solid rgba(26,188,156,0.4);
+    background:rgba(255,255,255,0.04);
+    color:var(--text-soft);
+    font-family:Georgia,serif;
+    font-size:15px;font-weight:600;
+    transition:.2s;
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  }
+  .dir-btn:hover:not(.disabled){
+    border-color:var(--mint);background:rgba(26,188,156,0.1);
+    color:var(--text);transform:translateY(-1px);
+  }
+  .dir-btn.active{
+    background:linear-gradient(135deg,var(--teal),var(--teal-dark));
+    color:#04231d;border-color:transparent;
+    box-shadow:0 4px 14px rgba(26,188,156,0.5);
+  }
+  .dir-btn.disabled{
+    opacity:0.35;cursor:not-allowed;
+  }
+  .num-input{
+    width:100%;
+    text-align:center;
+    font-family:'Courier New',monospace;
+    font-size:24px;font-weight:700;
+    color:var(--text);
+    background:rgba(10,42,51,0.6);
+    border:1.5px solid rgba(26,188,156,0.45);
+    border-radius:12px;
+    padding:12px 10px;
+    outline:none;
+    transition:.25s;
+  }
+  .num-input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+
+  .quarters-block{
+    background:rgba(26,188,156,0.06);
+    border:1.5px solid rgba(26,188,156,0.3);
+    border-radius:18px;
+    padding:16px 18px;
+    margin-bottom:22px;
+  }
+  .quarters-block .ib-label{
+    font-family:'Times New Roman',serif;
+    font-size:13px;
+    color:var(--mint);
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    margin-bottom:14px;
+    text-align:center;
+  }
+  .quarters-row{
+    display:flex;gap:16px;justify-content:center;
+    flex-wrap:wrap;
+  }
+  .quarter-btn{
+    cursor:pointer;user-select:none;
+    background:rgba(255,255,255,0.04);
+    border:2px solid rgba(26,188,156,0.4);
+    border-radius:14px;
+    padding:10px;
+    transition:.22s;
+    width:180px;
+  }
+  .quarter-btn:hover{
+    border-color:var(--mint);
+    background:rgba(26,188,156,0.08);
+    transform:translateY(-2px);
+  }
+  .quarter-btn.active{
+    border-color:var(--mint);
+    background:linear-gradient(135deg,rgba(26,188,156,0.2),rgba(244,211,94,0.1));
+    box-shadow:0 0 0 4px rgba(127,255,212,0.15);
+  }
+  .quarter-btn svg{width:100%;height:auto;display:block;}
+
+  .check-btn{
+    cursor:pointer;user-select:none;
+    padding:16px 50px;
+    border-radius:16px;border:none;
+    background:linear-gradient(135deg,var(--teal),var(--teal-dark));
+    color:#04231d;
+    font-family:Georgia,serif;font-size:17px;font-weight:700;
+    letter-spacing:.7px;
+    box-shadow:0 8px 24px rgba(26,188,156,0.45);
+    transition:.25s;
+  }
+  .check-btn:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 12px 32px rgba(26,188,156,0.6);}
+  .check-btn:disabled{opacity:0.4;cursor:not-allowed;}
+
+  .feedback{
+    margin-top:18px;
+    font-size:17px;
+    font-weight:700;
+    min-height:26px;
+    line-height:1.5;
+  }
+  .feedback.ok{color:var(--ok);}
+  .feedback.err{color:var(--err);}
+  .feedback .detail{
+    display:block;font-size:14px;font-weight:400;color:var(--text-soft);
+    font-style:italic;margin-top:6px;
+  }
+
+  .finish-card{
+    background:var(--glass);
+    border:1.5px solid var(--glass-brd);
+    border-radius:24px;
+    backdrop-filter:blur(14px);
+    box-shadow:0 12px 40px rgba(0,0,0,0.35);
+    padding:44px 32px;
+    text-align:center;
+  }
+  .finish-card h2{
+    font-family:'Times New Roman',serif;
+    font-size:30px;
+    color:var(--mint);
+    text-shadow:0 0 20px rgba(127,255,212,0.4);
+    margin-bottom:22px;
+    letter-spacing:1px;
+  }
+  .finish-stats{
+    display:inline-flex;gap:30px;flex-wrap:wrap;justify-content:center;
+    margin-bottom:28px;
+    padding:22px 34px;
+    background:rgba(26,188,156,0.08);
+    border:1px solid rgba(26,188,156,0.35);
+    border-radius:18px;
+  }
+  .finish-stats .stat{text-align:center;}
+  .finish-stats .stat .v{
+    font-family:'Courier New',monospace;
+    font-size:34px;font-weight:700;
+    color:var(--gold);
+    line-height:1;
+    text-shadow:0 0 14px rgba(244,211,94,0.5);
+  }
+  .finish-stats .stat .l{
+    font-size:12px;color:var(--text-soft);
+    letter-spacing:1px;text-transform:uppercase;
+    margin-top:8px;
+  }
+  .finish-card .msg{
+    font-size:17px;color:var(--text-soft);font-style:italic;
+    margin-bottom:26px;line-height:1.6;
+  }
+  .restart-btn{
+    cursor:pointer;user-select:none;
+    padding:16px 38px;
+    border-radius:16px;border:none;
+    background:linear-gradient(135deg,var(--gold),#d9b53c);
+    color:#04231d;
+    font-family:Georgia,serif;font-size:16px;font-weight:700;
+    letter-spacing:.6px;
+    box-shadow:0 8px 24px rgba(244,211,94,0.45);
+    transition:.25s;
+  }
+  .restart-btn:hover{transform:translateY(-3px);}
+
+  footer{
+    margin-top:32px;text-align:center;
+    color:var(--text-soft);font-size:12px;font-style:italic;letter-spacing:1px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="brand">
+      <div class="dots">●
+● ●
+● ● ●
+● ● ● ●</div>
+      <div class="ttl">
+        <span class="gr">ΤΕΤΡΑΚΤΥΣ</span>
+        <span class="ru">ТЕТРАКТИС</span>
+      </div>
+    </div>
+    <div class="top-right">
+      <div class="chip timer" id="timerChip">⏱ 5:00</div>
+      <div class="chip lives" id="livesChip">❤️ ❤️ ❤️</div>
+      <div class="chip" id="scoreChip">✅ 0 / 5</div>
+    </div>
+  </div>
+
+  <!-- СТАРТ -->
+  <div class="screen active" id="screenStart">
+    <div class="start-card">
+      <h1>Тренажёр · Гипербола</h1>
+      <div class="sub">Сдвиги · четверти · 5 заданий · 3 жизни · 5 минут</div>
+
+      <div class="start-rules">
+        <div class="row"><span class="ico">📐</span><span>Определи <b>сдвиг по x</b> (влево / вправо) и <b>сдвиг по y</b> (вверх / вниз).</span></div>
+        <div class="row"><span class="ico">🎯</span><span>Выбери, в каких четвертях ветви относительно <b>нового центра</b>.</span></div>
+        <div class="row"><span class="ico">❤️</span><span>3 жизни. Любая ошибка — минус жизнь.</span></div>
+        <div class="row"><span class="ico">⏱</span><span>5 минут. Последние 10 секунд — писк.</span></div>
+      </div>
+
+      <div>
+        <button class="start-btn" id="startBtn">▶ Начать</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ИГРА -->
+  <div class="screen" id="screenGame">
+    <div class="game-head">
+      <span>Задание <span class="progress" id="taskNum">1</span> из <span class="progress">5</span></span>
+      <span id="gameScore">Верно: 0</span>
+    </div>
+
+    <div class="task-card">
+      <div class="q-label">Определи сдвиг и четверти</div>
+      <div class="task-formula" id="taskFormula"></div>
+
+      <div class="inputs-row">
+        <div class="input-block">
+          <div class="ib-label">Сдвиг по x</div>
+          <div class="dir-row">
+            <button class="dir-btn" data-axis="x" data-dir="-1" id="xLeft">← влево</button>
+            <button class="dir-btn" data-axis="x" data-dir="1" id="xRight">вправо →</button>
+          </div>
+          <input type="number" class="num-input" id="xInput" value="0" min="0" max="20" inputmode="numeric" />
+        </div>
+
+        <div class="input-block">
+          <div class="ib-label">Сдвиг по y</div>
+          <div class="dir-row">
+            <button class="dir-btn" data-axis="y" data-dir="1" id="yUp">↑ вверх</button>
+            <button class="dir-btn" data-axis="y" data-dir="-1" id="yDown">вниз ↓</button>
+          </div>
+          <input type="number" class="num-input" id="yInput" value="0" min="0" max="20" inputmode="numeric" />
+        </div>
+      </div>
+
+      <div class="quarters-block">
+        <div class="ib-label">Расположение ветвей относительно центра</div>
+        <div class="quarters-row">
+
+          <!-- I и III четверти (k > 0) -->
+          <div class="quarter-btn" data-q="1" id="quarterBtn1">
+            <svg viewBox="0 0 140 140">
+              <line x1="10" y1="70" x2="130" y2="70" stroke="#5a8f86" stroke-width="1.5"/>
+              <line x1="70" y1="10" x2="70" y2="130" stroke="#5a8f86" stroke-width="1.5"/>
+              <polygon points="130,70 122,66 122,74" fill="#5a8f86"/>
+              <polygon points="70,10 66,18 74,18" fill="#5a8f86"/>
+              <!-- I четверть: правая ветвь — ВЫШЕ -->
+              <path d="M 125 55 Q 90 55 82 30 Q 80 20 85 8" fill="none" stroke="#1abc9c" stroke-width="2" stroke-linecap="round"/>
+              <!-- III четверть: левая ветвь — НИЖЕ -->
+              <path d="M 15 85 Q 50 85 58 110 Q 60 120 55 132" fill="none" stroke="#1abc9c" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <div style="font-size:13px;color:var(--text-soft);margin-top:6px;">I и III</div>
+          </div>
+
+          <!-- II и IV четверти (k < 0) — зеркальные -->
+          <div class="quarter-btn" data-q="2" id="quarterBtn2">
+            <svg viewBox="0 0 140 140">
+              <line x1="10" y1="70" x2="130" y2="70" stroke="#5a8f86" stroke-width="1.5"/>
+              <line x1="70" y1="10" x2="70" y2="130" stroke="#5a8f86" stroke-width="1.5"/>
+              <polygon points="130,70 122,66 122,74" fill="#5a8f86"/>
+              <polygon points="70,10 66,18 74,18" fill="#5a8f86"/>
+              <!-- II четверть: левая верхняя — ВЫШЕ -->
+              <path d="M 15 55 Q 50 55 58 30 Q 60 20 55 8" fill="none" stroke="#1abc9c" stroke-width="2" stroke-linecap="round"/>
+              <!-- IV четверть: правая нижняя — НИЖЕ -->
+              <path d="M 125 85 Q 90 85 82 110 Q 80 120 85 132" fill="none" stroke="#1abc9c" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <div style="font-size:13px;color:var(--text-soft);margin-top:6px;">II и IV</div>
+          </div>
+
+        </div>
+      </div>
+
+      <button class="check-btn" id="checkBtn">✓ Проверить</button>
+      <div class="feedback" id="feedback"></div>
+    </div>
+  </div>
+
+  <!-- ФИНАЛ -->
+  <div class="screen" id="screenFinish">
+    <div class="finish-card">
+      <h2 id="finishTitle">Игра завершена</h2>
+      <div class="finish-stats">
+        <div class="stat">
+          <div class="v" id="finishCorrect">0</div>
+          <div class="l">Верно</div>
+        </div>
+        <div class="stat">
+          <div class="v" id="finishTotal">5</div>
+          <div class="l">Всего</div>
+        </div>
+        <div class="stat">
+          <div class="v" id="finishTime">0:00</div>
+          <div class="l">Время</div>
+        </div>
+      </div>
+      <div class="msg" id="finishMsg"></div>
+      <button class="restart-btn" id="restartBtn">↻ Играть снова</button>
+    </div>
+  </div>
+
+  <footer>Школа математики Елены Михалевой · ΤΕΤΡΑΚΤΥΣ</footer>
+</div>
+
+<script>
+/* ПУЛ ЗАДАНИЙ */
+const POOL = [
+  {k:1,  m:0,  n:0,  shiftX:0, shiftY:0, quarters:1},
+  {k:-1, m:0,  n:0,  shiftX:0, shiftY:0, quarters:2},
+  {k:3,  m:0,  n:0,  shiftX:0, shiftY:0, quarters:1},
+  {k:2,  m:1,  n:0,  shiftX:-1, shiftY:0, quarters:1},
+  {k:1,  m:-3, n:0,  shiftX:3, shiftY:0, quarters:1},
+  {k:1,  m:0,  n:2,  shiftX:0, shiftY:2, quarters:1},
+  {k:-2, m:0,  n:-1, shiftX:0, shiftY:-1, quarters:2},
+  {k:4,  m:2,  n:0,  shiftX:-2, shiftY:0, quarters:1},
+  {k:3,  m:1,  n:2,  shiftX:-1, shiftY:2, quarters:1},
+  {k:-1, m:-2, n:3,  shiftX:2, shiftY:3, quarters:2},
+  {k:2,  m:3,  n:-1, shiftX:-3, shiftY:-1, quarters:1},
+  {k:-3, m:1,  n:-2, shiftX:-1, shiftY:-2, quarters:2},
+  {k:1,  m:-4, n:1,  shiftX:4, shiftY:1, quarters:1},
+  {k:5,  m:-1, n:-3, shiftX:1, shiftY:-3, quarters:1},
+  {k:-4, m:2,  n:1,  shiftX:-2, shiftY:1, quarters:2}
+];
+
+/* ЗВУК */
+let audioCtx = null;
+let audioReady = false;
+function initAudio(){
+  if(audioReady) return;
+  try{
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    audioReady = true;
+  }catch(e){ audioReady = false; }
+}
+function beep(freq, duration, type){
+  if(!audioReady) return;
+  try{
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = type || 'square';
+    o.frequency.value = freq;
+    o.connect(g); g.connect(audioCtx.destination);
+    const now = audioCtx.currentTime;
+    g.gain.setValueAtTime(0.14, now);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+    o.start(now); o.stop(now + duration);
+  }catch(e){}
+}
+function soundTick(){ beep(880, 0.08, 'square'); }
+function soundWrong(){ beep(180, 0.35, 'sawtooth'); }
+function soundRight(){ beep(660, 0.1, 'triangle'); setTimeout(()=>beep(880, 0.15, 'triangle'), 90); }
+function soundEnd(){ beep(120, 0.6, 'sawtooth'); setTimeout(()=>beep(80, 0.8, 'sawtooth'), 200); }
+document.addEventListener('pointerdown', initAudio, { once:true });
+
+/* ИГРА */
+let lives = 3;
+let correct = 0;
+let total = 5;
+let tasks = [];
+let currentTaskIdx = 0;
+let timeLeft = 300;
+let timerInterval = null;
+let finished = false;
+
+const $ = id => document.getElementById(id);
+
+function shuffle(a){
+  const arr = a.slice();
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+function F(num, den){
+  return `<span class="frac"><span class="num">${num}</span><span class="den">${den}</span></span>`;
+}
+function formulaHTML(t){
+  const {k, m, n} = t;
+  let num = k === 1 ? '1' : (k === -1 ? '' : k);
+  let sign = k === -1 ? '−' : '';
+  let den = 'x';
+  if(m > 0) den += ' + ' + m;
+  else if(m < 0) den += ' − ' + Math.abs(m);
+  let tail = '';
+  if(n > 0) tail = ' + ' + n;
+  else if(n < 0) tail = ' − ' + Math.abs(n);
+  if(k === -1) return sign + F('1', den) + tail;
+  return F(num, den) + tail;
+}
+function pickTasks(){ return shuffle(POOL).slice(0, total); }
+
+function renderTask(){
+  const t = tasks[currentTaskIdx];
+  $('taskNum').textContent = (currentTaskIdx + 1);
+  $('taskFormula').innerHTML = 'y = ' + formulaHTML(t);
+  $('feedback').textContent = '';
+  $('feedback').className = 'feedback';
+  $('xInput').value = '0';
+  $('yInput').value = '0';
+  document.querySelectorAll('.dir-btn').forEach(b => b.classList.remove('active', 'disabled'));
+  document.querySelectorAll('.quarter-btn').forEach(b => b.classList.remove('active'));
+
+  const xButtons = [$('xLeft'), $('xRight')];
+  const yButtons = [$('yUp'), $('yDown')];
+  if(t.shiftX === 0) xButtons.forEach(b => b.classList.add('disabled'));
+  if(t.shiftY === 0) yButtons.forEach(b => b.classList.add('disabled'));
+
+  $('checkBtn').disabled = false;
+}
+
+document.querySelectorAll('.dir-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    if(btn.classList.contains('disabled')) return;
+    const axis = btn.dataset.axis;
+    const dir = btn.dataset.dir;
+    document.querySelectorAll(`.dir-btn[data-axis="${axis}"]`).forEach(b => {
+      b.classList.remove('active');
+      if(b !== btn) b.dataset.selected = '';
+    });
+    btn.classList.add('active');
+    btn.dataset.selected = dir;
+    const inp = axis === 'x' ? $('xInput') : $('yInput');
+    if(+inp.value === 0) inp.value = '1';
+    inp.focus();
+    inp.select();
+  });
+});
+
+document.querySelectorAll('.quarter-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.quarter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+$('checkBtn').addEventListener('click', ()=>{
+  if(finished) return;
+  initAudio();
+
+  const t = tasks[currentTaskIdx];
+  const fb = $('feedback');
+
+  const xBtn = document.querySelector('.dir-btn[data-axis="x"].active');
+  const yBtn = document.querySelector('.dir-btn[data-axis="y"].active');
+  const xVal = parseInt($('xInput').value, 10) || 0;
+  const yVal = parseInt($('yInput').value, 10) || 0;
+  const xDir = xBtn ? parseInt(xBtn.dataset.dir, 10) : 0;
+  const yDir = yBtn ? parseInt(yBtn.dataset.dir, 10) : 0;
+  const userShiftX = xDir * xVal;
+  const userShiftY = yDir * yVal;
+
+  const qBtn = document.querySelector('.quarter-btn.active');
+  const userQ = qBtn ? parseInt(qBtn.dataset.q, 10) : 0;
+
+  const correctX = t.shiftX;
+  const correctY = t.shiftY;
+  const correctQ = t.quarters;
+
+  const xOK = (userShiftX === correctX) && (xVal === Math.abs(correctX) || correctX === 0);
+  const yOK = (userShiftY === correctY) && (yVal === Math.abs(correctY) || correctY === 0);
+  const qOK = userQ === correctQ;
+
+  if(xOK && yOK && qOK){
+    correct++;
+    $('scoreChip').textContent = '✅ ' + correct + ' / ' + total;
+    $('gameScore').textContent = 'Верно: ' + correct;
+    fb.className = 'feedback ok';
+    fb.textContent = '✓ Верно!';
+    soundRight();
+    $('checkBtn').disabled = true;
+    setTimeout(nextTask, 700);
+  } else {
+    lives--;
+    updateLives();
+    fb.className = 'feedback err';
+    const errs = [];
+    if(!xOK) errs.push('сдвиге по x');
+    if(!yOK) errs.push('сдвиге по y');
+    if(!qOK) errs.push('четвертях');
+    fb.innerHTML = '✗ Неверно.<span class="detail">Ошибка в: ' + errs.join(', ') + '</span>';
+    soundWrong();
+    if(lives <= 0) setTimeout(()=>endGame(false), 600);
+    else $('checkBtn').disabled = false;
+  }
+});
+
+function nextTask(){
+  currentTaskIdx++;
+  if(currentTaskIdx >= total){ endGame(true); return; }
+  renderTask();
+}
+
+function updateLives(){
+  const hearts = '❤️ '.repeat(Math.max(0, lives)).trim();
+  const empty = '🖤 '.repeat(Math.max(0, 3 - lives)).trim();
+  $('livesChip').textContent = (hearts + ' ' + empty).trim();
+}
+
+function formatTime(s){
+  const m = Math.floor(s / 60);
+  const ss = s % 60;
+  return m + ':' + String(ss).padStart(2, '0');
+}
+
+function startTimer(){
+  timeLeft = 300;
+  $('timerChip').classList.remove('warn');
+  $('timerChip').textContent = '⏱ ' + formatTime(timeLeft);
+  clearInterval(timerInterval);
+  timerInterval = setInterval(()=>{
+    timeLeft--;
+    $('timerChip').textContent = '⏱ ' + formatTime(Math.max(0, timeLeft));
+    if(timeLeft <= 10 && timeLeft > 0){
+      $('timerChip').classList.add('warn');
+      soundTick();
+    }
+    if(timeLeft <= 0){
+      clearInterval(timerInterval);
+      endGame(false);
+    }
+  }, 1000);
+}
+
+function endGame(win){
+  if(finished) return;
+  finished = true;
+  clearInterval(timerInterval);
+  $('timerChip').classList.remove('warn');
+  soundEnd();
+
+  const elapsed = 300 - Math.max(0, timeLeft);
+
+  $('finishCorrect').textContent = correct;
+  $('finishTotal').textContent = total;
+  $('finishTime').textContent = formatTime(Math.max(0, elapsed));
+
+  if(win && correct === total){
+    $('finishTitle').textContent = '🏆 Победа!';
+    $('finishMsg').textContent = 'Все 5 заданий верно! Отличная работа.';
+  } else if(win){
+    $('finishTitle').textContent = '✓ Готово';
+    $('finishMsg').textContent = 'Ты справился. Есть над чем поработать.';
+  } else if(lives <= 0){
+    $('finishTitle').textContent = '💔 Жизни кончились';
+    $('finishMsg').textContent = 'Попробуй ещё раз — теперь ты знаешь, где ошибаешься.';
+  } else {
+    $('finishTitle').textContent = '⏱ Время вышло';
+    $('finishMsg').textContent = 'Не успел. Потренируйся и попробуй снова.';
+  }
+
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $('screenFinish').classList.add('active');
+}
+
+function startGame(){
+  initAudio();
+  lives = 3;
+  correct = 0;
+  currentTaskIdx = 0;
+  finished = false;
+  tasks = pickTasks();
+
+  $('scoreChip').textContent = '✅ 0 / ' + total;
+  $('gameScore').textContent = 'Верно: 0';
+  updateLives();
+
+  renderTask();
+  startTimer();
+
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $('screenGame').classList.add('active');
+}
+
+$('startBtn').addEventListener('click', startGame);
+$('restartBtn').addEventListener('click', startGame);
+
+['xInput','yInput'].forEach(id=>{
+  $(id).addEventListener('input', ()=>{
+    const axis = id === 'xInput' ? 'x' : 'y';
+    const v = parseInt($(id).value, 10) || 0;
+    if(v === 0){
+      document.querySelectorAll(`.dir-btn[data-axis="${axis}"]`).forEach(b => b.classList.remove('active'));
+    }
+  });
+});
+</script>
+</body>
+</html>
