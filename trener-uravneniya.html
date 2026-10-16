@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>ΤΕΤΡΑΚΤΥΣ · Тренажёр · Уравнения</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c; --teal-dark:#16a085; --teal-deep:#0e7c66;
+    --mint:#7fffd4; --coral:#ff6b6b;
+    --gold:#f4d35e; --gold-light:#ffe89a;
+    --text:#e8f8f5; --text-soft:#b8d8d0;
+    --ok:#2ecc71; --err:#ff6b6b;
+  }
+  body{
+    font-family: Georgia, "Times New Roman", serif;
+    color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(26,188,156,0.22), transparent 55%),
+      radial-gradient(ellipse at 85% 90%, rgba(127,255,212,0.15), transparent 55%),
+      radial-gradient(ellipse at 50% 50%, rgba(244,211,94,0.06), transparent 70%),
+      linear-gradient(160deg, #0a2a33 0%, #0d3b47 50%, #134e5e 100%);
+    background-attachment: fixed;
+    min-height:100vh; overflow-x:hidden;
+    line-height:1.6;
+  }
+
+  .wrap{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:14px;padding-top:100px;padding-bottom:80px;}
+
+  .logo-mini{
+    position:fixed; top:14px; left:16px; z-index:100;
+    display:flex;align-items:center;gap:10px;
+    background: rgba(255,255,255,0.05);
+    border:1.5px solid rgba(26,188,156,0.35);
+    border-radius:16px; padding:10px 14px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    font-family:'Times New Roman',serif;
+  }
+  .logo-dots{font-size:11px;line-height:1.15;letter-spacing:2px;font-weight:bold;color:var(--teal);}
+  .logo-txt{font-size:15px;letter-spacing:2px;font-weight:700;color:var(--teal);}
+  .logo-txt small{display:block;font-size:11px;letter-spacing:3px;font-weight:400;color:var(--teal);opacity:.85;font-style:normal;}
+
+  .top-fixed{
+    position:fixed; top:14px; right:16px; z-index:100;
+    display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end;
+  }
+  .chip{
+    background: rgba(255,255,255,0.05);
+    border:1.5px solid rgba(26,188,156,0.35);
+    border-radius:20px;padding:8px 16px;
+    font-weight:700;font-size:14px;white-space:nowrap;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    color:var(--text);
+    font-family:"Courier New", monospace;
+  }
+  .chip.date{font-family: Georgia, serif; font-size:13px;}
+  .chip.set{color:var(--gold);border-color:rgba(244,211,94,0.5);}
+
+  .title{text-align:center; margin: 20px auto 26px;}
+  .title h1{
+    font-size: clamp(22px, 3.5vw, 28px);
+    color:var(--mint);
+    text-shadow: 0 0 24px rgba(127,255,212,0.35);
+    margin-bottom:8px;
+  }
+  .title p{color:var(--text-soft); font-size:14.5px; font-style:italic;}
+
+  /* ДВУХКОЛОНОЧНАЯ РАСКЛАДКА */
+  .layout{
+    display:grid;
+    grid-template-columns:1fr 500px;
+    gap:22px;
+    align-items:start;
+  }
+  @media (max-width:1200px){ .layout{grid-template-columns:1fr;} }
+
+  .left-col{display:flex;flex-direction:column;gap:20px;}
+
+  .right-col{
+    position:sticky;
+    top:20px;
+  }
+  @media (max-width:1200px){ .right-col{position:static;} }
+
+  .card{
+    background: rgba(255,255,255,0.04);
+    border:1.5px solid rgba(26,188,156,0.4);
+    border-radius:20px;
+    padding:22px 26px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+  .card h2{
+    font-family:'Times New Roman',serif;
+    font-size:19px;
+    color: var(--mint);
+    margin-bottom:14px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .card h2 .num-badge{
+    font-family:"Courier New",monospace;
+    font-weight:bold;
+    color:#04231d;
+    font-size:13px;
+    background: linear-gradient(135deg,#1abc9c,#16a085);
+    padding:5px 12px;
+    border-radius:11px;
+  }
+
+  .instructions{
+    background: rgba(26,188,156,0.10);
+    border-left:5px solid var(--teal);
+    border-radius:14px;
+    padding:14px 18px;
+    margin:10px 0;
+    font-size:15px;
+    line-height:1.7;
+  }
+  .instructions b{color:var(--mint);}
+  .instructions ol{margin:8px 0 0 22px;}
+  .instructions li{margin-bottom:6px;}
+
+  .name-row{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    margin:14px 0 0;
+  }
+  .name-row label{
+    font-size:15px;
+    color:var(--mint);
+    font-weight:bold;
+    white-space:nowrap;
+  }
+  .name-row input{
+    flex:1;
+    padding:12px 16px;
+    border-radius:14px;
+    background: rgba(255,255,255,0.06);
+    border:1.5px solid rgba(26,188,156,0.5);
+    color:var(--text);
+    font-family: Georgia, serif;
+    font-size:16px;
+    outline:none;
+    transition: all .18s;
+  }
+  .name-row input:focus{
+    border-color:var(--mint);
+    background:rgba(26,188,156,0.12);
+  }
+
+  .task{
+    background: rgba(255,255,255,0.03);
+    border:1.5px solid rgba(26,188,156,0.3);
+    border-radius:18px;
+    padding:18px 20px;
+    margin-bottom:16px;
+    transition: all .2s;
+  }
+  .task:last-child{margin-bottom:0;}
+  .task:hover{ border-color: var(--mint); }
+  .task.solved-ok{ border-color: rgba(46,204,113,0.6); background: rgba(46,204,113,0.04); }
+  .task.solved-err{ border-color: rgba(255,107,107,0.6); background: rgba(255,107,107,0.04); }
+
+  .task-head{display:flex; align-items:center; gap:12px; margin-bottom:12px;}
+  .task-num{
+    font-family:"Courier New",monospace;
+    font-weight:bold;
+    color:#04231d;
+    font-size:14px;
+    background: linear-gradient(135deg,#1abc9c,#16a085);
+    padding:6px 13px;
+    border-radius:11px;
+    flex-shrink:0;
+    white-space:nowrap;
+  }
+
+  .task-text{font-size:15.5px; color: var(--text); line-height:1.7; margin-bottom:10px;}
+  .task-eq{
+    font-family:'Cambria Math','Times New Roman',serif;
+    font-size:22px;
+    color: var(--gold-light);
+    font-style:italic;
+    text-align:center;
+    padding:12px 16px;
+    margin:12px 0;
+    background: rgba(244,211,94,0.08);
+    border-left:4px solid var(--gold);
+    border-radius:0 12px 12px 0;
+    letter-spacing:0.5px;
+    line-height:1.4;
+  }
+
+  .answer-row{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    margin-top:12px;
+    flex-wrap:wrap;
+  }
+  .answer-row label{font-size:14px; color: var(--text-soft); white-space:nowrap;}
+  .answer-row input{
+    flex:1;
+    min-width:160px;
+    padding:11px 14px;
+    border-radius:12px;
+    background: rgba(255,255,255,0.06);
+    border:1.5px solid rgba(26,188,156,0.45);
+    color: var(--text);
+    font-family:'Courier New',monospace;
+    font-size:15px;
+    outline:none;
+    transition: all .18s;
+  }
+  .answer-row input:focus{border-color:var(--mint); background:rgba(26,188,156,0.12);}
+  .answer-row input:disabled{
+    opacity:1;
+    cursor:not-allowed;
+    background:rgba(0,0,0,0.35);
+    color:#cfeee6;
+    pointer-events:none;
+  }
+  .answer-row input.ok{border-color: var(--ok); background: rgba(46,204,113,0.18); color:#d4ffe3;}
+  .answer-row input.err{border-color: var(--err); background: rgba(255,107,107,0.18); color:#ffc9c9;}
+
+  .btn-answer{
+    padding:11px 20px;
+    border:none;
+    border-radius:12px;
+    background: linear-gradient(135deg,#1abc9c,#16a085);
+    color:#04231d;
+    font-family: Georgia, serif;
+    font-size:14px;
+    font-weight:bold;
+    cursor:pointer;
+    transition: all .18s;
+    box-shadow: 0 6px 18px rgba(26,188,156,0.35);
+    letter-spacing:0.5px;
+    white-space:nowrap;
+  }
+  .btn-answer:hover:not(:disabled){transform:translateY(-2px);}
+  .btn-answer:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+
+  .verdict-mark{font-size:22px; min-width:30px; text-align:center; flex-shrink:0;}
+
+  /* КАНВАС */
+  .board-box{
+    background:rgba(10,42,51,0.35);
+    border:1.5px solid rgba(26,188,156,0.35);
+    border-radius:16px;
+    padding:10px;
+  }
+  .tools{
+    display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    padding:4px 4px 10px;
+  }
+  .tool{
+    cursor:pointer;user-select:none;
+    padding:8px 14px;border-radius:10px;
+    background:rgba(255,255,255,0.05);
+    border:1.5px solid rgba(26,188,156,0.4);
+    color:var(--text);
+    font-family:Georgia,serif;font-size:13px;
+    transition:.2s;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .tool:hover{border-color:var(--mint);background:rgba(26,188,156,0.12);transform:translateY(-1px);}
+  .tool.active{
+    background:linear-gradient(135deg,var(--teal),var(--teal-dark));
+    color:#04231d;font-weight:bold;
+    border-color:var(--mint);
+    box-shadow:0 4px 14px rgba(26,188,156,0.4);
+  }
+  .tool .color-dot{
+    display:inline-block;width:14px;height:14px;
+    border-radius:50%;border:2px solid #fff;
+    box-shadow:0 0 0 1px rgba(0,0,0,0.3);
+  }
+  .tool-sep{width:1px;height:24px;background:rgba(26,188,156,0.3);margin:0 4px;}
+  canvas.board{
+    display:block;width:100%;height:auto;
+    touch-action:none;cursor:crosshair;
+    border-radius:14px;background:#f7fcfa;
+  }
+
+  .btnrow{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin-top:22px;
+  }
+  button.big{
+    font-family: Georgia, serif;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+    border:none;
+    border-radius:16px;
+    padding:16px 30px;
+    color:#04231d;
+    background: linear-gradient(135deg, #1abc9c, #16a085);
+    transition:.2s;
+    box-shadow: 0 8px 28px rgba(26,188,156,0.4);
+    letter-spacing:0.5px;
+  }
+  button.big:hover{transform:translateY(-2px); box-shadow: 0 12px 36px rgba(26,188,156,0.55);}
+  button.big:active{transform:translateY(1px);}
+  button.big.gold{
+    background: linear-gradient(135deg, #f4d35e, #d9b53c);
+    box-shadow: 0 8px 28px rgba(244,211,94,0.4);
+  }
+
+  .toast{
+    position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(80px);
+    background: linear-gradient(135deg, #1abc9c, #16a085);
+    color:#04231d;
+    padding:14px 26px;
+    border-radius:16px;
+    font-family: Georgia, serif;
+    font-weight:bold;
+    font-size:15px;
+    box-shadow: 0 12px 40px rgba(26,188,156,0.5);
+    opacity:0;
+    transition: all .35s cubic-bezier(.3,.9,.4,1);
+    z-index:200;
+    pointer-events:none;
+    max-width:90vw;
+    text-align:center;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  .footer{
+    text-align:center;
+    padding: 40px 20px 20px;
+    color:var(--text-soft);
+    font-size:13px;
+    font-family:'Times New Roman',serif;
+    letter-spacing:2px;
+  }
+  .footer .f-logo{color:var(--teal); font-size:15px; margin-bottom:6px;}
+  .footer .f-sub{font-style:italic; opacity:.75;}
+
+  @media (max-width: 1200px){
+    .right-col{order:-1;}
+  }
+  @media (max-width: 700px){
+    .wrap{padding-top:120px;}
+    .logo-mini{padding:8px 10px;}
+    .logo-txt{font-size:13px;}
+    .title h1{font-size:20px;}
+    .chip{padding:6px 12px; font-size:12px;}
+    .card{padding:18px 18px;}
+    .task-eq{font-size:19px; padding:10px 12px;}
+    .name-row{flex-wrap:wrap;}
+    .name-row label{width:100%;}
+    button.big{font-size:14px; padding:13px 20px;}
+    .answer-row{flex-wrap:wrap;}
+    .btn-answer{width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<div class="logo-mini">
+  <div class="logo-dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="logo-txt">ΤΕΤΡΑΚΤΥΣ<small>Школа Елены Михалевой</small></div>
+</div>
+
+<div class="top-fixed">
+  <div class="chip set" id="setChip">📚 Набор 1 / 5</div>
+  <div class="chip date" id="dateChip">📅 —</div>
+</div>
+
+<div class="wrap">
+  <div class="title">
+    <h1>✏️ Тренажёр · Уравнения</h1>
+    <p>5 наборов по 10 уравнений · ввод ответа · канвас для черновика</p>
+  </div>
+
+  <div class="layout">
+
+    <!-- ЛЕВАЯ КОЛОНКА -->
+    <div class="left-col">
+
+      <!-- ИНСТРУКЦИЯ + ИМЯ -->
+      <div class="card">
+        <h2><span class="num-badge">📋</span>Инструкция</h2>
+        <div class="instructions">
+          <b>Как выполнять:</b>
+          <ol>
+            <li>Реши каждое уравнение <b>в тетради</b> с полным решением.</li>
+            <li>Впиши ответ и нажми <b>«✅ Ответить»</b> — <b>изменить нельзя</b>.</li>
+            <li>Несколько корней — через <b>точку с запятой</b>: <b>2; -3</b>.</li>
+            <li>Десятичные — через запятую или точку: <b>1,5</b> или <b>1.5</b>.</li>
+            <li>Закончил — нажми <b>«📩 Отправить учителю в Макс»</b>.</li>
+            <li>Затем — <b>«🔄 Сменить задания»</b> → следующий набор.</li>
+            <li>Справа — <b>канвас</b> для черновика. При смене набора очищается.</li>
+          </ol>
+        </div>
+        <div class="name-row">
+          <label for="studentName">👤 Имя ученика:</label>
+          <input type="text" id="studentName" placeholder="введи своё имя" autocomplete="off">
+        </div>
+      </div>
+
+      <!-- ЗАДАНИЯ -->
+      <div class="card">
+        <h2><span class="num-badge" id="setTitle">📚</span>Набор 1</h2>
+        <div id="tasksContainer"></div>
+      </div>
+
+    </div>
+
+    <!-- ПРАВАЯ КОЛОНКА — STICKY КАНВАС -->
+    <div class="right-col">
+      <div class="card" style="padding:14px;">
+        <h2 style="margin-bottom:10px;"><span class="num-badge">✏️</span>Черновик</h2>
+        <div class="board-box">
+          <div class="tools">
+            <button class="tool active" data-color="#0e7c66"><span class="color-dot" style="background:#0e7c66"></span> Перо</button>
+            <button class="tool" data-color="#ff6b6b"><span class="color-dot" style="background:#ff6b6b"></span> Перо</button>
+            <button class="tool" data-tool="eraser">🧽 Ластик</button>
+            <span class="tool-sep"></span>
+            <button class="tool" data-tool="undo">↶ Отмена</button>
+            <button class="tool" data-tool="clear">🗑 Очистить</button>
+          </div>
+          <canvas class="board" id="board"></canvas>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="btnrow">
+    <button class="big" id="btnMax">📩 Отправить учителю в Макс</button>
+    <button class="big gold" id="btnNext">🔄 Сменить задания</button>
+  </div>
+
+  <div class="footer">
+    <div class="f-logo">ΤΕΤΡΑΚΤΥΣ · ΤΕΤРАКТИС</div>
+    <div class="f-sub">где математика превращается в приключение</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── ДАТА ── */
+(function(){
+  const days = ['ВС','ПН','ВТ','СР','ЧТ','ПТ','СБ'];
+  function upd(){
+    const d = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    document.getElementById('dateChip').textContent =
+      `📅 ${days[d.getDay()]} ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`;
+  }
+  upd(); setInterval(upd, 60000);
+})();
+
+/* ── ИМЯ ── */
+const nameInput = document.getElementById('studentName');
+const savedName = localStorage.getItem('tetraktis_student_name') || '';
+if (savedName) nameInput.value = savedName;
+nameInput.addEventListener('input', () => {
+  localStorage.setItem('tetraktis_student_name', nameInput.value.trim());
+});
+
+/* ── 5 НАБОРОВ ── */
+const SETS = [
+  [
+    {eq:'x² − 7x + 12 = 0', type:'roots', values:[3,4]},
+    {eq:'5x − 9 = 3x + 7', type:'number', value:8},
+    {eq:'x² − 16 = 0', type:'roots', values:[-4,4]},
+    {eq:'4(x − 3) = 2(x + 5)', type:'number', value:11},
+    {eq:'2x² − 8x = 0', type:'roots', values:[0,4]},
+    {eq:'7x = 42', type:'number', value:6},
+    {eq:'x² + 5x − 14 = 0', type:'roots', values:[-7,2]},
+    {eq:'(x + 2)² = 9', type:'roots', values:[-5,1]},
+    {eq:'3(x + 1) = 2(x − 4) + 5', type:'number', value:0},
+    {eq:'3x² − 27 = 0', type:'roots', values:[-3,3]}
+  ],
+  [
+    {eq:'x² − 9x + 20 = 0', type:'roots', values:[4,5]},
+    {eq:'4x + 7 = 2x − 3', type:'number', value:-5},
+    {eq:'x² − 25 = 0', type:'roots', values:[-5,5]},
+    {eq:'5(x + 2) = 3(x + 6)', type:'number', value:4},
+    {eq:'3x² − 12x = 0', type:'roots', values:[0,4]},
+    {eq:'9x = 63', type:'number', value:7},
+    {eq:'x² + 3x − 10 = 0', type:'roots', values:[-5,2]},
+    {eq:'(x − 1)² = 16', type:'roots', values:[-3,5]},
+    {eq:'2(x − 3) = 5(x + 1) − 7', type:'number', value:-2},
+    {eq:'2x² − 18 = 0', type:'roots', values:[-3,3]}
+  ],
+  [
+    {eq:'x² − 5x + 6 = 0', type:'roots', values:[2,3]},
+    {eq:'3x − 5 = 7x + 11', type:'number', value:-4},
+    {eq:'x² − 36 = 0', type:'roots', values:[-6,6]},
+    {eq:'6(x − 1) = 4(x + 3)', type:'number', value:9},
+    {eq:'x² − 7x = 0', type:'roots', values:[0,7]},
+    {eq:'8x = 48', type:'number', value:6},
+    {eq:'x² − x − 12 = 0', type:'roots', values:[-3,4]},
+    {eq:'(x + 3)² = 25', type:'roots', values:[-8,2]},
+    {eq:'4(x + 2) = 3(x − 1) + 12', type:'number', value:1},
+    {eq:'5x² − 45 = 0', type:'roots', values:[-3,3]}
+  ],
+  [
+    {eq:'x² − 11x + 30 = 0', type:'roots', values:[5,6]},
+    {eq:'7x + 3 = 2x − 12', type:'number', value:-3},
+    {eq:'x² − 49 = 0', type:'roots', values:[-7,7]},
+    {eq:'3(x + 4) = 5(x − 2)', type:'number', value:11},
+    {eq:'4x² − 16x = 0', type:'roots', values:[0,4]},
+    {eq:'6x = 54', type:'number', value:9},
+    {eq:'x² + 7x + 12 = 0', type:'roots', values:[-4,-3]},
+    {eq:'(x − 4)² = 4', type:'roots', values:[2,6]},
+    {eq:'3(x − 2) = 5(x + 2) − 20', type:'number', value:2},
+    {eq:'2x² − 32 = 0', type:'roots', values:[-4,4]}
+  ],
+  [
+    {eq:'x² − 8x + 15 = 0', type:'roots', values:[3,5]},
+    {eq:'6x − 4 = 3x + 11', type:'number', value:5},
+    {eq:'x² − 64 = 0', type:'roots', values:[-8,8]},
+    {eq:'2(x + 5) = 7(x − 5)', type:'number', value:9},
+    {eq:'5x² − 20x = 0', type:'roots', values:[0,4]},
+    {eq:'4x = 36', type:'number', value:9},
+    {eq:'x² + 2x − 15 = 0', type:'roots', values:[-5,3]},
+    {eq:'(x + 4)² = 1', type:'roots', values:[-5,-3]},
+    {eq:'2(x + 3) = 4(x − 1) − 4', type:'number', value:7},
+    {eq:'4x² − 100 = 0', type:'roots', values:[-5,5]}
+  ]
+];
+
+/* ── СОСТОЯНИЕ ── */
+let currentSet = parseInt(localStorage.getItem('tetraktis_eq_set') || '0', 10);
+if (currentSet < 0 || currentSet >= SETS.length) currentSet = 0;
+const taskState = {};
+
+/* ── РЕНДЕР НАБОРА ── */
+function renderSet(){
+  document.getElementById('setChip').textContent = `📚 Набор ${currentSet + 1} / ${SETS.length}`;
+  document.getElementById('setTitle').textContent = `📚 Набор ${currentSet + 1}`;
+  localStorage.setItem('tetraktis_eq_set', String(currentSet));
+
+  const box = document.getElementById('tasksContainer');
+  box.innerHTML = '';
+
+  Object.keys(taskState).forEach(k => delete taskState[k]);
+
+  SETS[currentSet].forEach((task, i) => {
+    const id = i + 1;
+    const el = document.createElement('div');
+    el.className = 'task';
+    el.dataset.task = id;
+    el.innerHTML = `
+      <div class="task-head"><div class="task-num">№${id}</div></div>
+      <div class="task-text">Решите уравнение:</div>
+      <div class="task-eq">${task.eq}</div>
+      <div class="answer-row">
+        <label>Ответ:</label>
+        <input type="text" data-ans="${id}" placeholder="введи ответ" autocomplete="off">
+        <button class="btn-answer" data-check="${id}">✅ Ответить</button>
+        <span class="verdict-mark" data-mark="${id}"></span>
+      </div>
+    `;
+    box.appendChild(el);
+  });
+
+  box.querySelectorAll('.btn-answer').forEach(btn => {
+    btn.addEventListener('click', () => handleAnswer(btn.dataset.check));
+  });
+  box.querySelectorAll('input[data-ans]').forEach(inp => {
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'Enter'){
+        e.preventDefault();
+        const id = inp.dataset.ans;
+        const btn = box.querySelector(`.btn-answer[data-check="${id}"]`);
+        if (btn && !btn.disabled) btn.click();
+      }
+    });
+  });
+
+  /* Восстановление ответов */
+  const saved = JSON.parse(localStorage.getItem('tetraktis_eq_answers_set' + currentSet) || '{}');
+  for (const id in saved){
+    const s = saved[id];
+    const inp = box.querySelector(`input[data-ans="${id}"]`);
+    const btn = box.querySelector(`.btn-answer[data-check="${id}"]`);
+    const mark = box.querySelector(`.verdict-mark[data-mark="${id}"]`);
+    const task = box.querySelector(`.task[data-task="${id}"]`);
+    if (!inp) continue;
+    inp.value = s.val || '';
+    inp.disabled = true;
+    inp.classList.add(s.ok ? 'ok' : 'err');
+    btn.disabled = true;
+    btn.textContent = s.ok ? '✅ Принято' : '📌 Принято';
+    mark.textContent = s.ok ? '✅' : '❌';
+    mark.style.color = s.ok ? 'var(--ok)' : 'var(--err)';
+    task.classList.add(s.ok ? 'solved-ok' : 'solved-err');
+    taskState[id] = s.ok ? 'ok' : 'err';
+  }
+}
+
+/* ── НОРМАЛИЗАЦИЯ ── */
+function normalizeNumber(s){
+  return String(s).trim()
+    .replace(/[−–—]/g, '-')
+    .replace(/,/g, '.')
+    .replace(/\s+/g, '');
+}
+
+function parseRoots(s){
+  let str = String(s).trim()
+    .replace(/[−–—]/g, '-')
+    .replace(/(\d),(\d)/g, '$1.$2')
+    .replace(/\s+/g, ' ');
+  const parts = str.split(/[;]+/).map(p => p.trim()).filter(Boolean);
+  const final = [];
+  for (const p of parts){
+    const sub = p.split(/,(?=\s*-?\d)/).map(x => x.trim()).filter(Boolean);
+    for (const x of sub) final.push(x);
+  }
+  const nums = [];
+  for (const p of final){
+    const n = parseFloat(p);
+    if (isNaN(n)) return null;
+    nums.push(n);
+  }
+  return nums;
+}
+
+function checkAnswer(task, userVal){
+  if (task.type === 'number'){
+    const s = normalizeNumber(userVal).toLowerCase();
+    const n = parseFloat(s);
+    if (isNaN(n)) return false;
+    return Math.abs(n - task.value) < 1e-6;
+  }
+  if (task.type === 'roots'){
+    const s = String(userVal).trim().toLowerCase();
+    if (s === 'нет корней' || s === 'неткорней') return task.values.length === 0;
+    const nums = parseRoots(userVal);
+    if (!nums) return false;
+    if (nums.length !== task.values.length) return false;
+    const a = nums.slice().sort((x,y)=>x-y);
+    const b = task.values.slice().sort((x,y)=>x-y);
+    for (let i=0;i<a.length;i++){
+      if (Math.abs(a[i]-b[i]) > 1e-6) return false;
+    }
+    return true;
+  }
+  return false;
+}
+
+/* ── ОБРАБОТКА ОТВЕТА ── */
+function handleAnswer(id){
+  const task = SETS[currentSet][id - 1];
+  const box = document.getElementById('tasksContainer');
+  const el = box.querySelector(`.task[data-task="${id}"]`);
+  const inp = el.querySelector(`input[data-ans="${id}"]`);
+  const btn = el.querySelector(`.btn-answer[data-check="${id}"]`);
+  const mark = el.querySelector(`.verdict-mark[data-mark="${id}"]`);
+  const val = inp.value.trim();
+
+  if (!val){
+    showToast('⚠️ Впиши ответ');
+    inp.focus();
+    return;
+  }
+
+  const correct = checkAnswer(task, val);
+  taskState[id] = correct ? 'ok' : 'err';
+
+  inp.disabled = true;
+  inp.classList.remove('ok', 'err');
+  inp.classList.add(correct ? 'ok' : 'err');
+  btn.disabled = true;
+  btn.textContent = correct ? '✅ Принято' : '📌 Принято';
+  mark.textContent = correct ? '✅' : '❌';
+  mark.style.color = correct ? 'var(--ok)' : 'var(--err)';
+  el.classList.remove('solved-ok', 'solved-err');
+  el.classList.add(correct ? 'solved-ok' : 'solved-err');
+
+  const savedKey = 'tetraktis_eq_answers_set' + currentSet;
+  const saved = JSON.parse(localStorage.getItem(savedKey) || '{}');
+  saved[id] = { val: val, ok: correct };
+  localStorage.setItem(savedKey, JSON.stringify(saved));
+
+  showToast(correct ? '✅ Верно!' : '📌 Ответ принят');
+}
+
+/* ── ТЕКСТ УЧИТЕЛЮ ── */
+function buildText(){
+  const name = (nameInput.value.trim() || 'Ученик');
+  const days = ['ВС','ПН','ВТ','СР','ЧТ','ПТ','СБ'];
+  const d = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const dateStr = `${days[d.getDay()]} ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`;
+
+  const lines = [];
+  lines.push(`✏️ Тренажёр · Уравнения · Набор ${currentSet + 1}`);
+  lines.push(`Ученик: ${name}`);
+  lines.push(`Дата: ${dateStr}`);
+  lines.push('');
+  lines.push('━━━ Ответы ━━━');
+
+  let correctCount = 0;
+  SETS[currentSet].forEach((task, i) => {
+    const id = i + 1;
+    const inp = document.querySelector(`input[data-ans="${id}"]`);
+    const val = inp ? (inp.value.trim() || '—') : '—';
+    const state = taskState[id];
+    let mark = '—';
+    if (state === 'ok'){ mark = '✅'; correctCount++; }
+    else if (state === 'err'){ mark = '❌'; }
+    lines.push(`№${id}. ${task.eq}`);
+    lines.push(`   Ответ: ${val}  ${mark}`);
+  });
+
+  lines.push('');
+  lines.push(`Итого верно: ${correctCount} из ${SETS[currentSet].length}`);
+  lines.push('');
+  lines.push('Решение — в тетради (фото прикрепляю отдельно).');
+  return lines.join('\n');
+}
+
+/* ── МАКС ── */
+const MAX_URL = 'https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes';
+
+document.getElementById('btnMax').addEventListener('click', async () => {
+  if (!nameInput.value.trim()){
+    showToast('⚠️ Впиши своё имя');
+    nameInput.focus();
+    return;
+  }
+  const answered = Object.keys(taskState).length;
+  if (answered === 0){
+    showToast('⚠️ Ответь хотя бы на одно задание');
+    return;
+  }
+
+  const text = buildText();
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch (e) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch(err){}
+    document.body.removeChild(ta);
+  }
+  window.open(MAX_URL, '_blank');
+  showToast('📋 Скопировано · прикрепи фото в чате Макс');
+});
+
+/* ── СМЕНИТЬ НАБОР ── */
+document.getElementById('btnNext').addEventListener('click', () => {
+  currentSet = (currentSet + 1) % SETS.length;
+  renderSet();
+  clearCanvas();
+  showToast(`🔄 Набор ${currentSet + 1} загружен`);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+/* ── ТОСТ ── */
+let toastTimer = null;
+function showToast(text){
+  const t = document.getElementById('toast');
+  t.textContent = text;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ══════════════════════════════════════════════════
+   КАНВАС
+══════════════════════════════════════════════════ */
+const canvas = document.getElementById('board');
+const ctx = canvas.getContext('2d');
+const state = { tool: 'pen', color: '#0e7c66', drawing: false };
+let strokes = [];
+
+function resize(){
+  const r = canvas.getBoundingClientRect();
+  if(r.width === 0) return;
+  const dpr = window.devicePixelRatio || 1;
+  const newW = Math.round(r.width * dpr);
+  const newH = Math.round(r.width * 0.85 * dpr);
+  if(canvas.width === newW && canvas.height === newH) return;
+  canvas.width = newW;
+  canvas.height = newH;
+  canvas.style.height = (r.width * 0.85) + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  redraw();
+}
+
+function drawBg(){
+  const r = canvas.getBoundingClientRect();
+  const w = r.width, h = r.width * 0.85;
+  ctx.save();
+  ctx.fillStyle = '#f7fcfa';
+  ctx.fillRect(0, 0, w, h);
+  ctx.strokeStyle = 'rgba(26,188,156,0.18)';
+  ctx.lineWidth = 1;
+  for(let x = 0; x <= w; x += 20){
+    ctx.beginPath(); ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, h); ctx.stroke();
+  }
+  for(let y = 0; y <= h; y += 20){
+    ctx.beginPath(); ctx.moveTo(0, y + 0.5); ctx.lineTo(w, y + 0.5); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawStroke(s){
+  if(s.points.length < 2){
+    if(s.tool === 'eraser'){
+      ctx.beginPath();
+      ctx.arc(s.points[0].x, s.points[0].y, 12, 0, Math.PI * 2);
+      ctx.fillStyle = '#f7fcfa';
+      ctx.fill();
+    } else {
+      ctx.beginPath();
+      ctx.arc(s.points[0].x, s.points[0].y, 0.9, 0, Math.PI * 2);
+      ctx.fillStyle = s.color;
+      ctx.fill();
+    }
+    return;
+  }
+  ctx.save();
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  if(s.tool === 'eraser'){
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.strokeStyle = 'rgba(0,0,0,1)';
+    ctx.lineWidth = 24;
+  } else {
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.strokeStyle = s.color;
+    ctx.lineWidth = 2;
+  }
+  ctx.beginPath();
+  ctx.moveTo(s.points[0].x, s.points[0].y);
+  for(let i = 1; i < s.points.length; i++) ctx.lineTo(s.points[i].x, s.points[i].y);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function redraw(){
+  drawBg();
+  strokes.forEach(drawStroke);
+}
+
+function clearCanvas(){
+  strokes = [];
+  redraw();
+}
+
+function getPos(e){
+  const r = canvas.getBoundingClientRect();
+  return { x: e.clientX - r.left, y: e.clientY - r.top };
+}
+
+canvas.addEventListener('pointerdown', e=>{
+  e.preventDefault();
+  try{ canvas.setPointerCapture(e.pointerId); }catch(_){}
+  const p = getPos(e);
+  state.drawing = true;
+  strokes.push({ tool: state.tool, color: state.color, points: [p] });
+  redraw();
+});
+
+canvas.addEventListener('pointermove', e=>{
+  if(!state.drawing) return;
+  e.preventDefault();
+  const s = strokes[strokes.length - 1];
+  if(!s) return;
+  const events = (typeof e.getCoalescedEvents === 'function') ? e.getCoalescedEvents() : [e];
+  for(const ev of events){
+    s.points.push(getPos(ev));
+  }
+  redraw();
+});
+
+canvas.addEventListener('pointerup', e=>{
+  if(!state.drawing) return;
+  state.drawing = false;
+  redraw();
+  try{ canvas.releasePointerCapture(e.pointerId); }catch(_){}
+});
+
+canvas.addEventListener('pointercancel', ()=>{ state.drawing = false; });
+canvas.addEventListener('touchstart', e => e.preventDefault(), {passive:false});
+
+document.querySelectorAll('.board-box .tool').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    if(btn.dataset.color){
+      document.querySelectorAll('.board-box [data-color]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.color = btn.dataset.color;
+      state.tool = 'pen';
+      return;
+    }
+    const t = btn.dataset.tool;
+    if(t === 'undo'){ strokes.pop(); redraw(); return; }
+    if(t === 'clear'){ clearCanvas(); return; }
+    document.querySelectorAll('.board-box [data-tool]').forEach(b => {
+      if(b.dataset.tool !== 'undo' && b.dataset.tool !== 'clear') b.classList.remove('active');
+    });
+    document.querySelectorAll('.board-box [data-color]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.tool = t;
+  });
+});
+
+window.addEventListener('resize', resize);
+resize();
+requestAnimationFrame(()=>setTimeout(resize, 100));
+
+/* ── СТАРТ ── */
+renderSet();
+</script>
+
+</body>
+</html>
