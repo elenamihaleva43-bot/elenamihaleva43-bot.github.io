@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тренажер · Квадратные уравнения · ΤΕΤΡΑΚΤΥΣ</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<style>
+  :root {
+    --bg: #113c38; --panel: rgba(22, 83, 77, 0.6); --bg2: #0b2b27;
+    --line: rgba(47, 212, 181, 0.3); --turq: #2fd4b5; --mint: #7fe8c8;
+    --gold: #e8c45a; --text: #e0f2ec; --coral: #ff6b6b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background-color: var(--bg);
+    background-image: radial-gradient(circle at 15% 10%, rgba(47, 212, 181, 0.15) 0%, transparent 40%),
+                      radial-gradient(circle at 85% 90%, rgba(47, 212, 181, 0.1) 0%, transparent 40%);
+    background-attachment: fixed; color: var(--text);
+    font-family: Georgia, serif; padding: 20px; margin: 0;
+    display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+    overflow-x: hidden;
+  }
+  
+  header {
+    position: sticky; top: 0; z-index: 50; width: 100%; max-width: 800px;
+    background: rgba(17, 60, 56, 0.9); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line); padding: 15px 20px; margin-bottom: 20px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-radius: 0 0 18px 18px;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-dots { display: flex; flex-direction: column; gap: 2px; font-size: 10px; color: var(--gold); line-height: 1; }
+  .logo-text { font-family: 'Times New Roman', serif; font-weight: bold; font-size: 20px; color: var(--turq); letter-spacing: 2px; text-shadow: 0 0 12px rgba(47,212,181,0.4); }
+  .logo-text small { display: block; font-size: 10px; color: var(--mint); letter-spacing: 3px; }
+  
+  .header-info { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .chip {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+    padding: 6px 12px; font-size: 13px; color: var(--mint); font-family: "Courier New", monospace;
+  }
+  .chip.timer { cursor: pointer; }
+  .chip.timer:hover { border-color: var(--turq); }
+  .chip.ok { color: #2ecc71; }
+
+  .main-container { display: flex; gap: 20px; width: 100%; max-width: 1200px; justify-content: center; transition: all 0.3s ease; }
+  .tasks-area { width: 100%; max-width: 800px; display: flex; flex-direction: column; gap: 20px; padding-bottom: 100px; }
+  
+  .name-block {
+    background: var(--panel); backdrop-filter: blur(12px);
+    border: 1px solid var(--line); border-radius: 16px;
+    padding: 15px 20px; display: flex; align-items: center; gap: 15px; flex-wrap: wrap;
+  }
+  .name-block label { color: var(--gold); font-weight: bold; }
+  .name-block input {
+    flex: 1; min-width: 200px; padding: 10px 15px; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--bg2); color: var(--text);
+    font-family: Georgia, serif; font-size: 16px; outline: none;
+  }
+  .name-block input:focus { border-color: var(--turq); }
+
+  .task-card {
+    background: var(--panel); backdrop-filter: blur(12px);
+    border: 1px solid var(--line); border-radius: 16px; padding: 24px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3); transition: 0.3s;
+  }
+  .task-card.solved-ok { border-color: #2ecc71; background: rgba(46, 204, 113, 0.05); }
+  .task-card.solved-bad { border-color: var(--coral); background: rgba(255, 107, 107, 0.05); }
+
+  .task-header {
+    display: flex; gap: 12px; align-items: center; margin-bottom: 16px;
+    border-bottom: 1px solid rgba(47, 212, 181, 0.15); padding-bottom: 12px;
+  }
+  .task-num {
+    background: linear-gradient(135deg, var(--turq), #1a9a82); color: #0b2b27;
+    font-weight: bold; font-size: 18px; width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 10px; font-family: "Courier New", monospace;
+  }
+  .task-mark { font-size: 24px; margin-left: auto; }
+  
+  .task-body { font-size: 18px; line-height: 1.6; margin-bottom: 15px; }
+  .task-body b { color: var(--gold); }
+  
+  .answer-row { display: flex; gap: 10px; margin-top: 15px; }
+  .answer-row input {
+    flex: 1; padding: 14px; border-radius: 12px; border: 1.5px solid var(--line);
+    background: var(--bg2); color: var(--text); font-size: 16px; font-family: "Courier New", monospace;
+    outline: none; transition: 0.3s;
+  }
+  .answer-row input:focus { border-color: var(--turq); box-shadow: 0 0 10px rgba(47,212,181,0.2); }
+  .answer-row input.disabled { opacity: 0.7; pointer-events: none; background: #061d1a; }
+  .answer-row input.correct { border-color: #2ecc71; color: #2ecc71; }
+  .answer-row input.wrong { border-color: var(--coral); color: var(--coral); }
+  
+  .status {
+    margin-top: 15px; font-weight: bold; display: none; font-size: 15px;
+    padding: 12px; border-radius: 10px;
+  }
+  .status.ok { display: block; background: rgba(46,204,113,0.15); color: #2ecc71; border: 1px solid #2ecc71; }
+  .status.err { display: block; background: rgba(255,107,107,0.15); color: var(--coral); border: 1px solid var(--coral); }
+
+  .katex { color: var(--gold); font-size: 1.1em; }
+
+  .bottom-bar {
+    position: fixed; bottom: 0; left: 0; width: 100%; 
+    background: rgba(17, 60, 56, 0.95); backdrop-filter: blur(10px);
+    border-top: 1px solid var(--line); padding: 15px 20px;
+    display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; z-index: 10;
+  }
+  .btn {
+    padding: 14px 20px; border: none; border-radius: 12px;
+    font-family: Georgia, serif; font-size: 16px; font-weight: bold;
+    cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px;
+  }
+  .btn-primary { background: linear-gradient(135deg, var(--turq), #1a9a82); color: #0b2b27; box-shadow: 0 4px 15px rgba(47,212,181,0.3); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(47,212,181,0.5); }
+  .btn-gold { background: transparent; border: 1.5px solid var(--gold); color: var(--gold); }
+  .btn-gold:hover { background: rgba(232, 196, 90, 0.1); }
+  .btn-max { background: linear-gradient(135deg, #2fd4b5, #1a9a82); color: #0b2b27; }
+
+  .cheat-sheet {
+    width: 0; opacity: 0; overflow: hidden;
+    background: var(--panel); backdrop-filter: blur(12px);
+    border: 1px solid var(--line); border-radius: 16px;
+    transition: width 0.4s ease, opacity 0.4s ease, margin 0.4s ease;
+    height: fit-content; position: sticky; top: 100px;
+    display: flex; flex-direction: column; max-height: calc(100vh - 120px);
+  }
+  .cheat-sheet.open { width: 380px; opacity: 1; margin-left: 20px; }
+  
+  .cheat-inner { width: 380px; padding: 20px; overflow-y: auto; }
+  .cheat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+  .cheat-header h2 { color: var(--turq); margin: 0; font-size: 20px; }
+  .cheat-close { background: none; border: none; color: var(--coral); font-size: 26px; cursor: pointer; line-height: 1; }
+  
+  .cheat-card {
+    background: rgba(0,0,0,0.2); border: 1px solid rgba(47,212,181,0.1); border-radius: 12px;
+    padding: 15px; margin-bottom: 15px;
+  }
+  .cheat-card h3 { color: var(--gold); font-size: 15px; margin: 0 0 10px 0; border-bottom: 1px solid rgba(47,212,181,0.2); padding-bottom: 5px; }
+  .cheat-card .desc { font-size: 13px; color: #b0c4cc; line-height: 1.4; margin-top: 10px; }
+  .cheat-card .math-block { font-size: 16px; color: var(--mint); text-align: center; margin: 10px 0; }
+
+  .squares-grid { 
+    display: grid; grid-template-columns: repeat(9, 1fr); gap: 3px; 
+    font-family: "Courier New", monospace; font-size: 11px; text-align: center;
+    margin-top: 10px;
+  }
+  .squares-grid div { 
+    background: rgba(0,0,0,0.3); padding: 4px 2px; border-radius: 3px; 
+    color: var(--mint); display: flex; flex-direction: column; align-items: center;
+  }
+  .squares-grid div span { color: var(--gold); font-size: 9px; line-height: 1; margin-top: 1px; }
+
+  @media (max-width: 1150px) {
+    .cheat-sheet {
+      position: fixed; top: 0; right: -100%; height: 100vh; width: 100%; max-width: 380px;
+      border-radius: 0; border-left: 2px solid var(--turq); z-index: 100;
+      overflow-y: auto; transition: right 0.3s ease; max-height: 100vh;
+    }
+    .cheat-sheet.open { right: 0; width: 100%; margin-left: 0; }
+    .cheat-inner { width: 100%; padding: 20px; height: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dots"><span>●</span><span>● ●</span><span>● ● ●</span><span>● ● ● ●</span></div>
+    <div class="logo-text">ΤΕΤΡΑΚΤΥΣ<small>ШКОЛА МАТЕМАТИКИ</small></div>
+  </div>
+  <div class="header-info">
+    <div class="chip" id="dateDisplay">📅 --.--.----</div>
+    <div class="chip timer" id="timerDisplay" title="Клик — пауза/старт">⏱ 00:00</div>
+    <div class="chip ok" id="scoreDisplay">✅ 0 / 5</div>
+  </div>
+</header>
+
+<div class="main-container">
+  <div class="tasks-area">
+    <div class="name-block">
+      <label>👤 Имя ученика:</label>
+      <input type="text" id="studentName" placeholder="Введи имя и фамилию" autocomplete="off">
+    </div>
+    <div id="tasks-container"></div>
+  </div>
+  
+  <!-- Шпаргалка -->
+  <div class="cheat-sheet" id="cheatSheet">
+    <div class="cheat-inner">
+      <div class="cheat-header">
+        <h2>📖 Шпаргалка</h2>
+        <button class="cheat-close" onclick="toggleCheat()">&times;</button>
+      </div>
+
+      <div class="cheat-card">
+        <h3>Формула корней</h3>
+        <div class="math-block" id="f1"></div>
+        <div class="desc">Где <span id="d1"></span>.</div>
+      </div>
+
+      <div class="cheat-card">
+        <h3>Дискриминант</h3>
+        <div class="math-block" id="f2"></div>
+        <div class="desc">Если <span id="d2_1"></span> — 2 корня, <span id="d2_2"></span> — 1 корень, <span id="d2_3"></span> — нет корней.</div>
+      </div>
+
+      <div class="cheat-card">
+        <h3>Теорема Виета</h3>
+        <div class="math-block" id="f3"></div>
+        <div class="desc">Для приведенного уравнения <span id="d3"></span>.</div>
+      </div>
+
+      <div class="cheat-card">
+        <h3>Неполные уравнения</h3>
+        <div class="desc" style="line-height: 2;">
+          <div style="margin-bottom: 8px;"><b>1.</b> <span id="f4_1"></span></div>
+          <div style="margin-bottom: 8px;"><b>2.</b> <span id="f4_2"></span></div>
+          <div><b>3.</b> <span id="f4_3"></span> <br>Если <span id="f4_3_cond"></span>, корней нет.</div>
+        </div>
+      </div>
+
+      <div class="cheat-card">
+        <h3>Таблица квадратов (10–99)</h3>
+        <div class="squares-grid" id="squaresTable"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="bottom-bar">
+  <button class="btn btn-gold" onclick="toggleCheat()">📖 Шпаргалка</button>
+  <button class="btn btn-primary" onclick="checkAll()" id="btnCheck">✅ Проверить</button>
+  <button class="btn btn-gold" onclick="generateAll()">🔄 Сменить</button>
+  <button class="btn btn-max" onclick="sendToMax()">💬 В Макс</button>
+</div>
+
+<script>
+  const tasks = {};
+  let timerInterval, timerSeconds = 0, isTimerRunning = true;
+
+  function renderEl(id, tex, displayMode = false) {
+    const el = document.getElementById(id);
+    if (el && window.katex) {
+      try {
+        el.innerHTML = katex.renderToString(tex, { displayMode: displayMode, throwOnError: false });
+      } catch (e) {
+        console.error("KaTeX error on " + id, e);
+      }
+    }
+  }
+
+  window.onload = () => {
+    // Формулы шпаргалки
+    renderEl('f1', 'x = \\frac{-b \\pm \\sqrt{D}}{2a}', true);
+    renderEl('d1', 'D = b^2 - 4ac');
+    
+    renderEl('f2', 'D = b^2 - 4ac', true);
+    renderEl('d2_1', 'D > 0');
+    renderEl('d2_2', 'D = 0');
+    renderEl('d2_3', 'D < 0');
+    
+    renderEl('f3', '\\begin{cases} x_1 + x_2 = -b \\\\ x_1 \\cdot x_2 = c \\end{cases}', true);
+    renderEl('d3', 'x^2 + bx + c = 0');
+    
+    // Неполные уравнения
+    renderEl('f4_1', 'ax^2 - c = 0 \\;\\Rightarrow\\; x^2 = \\frac{c}{a} \\;\\Rightarrow\\; x = \\pm\\sqrt{\\frac{c}{a}}');
+    renderEl('f4_2', 'ax^2 + bx = 0 \\;\\Rightarrow\\; x(ax+b) = 0 \\;\\Rightarrow\\; x_1=0, \\; x_2=-\\frac{b}{a}');
+    renderEl('f4_3', 'ax^2 + c = 0 \\;\\Rightarrow\\; x^2 = -\\frac{c}{a}');
+    renderEl('f4_3_cond', '-\\frac{c}{a} < 0');
+
+    // Таблица квадратов от 10 до 99
+    const grid = document.getElementById('squaresTable');
+    for (let i = 10; i <= 99; i++) {
+      grid.innerHTML += `<div>${i*i}<span>${i}²</span></div>`;
+    }
+    
+    const d = new Date();
+    document.getElementById('dateDisplay').textContent = '📅 ' + d.toLocaleDateString('ru-RU');
+    
+    timerInterval = setInterval(() => {
+      if (isTimerRunning) {
+        timerSeconds++;
+        const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+        const s = (timerSeconds % 60).toString().padStart(2, '0');
+        document.getElementById('timerDisplay').textContent = `⏱ ${m}:${s}`;
+      }
+    }, 1000);
+
+    document.getElementById('timerDisplay').onclick = function() {
+      isTimerRunning = !isTimerRunning;
+      this.style.opacity = isTimerRunning ? 1 : 0.5;
+    };
+
+    const savedName = localStorage.getItem('trenazher_uravneniya_name');
+    if(savedName) document.getElementById('studentName').value = savedName;
+    document.getElementById('studentName').addEventListener('input', (e) => {
+      localStorage.setItem('trenazher_uravneniya_name', e.target.value);
+    });
+
+    generateAll();
+  };
+
+  function formatEq(a, b, c) {
+    let eq = "";
+    if (a === 1) eq += "x^2";
+    else if (a === -1) eq += "-x^2";
+    else eq += `${a}x^2`;
+
+    if (b !== 0) {
+      if (b > 0) eq += ` + ${b === 1 ? '' : b}x`;
+      else eq += ` - ${b === -1 ? '' : Math.abs(b)}x`;
+    }
+    if (c !== 0) {
+      if (c > 0) eq += ` + ${c}`;
+      else eq += ` - ${Math.abs(c)}`;
+    }
+    return eq + " = 0";
+  }
+
+  function genTask1() {
+    const root = Math.floor(Math.random() * 9) + 2;
+    const a = root * root;
+    return { eq: formatEq(1, 0, -a), answer: `-${root};${root}` };
+  }
+  function genTask2() {
+    let a = Math.floor(Math.random() * 5) + 2;
+    let b = (Math.floor(Math.random() * 9) + 1) * (Math.random() > 0.5 ? 1 : -1); 
+    while (b % a !== 0) { b = (Math.floor(Math.random() * 9) + 1) * (Math.random() > 0.5 ? 1 : -1); }
+    const root2 = -b / a;
+    return { eq: formatEq(a, b, 0), answer: `${Math.min(0, root2)};${Math.max(0, root2)}` };
+  }
+  function genTask3() {
+    let a = Math.floor(Math.random() * 5) + 2;
+    let c = Math.floor(Math.random() * 10) + 1;
+    if (Math.random() > 0.5) { a = -a; c = -c; }
+    return { eq: formatEq(a, 0, c), answer: "нет корней" };
+  }
+  function genTask4() {
+    let r1 = Math.floor(Math.random() * 9) + 1, r2 = Math.floor(Math.random() * 9) + 1;
+    if (Math.random() > 0.5) r1 = -r1;
+    if (Math.random() > 0.5) r2 = -r2;
+    return { eq: formatEq(1, -(r1 + r2), r1 * r2), answer: `${Math.min(r1, r2)};${Math.max(r1, r2)}` };
+  }
+  function genTask5() {
+    let a = Math.floor(Math.random() * 3) + 2;
+    let r1 = Math.floor(Math.random() * 5) + 1, r2 = Math.floor(Math.random() * 5) + 1;
+    if (Math.random() > 0.5) r1 = -r1;
+    if (Math.random() > 0.5) r2 = -r2;
+    return { eq: formatEq(a, -a * (r1 + r2), a * r1 * r2), answer: `${Math.min(r1, r2)};${Math.max(r1, r2)}` };
+  }
+
+  function renderAll() {
+    const container = document.getElementById('tasks-container');
+    container.innerHTML = '';
+    for (let i = 1; i <= 5; i++) {
+      const t = tasks[i];
+      const eqHtml = katex.renderToString(t.eq, { displayMode: false, throwOnError: false });
+
+      const card = document.createElement('div');
+      card.className = 'task-card';
+      card.id = `task-${i}`;
+      card.innerHTML = `
+        <div class="task-header">
+          <div class="task-num">${i}</div>
+          <div class="task-mark" id="mark-${i}"></div>
+        </div>
+        <div class="task-body">
+          Решите уравнение: <b>${eqHtml}</b><br>
+          <span style="font-size:14px;color:#b0c4cc">Если корней несколько, запиши их через точку с запятой в порядке возрастания (например: -5; 5). Если корней нет — напиши: нет корней.</span>
+        </div>
+        <div class="answer-row">
+          <input type="text" id="input-${i}" placeholder="Введи корни или 'нет корней'" autocomplete="off">
+        </div>
+        <div class="status" id="status-${i}"></div>
+      `;
+      container.appendChild(card);
+    }
+    
+    const btn = document.getElementById('btnCheck');
+    btn.disabled = false; btn.style.opacity = '1'; btn.textContent = '✅ Проверить';
+    document.getElementById('scoreDisplay').textContent = '✅ 0 / 5';
+  }
+
+  function generateAll() {
+    tasks[1] = genTask1(); tasks[2] = genTask2(); tasks[3] = genTask3();
+    tasks[4] = genTask4(); tasks[5] = genTask5();
+    renderAll();
+  }
+
+  function checkAll() {
+    let emptyTasks = [];
+    for (let i = 1; i <= 5; i++) {
+      if (!document.getElementById(`input-${i}`).value.trim()) emptyTasks.push(i);
+    }
+    if (emptyTasks.length > 0) { alert(`Заполни все поля! Пустые: №${emptyTasks.join(', №')}`); return; }
+
+    let okCount = 0;
+    for (let i = 1; i <= 5; i++) {
+      const inp = document.getElementById(`input-${i}`);
+      const card = document.getElementById(`task-${i}`);
+      const mark = document.getElementById(`mark-${i}`);
+      const st = document.getElementById(`status-${i}`);
+      
+      let userAns = inp.value.trim().toLowerCase().replace(/\s+/g, '');
+      if (userAns !== 'неткорней') {
+          userAns = inp.value.trim().replace(/\s+/g, '').replace(/,/g, ';').replace(/\./g, ';');
+      } else { userAns = 'неткорней'; }
+
+      const parts = userAns.split(';').filter(x => x !== '');
+      if (parts.length === 2) {
+        const num1 = parseInt(parts[0]), num2 = parseInt(parts[1]);
+        if (!isNaN(num1) && !isNaN(num2)) userAns = Math.min(num1, num2) + ';' + Math.max(num1, num2);
+      }
+      
+      const correctAns = tasks[i].answer;
+      const isOk = (userAns === correctAns);
+      
+      inp.classList.add('disabled', isOk ? 'correct' : 'wrong');
+      inp.disabled = true;
+      
+      if (isOk) {
+        okCount++;
+        card.classList.add('solved-ok');
+        mark.innerHTML = '✅';
+        st.className = 'status ok';
+        st.innerHTML = 'Верно!';
+      } else {
+        card.classList.add('solved-bad');
+        mark.innerHTML = '❌';
+        st.className = 'status err';
+        st.innerHTML = `Неверно. Твой ответ: ${inp.value}. <b>Правильный ответ: ${correctAns.replace(';', ' ; ')}</b>`;
+      }
+    }
+    document.getElementById('scoreDisplay').textContent = `✅ ${okCount} / 5`;
+    const btn = document.getElementById('btnCheck');
+    btn.disabled = true; btn.style.opacity = '0.5'; btn.textContent = 'Проверено';
+  }
+
+  function sendToMax() {
+    const name = document.getElementById('studentName').value.trim() || 'Без имени';
+    let text = `📐 ТРЕНАЖЕР · Квадратные уравнения\nУченик: ${name}\nДата: ${new Date().toLocaleString('ru-RU')}\n--------------------------------\n\n`;
+    let okCount = 0;
+    for (let i = 1; i <= 5; i++) {
+      const userAns = document.getElementById(`input-${i}`).value.trim();
+      const correctAns = tasks[i].answer;
+      
+      let isOk = false;
+      let cleanUser = userAns.toLowerCase().replace(/\s+/g, '').replace(/,/g, ';').replace(/\./g, ';');
+      if (cleanUser === 'неткорней' && correctAns === 'нет корней') isOk = true;
+      
+      const parts = cleanUser.split(';').filter(x => x !== '');
+      if (parts.length === 2) {
+        const num1 = parseInt(parts[0]), num2 = parseInt(parts[1]);
+        if (!isNaN(num1) && !isNaN(num2)) cleanUser = Math.min(num1, num2) + ';' + Math.max(num1, num2);
+      }
+      if (cleanUser === correctAns) isOk = true;
+
+      if (userAns !== '') {
+        if (isOk) { okCount++; text += `✅ Задача ${i}. Ответ: ${userAns} (верно)\n`; }
+        else { text += `❌ Задача ${i}. Ответ: ${userAns} (правильный: ${correctAns.replace(';', '; ')})\n`; }
+      } else {
+        text += `— Задача ${i}. (не решено)\n`;
+      }
+    }
+    text += `\n✅ Итог: ${okCount} из 5 верно`;
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Отчет скопирован! Открываем чат Макс...');
+      window.open('https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes', '_blank');
+    }).catch(err => alert('Ошибка копирования: ' + err));
+  }
+
+  function toggleCheat() {
+    document.getElementById('cheatSheet').classList.toggle('open');
+  }
+</script>
+</body>
+</html>
