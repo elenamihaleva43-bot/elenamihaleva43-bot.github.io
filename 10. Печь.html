@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Баня для Бабы Яги</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f5ede4;
+            font-family: 'Georgia', 'Times New Roman', serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 40px;
+            padding: 28px 32px 30px;
+            border: 1px solid #e0d8cc;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.04);
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 6px 14px;
+            background: #f8f4ee;
+            border-radius: 16px;
+            border: 1px solid #e0d8cc;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+        .logo-symbol {
+            font-size: 12px;
+            line-height: 1.1;
+            letter-spacing: 3px;
+            font-weight: bold;
+            color: #b4a7d6;
+            flex-shrink: 0;
+        }
+        .line1 { letter-spacing: 7px; }
+        .line2 { letter-spacing: 7px; }
+        .line3 { letter-spacing: 7px; }
+        .line4 { letter-spacing: 7px; }
+        .logo-text { flex: 1; min-width: 120px; }
+        .logo-greek {
+            font-size: 20px;
+            letter-spacing: 3px;
+            font-weight: 700;
+            font-family: 'Times New Roman', Times, serif;
+            color: #4a3f5e;
+            border-top: 1px solid #e0d8cc;
+            border-bottom: 1px solid #e0d8cc;
+            padding: 2px 0;
+            display: inline-block;
+        }
+        .logo-russian {
+            font-size: 11px;
+            letter-spacing: 2px;
+            font-weight: 600;
+            color: #8888aa;
+            margin-top: 1px;
+        }
+        .logo-sub {
+            font-size: 9px;
+            letter-spacing: 1px;
+            color: #8888aa;
+            opacity: 0.5;
+            font-style: italic;
+        }
+
+        .title-block {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .title-block h1 {
+            font-size: clamp(28px, 4.5vw, 42px);
+            font-weight: 900;
+            color: #2d2b4e;
+            letter-spacing: 2px;
+        }
+        .title-block h1 span {
+            color: #c47a5a;
+        }
+        .title-block .sub {
+            font-size: clamp(14px, 1.5vw, 18px);
+            color: #8888aa;
+            letter-spacing: 3px;
+            margin-top: 2px;
+        }
+
+        .condition {
+            background: #f8f4ee;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            font-size: 15px;
+            line-height: 1.8;
+            color: #333344;
+            border: 1px solid #e8e0d4;
+        }
+        .condition strong {
+            color: #2d2b4e;
+        }
+        .condition .highlight {
+            color: #6a8cdf;
+            font-weight: 600;
+        }
+
+        .figure-wrapper {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 8px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: center;
+            border: 1px solid #e8e0d4;
+        }
+        .figure-wrapper svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .table-box {
+            margin-bottom: 16px;
+        }
+        .table-box h3 {
+            text-align: center;
+            font-size: 16px;
+            color: #2d2b4e;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+        .table-data {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        .table-data th {
+            color: #6a8cdf;
+            font-weight: 700;
+            padding: 8px 10px;
+            border-bottom: 2px solid #d5cce8;
+            text-align: center;
+            font-size: 13px;
+        }
+        .table-data td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #e8e0d4;
+            text-align: center;
+            font-size: 14px;
+            color: #333344;
+        }
+        .table-data tr:last-child td {
+            border-bottom: none;
+        }
+
+        .task {
+            background: #f8f4ee;
+            border: 1px solid #e8e0d4;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+        }
+        .task .task-num {
+            font-size: 13px;
+            color: #6a8cdf;
+            letter-spacing: 1px;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+        .task .task-text {
+            font-size: 16px;
+            line-height: 1.7;
+            color: #333344;
+        }
+        .task .task-text strong {
+            color: #2d2b4e;
+        }
+
+        .task .input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .task input[type="text"] {
+            padding: 8px 14px;
+            background: #ffffff;
+            border: 1px solid #d5cce8;
+            border-radius: 8px;
+            color: #2d2b4e;
+            font-family: 'Georgia', serif;
+            font-size: 18px;
+            width: 160px;
+            text-align: center;
+            outline: none;
+            transition: 0.3s;
+        }
+        .task input[type="text"]:focus {
+            border-color: #6a8cdf;
+            box-shadow: 0 0 16px rgba(106, 140, 223, 0.05);
+        }
+        .task input[type="text"]:disabled {
+            opacity: 0.3;
+        }
+
+        .match-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 8px 0;
+            font-size: 17px;
+        }
+        .match-table th {
+            color: #6a8cdf;
+            font-weight: 700;
+            padding: 8px 10px;
+            border-bottom: 2px solid #d5cce8;
+            text-align: center;
+        }
+        .match-table td {
+            padding: 8px 10px;
+            text-align: center;
+        }
+        .match-table input[type="text"] {
+            padding: 6px 10px;
+            background: #ffffff;
+            border: 1px solid #d5cce8;
+            border-radius: 6px;
+            color: #2d2b4e;
+            font-family: 'Georgia', serif;
+            font-size: 16px;
+            width: 50px;
+            text-align: center;
+            outline: none;
+            transition: 0.3s;
+        }
+        .match-table input[type="text"]:focus {
+            border-color: #6a8cdf;
+        }
+        .match-table input[type="text"]:disabled {
+            opacity: 0.3;
+        }
+
+        .btn-nav {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: #6a8cdf;
+            border: none;
+            border-radius: 50px;
+            font-size: 17px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Georgia', serif;
+            text-align: center;
+        }
+        .btn-nav:hover {
+            background: #5a7ccf;
+            box-shadow: 0 6px 24px rgba(106, 140, 223, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .btn-nav-sm {
+            padding: 10px 24px;
+            background: #6a8cdf;
+            border: none;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Georgia', serif;
+            text-align: center;
+        }
+        .btn-nav-sm:hover {
+            background: #5a7ccf;
+            box-shadow: 0 6px 24px rgba(106, 140, 223, 0.10);
+            transform: translateY(-2px);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        .nav-buttons .btn-nav-sm {
+            flex: 1;
+            min-width: 100px;
+        }
+
+        .motto {
+            margin-top: 18px;
+            text-align: center;
+            font-size: clamp(13px, 1.2vw, 16px);
+            color: #8888aa;
+            letter-spacing: 2px;
+            font-style: italic;
+            border-top: 1px solid #e8e0d4;
+            padding-top: 14px;
+        }
+        .motto strong {
+            color: #b4a7d6;
+            font-weight: 700;
+        }
+
+        .math {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 1.4em;
+            color: #2d2b4e;
+            text-align: center;
+            padding: 10px 0;
+        }
+        .math .frac {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            margin: 0 3px;
+        }
+        .math .frac .num {
+            border-bottom: 2px solid #2d2b4e;
+            padding: 0 8px 2px;
+        }
+        .math .frac .den {
+            padding: 2px 8px 0;
+        }
+        .math .sqrt {
+            display: inline-block;
+            position: relative;
+            padding-left: 5px;
+        }
+        .math .sqrt::before {
+            content: '√';
+            font-size: 1.1em;
+        }
+        .math .sqrt .radicand {
+            border-top: 2px solid #2d2b4e;
+            padding: 0 6px;
+        }
+        .math .sup {
+            font-size: 0.6em;
+            vertical-align: super;
+        }
+
+        .options {
+            margin: 8px 0 4px 0;
+            color: #333344;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .result-box {
+            text-align: center;
+            padding: 16px 0;
+        }
+        .result-box .big-score {
+            font-size: 56px;
+            font-weight: 900;
+            color: #6a8cdf;
+        }
+        .result-box .label {
+            font-size: 16px;
+            color: #8888aa;
+            margin-top: 2px;
+        }
+        .result-box .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 16px 0;
+        }
+        .result-box .stats .stat {
+            text-align: center;
+        }
+        .result-box .stats .num {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2d2b4e;
+        }
+        .result-box .stats .desc {
+            font-size: 13px;
+            color: #8888aa;
+        }
+
+        .result-box .errors-list {
+            text-align: left;
+            max-width: 480px;
+            margin: 12px auto;
+            background: #f8f4ee;
+            border: 1px solid #e8e0d4;
+            border-radius: 10px;
+            padding: 12px 16px;
+        }
+        .result-box .errors-list h3 {
+            color: #cc4466;
+            font-size: 13px;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+        .result-box .errors-list .error-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+            border-bottom: 1px solid #e8e0d4;
+            font-size: 14px;
+            color: #8888aa;
+            gap: 8px;
+        }
+        .result-box .errors-list .error-item:last-child {
+            border-bottom: none;
+        }
+        .result-box .errors-list .error-item .q {
+            color: #2d2b4e;
+            flex: 1;
+        }
+        .result-box .errors-list .error-item .a {
+            color: #2d8a4e;
+        }
+        .result-box .errors-list .error-item .wrong-answer {
+            color: #cc4466;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 16px;
+                border-radius: 28px;
+            }
+            .logo {
+                flex-direction: column;
+                align-items: center;
+                gap: 6px;
+            }
+            .task input[type="text"] {
+                width: 100px;
+                font-size: 16px;
+            }
+            .nav-buttons {
+                flex-direction: column;
+            }
+            .nav-buttons .btn-nav-sm {
+                flex: none;
+                width: 100%;
+            }
+            .condition {
+                font-size: 14px;
+                padding: 14px 16px;
+            }
+            .task .task-text {
+                font-size: 15px;
+            }
+            .table-data {
+                font-size: 12px;
+            }
+            .table-data th,
+            .table-data td {
+                padding: 5px 6px;
+                font-size: 12px;
+            }
+            .match-table {
+                font-size: 14px;
+            }
+            .match-table input[type="text"] {
+                width: 40px;
+                font-size: 14px;
+            }
+            .result-box .stats {
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- ЛОГОТИП -->
+        <div class="logo">
+            <div class="logo-symbol">
+                <div class="line1">●</div>
+                <div class="line2">● ●</div>
+                <div class="line3">● ● ●</div>
+                <div class="line4">● ● ● ●</div>
+            </div>
+            <div class="logo-text">
+                <div class="logo-greek">ΤΕΤΡΑΚΤΥΣ</div>
+                <div class="logo-russian">ТЕТРАКТИС</div>
+                <div class="logo-sub">Школа математики Елены Михалевой</div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- СТРАНИЦА 1: УСЛОВИЕ + РИСУНОК -->
+        <!-- ============================================================ -->
+        <div class="screen active" id="page1">
+            <div class="title-block">
+                <h1>🧖 БАНЯ <span>ДЛЯ БАБЫ ЯГИ</span></h1>
+                <div class="sub">✦ Подготовка к ОГЭ ✦</div>
+            </div>
+
+            <div class="condition">
+                <strong>📜 Условие:</strong><br>
+                Хозяин дачного участка строит баню с парным отделением.
+                Парное отделение имеет размеры: <strong>длина 3,2 м</strong>, <strong>ширина 2,5 м</strong>, <strong>высота 1,9 м</strong>.
+                Окон в парном отделении нет, для доступа внутрь планируется дверь шириной <strong>60 см</strong>, высота дверного проёма <strong>1,7 м</strong>.
+                Для прогрева парного отделения можно использовать электрическую или дровяную печь.
+                В таблице представлены характеристики трёх печей.
+            </div>
+
+            <!-- ТАБЛИЦА -->
+            <div class="table-box">
+                <h3>📋 Характеристики печей</h3>
+                <table class="table-data">
+                    <thead>
+                        <tr>
+                            <th>Номер печи</th>
+                            <th>Тип</th>
+                            <th>Объём помещения (куб. м)</th>
+                            <th>Масса (кг)</th>
+                            <th>Стоимость (руб.)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1</strong></td>
+                            <td>дровяная</td>
+                            <td>7 – 11</td>
+                            <td>42</td>
+                            <td>17 000</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2</strong></td>
+                            <td>дровяная</td>
+                            <td>9 – 17</td>
+                            <td>46</td>
+                            <td>18 500</td>
+                        </tr>
+                        <tr>
+                            <td><strong>3</strong></td>
+                            <td>электрическая</td>
+                            <td>8 – 16,5</td>
+                            <td>18</td>
+                            <td>14 000</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div style="font-size:13px;color:#8888aa;margin-top:6px;text-align:center;">
+                    Для установки дровяной печи дополнительных затрат не потребуется.<br>
+                    Установка электрической печи потребует подведения специального кабеля, что обойдётся в <strong>6200 руб.</strong>
+                </div>
+            </div>
+
+            <!-- КАРТИНКА: БАБА ЯГА В САУНЕ -->
+            <div class="figure-wrapper">
+                <svg viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg">
+                    <style>
+                        .wood { fill: #8b6b4a; stroke: #5a3f2a; stroke-width: 1.5; }
+                        .roof { fill: #6a4a3a; stroke: #4a2a1a; stroke-width: 1.5; }
+                        .wall { fill: #c4b09a; stroke: #8a7a6a; stroke-width: 1; }
+                        .window { fill: #4a7a9a; stroke: #2a4a6a; stroke-width: 1.5; }
+                        .door { fill: #5a3f2a; stroke: #3a2a1a; stroke-width: 1.5; }
+                        .yaga-body { fill: #3a5a3a; stroke: #2a3a2a; stroke-width: 1; }
+                        .yaga-face { fill: #e8c8a0; stroke: #b09070; stroke-width: 0.8; }
+                        .yaga-hair { fill: #8a8a8a; stroke: #6a6a6a; stroke-width: 0.8; }
+                        .yaga-hat { fill: #2a2a3a; stroke: #1a1a2a; stroke-width: 1; }
+                        .sauna-bg { fill: #d4c8b8; }
+                        .steam { fill: none; stroke: #ffffff; stroke-width: 1.5; opacity: 0.6; }
+                        .broom { fill: #8b7a5a; stroke: #5a4a2a; stroke-width: 1; }
+                    </style>
+
+                    <rect x="0" y="0" width="700" height="400" class="sauna-bg" rx="10"/>
+
+                    <rect x="40" y="40" width="620" height="320" class="wall" rx="6"/>
+                    <line x1="40" y1="100" x2="660" y2="100" class="wood"/>
+                    <line x1="40" y1="160" x2="660" y2="160" class="wood"/>
+                    <line x1="40" y1="220" x2="660" y2="220" class="wood"/>
+                    <line x1="40" y1="280" x2="660" y2="280" class="wood"/>
+                    <line x1="40" y1="340" x2="660" y2="340" class="wood"/>
+
+                    <rect x="80" y="300" width="540" height="20" class="wood" rx="4"/>
+
+                    <!-- Печь -->
+                    <g transform="translate(60, 190) scale(0.6)">
+                        <rect x="70" y="32" width="96" height="148" fill="#d0d0d0" stroke="#000" stroke-width="1.2"/>
+                        <rect x="82" y="52" width="72" height="16" fill="#c8c8c8" stroke="#aaaaaa" stroke-width="0.6" rx="3"/>
+                        <path d="M 70 116 Q 118 78 166 116" fill="none" stroke="#000" stroke-width="1"/>
+                        <rect x="98" y="135" width="40" height="45" fill="#e0e0e0" stroke="#000" stroke-width="1.2"/>
+                        <ellipse cx="118" cy="150" rx="12" ry="8" fill="#ff6633" opacity="0.6"/>
+                        <ellipse cx="118" cy="147" rx="7" ry="5" fill="#ffaa33" opacity="0.8"/>
+                    </g>
+
+                    <rect x="130" y="20" width="25" height="40" class="wood" rx="2"/>
+
+                    <!-- БАБА ЯГА -->
+                    <g transform="translate(450, 150)">
+                        <rect x="10" y="50" width="50" height="70" class="yaga-body" rx="6"/>
+                        <circle cx="35" cy="35" r="22" class="yaga-face"/>
+                        <path d="M 13 35 Q 5 50 15 60 Q 25 55 20 70" class="yaga-hair"/>
+                        <path d="M 57 35 Q 65 50 55 60 Q 45 55 50 70" class="yaga-hair"/>
+                        <path d="M 10 25 Q 35 5 60 25 Q 45 20 35 28 Q 25 20 10 25" class="yaga-hat"/>
+                        <circle cx="28" cy="32" r="3" fill="#2a2a2a"/>
+                        <circle cx="42" cy="32" r="3" fill="#2a2a2a"/>
+                        <path d="M 35 38 L 32 45 L 38 45 Z" fill="#b09070"/>
+                        <path d="M 28 48 Q 35 52 42 48" fill="none" stroke="#8a5a4a" stroke-width="1.2"/>
+                        <line x1="65" y1="70" x2="100" y2="30" class="broom" stroke-width="2"/>
+                        <line x1="90" y1="40" x2="110" y2="50" class="broom" stroke-width="1.5"/>
+                        <line x1="95" y1="30" x2="115" y2="40" class="broom" stroke-width="1.5"/>
+                        <line x1="85" y1="50" x2="105" y2="60" class="broom" stroke-width="1.5"/>
+                        <line x1="0" y1="60" x2="20" y2="80" stroke="#6a5a3a" stroke-width="2"/>
+                        <line x1="0" y1="65" x2="15" y2="85" stroke="#6a5a3a" stroke-width="1.5"/>
+                        <line x1="0" y1="70" x2="10" y2="90" stroke="#6a5a3a" stroke-width="1.5"/>
+                    </g>
+
+                    <g class="steam">
+                        <path d="M 200 140 Q 210 120 200 100 Q 190 80 200 60" fill="none"/>
+                        <path d="M 240 130 Q 250 110 240 90 Q 230 70 240 50" fill="none"/>
+                        <path d="M 280 150 Q 290 130 280 110 Q 270 90 280 70" fill="none"/>
+                        <path d="M 320 120 Q 330 100 320 80 Q 310 60 320 40" fill="none"/>
+                    </g>
+
+                    <text x="350" y="390" font-family="Georgia, serif" font-size="18" fill="#2d2b4e" text-anchor="middle" font-weight="bold">🧖 Баня для Бабы Яги</text>
+                </svg>
+            </div>
+
+            <button class="btn-nav" onclick="showPage('page2')">🚪 Перейти к заданиям</button>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- СТРАНИЦА 2: ЗАДАНИЯ 1–4 -->
+        <!-- ============================================================ -->
+        <div class="screen" id="page2">
+            <div class="title-block">
+                <h1>🧖 БАНЯ <span>ДЛЯ БАБЫ ЯГИ</span></h1>
+                <div class="sub">✦ Задания 1–4 ✦</div>
+            </div>
+
+            <div class="condition">
+                <strong>📜 Условие:</strong><br>
+                Хозяин дачного участка строит баню с парным отделением.
+                Парное отделение имеет размеры: <strong>длина 3,2 м</strong>, <strong>ширина 2,5 м</strong>, <strong>высота 1,9 м</strong>.
+                Окон в парном отделении нет, для доступа внутрь планируется дверь шириной <strong>60 см</strong>, высота дверного проёма <strong>1,7 м</strong>.
+                Для прогрева парного отделения можно использовать электрическую или дровяную печь.
+                В таблице представлены характеристики трёх печей.
+            </div>
+
+            <div class="table-box">
+                <h3>📋 Характеристики печей</h3>
+                <table class="table-data">
+                    <thead>
+                        <tr>
+                            <th>Номер печи</th>
+                            <th>Тип</th>
+                            <th>Объём помещения (куб. м)</th>
+                            <th>Масса (кг)</th>
+                            <th>Стоимость (руб.)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1</strong></td>
+                            <td>дровяная</td>
+                            <td>7 – 11</td>
+                            <td>42</td>
+                            <td>17 000</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2</strong></td>
+                            <td>дровяная</td>
+                            <td>9 – 17</td>
+                            <td>46</td>
+                            <td>18 500</td>
+                        </tr>
+                        <tr>
+                            <td><strong>3</strong></td>
+                            <td>электрическая</td>
+                            <td>8 – 16,5</td>
+                            <td>18</td>
+                            <td>14 000</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div style="font-size:13px;color:#8888aa;margin-top:6px;text-align:center;">
+                    Для установки дровяной печи дополнительных затрат не потребуется.<br>
+                    Установка электрической печи потребует подведения специального кабеля, что обойдётся в <strong>6200 руб.</strong>
+                </div>
+            </div>
+
+            <!-- ЗАДАНИЕ 1 -->
+            <div class="task" id="task1">
+                <div class="task-num">ЗАДАНИЕ 1</div>
+                <div class="task-text">
+                    <strong>Установите соответствие между стоимостями и номерами печей.</strong>
+                    Заполните таблицу, в бланк ответов перенесите последовательность трёх цифр без пробелов, запятых и других дополнительных символов.
+                </div>
+                <table class="match-table">
+                    <thead>
+                        <tr>
+                            <th>Стоимость (руб.)</th>
+                            <th>18 500</th>
+                            <th>14 000</th>
+                            <th>17 000</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Номер печи</strong></td>
+                            <td><input type="text" id="m1" maxlength="1" placeholder="?"></td>
+                            <td><input type="text" id="m2" maxlength="1" placeholder="?"></td>
+                            <td><input type="text" id="m3" maxlength="1" placeholder="?"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="input-group">
+                    <input type="text" id="ans1" placeholder="Последовательность (3 цифры)" style="width:180px;">
+                </div>
+            </div>
+
+            <!-- ЗАДАНИЕ 2 -->
+            <div class="task" id="task2">
+                <div class="task-num">ЗАДАНИЕ 2</div>
+                <div class="task-text">
+                    <strong>Найдите объём парного отделения строящейся бани.</strong>
+                    Ответ дайте в кубических метрах.
+                </div>
+                <div class="input-group">
+                    <input type="text" id="ans2" placeholder="Ответ">
+                </div>
+            </div>
+
+            <!-- ЗАДАНИЕ 3 -->
+            <div class="task" id="task3">
+                <div class="task-num">ЗАДАНИЕ 3</div>
+                <div class="task-text">
+                    <strong>Во сколько рублей обойдётся покупка дровяной печи, подходящей по объёму парного отделения, с доставкой, если доставка печи до дачного участка будет стоить 1200 рублей?</strong>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="ans3" placeholder="Ответ">
+                </div>
+            </div>
+
+            <!-- ЗАДАНИЕ 4 -->
+            <div class="task" id="task4">
+                <div class="task-num">ЗАДАНИЕ 4</div>
+                <div class="task-text">
+                    <strong>Доставка любой печи из магазина до участка стоит 1000 рублей.</strong>
+                    При покупке печи стоимостью больше 15 000 рублей магазин делает скидку 10% на товар и 25% на доставку.
+                    <strong>Сколько рублей будет стоить покупка печи номер 2 с доставкой на этих условиях?</strong>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="ans4" placeholder="Ответ">
+                </div>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn-nav-sm" onclick="showPage('page1')">⬅ Назад</button>
+                <button class="btn-nav-sm" onclick="saveAnswersAndGoToPage3()">Далее ➡</button>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- СТРАНИЦА 3: ЗАДАНИЯ 5–8 -->
+        <!-- ============================================================ -->
+        <div class="screen" id="page3">
+            <div class="title-block">
+                <h1>🧖 БАНЯ <span>ДЛЯ БАБЫ ЯГИ</span></h1>
+                <div class="sub">✦ Задания 5–8 ✦</div>
+            </div>
+
+            <!-- ЗАДАНИЕ 5 -->
+            <div class="task" id="task5">
+                <div class="task-num">ЗАДАНИЕ 5</div>
+                <div class="task-text">
+                    <strong>Хозяин выбрал дровяную печь (рис. 1). Чертёж передней панели печи показан на рисунке 2.</strong>
+                    Печь снабжена кожухом вокруг дверцы топки. Верхняя часть кожуха выполнена в виде арки,
+                    приваренной к передней стенке печки по дуге окружности с центром в середине нижней части кожуха (см. рис. 2).
+                    Для установки печки хозяину понадобилось узнать радиус закругления арки R.
+                    <strong>Размеры кожуха в сантиметрах показаны на рисунке. Найдите радиус закругления арки в сантиметрах.</strong>
+                </div>
+
+                <div class="figure-wrapper">
+                    <svg viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg">
+                        <style>
+                            .stove-body { fill: #d0d0d0; stroke: #000000; stroke-width: 1.2; }
+                            .stove-top { fill: #c8c8c8; stroke: #aaaaaa; stroke-width: 0.6; rx: 3; ry: 3; }
+                            .stove-bottom { fill: #e0e0e0; stroke: #000000; stroke-width: 1.2; }
+                            .stove-arch { fill: none; stroke: #000000; stroke-width: 1; }
+                            .dim-arrow { fill: none; stroke: #000000; stroke-width: 1.2; }
+                            .dim-text { font-family: 'Georgia', serif; font-size: 12; fill: #000000; font-weight: bold; }
+                            .pointer { fill: none; stroke: #000000; stroke-width: 0.5; }
+                            .pointer-text { font-family: 'Georgia', serif; font-size: 10; fill: #000000; }
+                            .helper-line { stroke: #000000; stroke-width: 0.6; }
+                            .helper-text { font-family: 'Georgia', serif; font-size: 10; fill: #000000; font-weight: bold; }
+                            .fig-label { font-family: 'Georgia', serif; font-size: 11; fill: #888888; font-style: italic; }
+                        </style>
+
+                        <rect x="70" y="32" width="96" height="148" class="stove-body"/>
+                        <rect x="82" y="52" width="72" height="16" class="stove-top"/>
+                        <path d="M 70 116 Q 118 78 166 116" class="stove-arch"/>
+                        <rect x="98" y="135" width="40" height="45" class="stove-bottom"/>
+
+                        <line x1="118" y1="180" x2="70" y2="116" class="helper-line"/>
+                        <text x="83" y="124" class="helper-text">R</text>
+
+                        <line x1="70" y1="195" x2="166" y2="195" class="dim-arrow"/>
+                        <line x1="70" y1="190" x2="70" y2="200" class="dim-arrow"/>
+                        <line x1="166" y1="190" x2="166" y2="200" class="dim-arrow"/>
+                        <text x="118" y="212" class="dim-text" text-anchor="middle">40</text>
+
+                        <line x1="55" y1="180" x2="55" y2="116" class="dim-arrow"/>
+                        <line x1="50" y1="180" x2="60" y2="180" class="dim-arrow"/>
+                        <line x1="50" y1="116" x2="60" y2="116" class="dim-arrow"/>
+                        <text x="48" y="152" class="dim-text" transform="rotate(-90, 48, 152)">48</text>
+
+                        <line x1="172" y1="113" x2="220" y2="113" class="pointer"/>
+                        <polygon points="172,110 165,113 172,116" fill="#000000"/>
+                        <text x="228" y="117" class="pointer-text">арка кожуха</text>
+
+                        <line x1="152" y1="143" x2="220" y2="143" class="pointer"/>
+                        <polygon points="152,140 145,143 152,146" fill="#000000"/>
+                        <text x="228" y="147" class="pointer-text">дверка топки</text>
+
+                        <text x="330" y="230" class="fig-label" text-anchor="end">Рис. 2</text>
+                    </svg>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" id="ans5" placeholder="Ответ">
+                </div>
+            </div>
+
+            <!-- ЗАДАНИЕ 6 -->
+            <div class="task" id="task6">
+                <div class="task-num">ЗАДАНИЕ 6</div>
+                <div class="task-text">
+                    <strong>Найдите значение выражения:</strong>
+                </div>
+                <div class="math">
+                    15 · <span class="frac"><span class="num">1</span><span class="den">5</span></span><span class="sup">2</span> − 8 · <span class="frac"><span class="num">1</span><span class="den">5</span></span>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="ans6" placeholder="Ответ">
+                </div>
+            </div>
+
+            <!-- ЗАДАНИЕ 7 -->
+            <div class="task" id="task7">
+                <div class="task-num">ЗАДАНИЕ 7</div>
+                <div class="task-text">
+                    <strong>Какое из следующих чисел заключено между числами</strong>
+                </div>
+                <div class="math">
+                    <span class="frac"><span class="num">19</span><span class="den">8</span></span> &nbsp;и&nbsp; <span class="frac"><span class="num">17</span><span class="den">7</span></span>
+                </div>
+                <div class="options">
+                    1) 2,3<br>
+                    2) 2,4<br>
+                    3) 2,5<br>
+                    4) 2,6
+                </div>
+                <div class="input-group">
+                    <input type="text" id="ans7" placeholder="Номер ответа (1–4)" style="width:140px;">
+                </div>
+            </div>
+
+            <!-- ЗАДАНИЕ 8 -->
+            <div class="task" id="task8">
+                <div class="task-num">ЗАДАНИЕ 8</div>
+                <div class="task-text">
+                    <strong>Найдите значение выражения:</strong>
+                </div>
+                <div class="math">
+                    <span class="frac">
+                        <span class="num"><span class="sqrt"><span class="radicand">75</span></span> · <span class="sqrt"><span class="radicand">10</span></span></span>
+                        <span class="den"><span class="sqrt"><span class="radicand">30</span></span></span>
+                    </span>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="ans8" placeholder="Ответ">
+                </div>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn-nav-sm" onclick="showPage('page2')">⬅ Назад</button>
+                <button class="btn-nav-sm" onclick="showResults()">📊 Закончить тест</button>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- СТРАНИЦА 4: ИТОГИ -->
+        <!-- ============================================================ -->
+        <div class="screen" id="page4">
+            <div class="title-block">
+                <h1>🧖 БАНЯ <span>ДЛЯ БАБЫ ЯГИ</span></h1>
+                <div class="sub">✦ Результаты ✦</div>
+            </div>
+
+            <div class="result-box">
+                <div class="big-score" id="final-score">0</div>
+                <div class="label">из 8 баллов</div>
+
+                <div class="stats">
+                    <div class="stat">
+                        <div class="num" id="result-correct" style="color:#2d8a4e;">0</div>
+                        <div class="desc">✅ Верно</div>
+                    </div>
+                    <div class="stat">
+                        <div class="num" id="result-wrong" style="color:#cc4466;">0</div>
+                        <div class="desc">❌ Ошибок</div>
+                    </div>
+                    <div class="stat">
+                        <div class="num" id="result-time" style="color:#6a8cdf;">00:00</div>
+                        <div class="desc">⏱ Время</div>
+                    </div>
+                </div>
+
+                <div id="errors-container">
+                    <div class="errors-list" id="errors-list">
+                        <h3>📋 ОШИБКИ</h3>
+                        <div id="errors-content"></div>
+                    </div>
+                </div>
+
+                <button class="btn-nav" onclick="restartTest()" style="margin-top:16px;">🔄 Пройти заново</button>
+            </div>
+        </div>
+
+        <!-- МОТТО -->
+        <div class="motto">
+            <strong>Τετρακτύς</strong> — где математика превращается в приключение!
+        </div>
+
+    </div>
+
+    <script>
+        // ============================================================
+        // ЗВУКИ
+        // ============================================================
+        var AudioCtx = window.AudioContext || window.webkitAudioContext;
+        var audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioCtx();
+        }
+
+        function playSound(type) {
+            try {
+                initAudio();
+                if (type === 'correct') {
+                    var o = audioCtx.createOscillator(),
+                        g = audioCtx.createGain();
+                    o.connect(g);
+                    g.connect(audioCtx.destination);
+                    o.frequency.value = 880;
+                    o.type = 'sine';
+                    g.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+                    o.start(audioCtx.currentTime);
+                    o.stop(audioCtx.currentTime + 0.15);
+                    var o2 = audioCtx.createOscillator(),
+                        g2 = audioCtx.createGain();
+                    o2.connect(g2);
+                    g2.connect(audioCtx.destination);
+                    o2.frequency.value = 1108;
+                    o2.type = 'sine';
+                    g2.gain.setValueAtTime(0.08, audioCtx.currentTime + 0.08);
+                    g2.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+                    o2.start(audioCtx.currentTime + 0.08);
+                    o2.stop(audioCtx.currentTime + 0.2);
+                } else if (type === 'wrong') {
+                    var o = audioCtx.createOscillator(),
+                        g = audioCtx.createGain();
+                    o.connect(g);
+                    g.connect(audioCtx.destination);
+                    o.frequency.value = 330;
+                    o.type = 'sawtooth';
+                    g.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+                    o.start(audioCtx.currentTime);
+                    o.stop(audioCtx.currentTime + 0.3);
+                } else if (type === 'click') {
+                    var o = audioCtx.createOscillator(),
+                        g = audioCtx.createGain();
+                    o.connect(g);
+                    g.connect(audioCtx.destination);
+                    o.frequency.value = 600;
+                    o.type = 'sine';
+                    g.gain.setValueAtTime(0.06, audioCtx.currentTime);
+                    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.06);
+                    o.start(audioCtx.currentTime);
+                    o.stop(audioCtx.currentTime + 0.06);
+                } else if (type === 'win') {
+                    [523, 587, 659, 784, 880, 988, 1175].forEach(function(f, i) {
+                        var o = audioCtx.createOscillator(),
+                            g = audioCtx.createGain();
+                        o.connect(g);
+                        g.connect(audioCtx.destination);
+                        o.frequency.value = f;
+                        o.type = 'sine';
+                        g.gain.setValueAtTime(0.06, audioCtx.currentTime + i * 0.08);
+                        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + i * 0.08 + 0.15);
+                        o.start(audioCtx.currentTime + i * 0.08);
+                        o.stop(audioCtx.currentTime + i * 0.08 + 0.15);
+                    });
+                }
+            } catch (e) {}
+        }
+
+        // ============================================================
+        // НАВИГАЦИЯ
+        // ============================================================
+        var userAnswers = {};
+        var startTime = null;
+        var timerInterval = null;
+
+        function showPage(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if (id !== 'page1' && !startTime) {
+                startTime = Date.now();
+                timerInterval = setInterval(updateTimer, 1000);
+            }
+            playSound('click');
+        }
+
+        function updateTimer() {
+            if (!startTime) return;
+            var e = Math.floor((Date.now() - startTime) / 1000);
+            var m = String(Math.floor(e / 60)).padStart(2, '0');
+            var s = String(e % 60).padStart(2, '0');
+            document.getElementById('result-time').textContent = m + ':' + s;
+        }
+
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        // ============================================================
+        // СОХРАНЕНИЕ ОТВЕТОВ И ПЕРЕХОД НА СТРАНИЦУ 3
+        // ============================================================
+        function saveAnswersAndGoToPage3() {
+            userAnswers['1'] = document.getElementById('ans1').value;
+            userAnswers['2'] = document.getElementById('ans2').value;
+            userAnswers['3'] = document.getElementById('ans3').value;
+            userAnswers['4'] = document.getElementById('ans4').value;
+            showPage('page3');
+        }
+
+        // ============================================================
+        // РЕЗУЛЬТАТЫ
+        // ============================================================
+        function showResults() {
+            stopTimer();
+
+            userAnswers['5'] = document.getElementById('ans5').value;
+            userAnswers['6'] = document.getElementById('ans6').value;
+            userAnswers['7'] = document.getElementById('ans7').value;
+            userAnswers['8'] = document.getElementById('ans8').value;
+
+            var correctAnswers = {
+                '1': '231',
+                '2': '15.2',
+                '3': '19700',
+                '4': '17400',
+                '5': '52',
+                '6': '-1',
+                '7': '2',
+                '8': '5'
+            };
+
+            var correct = 0,
+                wrong = 0,
+                errors = [];
+
+            for (var i = 1; i <= 8; i++) {
+                var userVal = (userAnswers[i] || '').replace(/\s/g, '').replace(/,/g, '.');
+                var correctVal = correctAnswers[i].replace(/\s/g, '').replace(/,/g, '.');
+                if (userVal === correctVal) {
+                    correct++;
+                } else {
+                    wrong++;
+                    errors.push({ num: i, user: userAnswers[i] || '(пусто)', correct: correctAnswers[i] });
+                }
+            }
+
+            document.getElementById('final-score').textContent = correct;
+            document.getElementById('result-correct').textContent = correct;
+            document.getElementById('result-wrong').textContent = wrong;
+
+            var ec = document.getElementById('errors-content');
+            if (errors.length === 0) {
+                ec.innerHTML = '<div style="color:#2d8a4e;text-align:center;padding:10px;">🎉 Все задания решены верно!</div>';
+                playSound('win');
+            } else {
+                var html = '';
+                errors.forEach(function(e) {
+                    html += '<div class="error-item">';
+                    html += '<span class="q">Задание ' + e.num + '</span>';
+                    html += '<span><span class="wrong-answer">' + e.user + '</span> → <span class="a">' + e.correct +
+                        '</span></span>';
+                    html += '</div>';
+                });
+                ec.innerHTML = html;
+                playSound('wrong');
+            }
+
+            showPage('page4');
+        }
+
+        // ============================================================
+        // ПЕРЕЗАПУСК
+        // ============================================================
+        function restartTest() {
+            stopTimer();
+            startTime = null;
+            userAnswers = {};
+
+            document.querySelectorAll('input[type="text"]').forEach(function(inp) {
+                inp.value = '';
+                inp.disabled = false;
+            });
+
+            document.querySelectorAll('.feedback').forEach(function(f) {
+                f.textContent = '';
+                f.className = 'feedback';
+            });
+
+            document.getElementById('result-time').textContent = '00:00';
+            showPage('page1');
+            playSound('click');
+        }
+
+        console.log('🧖 Баня для Бабы Яги · Без проверок до финала');
+        console.log('🏷️ ΤΕΤΡΑΚΤΥΣ — Школа математики Елены Михалевой');
+        console.log('🔊 Звуки активированы!');
+    </script>
+
+</body>
+</html>
