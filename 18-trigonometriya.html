@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>18-trigonometriya</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<style>
+  :root {
+    --bg: #0d2b26;
+    --panel: rgba(22, 83, 77, 0.6);
+    --bg2: #081c19;
+    --line: rgba(47, 212, 181, 0.3);
+    --turq: #2fd4b5;
+    --mint: #7fffd4;
+    --gold: #f4d35e;
+    --text: #e0f2ec;
+    --coral: #ff6b6b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background-color: var(--bg);
+    background-image: radial-gradient(circle at 15% 10%, rgba(47, 212, 181, 0.15) 0%, transparent 40%),
+                      radial-gradient(circle at 85% 90%, rgba(47, 212, 181, 0.1) 0%, transparent 40%);
+    background-attachment: fixed; color: var(--text);
+    font-family: Georgia, serif; padding: 0; margin: 0;
+    display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+  }
+  
+  .wrap { max-width: 700px; width: 100%; padding: 0 20px 40px 20px; }
+  
+  /* ШАПКА */
+  .sticky-header {
+    position: sticky; top: 0; width: 100%; background: rgba(8, 28, 25, 0.95);
+    backdrop-filter: blur(10px); z-index: 100; border-bottom: 1px solid var(--line);
+    padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  }
+  .logo-block { display: flex; align-items: center; gap: 8px; }
+  .logo-dots { display: flex; flex-direction: column; gap: 1px; font-size: 5px; color: var(--turq); line-height: 1.1; }
+  .logo-dots div { display: flex; gap: 2px; }
+  .logo-info { display: flex; flex-direction: column; }
+  .logo-text { font-family: 'Times New Roman', serif; font-size: 14px; font-weight: bold; color: var(--turq); letter-spacing: 1px; line-height: 1; }
+  .logo-sub { font-size: 8px; color: var(--text-soft); font-style: italic; margin-top: 2px; }
+  .header-info { text-align: right; font-size: 12px; font-family: 'Courier New', monospace; color: var(--mint); }
+  .progress { font-weight: bold; margin-top: 3px; color: var(--gold); }
+
+  .header-title {
+    text-align: center; margin: 20px 0;
+    color: var(--turq); font-size: 22px; font-weight: bold;
+    text-shadow: 0 0 12px rgba(47,212,181,0.4);
+    letter-spacing: 1px;
+  }
+
+  /* ИМЯ */
+  .name-block {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+    padding: 15px; margin-bottom: 20px; display: flex; gap: 15px; align-items: center;
+  }
+  .name-block label { font-size: 14px; color: var(--mint); font-weight: bold; white-space: nowrap; }
+  .name-block input {
+    flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--line);
+    background: var(--bg2); color: var(--text); font-family: Georgia, serif; outline: none;
+  }
+
+  /* ТЕКСТ ТЕОРИИ */
+  .theory-block {
+    background: rgba(255, 255, 255, 0.03); border-radius: 12px; padding: 15px 20px;
+    font-size: 14px; line-height: 1.6; margin-bottom: 20px; border-left: 4px solid var(--gold);
+  }
+  .theory-block b { color: var(--gold); }
+  .katex { font-size: 1.1em; color: var(--mint); }
+
+  /* ТАБЛИЦА */
+  .table-container { overflow-x: auto; margin-bottom: 20px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; background: rgba(0,0,0,0.2); border-radius: 8px; overflow: hidden; }
+  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: center; }
+  th { background: rgba(47, 212, 181, 0.15); color: var(--mint); font-weight: bold; }
+  td { color: var(--text); }
+  tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+
+  /* КАРТОЧКИ ЗАДАЧ */
+  .task-card {
+    background: var(--panel); backdrop-filter: blur(12px);
+    border: 1px solid var(--line); border-radius: 16px; padding: 20px; margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3); transition: border-color 0.3s;
+  }
+  .task-card.correct { border-color: #2ecc71; box-shadow: 0 0 15px rgba(46, 204, 113, 0.2); }
+  .task-card.wrong { border-color: var(--coral); box-shadow: 0 0 15px rgba(255, 107, 107, 0.2); }
+  
+  .task-header { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; }
+  .task-num {
+    background: linear-gradient(135deg, var(--turq), #1a9a82);
+    color: #0b2b27; font-weight: bold; font-size: 16px;
+    width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+    border-radius: 8px; font-family: "Courier New", monospace; flex-shrink: 0;
+  }
+  .task-body { font-size: 16px; line-height: 1.5; flex: 1; }
+  .task-body b { color: var(--gold); }
+  
+  .drawing { margin: 10px 0 15px 0; text-align: center; background: #f8fdfb; padding: 5px; border-radius: 12px; border: 1px solid rgba(47, 212, 181, 0.2); }
+  .drawing svg { max-width: 240px; height: auto; display: block; margin: 0 auto; }
+
+  .answer-row { display: flex; gap: 10px; margin-top: 15px; }
+  .answer-row input {
+    flex: 1; padding: 12px; border-radius: 10px; border: 1.5px solid var(--line);
+    background: var(--bg2); color: var(--text); font-size: 16px; font-family: "Courier New", monospace;
+    outline: none; transition: 0.3s;
+  }
+  .answer-row input:focus { border-color: var(--turq); box-shadow: 0 0 10px rgba(47,212,181,0.2); }
+  .answer-row input.disabled { opacity: 0.7; pointer-events: none; background: #061d1a; }
+  .answer-row input.correct { border-color: #2ecc71; color: #2ecc71; }
+  .answer-row input.wrong { border-color: var(--coral); color: var(--coral); }
+
+  .status { margin-top: 12px; font-weight: bold; display: none; font-size: 14px; padding: 10px; border-radius: 8px; }
+  .status.ok { display: block; background: rgba(46,204,113,0.15); color: #2ecc71; border: 1px solid #2ecc71; }
+  .status.err { display: block; background: rgba(255,107,107,0.15); color: var(--coral); border: 1px solid var(--coral); }
+
+  /* КНОПКИ */
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
+  .btn {
+    padding: 14px 20px; border: none; border-radius: 12px;
+    font-family: Georgia, serif; font-size: 16px; font-weight: bold;
+    cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-primary { background: linear-gradient(135deg, var(--turq), #1a9a82); color: #0b2b27; flex: 1; box-shadow: 0 4px 15px rgba(47,212,181,0.3); min-width: 200px;}
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(47,212,181,0.5); }
+  .btn-outline { background: transparent; border: 1.5px solid var(--turq); color: var(--turq); }
+  .btn-outline:hover { background: rgba(47, 212, 181, 0.1); }
+  .btn-coral { background: transparent; border: 1.5px solid var(--coral); color: var(--coral); }
+  .btn-coral:hover { background: rgba(255, 107, 107, 0.1); }
+
+  /* МОДАЛКИ */
+  .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 1000; }
+  .modal { background: var(--bg); border: 1px solid var(--line); border-radius: 16px; padding: 24px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+  .modal h3 { margin-top: 0; color: var(--turq); margin-bottom: 15px; }
+  .modal p { margin-bottom: 20px; }
+  .modal input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg2); color: var(--text); text-align: center; font-size: 18px; margin-bottom: 15px; font-family: "Courier New", monospace; outline: none; }
+  .modal-btns { display: flex; gap: 10px; }
+  .modal-btns .btn { flex: 1; padding: 10px; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<!-- ШАПКА -->
+<div class="sticky-header">
+  <div class="logo-block">
+    <div class="logo-dots">
+      <div>●</div>
+      <div>● ●</div>
+      <div>● ● ●</div>
+      <div>● ● ● ●</div>
+    </div>
+    <div class="logo-info">
+      <div class="logo-text">ΤΕΤΡΑΚΤΥΣ</div>
+      <div class="logo-sub">Школа Елены Михалевой</div>
+    </div>
+  </div>
+  <div class="header-info">
+    <div id="dateDisplay"></div>
+    <div class="progress" id="progressDisplay">✅ 0 / 11</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="header-title">Контроль к теме 18 «Тригонометрия»</div>
+
+  <!-- ИМЯ -->
+  <div class="name-block">
+    <label>Ученик:</label>
+    <input type="text" id="studentName" placeholder="Введи своё имя..." oninput="saveName()">
+  </div>
+
+  <!-- ТЕОРИЯ (КОРОТКО) -->
+  <div class="theory-block">
+    <b>Автомобильное колесо</b> — металлический диск с резиновой шиной. Маркировка <b>195/65 R15</b> означает: ширина шины \(B = 195\) мм, высота боковины \(H = 195 \cdot 0,65 = 126,75\) мм. Буква R — радиальная конструкция. Число 15 — диаметр диска в дюймах (1 дюйм = 25,4 мм). Завод устанавливает шины <b>165/70 R13</b>.
+  </div>
+
+  <!-- ТАБЛИЦА -->
+  <div style="font-size: 15px; margin-bottom: 10px;">
+    <b>1.</b> Завод допускает установку шин с разными размерами. В таблице показаны разрешённые размеры шин.
+  </div>
+  <div class="table-container">
+    <table>
+      <tr>
+        <th rowspan="2">Ширина шины (мм)</th>
+        <th colspan="3">Диаметр диска (дюймы)</th>
+      </tr>
+      <tr>
+        <th>13</th>
+        <th>14</th>
+        <th>15</th>
+      </tr>
+      <tr><td>165</td><td>165/70</td><td>165/65</td><td>–</td></tr>
+      <tr><td>175</td><td>175/65</td><td>175/65; 175/60</td><td>–</td></tr>
+      <tr><td>185</td><td>185/65; 185/60</td><td>185/60</td><td>185/55</td></tr>
+      <tr><td>195</td><td>195/60</td><td>195/55</td><td>195/55; 195/50</td></tr>
+    </table>
+  </div>
+
+  <div id="tasks-container"></div>
+
+  <!-- КНОПКИ -->
+  <div class="actions">
+    <button class="btn btn-primary" onclick="checkAll()" id="btnCheck">✅ Проверить всё</button>
+    <button class="btn btn-outline" onclick="copyAnswers()">📋 Скопировать</button>
+    <button class="btn btn-coral" onclick="openClearModal()">🔒 Сбросить</button>
+  </div>
+
+  <div style="text-align:center; margin-top: 15px;">
+    <a class="btn btn-primary" style="display:inline-flex; text-decoration:none; width: 100%;" href="https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes" target="_blank" onclick="copyAnswers()">💬 Отправить в Макс</a>
+  </div>
+</div>
+
+<!-- МОДАЛКА ПУСТЫЕ ПОЛЯ -->
+<div class="modal-overlay" id="emptyModal">
+  <div class="modal">
+    <h3>Заполни все поля!</h3>
+    <p id="emptyList"></p>
+    <div class="modal-btns">
+      <button class="btn btn-primary" onclick="closeModal('emptyModal')">Понятно</button>
+    </div>
+  </div>
+</div>
+
+<!-- МОДАЛКА СБРОСА -->
+<div class="modal-overlay" id="clearModal">
+  <div class="modal">
+    <h3>Сбросить всё?</h3>
+    <p>Введи пароль для сброса:</p>
+    <input type="password" id="clearPassword" placeholder="Пароль...">
+    <div class="modal-btns">
+      <button class="btn btn-outline" onclick="closeModal('clearModal')">Отмена</button>
+      <button class="btn btn-coral" onclick="confirmClear()">Сбросить</button>
+    </div>
+    <p id="passError" style="color: var(--coral); display: none; margin-top: 10px; font-size: 14px;">Неверный пароль</p>
+  </div>
+</div>
+
+<script>
+  let tasks = {};
+  let checkedState = {};
+  const TOTAL = 11;
+  const STORAGE_KEY = 'control_18_';
+
+  function tex(str) { return katex.renderToString(str, { displayMode: false, throwOnError: false }); }
+
+  // --- ГЕНЕРАТОРЫ ЗАДАЧ ---
+  function genTask1() {
+    return { text: `Шины какой наименьшей ширины можно устанавливать на автомобиль, если диаметр диска равен 15 дюймам? Ответ дайте в миллиметрах.`, answer: '185' };
+  }
+  function genTask2() {
+    return { text: `Сколько миллиметров составляет высота боковины шины, имеющей маркировку 165/65 R14?`, answer: '107,25' };
+  }
+  function genTask3() {
+    return { text: `На сколько миллиметров увеличится диаметр колеса, если заменить колёса, установленные на заводе, колёсами с шинами 195/50 R15?`, answer: '14,8' };
+  }
+  function genTask4() {
+    return { text: `Найдите диаметр колеса автомобиля, выходящего с завода. Ответ дайте в миллиметрах.`, answer: '561,2' };
+  }
+  function genTask5() {
+    return { text: `На сколько процентов увеличится пробег автомобиля при одном обороте колеса, если заменить колёса, установленные на заводе, колёсами с шинами маркировки 175/60 R14? Результат округлите до десятых.`, answer: '0,8' };
+  }
+  function genTask6() {
+    return { text: `Найдите значение выражения: 0,2 · (−4)<sup>3</sup> + 3 · (−4)<sup>2</sup> − 17.`, answer: '18,2' };
+  }
+  function genTask7() {
+    return { text: `Сколько целых чисел расположено между ${tex('3\\sqrt{14}')} и ${tex('7\\sqrt{3}')}?`, answer: '1' };
+  }
+  function genTask8() {
+    return { text: `Найдите значение выражения: <br> <div style="text-align:center; font-size:20px; margin:10px 0;">${katex.renderToString('\\frac{6^7}{2^6 \\cdot 3^5}', {displayMode:true})}</div>`, answer: '18' };
+  }
+  function genTask9() {
+    return { text: `В треугольнике ABC угол C равен <b>90°</b>, ${tex('\\text{tg}B = \\frac{4}{7}')}, BC = <b>35</b>. Найдите <b>AC</b>.`, answer: '20', showDrawing: 9 };
+  }
+  function genTask10() {
+    return { text: `Найдите тангенс угла AOB, изображённого на рисунке.`, answer: '3', showDrawing: 10 };
+  }
+  function genTask11() {
+    return { text: `Какие из следующих утверждений верны?<br><br>
+      1) Две прямые, перпендикулярные третьей прямой, перпендикулярны.<br>
+      2) В любой прямоугольной трапеции есть два равных угла.<br>
+      3) Все диаметры окружности равны между собой.<br><br>
+      В ответ запишите номера выбранных утверждений без пробелов, запятых и других дополнительных символов.`, answer: '23' };
+  }
+
+  // --- ЧЕРТЕЖИ ---
+  function getSVG(type) {
+    if (type === 9) {
+      return `<svg viewBox="0 0 260 140" style="max-width:240px; width:100%;">
+        <defs><pattern id="grid9" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="#d0e8e0" stroke-width="1"/></pattern></defs>
+        <rect width="260" height="140" fill="url(#grid9)" />
+        <polygon points="40,110 200,110 200,30" fill="none" stroke="#1b5e20" stroke-width="1.5"/>
+        <polyline points="185,110 185,95 200,95" fill="none" stroke="#2e7d32" stroke-width="1.2"/>
+        <text x="25" y="125" font-family="Georgia, serif" font-size="14" font-weight="bold" fill="#1b5e20">A</text>
+        <text x="195" y="20" font-family="Georgia, serif" font-size="14" font-weight="bold" fill="#1b5e20">B</text>
+        <text x="205" y="125" font-family="Georgia, serif" font-size="14" font-weight="bold" fill="#1b5e20">C</text>
+      </svg>`;
+    } else if (type === 10) {
+      // Сетка теперь 20x20, как в изолированном файле
+      return `<svg viewBox="0 0 320 200" style="max-width:240px; width:100%;">
+        <defs>
+          <pattern id="grid10" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#d0e8e0" stroke-width="1"/>
+          </pattern>
+        </defs>
+        <rect width="320" height="200" fill="url(#grid10)" />
+        
+        <!-- ОА = 6 клеток. O(60,160) -> A(180,160) -->
+        <line x1="60" y1="160" x2="180" y2="160" stroke="#1b5e20" stroke-width="2"/>
+        
+        <!-- ОВ = 2 вправо, 6 вверх. O(60,160) -> B(100,40) -->
+        <line x1="60" y1="160" x2="100" y2="40" stroke="#1b5e20" stroke-width="2"/>
+        
+        <text x="40" y="180" font-family="Georgia, serif" font-size="18" font-weight="bold" fill="#1b5e20">O</text>
+        <text x="185" y="180" font-family="Georgia, serif" font-size="18" font-weight="bold" fill="#1b5e20">A</text>
+        <text x="105" y="35" font-family="Georgia, serif" font-size="18" font-weight="bold" fill="#1b5e20">B</text>
+      </svg>`;
+    }
+    return '';
+  }
+
+  // --- ОТРИСОВКА ---
+  function renderAll() {
+    const container = document.getElementById('tasks-container');
+    container.innerHTML = '';
+    
+    for (let i = 1; i <= TOTAL; i++) {
+      const t = tasks[i];
+      const isChecked = checkedState[i] !== undefined;
+      const isOk = checkedState[i] === 'ok';
+      
+      let cardClass = isChecked ? (isOk ? 'correct' : 'wrong') : '';
+      let statusClass = isChecked ? (isOk ? 'status ok' : 'status err') : 'status';
+      let statusText = isChecked ? (isOk ? '✅ Верно!' : `❌ Неверно. Правильный ответ: ${t.answer}`) : '';
+      let inputClass = isChecked ? (isOk ? 'correct' : 'wrong') : '';
+      let disabled = isChecked ? 'disabled' : '';
+      let savedVal = localStorage.getItem(STORAGE_KEY + 'ans_' + i) || '';
+
+      container.innerHTML += `
+        <div class="task-card ${cardClass}" id="task${i}">
+          <div class="task-header">
+            <div class="task-num">${i}</div>
+            <div class="task-body">${t.text}</div>
+          </div>
+          ${t.showDrawing ? `<div class="drawing">${getSVG(t.showDrawing)}</div>` : ''}
+          <div class="answer-row">
+            <input type="text" id="input${i}" value="${savedVal}" placeholder="Введи ответ..." autocomplete="off" class="${inputClass}" ${disabled} oninput="saveAnswer(${i})">
+          </div>
+          <div class="${statusClass}" id="status${i}">${statusText}</div>
+        </div>
+      `;
+    }
+    
+    // 12-я задача (без проверки)
+    container.innerHTML += `
+      <div class="task-card">
+        <div class="task-header">
+          <div class="task-num">12</div>
+          <div class="task-body">
+            Два автомобиля одновременно отправляются в 420-километровый пробег. Первый едет со скоростью, на 24 км/ч большей, чем второй, и прибывает к финишу на 2 часа раньше второго. Найдите скорость первого автомобиля.
+          </div>
+        </div>
+        <div class="instruction" style="margin-top: 15px; background: rgba(244,211,94,0.08); border-left-color: var(--gold);">
+          <b>📷 Реши в тетради</b> и пришли фото решения учителю в Макс.
+        </div>
+      </div>
+    `;
+    
+    updateProgress();
+  }
+
+  // --- ЛОГИКА ---
+  function generateAll() {
+    tasks[1] = genTask1(); tasks[2] = genTask2(); tasks[3] = genTask3();
+    tasks[4] = genTask4(); tasks[5] = genTask5(); tasks[6] = genTask6();
+    tasks[7] = genTask7(); tasks[8] = genTask8(); tasks[9] = genTask9();
+    tasks[10] = genTask10(); tasks[11] = genTask11();
+    
+    for(let i=1; i<=TOTAL; i++) localStorage.removeItem(STORAGE_KEY + 'ans_' + i);
+    checkedState = {};
+    localStorage.removeItem(STORAGE_KEY + 'checked');
+    
+    renderAll();
+  }
+
+  function saveAnswer(n) {
+    localStorage.setItem(STORAGE_KEY + 'ans_' + n, document.getElementById('input'+n).value);
+  }
+
+  function saveName() {
+    localStorage.setItem(STORAGE_KEY + 'name', document.getElementById('studentName').value);
+  }
+
+  function checkAll() {
+    let empty = [];
+    for (let i = 1; i <= TOTAL; i++) {
+      if (!document.getElementById('input'+i).value.trim()) empty.push('№' + i);
+    }
+    
+    if (empty.length > 0) {
+      document.getElementById('emptyList').innerText = 'У тебя пустые: ' + empty.join(', ');
+      document.getElementById('emptyModal').style.display = 'flex';
+      return;
+    }
+
+    for (let i = 1; i <= TOTAL; i++) {
+      const inp = document.getElementById('input'+i);
+      let userAns = inp.value.trim().replace(',', '.').replace(/\s/g, '');
+      let correctAns = tasks[i].answer.replace(',', '.');
+      
+      const isOk = (userAns === correctAns);
+      checkedState[i] = isOk ? 'ok' : 'fail';
+      
+      inp.classList.add('disabled', isOk ? 'correct' : 'wrong');
+      inp.disabled = true;
+      
+      const st = document.getElementById('status'+i);
+      if (isOk) { st.className = 'status ok'; st.innerHTML = '✅ Верно!'; }
+      else { st.className = 'status err'; st.innerHTML = `❌ Неверно. Твой ответ: ${userAns}. <b>Правильный ответ: ${tasks[i].answer}</b>`; }
+      document.getElementById('task'+i).className = isOk ? 'task-card correct' : 'task-card wrong';
+    }
+
+    localStorage.setItem(STORAGE_KEY + 'checked', JSON.stringify(checkedState));
+    updateProgress();
+    
+    const btn = document.getElementById('btnCheck');
+    btn.disabled = true; btn.style.opacity = '0.5'; btn.textContent = 'Проверено';
+  }
+
+  function updateProgress() {
+    let count = 0;
+    for (let i = 1; i <= TOTAL; i++) { if (checkedState[i] === 'ok') count++; }
+    document.getElementById('progressDisplay').innerText = `✅ ${count} / ${TOTAL}`;
+  }
+
+  // --- ОТПРАВКА ---
+  function generateReport() {
+    const name = document.getElementById('studentName').value.trim() || 'Без имени';
+    let text = `📐 ОТВЕТЫ · 18-trigonometriya\nУченик: ${name}\n\n`;
+    let correctCount = 0;
+    for (let i = 1; i <= TOTAL; i++) {
+      const ans = document.getElementById('input'+i).value.trim() || '—';
+      if (checkedState[i] === 'ok') { text += `✅ Задание ${i}. Ответ: ${ans}\n`; correctCount++; }
+      else if (checkedState[i] === 'fail') text += `❌ Задание ${i}. Ответ: ${ans} (верно: ${tasks[i].answer})\n`;
+      else text += `— Задание ${i}. Ответ: ${ans} (не проверено)\n`;
+    }
+    text += `\n📷 Задание 12. Решение в тетради (фото отдельно).`;
+    text += `\n✅ Итог: ${correctCount} из ${TOTAL} верно`;
+    return text;
+  }
+
+  function copyAnswers() {
+    navigator.clipboard.writeText(generateReport()).then(() => {
+      alert('Текст скопирован в буфер обмена!');
+    });
+  }
+
+  // --- СБРОС ---
+  function openClearModal() {
+    document.getElementById('clearPassword').value = '';
+    document.getElementById('passError').style.display = 'none';
+    document.getElementById('clearModal').style.display = 'flex';
+  }
+  function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+  function confirmClear() {
+    if (document.getElementById('clearPassword').value === '2810') {
+      const name = localStorage.getItem(STORAGE_KEY + 'name');
+      localStorage.clear();
+      if (name) localStorage.setItem(STORAGE_KEY + 'name', name);
+      location.reload();
+    } else {
+      document.getElementById('passError').style.display = 'block';
+    }
+  }
+
+  // --- ИНИЦИАЛИЗАЦИЯ ---
+  window.onload = () => {
+    const now = new Date();
+    document.getElementById('dateDisplay').innerText = now.toLocaleDateString('ru-RU');
+    
+    const savedName = localStorage.getItem(STORAGE_KEY + 'name');
+    if (savedName) document.getElementById('studentName').value = savedName;
+    
+    const savedState = localStorage.getItem(STORAGE_KEY + 'checked');
+    if (savedState) checkedState = JSON.parse(savedState);
+
+    setTimeout(() => {
+      generateAll();
+
+      if (Object.keys(checkedState).length > 0) {
+        for (let i = 1; i <= TOTAL; i++) {
+          const inp = document.getElementById('input'+i);
+          if (checkedState[i]) {
+            inp.disabled = true;
+            inp.className = checkedState[i] === 'ok' ? 'correct disabled' : 'wrong disabled';
+            const st = document.getElementById('status'+i);
+            st.className = checkedState[i] === 'ok' ? 'status ok' : 'status err';
+            st.innerHTML = checkedState[i] === 'ok' ? '✅ Верно!' : `❌ Неверно. Правильный ответ: ${tasks[i].answer}`;
+            document.getElementById('task'+i).className = checkedState[i] === 'ok' ? 'task-card correct' : 'task-card wrong';
+          }
+        }
+        const btn = document.getElementById('btnCheck');
+        btn.disabled = true; btn.style.opacity = '0.5'; btn.textContent = 'Проверено';
+        updateProgress();
+      }
+    }, 100);
+  };
+</script>
+
+</body>
+</html>
