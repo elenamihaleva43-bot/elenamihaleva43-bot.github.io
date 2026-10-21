@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Колобок · ОГЭ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #ffffff;
+            font-family: 'Georgia', 'Times New Roman', serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 40px;
+            padding: 24px 30px 28px;
+            border: 1px solid #e0d8cc;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 6px 14px;
+            background: #f8f4ee;
+            border-radius: 16px;
+            border: 1px solid #e0d8cc;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .logo-symbol {
+            font-size: 12px;
+            line-height: 1.1;
+            letter-spacing: 3px;
+            font-weight: bold;
+            color: #b4a7d6;
+            flex-shrink: 0;
+        }
+        .line1 { letter-spacing: 7px; }
+        .line2 { letter-spacing: 7px; }
+        .line3 { letter-spacing: 7px; }
+        .line4 { letter-spacing: 7px; }
+        .logo-text {
+            flex: 1;
+            min-width: 120px;
+        }
+        .logo-greek {
+            font-size: 20px;
+            letter-spacing: 3px;
+            font-weight: 700;
+            font-family: 'Times New Roman', Times, serif;
+            color: #4a3f5e;
+            border-top: 1px solid #e0d8cc;
+            border-bottom: 1px solid #e0d8cc;
+            padding: 2px 0;
+            display: inline-block;
+        }
+        .logo-russian {
+            font-size: 11px;
+            letter-spacing: 2px;
+            font-weight: 600;
+            color: #8888aa;
+            margin-top: 1px;
+        }
+        .logo-sub {
+            font-size: 9px;
+            letter-spacing: 1px;
+            color: #8888aa;
+            opacity: 0.5;
+            font-style: italic;
+        }
+
+        .title-block {
+            text-align: center;
+            margin-bottom: 14px;
+        }
+        .title-block h1 {
+            font-size: clamp(28px, 4vw, 40px);
+            font-weight: 900;
+            color: #2d2b4e;
+            letter-spacing: 2px;
+        }
+        .title-block h1 span {
+            color: #6a8cdf;
+        }
+        .title-block .sub {
+            font-size: clamp(14px, 1.5vw, 18px);
+            color: #8888aa;
+            letter-spacing: 3px;
+            margin-top: 2px;
+        }
+
+        .condition {
+            background: #f8f4ee;
+            padding: 14px 18px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 15px;
+            line-height: 1.7;
+            color: #333344;
+            border: 1px solid #e8e0d4;
+        }
+        .condition strong {
+            color: #2d2b4e;
+        }
+
+        .figure-wrapper {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: center;
+            border: 1px solid #e8e0d4;
+        }
+        .figure-wrapper svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .btn-nav {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: #6a8cdf;
+            border: none;
+            border-radius: 50px;
+            font-size: 17px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Georgia', serif;
+            text-align: center;
+        }
+        .btn-nav:hover {
+            background: #5a7ccf;
+            box-shadow: 0 6px 24px rgba(106, 140, 223, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .btn-nav-sm {
+            padding: 10px 24px;
+            background: #6a8cdf;
+            border: none;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Georgia', serif;
+            text-align: center;
+        }
+        .btn-nav-sm:hover {
+            background: #5a7ccf;
+            box-shadow: 0 6px 24px rgba(106, 140, 223, 0.10);
+            transform: translateY(-2px);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        .nav-buttons .btn-nav-sm {
+            flex: 1;
+            min-width: 100px;
+        }
+
+        .select-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-top: -4px;
+            margin-bottom: 14px;
+            padding: 8px 16px;
+            background: #f8f4ee;
+            border-radius: 10px;
+            border: 1px solid #e8e0d4;
+            flex-wrap: wrap;
+        }
+        .select-wrapper label {
+            font-family: 'Georgia', serif;
+            font-size: 14px;
+            color: #333344;
+            font-weight: 600;
+        }
+        .select-wrapper select {
+            padding: 6px 12px;
+            background: #ffffff;
+            border: 1px solid #d5cce8;
+            border-radius: 8px;
+            font-family: 'Georgia', serif;
+            font-size: 14px;
+            color: #2d2b4e;
+            outline: none;
+            min-width: 160px;
+            cursor: pointer;
+        }
+        .select-wrapper select:focus {
+            border-color: #6a8cdf;
+            box-shadow: 0 0 16px rgba(106, 140, 223, 0.05);
+        }
+        .select-wrapper .hint {
+            font-family: 'Georgia', serif;
+            font-size: 12px;
+            color: #8888aa;
+            font-style: italic;
+        }
+
+        .clickable-zone {
+            cursor: pointer;
+            fill: rgba(106, 140, 223, 0.08);
+            stroke: #6a8cdf;
+            stroke-width: 1.5;
+            stroke-dasharray: 4,4;
+            transition: all 0.3s;
+        }
+        .clickable-zone:hover {
+            fill: rgba(106, 140, 223, 0.15);
+        }
+        .clickable-zone.selected {
+            fill: rgba(106, 140, 223, 0.15);
+            stroke: #6a8cdf;
+            stroke-width: 2;
+            stroke-dasharray: none;
+        }
+        .obj-label {
+            font-family: 'Georgia', serif;
+            font-size: 13px;
+            fill: #2d2b4e;
+            font-weight: 700;
+            text-anchor: middle;
+            dominant-baseline: central;
+            pointer-events: none;
+        }
+
+        .distance-click {
+            cursor: pointer;
+            fill: rgba(255, 200, 100, 0.3);
+            stroke: #d4a017;
+            stroke-width: 2;
+            transition: all 0.3s;
+        }
+        .distance-click:hover {
+            fill: rgba(255, 200, 100, 0.5);
+        }
+        .distance-label {
+            font-family: 'Georgia', serif;
+            font-size: 14px;
+            fill: #2d2b4e;
+            font-weight: 700;
+            text-anchor: middle;
+            dominant-baseline: central;
+            pointer-events: none;
+        }
+
+        .task {
+            background: #f8f4ee;
+            border: 1px solid #e8e0d4;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+        }
+        .task .task-num {
+            font-size: 13px;
+            color: #6a8cdf;
+            letter-spacing: 1px;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+        .task .task-text {
+            font-size: 16px;
+            line-height: 1.7;
+            color: #333344;
+        }
+        .task .task-text strong {
+            color: #2d2b4e;
+        }
+
+        .task .input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .task input[type="text"] {
+            padding: 8px 14px;
+            background: #ffffff;
+            border: 1px solid #d5cce8;
+            border-radius: 8px;
+            color: #2d2b4e;
+            font-family: 'Georgia', serif;
+            font-size: 18px;
+            width: 160px;
+            text-align: center;
+            outline: none;
+            transition: 0.3s;
+        }
+        .task input[type="text"]:focus {
+            border-color: #6a8cdf;
+            box-shadow: 0 0 16px rgba(106, 140, 223, 0.05);
+        }
+
+        .table-data {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 8px 0;
+            font-size: 13px;
+        }
+        .table-data th {
+            color: #6a8cdf;
+            font-weight: 700;
+            padding: 6px 8px;
+            border-bottom: 2px solid #d5cce8;
+            text-align: center;
+            font-size: 12px;
+        }
+        .table-data td {
+            padding: 6px 8px;
+            border-bottom: 1px solid #e8e0d4;
+            text-align: center;
+            font-size: 13px;
+            color: #333344;
+        }
+        .table-data tr:last-child td {
+            border-bottom: none;
+        }
+        .table-data input[type="text"] {
+            padding: 4px 6px;
+            background: #ffffff;
+            border: 1px solid #d5cce8;
+            border-radius: 6px;
+            color: #2d2b4e;
+            font-family: 'Georgia', serif;
+            font-size: 16px;
+            text-align: center;
+            outline: none;
+            transition: 0.3s;
+        }
+        .table-data input[type="text"]:focus {
+            border-color: #6a8cdf;
+        }
+
+        .math {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 1.5em;
+            color: #2d2b4e;
+            text-align: center;
+            padding: 12px 0;
+        }
+        .math .frac {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            margin: 0 4px;
+        }
+        .math .frac .num {
+            border-bottom: 2px solid #2d2b4e;
+            padding: 0 12px 4px;
+        }
+        .math .frac .den {
+            padding: 4px 12px 0;
+        }
+
+        .options {
+            margin: 8px 0 4px 0;
+            color: #333344;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .result-box {
+            text-align: center;
+            padding: 16px 0;
+        }
+        .result-box .big-score {
+            font-size: 56px;
+            font-weight: 900;
+            color: #6a8cdf;
+        }
+        .result-box .label {
+            font-size: 16px;
+            color: #8888aa;
+            margin-top: 2px;
+        }
+        .result-box .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 16px 0;
+        }
+        .result-box .stats .stat {
+            text-align: center;
+        }
+        .result-box .stats .num {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2d2b4e;
+        }
+        .result-box .stats .desc {
+            font-size: 13px;
+            color: #8888aa;
+        }
+
+        .result-box .errors-list {
+            text-align: left;
+            max-width: 480px;
+            margin: 12px auto;
+            background: #f8f4ee;
+            border: 1px solid #e8e0d4;
+            border-radius: 10px;
+            padding: 12px 16px;
+        }
+        .result-box .errors-list h3 {
+            color: #cc4466;
+            font-size: 13px;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+        .result-box .errors-list .error-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+            border-bottom: 1px solid #e8e0d4;
+            font-size: 14px;
+            color: #8888aa;
+            gap: 8px;
+        }
+        .result-box .errors-list .error-item:last-child {
+            border-bottom: none;
+        }
+        .result-box .errors-list .error-item .q {
+            color: #2d2b4e;
+            flex: 1;
+        }
+        .result-box .errors-list .error-item .a {
+            color: #2d8a4e;
+        }
+        .result-box .errors-list .error-item .wrong-answer {
+            color: #cc4466;
+        }
+
+        .motto {
+            margin-top: 16px;
+            text-align: center;
+            font-size: clamp(13px, 1.2vw, 16px);
+            color: #8888aa;
+            letter-spacing: 2px;
+            font-style: italic;
+            border-top: 1px solid #e8e0d4;
+            padding-top: 12px;
+        }
+        .motto strong {
+            color: #b4a7d6;
+            font-weight: 700;
+        }
+
+        .distance-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .distance-modal.active {
+            display: flex;
+        }
+        .distance-modal-content {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 30px 40px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        .distance-modal-content h3 {
+            font-size: 18px;
+            color: #2d2b4e;
+            margin-bottom: 8px;
+        }
+        .distance-modal-content p {
+            font-size: 14px;
+            color: #8888aa;
+            margin-bottom: 16px;
+        }
+        .distance-modal-content input {
+            padding: 10px 16px;
+            border: 2px solid #d5cce8;
+            border-radius: 10px;
+            font-size: 20px;
+            width: 120px;
+            text-align: center;
+            font-family: 'Georgia', serif;
+            outline: none;
+            transition: 0.3s;
+        }
+        .distance-modal-content input:focus {
+            border-color: #6a8cdf;
+        }
+        .distance-modal-content .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 16px;
+        }
+        .distance-modal-content .btn-group button {
+            padding: 8px 24px;
+            border: none;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Georgia', serif;
+        }
+        .distance-modal-content .btn-group .btn-save {
+            background: #6a8cdf;
+            color: #ffffff;
+        }
+        .distance-modal-content .btn-group .btn-save:hover {
+            background: #5a7ccf;
+        }
+        .distance-modal-content .btn-group .btn-cancel {
+            background: #e8e0d4;
+            color: #8888aa;
+        }
+        .distance-modal-content .btn-group .btn-cancel:hover {
+            background: #d5cce8;
+        }
+
+        .legend-text {
+            font-family: 'Georgia', serif;
+            font-size: 14px;
+            fill: #2d2b4e;
+        }
+        .legend-line { stroke: #000000; stroke-width: 2; fill: none; }
+        .legend-line-dashed { stroke: #000000; stroke-width: 2; stroke-dasharray: 6,4; fill: none; }
+        .legend-line-river { stroke: #1a3a6a; stroke-width: 4; fill: none; }
+        .pond { fill: #87CEEB; stroke: #1a3a6a; stroke-width: 1.5; }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 14px;
+                border-radius: 24px;
+            }
+            .logo {
+                flex-direction: column;
+                align-items: center;
+                gap: 6px;
+            }
+            .condition {
+                font-size: 14px;
+                padding: 12px 14px;
+            }
+            .task input[type="text"] {
+                width: 100px;
+                font-size: 16px;
+            }
+            .nav-buttons {
+                flex-direction: column;
+            }
+            .nav-buttons .btn-nav-sm {
+                flex: none;
+                width: 100%;
+            }
+            .select-wrapper {
+                flex-direction: column;
+                gap: 6px;
+                padding: 10px 12px;
+            }
+            .select-wrapper select {
+                width: 100%;
+                min-width: unset;
+            }
+            .table-data {
+                font-size: 11px;
+            }
+            .table-data th,
+            .table-data td {
+                padding: 4px 4px;
+                font-size: 10px;
+            }
+            .table-data input[type="text"] {
+                width: 40px;
+                font-size: 14px;
+            }
+            .result-box .stats {
+                gap: 16px;
+            }
+            .distance-modal-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- ============================================================ -->
+        <!-- ЛОГОТИП -->
+        <!-- ============================================================ -->
+        <div class="logo">
+            <div class="logo-symbol">
+                <div class="line1">●</div>
+                <div class="line2">● ●</div>
+                <div class="line3">● ● ●</div>
+                <div class="line4">● ● ● ●</div>
+            </div>
+            <div class="logo-text">
+                <div class="logo-greek">ΤΕΤΡΑΚΤΥΣ</div>
+                <div class="logo-russian">ТЕТРАКТИС</div>
+                <div class="logo-sub">Школа математики Елены Михалевой</div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- СТРАНИЦА 1: ИНТЕРАКТИВНЫЙ ПЛАН (ИДЕАЛЬНЫЙ) -->
+        <!-- ============================================================ -->
+        <div class="screen active" id="page1">
+            <div class="title-block">
+                <h1>🥖 КОЛОБОК <span>НА ДОРОГАХ</span></h1>
+                <div class="sub">✦ Сельская местность · Подготовка к ОГЭ ✦</div>
+            </div>
+
+            <div class="condition">
+                Таня на летних каникулах приезжает в гости к дедушке в деревню Антоновка (на плане обозначена цифрой 1). В конце каникул дедушка на машине собирается отвезти Таню на автобусную станцию, которая находится в деревне Богданово. Из Антоновки в Богданово можно проехать по просёлочной дороге мимо реки. Есть другой путь – по шоссе до деревни Ванютино, где нужно повернуть под прямым углом налево на другое шоссе, ведущее в Богданово. Третий маршрут проходит по просёлочной дороге мимо пруда до деревни Горюново, где можно свернуть на шоссе до Богданово. Четвёртый маршрут пролегает по шоссе до деревни Доломино, от Доломино до Горюново по просёлочной дороге мимо конюшни и от Горюново до Богданово по шоссе. Ещё один маршрут проходит по шоссе до деревни Егорка, по просёлочной дороге мимо конюшни от Егорки до Жилино и по шоссе от Жилино до Богданово.<br><br>
+                Шоссе и просёлочные дороги образуют прямоугольные треугольники. По шоссе Таня с дедушкой едут со скоростью 50 км/ч, а по просёлочным дорогам – со скоростью 30 км/ч. Расстояние от Антоновки до Доломино равно 12 км, от Доломино до Егорки – 4 км, от Егорки до Ванютино – 12 км, от Горюново до Ванютино – 15 км, от Ванютино до Жилино – 9 км, а от Жилино до Богданово – 12 км.
+            </div>
+
+            <div class="figure-wrapper">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 700" width="100%" height="auto" id="plan-svg">
+                    <style>
+                        .bg { fill: #ffffff; }
+                        .road { stroke: #000000; stroke-width: 3; fill: none; }
+                        .road-dashed { stroke: #000000; stroke-width: 1.5; stroke-dasharray: 6,4; fill: none; }
+                        .drop { fill: #ffffff; stroke: #000000; stroke-width: 2; }
+                        .drop-number { font-family: 'Georgia', serif; font-size: 16px; font-weight: 700; fill: #2d2b4e; text-anchor: middle; dominant-baseline: central; }
+                        .river { stroke: #1a3a6a; stroke-width: 6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+                        .pond { fill: #87CEEB; stroke: #1a3a6a; stroke-width: 1.5; }
+                        .horse-emoji { font-size: 28px; }
+                        .clickable-zone { cursor: pointer; fill: rgba(106, 140, 223, 0.08); stroke: #6a8cdf; stroke-width: 1.5; stroke-dasharray: 4,4; transition: all 0.3s; }
+                        .clickable-zone:hover { fill: rgba(106, 140, 223, 0.15); }
+                        .clickable-zone.selected { fill: rgba(106, 140, 223, 0.15); stroke: #6a8cdf; stroke-width: 2; stroke-dasharray: none; }
+                        .obj-label { font-family: 'Georgia', serif; font-size: 13px; fill: #2d2b4e; font-weight: 700; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+                        .distance-click { cursor: pointer; fill: rgba(255, 200, 100, 0.3); stroke: #d4a017; stroke-width: 2; transition: all 0.3s; }
+                        .distance-click:hover { fill: rgba(255, 200, 100, 0.5); }
+                        .distance-label { font-family: 'Georgia', serif; font-size: 14px; fill: #2d2b4e; font-weight: 700; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+                        .legend-text { font-family: 'Georgia', serif; font-size: 14px; fill: #2d2b4e; }
+                        .legend-line { stroke: #000000; stroke-width: 2; fill: none; }
+                        .legend-line-dashed { stroke: #000000; stroke-width: 2; stroke-dasharray: 6,4; fill: none; }
+                        .legend-line-river { stroke: #1a3a6a; stroke-width: 4; fill: none; }
+                    </style>
+                    
+                    <rect x="0" y="0" width="1100" height="700" class="bg"/>
+                    
+                    <!-- БУКВА "Г" (шоссе) -->
+                    <g class="road">
+                        <line x1="300" y1="100" x2="780" y2="100"/>
+                        <line x1="300" y1="100" x2="300" y2="500"/>
+                    </g>
+                    
+                    <!-- ПУНКТИРНЫЕ ЛИНИИ (просёлочные дороги) -->
+                    <line x1="300" y1="185" x2="460" y2="100" class="road-dashed"/>
+                    <line x1="300" y1="295" x2="380" y2="100" class="road-dashed"/>
+                    <line x1="300" y1="295" x2="640" y2="100" class="road-dashed"/>
+                    <line x1="300" y1="405" x2="640" y2="100" class="road-dashed"/>
+                    
+                    <!-- РЕКА -->
+                    <path d="M 280,500 C 320,480 340,440 380,420 C 420,400 440,360 480,340 C 520,320 540,280 580,260 C 600,250 620,230 640,210 C 660,190 670,170 680,150 C 690,130 695,110 690,90 C 685,70 675,60 660,55" class="river"/>
+                    
+                    <!-- ПРУД -->
+                    <ellipse cx="420" cy="185" rx="30" ry="18" class="pond"/>
+                    
+                    <!-- ЛОШАДКА -->
+                    <text x="295" y="125" class="horse-emoji">🐴</text>
+                    
+                    <!-- ================================================== -->
+                    <!-- КЛИКАБЕЛЬНЫЕ ЦИФРЫ (деревни): 1, 2, 3, 4, 5, 6, 7 -->
+                    <!-- ================================================== -->
+                    
+                    <!-- 1 (Антоновка) -->
+                    <g id="zone-1">
+                        <path d="M 628,60 C 628,43 652,43 652,60 C 652,73 643,87 640,96 C 637,87 628,73 628,60 Z" class="drop"/>
+                        <text x="640" y="65" class="drop-number">1</text>
+                        <circle cx="640" cy="65" r="22" class="clickable-zone" data-id="1"/>
+                    </g>
+                    
+                    <!-- 2 (Богданово) -->
+                    <g id="zone-2">
+                        <path d="M 448,60 C 448,43 472,43 472,60 C 472,73 463,87 460,96 C 457,87 448,73 448,60 Z" class="drop"/>
+                        <text x="460" y="65" class="drop-number">2</text>
+                        <circle cx="460" cy="65" r="22" class="clickable-zone" data-id="2"/>
+                    </g>
+                    
+                    <!-- 3 (Ванютино) -->
+                    <g id="zone-3">
+                        <path d="M 368,60 C 368,43 392,43 392,60 C 392,73 383,87 380,96 C 377,87 368,73 368,60 Z" class="drop"/>
+                        <text x="380" y="65" class="drop-number">3</text>
+                        <circle cx="380" cy="65" r="22" class="clickable-zone" data-id="3"/>
+                    </g>
+                    
+                    <!-- 4 (Горюново) -->
+                    <g id="zone-4">
+                        <path d="M 288,60 C 288,43 312,43 312,60 C 312,73 303,87 300,96 C 297,87 288,73 288,60 Z" class="drop"/>
+                        <text x="300" y="65" class="drop-number">4</text>
+                        <circle cx="300" cy="65" r="22" class="clickable-zone" data-id="4"/>
+                    </g>
+                    
+                    <!-- 5 (Доломино) -->
+                    <g id="zone-5">
+                        <path d="M 288,180 C 288,163 312,163 312,180 C 312,193 303,207 300,216 C 297,207 288,193 288,180 Z" class="drop"/>
+                        <text x="300" y="185" class="drop-number">5</text>
+                        <circle cx="300" cy="185" r="22" class="clickable-zone" data-id="5"/>
+                    </g>
+                    
+                    <!-- 6 (Егорка) -->
+                    <g id="zone-6">
+                        <path d="M 288,290 C 288,273 312,273 312,290 C 312,303 303,317 300,326 C 297,317 288,303 288,290 Z" class="drop"/>
+                        <text x="300" y="295" class="drop-number">6</text>
+                        <circle cx="300" cy="295" r="22" class="clickable-zone" data-id="6"/>
+                    </g>
+                    
+                    <!-- 7 (Жилино) -->
+                    <g id="zone-7">
+                        <path d="M 288,400 C 288,383 312,383 312,400 C 312,413 303,427 300,436 C 297,427 288,413 288,400 Z" class="drop"/>
+                        <text x="300" y="405" class="drop-number">7</text>
+                        <circle cx="300" cy="405" r="22" class="clickable-zone" data-id="7"/>
+                    </g>
+                    
+                    <!-- ================================================== -->
+                    <!-- РАССТОЯНИЯ ТОЛЬКО ПО ШОССЕ -->
+                    <!-- ================================================== -->
+                    
+                    <!-- 1→2: Антоновка → Богданово -->
+                    <circle cx="560" cy="80" r="14" class="distance-click" data-road="1-2" data-from="Антоновка" data-to="Богданово"/>
+                    <text x="560" y="80" class="distance-label" id="dist-1-2">?</text>
+                    
+                    <!-- 2→3: Богданово → Ванютино -->
+                    <circle cx="420" cy="80" r="14" class="distance-click" data-road="2-3" data-from="Богданово" data-to="Ванютино"/>
+                    <text x="420" y="80" class="distance-label" id="dist-2-3">?</text>
+                    
+                    <!-- 3→4: Ванютино → Горюново -->
+                    <circle cx="340" cy="80" r="14" class="distance-click" data-road="3-4" data-from="Ванютино" data-to="Горюново"/>
+                    <text x="340" y="80" class="distance-label" id="dist-3-4">?</text>
+                    
+                    <!-- 4→5: Горюново → Доломино -->
+                    <circle cx="280" cy="140" r="14" class="distance-click" data-road="4-5" data-from="Горюново" data-to="Доломино"/>
+                    <text x="280" y="140" class="distance-label" id="dist-4-5">?</text>
+                    
+                    <!-- 5→6: Доломино → Егорка -->
+                    <circle cx="280" cy="235" r="14" class="distance-click" data-road="5-6" data-from="Доломино" data-to="Егорка"/>
+                    <text x="280" y="235" class="distance-label" id="dist-5-6">?</text>
+                    
+                    <!-- 6→7: Егорка → Жилино -->
+                    <circle cx="280" cy="350" r="14" class="distance-click" data-road="6-7" data-from="Егорка" data-to="Жилино"/>
+                    <text x="280" y="350" class="distance-label" id="dist-6-7">?</text>
+                    
+                    <!-- ================================================== -->
+                    <!-- ЛЕГЕНДА -->
+                    <!-- ================================================== -->
+                    <g transform="translate(820, 100)">
+                        <text x="0" y="0" font-family="'Georgia', serif" font-size="18" font-weight="700" fill="#2d2b4e">Условные обозначения</text>
+                        <line x1="0" y1="30" x2="50" y2="30" class="legend-line"/>
+                        <text x="60" y="35" class="legend-text">— шоссе</text>
+                        <line x1="0" y1="60" x2="50" y2="60" class="legend-line-dashed"/>
+                        <text x="60" y="65" class="legend-text">— просёлочная дорога</text>
+                        <path d="M 0,90 C 10,85 20,95 30,90 C 40,85 45,95 50,90" class="legend-line-river"/>
+                        <text x="60" y="95" class="legend-text">— река</text>
+                        <ellipse cx="25" cy="118" rx="18" ry="10" class="pond"/>
+                        <text x="60" y="123" class="legend-text">— пруд</text>
+                        <text x="0" y="148" class="legend-text" font-weight="700">🐴 конюшня</text>
+                        <circle cx="12" cy="170" r="10" fill="rgba(255,200,100,0.3)" stroke="#d4a017" stroke-width="2"/>
+                        <text x="30" y="175" class="legend-text">— расстояние по шоссе</text>
+                    </g>
+                </svg>
+            </div>
+
+            <div class="select-wrapper">
+                <label for="object-select">🏷️ Выберите объект:</label>
+                <select id="object-select">
+                    <option value="">— выберите —</option>
+                    <option value="Антоновка">Антоновка</option>
+                    <option value="Богданово">Богданово</option>
+                    <option value="Ванютино">Ванютино</option>
+                    <option value="Горюново">Горюново</option>
+                    <option value="Доломино">Доломино</option>
+                    <option value="Егорка">Егорка</option>
+                    <option value="Жилино">Жилино</option>
+                </select>
+                <span class="hint">👆 кликните на цифру, затем выберите название деревни</span>
+            </div>
+
+            <button class="btn-nav" onclick="saveLabelsAndGoToPage2()">🚪 Далее →</button>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- СТРАНИЦА 2: ПЛАН С ПОДПИСЯМИ + ЗАДАНИЯ 1–5 -->
+        <!-- ============================================================ -->
+        <div class="screen" id="page2">
+            <div class="title-block">
+                <h1>🥖 КОЛОБОК <span>НА ДОРОГАХ</span></h1>
+                <div class="sub">✦ Задания 1–5 ✦</div>
+            </div>
+
+            <div class="figure-wrapper" id="plan-wrapper-page2"></div>
+
+            <!-- ЗАДАНИЕ 1 -->
+            <div class="task" id="task1">
+                <div class="task-num">ЗАДАНИЕ 1</div>
+                <div class="task-text">
+                    <strong>Пользуясь описанием, определите, какими цифрами на плане обозначены деревни.</strong>
+                    Заполните таблицу, в бланк ответов перенесите последовательность четырёх цифр без пробелов, запятых и других дополнительных символов.
+                </div>
+                <table class="table-data">
+                    <thead>
+                        <tr>
+                            <th>Деревни</th>
+                            <th>Егорка</th>
+                            <th>Ванютино</th>
+                            <th>Доломино</th>
+                            <th>Жилино</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Цифры</strong></td>
+                            <td><input type="text" id="m1" maxlength="1" placeholder="?" style="width:50px;"></td>
+                            <td><input type="text" id="m2" maxlength="1" placeholder="?" style="width:50px;"></td>
+                            <td><input type="text" id="m3" maxlength="1" placeholder="?" style="width:50px;"></td>
+                            <td><input type="text" id="m4" maxlength="1" placeholder="?" style="width:50px;"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="input-group">
+                    <input type="text" id="ans1" placeholder="Последовательность (4 цифры)" style="width:180px;">
+                </div>
+            </div>
+
+            <!-- ЗАДАНИЕ 2 -->
+            <div class="task" id="task2">
+                <div class="task-num">ЗАДАНИЕ 2</div>
+                <div class="task-text">
+                    <strong>Найдите расстояние от Доломино до Ванютино по шоссе. Ответ дайте в километрах.</strong>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="ans2" placeholder="Ответ">
+                </div>
+            </div>
+
+            <!-- ЗАДАНИЕ 3 -->
+            <div class="task" id="task3">
+                <div class="task-num">ЗАДАНИЕ 3</div>
+                <div class="task-text">
+                    <strong>Найдите расстояние от Доломино до Горюново по прямой. Ответ дайте в километрах.</strong>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="ans3" placeholder="Ответ">
+                </div>
+            </div>
+
+            <!-- ЗАДАНИЕ 4 -->
+            <div class="task" id="task4">
+                <div class="task-num">ЗАДАНИЕ 4</div>
+                <div class="task-text">
+                    <strong>Сколько минут затратят на дорогу Таня с дедушкой из Антоновки в Богданово, если поедут через Егорку и Жилино мимо конюшни?</strong>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="ans4" placeholder="Ответ">
+                </div>
+            </div>
+
+            <!-- ЗАДАНИЕ 5 -->
+            <div class="task" id="task5">
+                <div class="task-num">ЗАДАНИЕ 5</div>
+                <div class="task-text">
+                    <strong>На просёлочных дорогах машина дедушки расходует 8,2 литра бензина на 100 км. Известно, что на путь из Антоновки до Богданово через Ванютино и путь напрямик ей необходим один и тот же объём бензина. Сколько литров бензина на 100 км машина дедушки расходует на шоссе?</strong>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="ans5" placeholder="Ответ">
+                </div>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn-nav-sm" onclick="showPage('page1')">⬅ Назад</button>
+                <button class="btn-nav-sm" onclick="saveAnswersAndGoToPage3()">Далее ➡</button>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- СТРАНИЦА 3: ЗАДАНИЯ 6–8 -->
+        <!-- ============================================================ -->
+        <div class="screen" id="page3">
+            <div class="title-block">
+                <h1>🥖 КОЛОБОК <span>НА ДОРОГАХ</span></h1>
+                <div class="sub">✦ Задания 6–8 ✦</div>
+            </div>
+
+            <!-- ЗАДАНИЕ 6 -->
+            <div class="task" id="task6">
+                <div class="task-num">ЗАДАНИЕ 6</div>
+                <div class="task-text">
+                    <strong>Найдите значение выражения:</strong>
+                </div>
+                <div class="math">
+                    5,3 − 9 · (−4,4)
+                </div>
+                <div class="input-group">
+                    <input type="text" id="ans6" placeholder="Ответ">
+                </div>
+            </div>
+
+            <!-- ЗАДАНИЕ 7 -->
+            <div class="task" id="task7">
+                <div class="task-num">ЗАДАНИЕ 7</div>
+                <div class="task-text">
+                    <strong>Между какими целыми числами заключено число \(\sqrt{56}\)?</strong>
+                </div>
+                <div class="options">
+                    1) 55 и 57 &nbsp;&nbsp; 2) 3 и 4 &nbsp;&nbsp; 3) 19 и 21 &nbsp;&nbsp; 4) 7 и 8
+                </div>
+                <div class="input-group">
+                    <input type="text" id="ans7" placeholder="Номер ответа (1–4)" style="width:140px;">
+                </div>
+            </div>
+
+            <!-- ЗАДАНИЕ 8 -->
+            <div class="task" id="task8">
+                <div class="task-num">ЗАДАНИЕ 8</div>
+                <div class="task-text">
+                    <strong>Найдите значение выражения:</strong>
+                </div>
+                <div class="math">
+                    a⁻⁸ · (a⁵)² &nbsp;при a = 3
+                </div>
+                <div class="input-group">
+                    <input type="text" id="ans8" placeholder="Ответ">
+                </div>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn-nav-sm" onclick="showPage('page2')">⬅ Назад</button>
+                <button class="btn-nav-sm" onclick="showResults()">📊 Закончить тест</button>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- СТРАНИЦА 4: ИТОГИ -->
+        <!-- ============================================================ -->
+        <div class="screen" id="page4">
+            <div class="title-block">
+                <h1>🥖 КОЛОБОК <span>НА ДОРОГАХ</span></h1>
+                <div class="sub">✦ Результаты ✦</div>
+            </div>
+
+            <div class="result-box">
+                <div class="big-score" id="final-score">0</div>
+                <div class="label">из 8 баллов</div>
+
+                <div class="stats">
+                    <div class="stat">
+                        <div class="num" id="result-correct" style="color:#2d8a4e;">0</div>
+                        <div class="desc">✅ Верно</div>
+                    </div>
+                    <div class="stat">
+                        <div class="num" id="result-wrong" style="color:#cc4466;">0</div>
+                        <div class="desc">❌ Ошибок</div>
+                    </div>
+                </div>
+
+                <div id="errors-container">
+                    <div class="errors-list" id="errors-list">
+                        <h3>📋 ОШИБКИ</h3>
+                        <div id="errors-content"></div>
+                    </div>
+                </div>
+
+                <button class="btn-nav" onclick="restartTest()" style="margin-top:16px;">🔄 Пройти заново</button>
+            </div>
+        </div>
+
+        <div class="motto">
+            <strong>🥖 Колобок</strong> — катится по дорогам, а ты помогаешь ему не заблудиться!
+        </div>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ВВОДА РАССТОЯНИЯ -->
+    <!-- ============================================================ -->
+    <div class="distance-modal" id="distance-modal">
+        <div class="distance-modal-content">
+            <h3>✏️ Введите расстояние</h3>
+            <p id="distance-prompt">От <strong>Антоновка</strong> до <strong>Богданово</strong></p>
+            <input type="text" id="distance-input" placeholder="км" autofocus>
+            <div class="btn-group">
+                <button class="btn-save" onclick="saveDistance()">✅ Сохранить</button>
+                <button class="btn-cancel" onclick="closeDistanceModal()">❌ Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // ЗВУКИ
+        // ============================================================
+        var AudioCtx = window.AudioContext || window.webkitAudioContext;
+        var audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioCtx();
+        }
+
+        function playSound(type) {
+            try {
+                initAudio();
+                if (type === 'click') {
+                    var o = audioCtx.createOscillator(),
+                        g = audioCtx.createGain();
+                    o.connect(g);
+                    g.connect(audioCtx.destination);
+                    o.frequency.value = 600;
+                    o.type = 'sine';
+                    g.gain.setValueAtTime(0.06, audioCtx.currentTime);
+                    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.06);
+                    o.start(audioCtx.currentTime);
+                    o.stop(audioCtx.currentTime + 0.06);
+                } else if (type === 'correct') {
+                    var o = audioCtx.createOscillator(),
+                        g = audioCtx.createGain();
+                    o.connect(g);
+                    g.connect(audioCtx.destination);
+                    o.frequency.value = 880;
+                    o.type = 'sine';
+                    g.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+                    o.start(audioCtx.currentTime);
+                    o.stop(audioCtx.currentTime + 0.15);
+                    var o2 = audioCtx.createOscillator(),
+                        g2 = audioCtx.createGain();
+                    o2.connect(g2);
+                    g2.connect(audioCtx.destination);
+                    o2.frequency.value = 1108;
+                    o2.type = 'sine';
+                    g2.gain.setValueAtTime(0.08, audioCtx.currentTime + 0.08);
+                    g2.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+                    o2.start(audioCtx.currentTime + 0.08);
+                    o2.stop(audioCtx.currentTime + 0.2);
+                } else if (type === 'wrong') {
+                    var o = audioCtx.createOscillator(),
+                        g = audioCtx.createGain();
+                    o.connect(g);
+                    g.connect(audioCtx.destination);
+                    o.frequency.value = 330;
+                    o.type = 'sawtooth';
+                    g.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+                    o.start(audioCtx.currentTime);
+                    o.stop(audioCtx.currentTime + 0.3);
+                } else if (type === 'win') {
+                    [523, 587, 659, 784, 880, 988, 1175].forEach(function(f, i) {
+                        var o = audioCtx.createOscillator(),
+                            g = audioCtx.createGain();
+                        o.connect(g);
+                        g.connect(audioCtx.destination);
+                        o.frequency.value = f;
+                        o.type = 'sine';
+                        g.gain.setValueAtTime(0.06, audioCtx.currentTime + i * 0.08);
+                        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + i * 0.08 + 0.15);
+                        o.start(audioCtx.currentTime + i * 0.08);
+                        o.stop(audioCtx.currentTime + i * 0.08 + 0.15);
+                    });
+                }
+            } catch (e) {}
+        }
+
+        // ============================================================
+        // ПОДПИСЬ ДЕРЕВЕНЬ
+        // ============================================================
+        var selectedZone = null;
+        var savedLabels = {};
+
+        document.querySelectorAll('.clickable-zone').forEach(function(zone) {
+            zone.addEventListener('click', function(e) {
+                document.querySelectorAll('.clickable-zone').forEach(function(z) {
+                    z.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                selectedZone = this;
+                document.getElementById('object-select').focus();
+                e.stopPropagation();
+                playSound('click');
+            });
+        });
+
+        document.getElementById('object-select').addEventListener('change', function() {
+            if (selectedZone && this.value) {
+                var label = this.value;
+                var objId = selectedZone.getAttribute('data-id');
+
+                var oldLabel = document.getElementById('label-' + objId);
+                if (oldLabel) oldLabel.remove();
+
+                var svg = document.getElementById('plan-svg');
+                var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                var cx = parseFloat(selectedZone.getAttribute('cx'));
+                var cy = parseFloat(selectedZone.getAttribute('cy'));
+                text.setAttribute('x', cx);
+                text.setAttribute('y', cy - 24);
+                text.setAttribute('class', 'obj-label');
+                text.setAttribute('id', 'label-' + objId);
+                text.textContent = label;
+                svg.appendChild(text);
+
+                savedLabels[objId] = label;
+                this.value = '';
+                playSound('click');
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.clickable-zone') && !e.target.closest('.select-wrapper')) {
+                document.querySelectorAll('.clickable-zone').forEach(function(z) {
+                    z.classList.remove('selected');
+                });
+                selectedZone = null;
+            }
+        });
+
+        // ============================================================
+        // ВВОД РАССТОЯНИЙ
+        // ============================================================
+        var currentRoad = null;
+        var savedDistances = {};
+
+        document.querySelectorAll('.distance-click').forEach(function(el) {
+            el.addEventListener('click', function(e) {
+                currentRoad = this;
+                var from = this.getAttribute('data-from');
+                var to = this.getAttribute('data-to');
+                document.getElementById('distance-prompt').innerHTML =
+                    'От <strong>' + from + '</strong> до <strong>' + to + '</strong>';
+                document.getElementById('distance-input').value = '';
+                document.getElementById('distance-modal').classList.add('active');
+                setTimeout(function() {
+                    document.getElementById('distance-input').focus();
+                }, 200);
+                e.stopPropagation();
+                playSound('click');
+            });
+        });
+
+        function closeDistanceModal() {
+            document.getElementById('distance-modal').classList.remove('active');
+            currentRoad = null;
+        }
+
+        function saveDistance() {
+            var input = document.getElementById('distance-input');
+            var value = input.value.trim().replace(',', '.');
+            if (value === '' || isNaN(value) || parseFloat(value) <= 0) {
+                alert('Пожалуйста, введите положительное число');
+                return;
+            }
+            if (currentRoad) {
+                var roadId = currentRoad.getAttribute('data-road');
+                var label = document.getElementById('dist-' + roadId);
+                if (label) {
+                    label.textContent = value;
+                    label.setAttribute('fill', '#2d8a4e');
+                    savedDistances[roadId] = value;
+                }
+                currentRoad.setAttribute('fill', 'rgba(45, 138, 78, 0.2)');
+                currentRoad.setAttribute('stroke', '#2d8a4e');
+                playSound('click');
+            }
+            closeDistanceModal();
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeDistanceModal();
+            if (e.key === 'Enter' && document.getElementById('distance-modal').classList.contains('active')) {
+                saveDistance();
+            }
+        });
+
+        document.getElementById('distance-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeDistanceModal();
+        });
+
+        // ============================================================
+        // НАВИГАЦИЯ
+        // ============================================================
+        function showPage(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            playSound('click');
+        }
+
+        // ============================================================
+        // ПЕРЕХОД НА СТРАНИЦУ 2 (с сохранёнными подписями)
+        // ============================================================
+        function saveLabelsAndGoToPage2() {
+            var svg = document.getElementById('plan-svg');
+            var clone = svg.cloneNode(true);
+            var wrapper = document.getElementById('plan-wrapper-page2');
+            wrapper.innerHTML = '';
+            wrapper.appendChild(clone);
+            showPage('page2');
+        }
+
+        // ============================================================
+        // СОХРАНЕНИЕ ОТВЕТОВ И ПЕРЕХОД
+        // ============================================================
+        var userAnswers = {};
+
+        function saveAnswersAndGoToPage3() {
+            userAnswers['1'] = document.getElementById('ans1').value;
+            userAnswers['2'] = document.getElementById('ans2').value;
+            userAnswers['3'] = document.getElementById('ans3').value;
+            userAnswers['4'] = document.getElementById('ans4').value;
+            userAnswers['5'] = document.getElementById('ans5').value;
+            showPage('page3');
+        }
+
+        // ============================================================
+        // РЕЗУЛЬТАТЫ
+        // ============================================================
+        function showResults() {
+            userAnswers['6'] = document.getElementById('ans6').value;
+            userAnswers['7'] = document.getElementById('ans7').value;
+            userAnswers['8'] = document.getElementById('ans8').value;
+
+            var correctAnswers = {
+                '1': '2435',
+                '2': '8',
+                '3': '17',
+                '4': '54',
+                '5': '5.8',
+                '6': '44.9',
+                '7': '4',
+                '8': '9'
+            };
+
+            var correct = 0,
+                wrong = 0,
+                errors = [];
+
+            for (var i = 1; i <= 8; i++) {
+                var userVal = (userAnswers[i] || '').replace(/\s/g, '').replace(/,/g, '.');
+                var correctVal = correctAnswers[i].replace(/\s/g, '').replace(/,/g, '.');
+                if (userVal === correctVal) {
+                    correct++;
+                } else {
+                    wrong++;
+                    errors.push({ num: i, user: userAnswers[i] || '(пусто)', correct: correctAnswers[i] });
+                }
+            }
+
+            document.getElementById('final-score').textContent = correct;
+            document.getElementById('result-correct').textContent = correct;
+            document.getElementById('result-wrong').textContent = wrong;
+
+            var ec = document.getElementById('errors-content');
+            if (errors.length === 0) {
+                ec.innerHTML = '<div style="color:#2d8a4e;text-align:center;padding:10px;">🎉 Все задания решены верно!</div>';
+                playSound('win');
+            } else {
+                var html = '';
+                errors.forEach(function(e) {
+                    html += '<div class="error-item">';
+                    html += '<span class="q">Задание ' + e.num + '</span>';
+                    html += '<span><span class="wrong-answer">' + e.user + '</span> → <span class="a">' + e.correct + '</span></span>';
+                    html += '</div>';
+                });
+                ec.innerHTML = html;
+                playSound('wrong');
+            }
+
+            showPage('page4');
+        }
+
+        // ============================================================
+        // ПЕРЕЗАПУСК
+        // ============================================================
+        function restartTest() {
+            userAnswers = {};
+            savedLabels = {};
+            savedDistances = {};
+            document.querySelectorAll('input[type="text"]').forEach(function(inp) {
+                inp.value = '';
+            });
+            document.getElementById('errors-content').innerHTML = '';
+            location.reload();
+        }
+
+        console.log('🥖 Колобок · ОГЭ');
+        console.log('🏷️ ΤΕΤΡΑΚΤΥΣ — Школа математики Елены Михалевой');
+        console.log('🔊 Звуки активированы!');
+    </script>
+
+</body>
+</html>
