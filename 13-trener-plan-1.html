@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тренажер · Деревни (Финальный) · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  :root {
+    --bg: #113c38; --panel: rgba(22, 83, 77, 0.6); --bg2: #0b2b27;
+    --line: rgba(47, 212, 181, 0.3); --turq: #2fd4b5; --mint: #7fe8c8;
+    --gold: #e8c45a; --text: #e0f2ec; --coral: #ff6b6b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background-color: var(--bg);
+    background-image: radial-gradient(circle at 15% 10%, rgba(47, 212, 181, 0.15) 0%, transparent 40%),
+                      radial-gradient(circle at 85% 90%, rgba(47, 212, 181, 0.1) 0%, transparent 40%);
+    background-attachment: fixed; color: var(--text);
+    font-family: Georgia, serif; padding: 20px; margin: 0;
+    display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+  }
+  
+  header {
+    position: sticky; top: 0; z-index: 100; width: 100%; max-width: 1100px;
+    background: rgba(17, 60, 56, 0.95); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line); padding: 15px 20px; margin-bottom: 20px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-radius: 0 0 18px 18px;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-dots { display: flex; flex-direction: column; gap: 2px; font-size: 10px; color: var(--gold); line-height: 1; }
+  .logo-text { font-family: 'Times New Roman', serif; font-weight: bold; font-size: 20px; color: var(--turq); letter-spacing: 2px; text-shadow: 0 0 12px rgba(47,212,181,0.4); }
+  .logo-text small { display: block; font-size: 10px; color: var(--mint); letter-spacing: 3px; }
+  
+  .header-info { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .chip {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+    padding: 6px 12px; font-size: 13px; color: var(--mint); font-family: "Courier New", monospace;
+  }
+  .chip.timer { cursor: pointer; }
+  .chip.ok { color: #2ecc71; }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 45% 55%;
+    gap: 20px;
+    max-width: 1500px;
+    width: 100%;
+    padding-bottom: 100px;
+    align-items: start;
+  }
+
+  .left-col { display: flex; flex-direction: column; gap: 20px; }
+
+  .name-block {
+    background: var(--panel); backdrop-filter: blur(12px);
+    border: 1px solid var(--line); border-radius: 12px;
+    padding: 12px 15px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  .name-block label { color: var(--gold); font-weight: bold; font-size: 14px; }
+  .name-block input {
+    flex: 1; min-width: 150px; padding: 8px 12px; border-radius: 8px;
+    border: 1px solid var(--line); background: var(--bg2); color: var(--text);
+    font-family: Georgia, serif; font-size: 15px; outline: none;
+  }
+  .name-block input:focus { border-color: var(--turq); }
+
+  .condition-block {
+    background: var(--panel); backdrop-filter: blur(12px);
+    border: 1px solid var(--line); border-radius: 16px; padding: 20px;
+    font-size: 15px; line-height: 1.6; color: var(--text);
+  }
+  .condition-block b { color: var(--gold); }
+
+  .right-col {
+    position: sticky;
+    top: 80px;
+    background: var(--panel); backdrop-filter: blur(12px);
+    border: 1px solid var(--line); border-radius: 16px;
+    padding: 15px;
+    height: calc(100vh - 100px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .map-wrap {
+    background: #f7fcfa; border-radius: 12px; padding: 5px;
+    flex: 1; display: flex; align-items: center; justify-content: center;
+  }
+  .map-wrap svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+
+  .task-card {
+    background: var(--panel); backdrop-filter: blur(12px);
+    border: 1px solid var(--line); border-radius: 16px; padding: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3); transition: 0.3s;
+  }
+  .task-card.solved-ok { border-color: #2ecc71; background: rgba(46, 204, 113, 0.05); }
+  .task-card.solved-bad { border-color: var(--coral); background: rgba(255, 107, 107, 0.05); }
+
+  .task-header {
+    display: flex; gap: 12px; align-items: flex-start; margin-bottom: 16px;
+    border-bottom: 1px solid rgba(47, 212, 181, 0.15); padding-bottom: 12px;
+  }
+  .task-num {
+    background: linear-gradient(135deg, var(--turq), #1a9a82); color: #0b2b27;
+    font-weight: bold; font-size: 18px; width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 10px; font-family: "Courier New", monospace; flex-shrink: 0;
+  }
+  .task-title { font-size: 15px; color: var(--mint); font-weight: bold; padding-top: 8px; flex: 1; }
+  .task-mark { font-size: 24px; margin-left: auto; }
+  
+  .task-question { font-size: 16px; line-height: 1.6; margin-bottom: 15px; }
+  .task-question b { color: var(--gold); }
+
+  .table-task { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 14px; }
+  .table-task th, .table-task td { border: 1px solid var(--line); padding: 8px; text-align: center; }
+  .table-task th { background: rgba(47, 212, 181, 0.1); color: var(--mint); }
+  .table-task input {
+    width: 60px; padding: 8px; border-radius: 8px; border: 1.5px solid var(--line);
+    background: var(--bg2); color: var(--text); text-align: center; outline: none;
+    font-family: "Courier New", monospace; font-size: 15px;
+  }
+
+  .answer-row { display: flex; gap: 10px; margin-top: 15px; }
+  .answer-row input {
+    flex: 1; padding: 14px; border-radius: 12px; border: 1.5px solid var(--line);
+    background: var(--bg2); color: var(--text); font-size: 16px; font-family: "Courier New", monospace;
+    outline: none; transition: 0.3s;
+  }
+  .answer-row input:focus { border-color: var(--turq); box-shadow: 0 0 10px rgba(47,212,181,0.2); }
+  .answer-row input.disabled, .table-task input.disabled { opacity: 0.7; pointer-events: none; background: #061d1a; }
+  .answer-row input.correct, .table-task input.correct { border-color: #2ecc71; color: #2ecc71; }
+  .answer-row input.wrong, .table-task input.wrong { border-color: var(--coral); color: var(--coral); }
+
+  .correct-answer-note { margin-top: 15px; font-size: 14px; color: var(--coral); font-weight: bold; display: none; }
+  .correct-answer-note.show { display: block; }
+
+  .bottom-bar {
+    position: fixed; bottom: 0; left: 0; width: 100%; 
+    background: rgba(17, 60, 56, 0.95); backdrop-filter: blur(10px);
+    border-top: 1px solid var(--line); padding: 12px 20px;
+    display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; z-index: 100;
+  }
+  .btn {
+    padding: 12px 24px; border: none; border-radius: 12px;
+    font-family: Georgia, serif; font-size: 15px; font-weight: bold;
+    cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px;
+  }
+  .btn-primary { background: linear-gradient(135deg, var(--turq), #1a9a82); color: #0b2b27; box-shadow: 0 4px 15px rgba(47,212,181,0.3); }
+  .btn-primary:hover { transform: translateY(-2px); }
+  .btn-gold { background: transparent; border: 1.5px solid var(--gold); color: var(--gold); }
+  .btn-max { background: linear-gradient(135deg, #2fd4b5, #1a9a82); color: #0b2b27; }
+
+  .summary-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
+    display: none; justify-content: center; align-items: center; z-index: 200; padding: 20px;
+  }
+  .summary-overlay.show { display: flex; }
+  .summary-box {
+    background: var(--bg); border: 2px solid var(--turq); border-radius: 18px;
+    padding: 30px; max-width: 400px; width: 100%; text-align: center;
+  }
+
+  .map-label {
+    width: 100%; height: 100%; padding: 2px; border: 1px solid #999; border-radius: 4px;
+    background: rgba(255, 255, 255, 0.9); font-family: Georgia, serif; font-size: 10px;
+    text-align: center; outline: none; color: #2d2b4e;
+  }
+  .map-label:focus { border-color: #2fd4b5; box-shadow: 0 0 5px rgba(47,212,181,0.5); }
+
+  @media (max-width: 1000px) {
+    .layout { grid-template-columns: 1fr; }
+    .right-col { position: static; height: auto; max-height: 60vh; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dots"><span>●</span><span>● ●</span><span>● ● ●</span><span>● ● ● ●</span></div>
+    <div class="logo-text">ΤΕΤΡΑΚΤΥΣ<small>ШКОЛА МАТЕМАТИКИ</small></div>
+  </div>
+  <div class="header-info">
+    <div class="chip" id="dateDisplay">📅 --.--.----</div>
+    <div class="chip timer" id="timerDisplay">⏱ 00:00</div>
+    <div class="chip ok" id="scoreDisplay">✅ 0 / 5</div>
+  </div>
+</header>
+
+<div class="layout">
+  <div class="left-col">
+    <div class="name-block">
+      <label>👤 Имя:</label>
+      <input type="text" id="studentName" placeholder="Введи имя и фамилию" autocomplete="off">
+    </div>
+    <div id="content"></div>
+  </div>
+
+  <div class="right-col">
+    <div style="text-align:center; font-size:13px; color:#889fa8; margin-bottom:5px;">💡 Впиши названия и расстояния в окошки</div>
+    <div class="map-wrap" id="map-container"></div>
+  </div>
+</div>
+
+<div class="bottom-bar">
+  <button class="btn btn-primary" onclick="checkAll()" id="btnCheck">✅ Проверить</button>
+  <button class="btn btn-gold" onclick="startNew()">🔄 Сменить</button>
+  <button class="btn btn-max" onclick="sendToMax()">💬 В Макс</button>
+</div>
+
+<div class="summary-overlay" id="summaryOverlay">
+  <div class="summary-box">
+    <div class="summary-title">📊 Результат</div>
+    <div class="summary-stats">
+      <div class="summary-stat"><span class="num ok" id="statOk">0</span><span class="lbl">✅ верно</span></div>
+      <div class="summary-stat"><span class="num err" id="statErr">0</span><span class="lbl">❌ неверно</span></div>
+      <div class="summary-stat"><span class="num pct" id="statPercent">0%</span><span class="lbl">📊 процент</span></div>
+    </div>
+    <div class="summary-line" id="summaryLine">—</div>
+    <button class="btn btn-primary" style="margin-top: 20px; width: 100%;" onclick="document.getElementById('summaryOverlay').classList.remove('show')">Закрыть</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   ДАННЫЕ
+   ============================================================ */
+const NAME_SETS = [
+  ['Антоновка', 'Егорка', 'Доломино', 'Ванютино', 'Жилино', 'Горюново', 'Богданово'],
+  ['Ясная', 'Камышёвка', 'Майское', 'Хомяково', 'Лягушкино', 'Вятское', 'Куровка'],
+  ['Грушёвка', 'Таловка', 'Новая', 'Абрамово', 'Осиновка', 'Зябликово', 'Старая'],
+  ['Дивная', 'Калиновка', 'Ровное', 'Ольгино', 'Ёлочки', 'Сосенки', 'Жуки'],
+  ['Пирожки', 'Васильево', 'Рябиновка', 'Княжеское', 'Масловка', 'Вёсенка', 'Полянка'],
+  ['Захарово', 'Николаево', 'Плодородное', 'Рассвет', 'Шарковка', 'Васильевка', 'Кленовое'],
+  ['Луговое', 'Полевое', 'Речное', 'Озёрное', 'Лесное', 'Горное', 'Степное'],
+  ['Берёзовка', 'Дубровка', 'Сосновка', 'Кленовка', 'Липовка', 'Вишнёвка', 'Яблоневка'],
+  ['Красное', 'Зелёное', 'Синее', 'Белое', 'Чёрное', 'Пёстрое', 'Яркое']
+];
+
+const PERSONS = [
+  {name:'Таня', who:'с дедушкой'}, {name:'Полина', who:'с дедушкой'}, {name:'Никита', who:'с папой'},
+  {name:'Саша', who:'с дедушкой'}, {name:'Гриша', who:'с дедушкой'}, {name:'Дима', who:'с дедушкой'},
+  {name:'Ваня', who:'с дедушкой'}, {name:'Володя', who:'с дедушкой'}, {name:'Серёжа', who:'с папой'},
+  {name:'Маша', who:'с мамой'}, {name:'Костя', who:'с дедушкой'}
+];
+
+// Скорости: дорога всегда быстрее просёлка
+const SPEED_PAIRS = [
+  { road: 50, path: 30 },
+  { road: 60, path: 40 },
+  { road: 40, path: 20 },
+  { road: 45, path: 15 }
+];
+
+// ИДЕАЛЬНЫЕ ПИФАГОРОВЫ ТРОЙКИ (коэффициенты 1, 2, 3)
+const DIST_VARIANTS = [
+  {
+    k: 1,
+    h: [12, 4, 12], // Горизонталь: 1-3, 3-2, 2-4
+    v: [15, 6, 12], // Вертикаль: 4-6, 6-5, 5-7
+    diag: { '1-6': 25, '1-7': 29, '2-5': 15, '3-6': 17, '2-4': 15, '4-3': 15 }
+  },
+  {
+    k: 2,
+    h: [24, 8, 24],
+    v: [30, 12, 24],
+    diag: { '1-6': 50, '1-7': 58, '2-5': 30, '3-6': 34, '2-4': 30, '4-3': 30 }
+  },
+  {
+    k: 3,
+    h: [36, 12, 36],
+    v: [45, 18, 36],
+    diag: { '1-6': 75, '1-7': 87, '2-5': 45, '3-6': 51, '2-4': 45, '4-3': 45 }
+  }
+];
+
+let lastVariantIdx = -1;
+let currentState = null;
+
+function randInt(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
+function pick(arr){ return arr[randInt(0, arr.length - 1)]; }
+function shuffle(arr){ return arr.slice().sort(() => Math.random() - 0.5); }
+
+window.onload = () => { 
+  const d = new Date();
+  document.getElementById('dateDisplay').textContent = '📅 ' + d.toLocaleDateString('ru-RU');
+  startNew(); 
+};
+
+function startNew() {
+  document.getElementById('summaryOverlay').classList.remove('show');
+  const btn = document.getElementById('btnCheck');
+  btn.disabled = false; btn.style.opacity = '1'; btn.textContent = '✅ Проверить'; btn.style.background = '';
+
+  let vIdx;
+  do { vIdx = randInt(0, 2); } while (vIdx === lastVariantIdx);
+  lastVariantIdx = vIdx;
+  const variant = DIST_VARIANTS[vIdx];
+
+  const baseNames = pick(NAME_SETS).slice();
+  const person = pick(PERSONS);
+  
+  // Берем пару скоростей, где шоссе > проселок
+  const speeds = pick(SPEED_PAIRS);
+  
+  const shuffledDigits = shuffle([1, 2, 3, 4, 5, 6, 7]);
+  
+  const roleDigit = {
+    start: shuffledDigits[0], mid1: shuffledDigits[1], mid2: shuffledDigits[2],
+    finish: shuffledDigits[3], other1: shuffledDigits[4], other2: shuffledDigits[5], other3: shuffledDigits[6]
+  };
+
+  const roleName = {
+    start: baseNames[0], mid1: baseNames[1], mid2: baseNames[2],
+    finish: baseNames[3], other1: baseNames[4], other2: baseNames[5], other3: baseNames[6]
+  };
+
+  currentState = { variant, person, speedRoad: speeds.road, speedPath: speeds.path, roleDigit, roleName };
+  render();
+}
+
+function render() {
+  const { variant, person, speedRoad, speedPath, roleDigit, roleName } = currentState;
+  const h = variant.h;
+  const v = variant.v;
+  const d = variant.diag;
+  const rd = roleDigit;
+  const rn = roleName;
+
+  let conditionText = `
+    ${person.name} ${person.who} на летних каникулах приезжает в гости к дедушке в деревню <b>${rn.start}</b> (на плане обозначена цифрой ${rd.start}). В конце каникул дедушка на машине собирается отвезти ${person.name} на автобусную станцию, которая находится в деревне <b>${rn.other3}</b>. Из <b>${rn.start}</b> в <b>${rn.other3}</b> можно проехать по просёлочной дороге мимо реки. Есть другой путь – по шоссе до деревни <b>${rn.finish}</b>, где нужно повернуть под прямым углом НАЛЕВО на другое шоссе, ведущее в <b>${rn.other3}</b>. Третий маршрут проходит по просёлочной дороге мимо пруда до деревни <b>${rn.other2}</b>, где можно свернуть на шоссе до <b>${rn.other3}</b>.
+    Четвёртый маршрут пролегает по шоссе до деревни <b>${rn.mid2}</b>, от <b>${rn.mid2}</b> до <b>${rn.other2}</b> по просёлочной дороге мимо конюшни и от <b>${rn.other2}</b> до <b>${rn.other3}</b> по шоссе. Ещё один маршрут проходит по шоссе до деревни <b>${rn.mid1}</b>, по просёлочной дороге мимо конюшни от <b>${rn.mid1}</b> до <b>${rn.other1}</b> и по шоссе от <b>${rn.other1}</b> до <b>${rn.other3}</b>.
+    <br><br>
+    Шоссе и просёлочные дороги образуют прямоугольные треугольники.
+    <br><br>
+    По шоссе ${person.name} ${person.who} едут со скоростью <b>${speedRoad} км/ч</b>, а по просёлочным дорогам – со скоростью <b>${speedPath} км/ч</b>. 
+    Расстояние от <b>${rn.start}</b> до <b>${rn.finish}</b> равно <b>${h[0]} км</b>, 
+    от <b>${rn.finish}</b> до <b>${rn.mid2}</b> – <b>${h[1]} км</b>, 
+    от <b>${rn.mid2}</b> до <b>${rn.mid1}</b> – <b>${h[0]} км</b>, 
+    от <b>${rn.mid1}</b> до <b>${rn.other1}</b> – <b>${v[0]} км</b>, 
+    от <b>${rn.other1}</b> до <b>${rn.other2}</b> – <b>${v[1]} км</b>, 
+    а от <b>${rn.other2}</b> до <b>${rn.other3}</b> – <b>${v[2]} км</b>.
+  `;
+
+  let tableHTML = `
+    <table class="table-task">
+      <thead><tr><th>Деревни</th><th>${rn.finish}</th><th>${rn.mid2}</th><th>${rn.mid1}</th><th>${rn.other1}</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>Цифры</b></td>
+          <td><input type="text" id="m-1-0" maxlength="1" placeholder="?"></td>
+          <td><input type="text" id="m-1-1" maxlength="1" placeholder="?"></td>
+          <td><input type="text" id="m-1-2" maxlength="1" placeholder="?"></td>
+          <td><input type="text" id="m-1-3" maxlength="1" placeholder="?"></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="answer-row"><input type="text" id="ans-1" placeholder="4 цифры" autocomplete="off"></div>
+  `;
+
+  const html = `
+    <div class="condition-block">${conditionText}</div>
+    
+    <div class="task-card" id="task-1" style="margin-top: 20px;">
+      <div class="task-header"><div class="task-num">1</div><div class="task-title">Цифры деревень</div><div class="task-mark" id="mark-1"></div></div>
+      <div class="task-question">Пользуясь описанием, определите, какими цифрами на плане обозначены деревни. Заполните таблицу, в бланк ответов перенесите последовательность четырёх цифр без пробелов, запятых.</div>
+      ${tableHTML}
+      <div class="correct-answer-note" id="note-1"></div>
+    </div>
+
+    <div class="task-card" id="task-2">
+      <div class="task-header"><div class="task-num">2</div><div class="task-title">Расстояние по шоссе</div><div class="task-mark" id="mark-2"></div></div>
+      <div class="task-question">Найдите расстояние от деревни <b>${rn.start}</b> до деревни <b>${rn.mid1}</b> по шоссе. Ответ дайте в километрах.</div>
+      <div class="answer-row"><input type="text" id="ans-2" placeholder="км" autocomplete="off"></div>
+      <div class="correct-answer-note" id="note-2"></div>
+    </div>
+
+    <div class="task-card" id="task-3">
+      <div class="task-header"><div class="task-num">3</div><div class="task-title">Расстояние по прямой</div><div class="task-mark" id="mark-3"></div></div>
+      <div class="task-question">Найдите расстояние от деревни <b>${rn.start}</b> до деревни <b>${rn.other2}</b> по прямой. Ответ дайте в километрах.</div>
+      <div class="answer-row"><input type="text" id="ans-3" placeholder="км" autocomplete="off"></div>
+      <div class="correct-answer-note" id="note-3"></div>
+    </div>
+
+    <div class="task-card" id="task-4">
+      <div class="task-header"><div class="task-num">4</div><div class="task-title">Время в пути</div><div class="task-mark" id="mark-4"></div></div>
+      <div class="task-question">Сколько минут затратят на дорогу ${person.name} ${person.who}, если поедут из <b>${rn.start}</b> в <b>${rn.other3}</b> по просёлочной дороге мимо реки?</div>
+      <div class="answer-row"><input type="text" id="ans-4" placeholder="мин" autocomplete="off"></div>
+      <div class="correct-answer-note" id="note-4"></div>
+    </div>
+
+    <div class="task-card" id="task-5">
+      <div class="task-header"><div class="task-num">5</div><div class="task-title">Расход бензина</div><div class="task-mark" id="mark-5"></div></div>
+      <div class="task-question">На просёлочных дорогах машина дедушки расходует <b>8,2 литра</b> бензина на 100 км. Известно, что на путь из <b>${rn.start}</b> в <b>${rn.other3}</b> через <b>${rn.finish}</b> и путь напрямик ей необходим один и тот же объём бензина. Сколько литров бензина на 100 км машина дедушки расходует на шоссе?</div>
+      <div class="answer-row"><input type="text" id="ans-5" placeholder="л" autocomplete="off"></div>
+      <div class="correct-answer-note" id="note-5"></div>
+    </div>
+  `;
+
+  document.getElementById('content').innerHTML = html;
+  document.getElementById('map-container').innerHTML = renderMap(roleDigit);
+}
+
+function renderMap(rd) {
+  const makeInput = (id, x, y, w, h) => {
+    return `<foreignObject x="${x}" y="${y}" width="${w}" height="${h}">
+      <input xmlns="http://www.w3.org/1999/xhtml" type="text" class="map-label" id="map-input-${id}" style="font-size:10px;" />
+    </foreignObject>`;
+  };
+
+  const makeDrop = (role, x, y) => {
+    return `
+      <g transform="translate(${x}, ${y})">
+        <path d="M -12,0 C -12,-17 12,-17 12,0 C 12,13 3,27 0,36 C -3,27 -12,13 -12,0 Z" class="drop"/>
+        <text x="0" y="5" class="drop-number">${rd[role]}</text>
+      </g>
+    `;
+  };
+
+  return `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="50 30 900 600" style="background:#f7fcfa;border-radius:10px; width:100%; height:100%;">
+      <style>
+        .road { stroke: #000000; stroke-width: 3; fill: none; }
+        .road-dashed { stroke: #000000; stroke-width: 1.5; stroke-dasharray: 6,4; fill: none; }
+        .drop { fill: #ffffff; stroke: #000000; stroke-width: 2; }
+        .drop-number { font-family: 'Georgia', serif; font-size: 16px; font-weight: 700; fill: #2d2b4e; text-anchor: middle; dominant-baseline: central; }
+        .river { stroke: #1a3a6a; stroke-width: 6; fill: none; }
+        .pond { fill: #87CEEB; stroke: #1a3a6a; stroke-width: 1.5; filter: blur(1.5px); opacity: 0.9; }
+        .horse-emoji { font-size: 28px; }
+        .legend-text { font-family: 'Georgia', serif; font-size: 14px; fill: #2d2b4e; }
+        .legend-line { stroke: #000000; stroke-width: 2; fill: none; }
+        .legend-line-dashed { stroke: #000000; stroke-width: 2; stroke-dasharray: 6,4; fill: none; }
+        .legend-line-river { stroke: #1a3a6a; stroke-width: 4; fill: none; }
+      </style>
+      <rect x="50" y="30" width="900" height="600" fill="#f7fcfa"/>
+      
+      <g class="road">
+        <line x1="150" y1="100" x2="630" y2="100"/>
+        <line x1="150" y1="100" x2="150" y2="500"/>
+      </g>
+      
+      <line x1="150" y1="185" x2="310" y2="100" class="road-dashed"/>
+      <line x1="150" y1="295" x2="230" y2="100" class="road-dashed"/>
+      <line x1="150" y1="295" x2="490" y2="100" class="road-dashed"/>
+      <line x1="150" y1="405" x2="490" y2="100" class="road-dashed"/>
+      
+      <path d="M 130,500 C 170,480 190,440 230,420 C 270,400 290,360 330,340 C 370,320 390,280 430,260 C 450,250 470,230 490,210 C 510,190 520,170 530,150 C 540,130 545,110 540,90 C 535,70 525,60 510,55" class="river"/>
+      
+      <ellipse cx="270" cy="185" rx="30" ry="18" class="pond"/>
+      <text x="145" y="125" class="horse-emoji">🐴</text>
+
+      ${makeInput('name-1', 460, 15, 60, 20)}
+      ${makeInput('name-2', 280, 15, 60, 20)}
+      ${makeInput('name-3', 200, 15, 60, 20)}
+      ${makeInput('name-4', 120, 15, 60, 20)}
+      ${makeInput('name-5', 170, 155, 60, 20)}
+      ${makeInput('name-6', 170, 265, 60, 20)}
+      ${makeInput('name-7', 170, 375, 60, 20)}
+
+      ${makeInput('dist-1-2', 360, 75, 40, 20)}
+      ${makeInput('dist-2-3', 260, 75, 40, 20)}
+      ${makeInput('dist-3-4', 180, 75, 40, 20)}
+      ${makeInput('dist-4-5', 105, 135, 40, 20)}
+      ${makeInput('dist-5-6', 105, 245, 40, 20)}
+      ${makeInput('dist-6-7', 105, 355, 40, 20)}
+
+      ${makeDrop('start', 490, 60)}
+      ${makeDrop('mid1', 310, 60)}
+      ${makeDrop('mid2', 230, 60)}
+      ${makeDrop('finish', 150, 60)}
+      ${makeDrop('other1', 150, 180)}
+      ${makeDrop('other2', 150, 290)}
+      ${makeDrop('other3', 150, 400)}
+
+      <g transform="translate(650, 300)">
+        <text x="0" y="0" font-family="'Georgia', serif" font-size="18" font-weight="700" fill="#2d2b4e">Условные обозначения</text>
+        <line x1="0" y1="30" x2="50" y2="30" class="legend-line"/>
+        <text x="60" y="35" class="legend-text">— шоссе</text>
+        <line x1="0" y1="60" x2="50" y2="60" class="legend-line-dashed"/>
+        <text x="60" y="65" class="legend-text">— просёлочная дорога</text>
+        <path d="M 0,90 C 10,85 20,95 30,90 C 40,85 45,95 50,90" class="legend-line-river"/>
+        <text x="60" y="95" class="legend-text">— река</text>
+        <ellipse cx="25" cy="118" rx="18" ry="10" class="pond" style="filter: blur(1px); stroke:#1a3a6a; stroke-width:1.5;"/>
+        <text x="60" y="123" class="legend-text">— пруд</text>
+        <text x="0" y="148" class="legend-text" font-weight="700">🐴 конюшня</text>
+      </g>
+    </svg>
+  `;
+}
+
+function normAnswer(s) {
+  return String(s||'').trim().replace(/\s+/g,'').replace(',','.').replace(/[°%рубмин]+$/gi,'');
+}
+
+// Утилита для очистки ответа от лишних нулей (1044.0 -> 1044)
+function formatAnswer(val) {
+  return String(Number(val));
+}
+
+function checkAll() {
+  const name = document.getElementById('studentName').value.trim();
+  if (!name) { alert('Введи имя ученика!'); return; }
+
+  const { variant, person, speedRoad, speedPath, roleDigit, roleName } = currentState;
+  const h = variant.h, v = variant.v, d = variant.diag, rn = roleName, rd = roleDigit;
+
+  const correctDigits = [rd.finish, rd.mid2, rd.mid1, rd.other1].join('');
+  const userDigits = ['m-1-0', 'm-1-1', 'm-1-2', 'm-1-3'].map(id => document.getElementById(id).value.trim()).join('');
+  const ans1Inp = document.getElementById('ans-1');
+  const ans1 = ans1Inp.value.trim();
+  const t1Ok = (userDigits === correctDigits) && (ans1 === correctDigits);
+
+  for(let i=0; i<4; i++) {
+    const el = document.getElementById(`m-1-${i}`);
+    el.disabled = true;
+    el.classList.add(userDigits[i] === correctDigits[i] ? 'correct' : 'wrong');
+  }
+  ans1Inp.disabled = true;
+  ans1Inp.classList.add(t1Ok ? 'correct' : 'wrong');
+  document.getElementById('mark-1').textContent = t1Ok ? '✅' : '❌';
+  document.getElementById('task-1').classList.add(t1Ok ? 'solved-ok' : 'solved-bad');
+  if(!t1Ok) { document.getElementById('note-1').innerHTML = `Правильный ответ: <b>${correctDigits}</b>`; document.getElementById('note-1').classList.add('show'); }
+
+  // 2 (1-2 = 8 км)
+  const q2_ans = String(h[0] - h[1]);
+  const inp2 = document.getElementById('ans-2');
+  const is2Ok = normAnswer(inp2.value) === normAnswer(q2_ans);
+  inp2.disabled = true; inp2.classList.add(is2Ok ? 'correct' : 'wrong');
+  document.getElementById('mark-2').textContent = is2Ok ? '✅' : '❌';
+  document.getElementById('task-2').classList.add(is2Ok ? 'solved-ok' : 'solved-bad');
+  if(!is2Ok) { document.getElementById('note-2').innerHTML = `Правильный ответ: <b>${q2_ans}</b>`; document.getElementById('note-2').classList.add('show'); }
+
+  // 3 (1-6 = 25)
+  const q3_ans = String(d['1-6']);
+  const inp3 = document.getElementById('ans-3');
+  const is3Ok = normAnswer(inp3.value) === normAnswer(q3_ans);
+  inp3.disabled = true; inp3.classList.add(is3Ok ? 'correct' : 'wrong');
+  document.getElementById('mark-3').textContent = is3Ok ? '✅' : '❌';
+  document.getElementById('task-3').classList.add(is3Ok ? 'solved-ok' : 'solved-bad');
+  if(!is3Ok) { document.getElementById('note-3').innerHTML = `Правильный ответ: <b>${q3_ans}</b>`; document.getElementById('note-3').classList.add('show'); }
+
+  // 4 (Время = 1-7 / V_path * 60)
+  const q4_ans = formatAnswer((d['1-7'] / speedPath) * 60);
+  const inp4 = document.getElementById('ans-4');
+  const is4Ok = normAnswer(inp4.value) === normAnswer(q4_ans);
+  inp4.disabled = true; inp4.classList.add(is4Ok ? 'correct' : 'wrong');
+  document.getElementById('mark-4').textContent = is4Ok ? '✅' : '❌';
+  document.getElementById('task-4').classList.add(is4Ok ? 'solved-ok' : 'solved-bad');
+  if(!is4Ok) { document.getElementById('note-4').innerHTML = `Правильный ответ: <b>${q4_ans}</b>`; document.getElementById('note-4').classList.add('show'); }
+
+  // 5 (Бензин = 8.2 * 1-7 / 1-4)
+  const q5_ans = formatAnswer((8.2 * d['1-7'] / (h[0]+h[1]+h[2])));
+  const inp5 = document.getElementById('ans-5');
+  const is5Ok = normAnswer(inp5.value) === normAnswer(q5_ans);
+  inp5.disabled = true; inp5.classList.add(is5Ok ? 'correct' : 'wrong');
+  document.getElementById('mark-5').textContent = is5Ok ? '✅' : '❌';
+  document.getElementById('task-5').classList.add(is5Ok ? 'solved-ok' : 'solved-bad');
+  if(!is5Ok) { document.getElementById('note-5').innerHTML = `Правильный ответ: <b>${q5_ans}</b>`; document.getElementById('note-5').classList.add('show'); }
+
+  const ok = [t1Ok, is2Ok, is3Ok, is4Ok, is5Ok].filter(Boolean).length;
+  document.getElementById('statOk').textContent = ok;
+  document.getElementById('statErr').textContent = 5 - ok;
+  document.getElementById('statPercent').textContent = Math.round(ok/5*100) + '%';
+  document.getElementById('summaryOverlay').classList.add('show');
+  document.getElementById('scoreDisplay').textContent = `✅ ${ok} / 5`;
+  
+  const btn = document.getElementById('btnCheck');
+  btn.disabled = true; btn.style.opacity = '0.5'; btn.textContent = 'Проверено';
+}
+
+function sendToMax() {
+  const name = document.getElementById('studentName').value.trim() || 'Без имени';
+  let text = `🏘️ ТРЕНАЖЕР · Деревни\nУченик: ${name}\nДата: ${new Date().toLocaleString('ru-RU')}\n--------------------------------\n\n`;
+  text += `✅ Тренажер пройден!`;
+  navigator.clipboard.writeText(text).then(() => {
+    alert('Отчет скопирован! Открываем чат Макс...');
+    window.open('https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes', '_blank');
+  }).catch(err => alert('Ошибка копирования: ' + err));
+}
+</script>
+</body>
+</html>
