@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>19. Тренажер Прямоугольный треугольник · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{
+    min-height:100vh;font-family:Georgia,'Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.06),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;padding:20px;overflow-x:hidden;display:flex;justify-content:center;
+  }
+  .glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.5;}
+  .glow.g1{width:520px;height:520px;top:-120px;left:-120px;background:radial-gradient(circle,rgba(26,188,156,0.55),transparent 70%);}
+  .glow.g2{width:600px;height:600px;bottom:-200px;right:-180px;background:radial-gradient(circle,rgba(127,255,212,0.4),transparent 70%);}
+  
+  .corner-logo{position:fixed;top:14px;left:16px;z-index:50;font-family:'Times New Roman',serif;text-align:center;line-height:1;padding:10px 18px 12px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(26,188,156,0.45);border-radius:14px;backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(0,0,0,0.35);}
+  .corner-logo .dots{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:16px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:4px;}
+  .corner-logo .ru{font-size:10px;letter-spacing:3px;color:var(--text-soft);margin-top:2px;}
+  
+  .top-right{position:fixed;top:14px;right:16px;z-index:50;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+  .date-badge{display:flex;align-items:center;justify-content:center;height:46px;padding:0 16px;border-radius:14px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(127,255,212,0.45);color:var(--mint);backdrop-filter:blur(10px);font-weight:700;font-family:'Courier New',monospace;font-size:15px;}
+  
+  .app{max-width:950px;width:100%;background:rgba(255,255,255,0.04);border:1.5px solid var(--glass-brd);border-radius:24px;padding:28px 30px;backdrop-filter:blur(12px);box-shadow:0 12px 50px rgba(0,0,0,0.5);position:relative;z-index:2;margin-top:50px;}
+  
+  h1{font-size:clamp(20px,3vw,26px);color:var(--mint);letter-spacing:1.5px;text-align:center;margin-bottom:8px;font-family:'Times New Roman',serif;}
+  .subtitle{text-align:center;font-size:14px;color:var(--text-soft);font-style:italic;margin-bottom:30px;}
+  
+  .name-block{background:linear-gradient(135deg,rgba(244,211,94,0.12),rgba(26,188,156,0.08));border:1.5px solid var(--gold);border-radius:14px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .name-block label{font-size:15px;color:var(--gold-light);font-weight:700;white-space:nowrap;}
+  .name-block input{flex:1;min-width:200px;padding:10px 14px;border-radius:10px;border:2px solid rgba(244,211,94,0.4);background:rgba(0,0,0,0.3);color:#fff;font-family:Georgia,serif;font-size:16px;outline:none;transition:0.2s;}
+  .name-block input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(244,211,94,0.25);}
+  .name-block input::placeholder{color:#a89a6a;font-style:italic;}
+  .name-block input:disabled{opacity:0.7;cursor:not-allowed;}
+
+  .task-block{background:rgba(0,0,0,0.2);border-radius:18px;padding:24px;margin-bottom:24px;border-left:4px solid var(--mint);transition:0.3s;}
+  .task-block.correct{border-left-color:var(--ok);background:rgba(46,204,113,0.08);}
+  .task-block.wrong{border-left-color:var(--err);background:rgba(255,107,107,0.08);}
+  .task-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+  .task-num{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:linear-gradient(135deg,var(--gold),#c9a32b);color:#2a1f00;border-radius:10px;font-family:'Courier New',monospace;font-weight:700;font-size:16px;flex-shrink:0;}
+  .task-title{font-size:15px;color:var(--mint);font-weight:700;letter-spacing:1px;text-transform:uppercase;flex:1;}
+  .task-mark{font-size:20px;font-weight:800;flex-shrink:0;}
+  .task-mark.ok{color:var(--ok);}
+  .task-mark.err{color:var(--err);}
+  
+  .task-question{font-size:17px;color:var(--text);margin-bottom:16px;line-height:1.7;}
+  .task-question b{color:var(--mint);font-size:18px; font-family:'Courier New', monospace;}
+
+  .canvas-container {
+    position: relative;
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    aspect-ratio: 16 / 9;
+    background-color: #f7fcfa;
+    border-radius: 14px;
+    border: 1.5px solid rgba(26,188,156,0.3);
+    overflow: hidden;
+    background-image: 
+      linear-gradient(rgba(26,188,156,0.15) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(26,188,156,0.15) 1px, transparent 1px);
+    background-size: 50px 50px;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+  }
+  .canvas-container canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+  .paint-layer { cursor: crosshair; touch-action: none; z-index: 10; }
+
+  /* Задание 10 — холст ровно 7×9 клеток, как во втором файле */
+  #container10{
+    max-width: 350px;
+    aspect-ratio: 7 / 9;
+    background-image:
+      linear-gradient(rgba(26,188,156,0.30) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(26,188,156,0.30) 1px, transparent 1px);
+    background-size: 50px 50px;
+    background-position: 0 0;
+  }
+  #container10 canvas{
+    width: 100%;
+    height: 100%;
+  }
+
+  .answer-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center; margin-top: 16px;}
+  .answer-row label{font-size:15px;color:var(--gold-light);font-weight:700;min-width:110px;}
+  .answer-row input{flex:1;min-width:180px;padding:11px 14px;border-radius:10px;border:1.5px solid var(--glass-brd);background:rgba(10,42,51,0.5);color:var(--text);font-family:'Courier New',monospace;font-size:16px;outline:none;transition:0.2s;}
+  .answer-row input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+  .answer-row input.correct{border-color:var(--ok);background:rgba(46,204,113,0.15);}
+  .answer-row input.wrong{border-color:var(--err);background:rgba(255,107,107,0.15);}
+  .answer-row input:disabled{opacity:0.9;cursor:default;}
+
+  .task-controls { display: flex; justify-content: flex-end; margin-top: -10px; margin-bottom: 10px;}
+  .btn-clear { background: transparent; border: 1.5px solid var(--coral); color: var(--coral); padding: 6px 12px; border-radius: 8px; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+  .btn-clear:hover { background: rgba(255,107,107,0.1); }
+
+  .btn-check{display:block;width:100%;padding:16px 32px;font-size:18px;font-weight:700;font-family:inherit;letter-spacing:1px;border:none;border-radius:16px;background:linear-gradient(135deg,#f4d35e,#c9a32b);color:#2a1f00;cursor:pointer;transition:0.3s;box-shadow:0 6px 24px rgba(244,211,94,0.4);margin-top:20px;}
+  .btn-check:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(244,211,94,0.55);}
+  .btn-check:disabled{opacity:0.5;cursor:default;transform:none;}
+  
+  .btn-group { display: flex; gap: 12px; margin-top: 12px; }
+  .btn-next { flex: 1; padding: 14px 24px; font-size: 15px; font-weight: 700; font-family: inherit; border: 2px solid var(--teal); border-radius: 12px; background: transparent; color: var(--teal); cursor: pointer; transition: 0.25s; letter-spacing: 1px; }
+  .btn-next:hover { background: rgba(26,188,156,0.12); }
+  
+  .btn-reset { flex: 1; padding: 14px 24px; font-size: 15px; font-weight: 700; font-family: inherit; border: 2px solid var(--coral); border-radius: 12px; background: transparent; color: var(--coral); cursor: pointer; transition: 0.25s; letter-spacing: 1px; }
+  .btn-reset:hover { background: rgba(255,107,107,0.12); }
+
+  .summary-box{display:none;background:linear-gradient(135deg,rgba(26,188,156,0.15),rgba(244,211,94,0.10));border:2px solid var(--mint);border-radius:16px;padding:20px 24px;margin-top:20px;text-align:center;}
+  .summary-box.show{display:block;animation:fade 0.5s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .summary-title{font-size:16px;color:var(--mint);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:14px;}
+  .summary-stats{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:10px;}
+  .summary-stat{display:flex;flex-direction:column;align-items:center;gap:4px;}
+  .summary-stat .num{font-family:'Courier New',monospace;font-size:38px;font-weight:800;color:var(--gold);line-height:1;}
+  .summary-stat .lbl{font-size:12px;color:var(--text-soft);letter-spacing:1.5px;text-transform:uppercase;}
+  .summary-stat .num.ok{color:var(--ok);}
+  .summary-stat .num.err{color:var(--err);}
+  .summary-line{font-size:15px;color:var(--text);margin-top:8px;font-style:italic;}
+
+  .result-area{margin-top:20px;display:none;}
+  .result-area.show{display:block;animation:fade 0.4s ease;}
+  .result-text{background:rgba(0,0,0,0.35);border:1.5px solid var(--mint);border-radius:12px;padding:16px 18px;font-family:'Courier New',monospace;font-size:13px;color:var(--text);white-space:pre-wrap;line-height:1.7;user-select:all;cursor:text;}
+  .result-hint{text-align:center;font-size:13px;color:var(--gold-light);font-style:italic;margin-top:10px;}
+  .btn-copy{display:block;width:100%;margin-top:12px;padding:13px 24px;font-size:15px;font-weight:700;font-family:inherit;border:2px solid var(--glass-brd);border-radius:12px;background:transparent;color:var(--mint);cursor:pointer;transition:0.25s;letter-spacing:1px;}
+  .btn-copy:hover{background:rgba(26,188,156,0.15);}
+  .btn-copy.copied{background:linear-gradient(135deg,#2ecc71,#27ae60);color:#fff;border-color:var(--ok);}
+  .btn-max{display:block;width:100%;margin-top:12px;padding:14px 24px;font-size:16px;font-weight:700;font-family:inherit;border:none;border-radius:12px;background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;cursor:pointer;text-decoration:none;text-align:center;letter-spacing:1px;box-shadow:0 6px 20px rgba(26,188,156,0.4);transition:0.2s;}
+  .btn-max:hover{transform:translateY(-2px);}
+
+  .modal-overlay{display:none;position:fixed;inset:0;z-index:100;background:rgba(4,20,24,0.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px;}
+  .modal-overlay.show{display:flex;}
+  .modal-box{background:linear-gradient(160deg,#0d3b47,#134e5e);border:1.5px solid var(--coral);border-radius:18px;padding:24px 26px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.6);}
+  .modal-title{font-family:'Times New Roman',serif;font-size:20px;color:var(--coral);margin-bottom:10px;letter-spacing:1px;}
+  .modal-text{font-size:14px;color:var(--text-soft);line-height:1.6;margin-bottom:16px;}
+  .modal-input{width:100%;padding:12px 14px;border-radius:10px;border:2px solid rgba(255,107,107,0.4);background:rgba(0,0,0,0.35);color:#fff;font-family:'Courier New',monospace;font-size:18px;letter-spacing:3px;text-align:center;outline:none;}
+  .modal-input:focus{border-color:var(--coral);box-shadow:0 0 0 3px rgba(255,107,107,0.2);}
+  .modal-err{color:var(--coral);font-size:13px;min-height:18px;margin-top:8px;text-align:center;font-style:italic;}
+  .modal-actions{display:flex;gap:10px;margin-top:14px;}
+  .modal-btn{flex:1;padding:11px 16px;border-radius:10px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:0.2s;border:none;}
+  .modal-btn.cancel{background:transparent;border:1.5px solid var(--glass-brd);color:var(--text-soft);}
+  .modal-btn.cancel:hover{background:rgba(255,255,255,0.06);}
+  .modal-btn.confirm{background:linear-gradient(135deg,#ff6b6b,#c0392b);color:#fff;}
+  .modal-btn.confirm:hover{transform:translateY(-1px);}
+
+  @media(max-width:600px){
+    .app{padding:18px 14px;}
+    .name-block{flex-direction:column;align-items:stretch;gap:8px;}
+    .name-block label{text-align:center;}
+    .task-block{padding:14px 16px;}
+    .answer-row label{min-width:80px;font-size:13px;}
+    .summary-stat .num{font-size:28px;}
+    .btn-group { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div><div class="glow g2"></div>
+
+<div class="corner-logo">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+</div>
+
+<div class="top-right">
+  <div class="date-badge" id="dateDisplay">📅 00.00.0000</div>
+</div>
+
+<div class="app">
+  <h1>19. Тренажер Прямоугольный треугольник</h1>
+  <div class="subtitle">1-тренажер-произв-треуг</div>
+
+  <div class="name-block">
+    <label for="studentName">👤 Имя ученика:</label>
+    <input type="text" id="studentName" placeholder="Введи своё имя и фамилию..." maxlength="60" autocomplete="off">
+  </div>
+
+  <!-- Блок для заданий -->
+  <div id="tasks-container">
+    <!-- Задание 1 -->
+    <div class="task-block" id="task-1">
+      <div class="task-header"><span class="task-num">1</span><span class="task-title">Параллельная сторона (найти AM)</span><span class="task-mark" id="mark-1"></span></div>
+      <div class="task-question" id="questionText1">Загрузка...</div>
+      <div class="task-controls"><button class="btn-clear" onclick="clearPaint(1)">🗑 Очистить рисование</button></div>
+      <div class="canvas-container" id="container1">
+        <canvas class="cv-bg" width="700" height="394"></canvas>
+        <canvas class="paint-layer" width="700" height="394"></canvas>
+      </div>
+      <div class="answer-row">
+        <label>Ответ:</label>
+        <input type="text" id="ans-1" placeholder="введи ответ" autocomplete="off">
+      </div>
+    </div>
+
+    <!-- Задание 2 -->
+    <div class="task-block" id="task-2">
+      <div class="task-header"><span class="task-num">2</span><span class="task-title">Параллельная сторона (найти AC)</span><span class="task-mark" id="mark-2"></span></div>
+      <div class="task-question" id="questionText2">Загрузка...</div>
+      <div class="task-controls"><button class="btn-clear" onclick="clearPaint(2)">🗑 Очистить рисование</button></div>
+      <div class="canvas-container" id="container2">
+        <canvas class="cv-bg" width="700" height="394"></canvas>
+        <canvas class="paint-layer" width="700" height="394"></canvas>
+      </div>
+      <div class="answer-row">
+        <label>Ответ:</label>
+        <input type="text" id="ans-2" placeholder="введи ответ" autocomplete="off">
+      </div>
+    </div>
+
+    <!-- Задание 3 -->
+    <div class="task-block" id="task-3">
+      <div class="task-header"><span class="task-num">3</span><span class="task-title">Высота к гипотенузе</span><span class="task-mark" id="mark-3"></span></div>
+      <div class="task-question" id="questionText3">Загрузка...</div>
+      <div class="task-controls"><button class="btn-clear" onclick="clearPaint(3)">🗑 Очистить рисование</button></div>
+      <div class="canvas-container" id="container3">
+        <canvas class="cv-bg" width="700" height="394"></canvas>
+        <canvas class="paint-layer" width="700" height="394"></canvas>
+      </div>
+      <div class="answer-row">
+        <label>Ответ:</label>
+        <input type="text" id="ans-3" placeholder="введи ответ" autocomplete="off">
+      </div>
+    </div>
+
+    <!-- Задание 4 -->
+    <div class="task-block" id="task-4">
+      <div class="task-header"><span class="task-num">4</span><span class="task-title">Трапеция</span><span class="task-mark" id="mark-4"></span></div>
+      <div class="task-question" id="questionText4">Загрузка...</div>
+      <div class="task-controls"><button class="btn-clear" onclick="clearPaint(4)">🗑 Очистить рисование</button></div>
+      <div class="canvas-container" id="container4">
+        <canvas class="cv-bg" width="700" height="394"></canvas>
+        <canvas class="paint-layer" width="700" height="394"></canvas>
+      </div>
+      <div class="answer-row">
+        <label>Ответ:</label>
+        <input type="text" id="ans-4" placeholder="введи ответ" autocomplete="off">
+      </div>
+    </div>
+
+    <!-- Задание 5 -->
+    <div class="task-block" id="task-5">
+      <div class="task-header"><span class="task-num">5</span><span class="task-title">Теорема синусов</span><span class="task-mark" id="mark-5"></span></div>
+      <div class="task-question" id="questionText5">Загрузка...</div>
+      <div class="task-controls"><button class="btn-clear" onclick="clearPaint(5)">🗑 Очистить рисование</button></div>
+      <div class="canvas-container" id="container5">
+        <canvas class="cv-bg" width="700" height="394"></canvas>
+        <canvas class="paint-layer" width="700" height="394"></canvas>
+      </div>
+      <div class="answer-row">
+        <label>Ответ:</label>
+        <input type="text" id="ans-5" placeholder="введи ответ" autocomplete="off">
+      </div>
+    </div>
+
+    <!-- Задание 6 -->
+    <div class="task-block" id="task-6">
+      <div class="task-header"><span class="task-num">6</span><span class="task-title">Теорема косинусов</span><span class="task-mark" id="mark-6"></span></div>
+      <div class="task-question" id="questionText6">Загрузка...</div>
+      <div class="task-controls"><button class="btn-clear" onclick="clearPaint(6)">🗑 Очистить рисование</button></div>
+      <div class="canvas-container" id="container6">
+        <canvas class="cv-bg" width="700" height="394"></canvas>
+        <canvas class="paint-layer" width="700" height="394"></canvas>
+      </div>
+      <div class="answer-row">
+        <label>Ответ:</label>
+        <input type="text" id="ans-6" placeholder="введи ответ" autocomplete="off">
+      </div>
+    </div>
+
+    <!-- Задание 7 -->
+    <div class="task-block" id="task-7">
+      <div class="task-header"><span class="task-num">7</span><span class="task-title">Теорема косинусов (угол)</span><span class="task-mark" id="mark-7"></span></div>
+      <div class="task-question" id="questionText7">Загрузка...</div>
+      <div class="task-controls"><button class="btn-clear" onclick="clearPaint(7)">🗑 Очистить рисование</button></div>
+      <div class="canvas-container" id="container7">
+        <canvas class="cv-bg" width="700" height="394"></canvas>
+        <canvas class="paint-layer" width="700" height="394"></canvas>
+      </div>
+      <div class="answer-row">
+        <label>Ответ:</label>
+        <input type="text" id="ans-7" placeholder="введи ответ" autocomplete="off">
+      </div>
+    </div>
+
+    <!-- Задание 8 -->
+    <div class="task-block" id="task-8">
+      <div class="task-header"><span class="task-num">8</span><span class="task-title">Радиус описанной окружности</span><span class="task-mark" id="mark-8"></span></div>
+      <div class="task-question" id="questionText8">Загрузка...</div>
+      <div class="task-controls"><button class="btn-clear" onclick="clearPaint(8)">🗑 Очистить рисование</button></div>
+      <div class="canvas-container" id="container8">
+        <canvas class="cv-bg" width="700" height="394"></canvas>
+        <canvas class="paint-layer" width="700" height="394"></canvas>
+      </div>
+      <div class="answer-row">
+        <label>Ответ:</label>
+        <input type="text" id="ans-8" placeholder="введи ответ" autocomplete="off">
+      </div>
+    </div>
+
+    <!-- Задание 9 -->
+    <div class="task-block" id="task-9">
+      <div class="task-header"><span class="task-num">9</span><span class="task-title">Отрезок на клетках</span><span class="task-mark" id="mark-9"></span></div>
+      <div class="task-question" id="questionText9">Загрузка...</div>
+      <div class="task-controls"><button class="btn-clear" onclick="clearPaint(9)">🗑 Очистить рисование</button></div>
+      <div class="canvas-container" id="container9">
+        <canvas class="cv-bg" width="700" height="394"></canvas>
+        <canvas class="paint-layer" width="700" height="394"></canvas>
+      </div>
+      <div class="answer-row">
+        <label>Ответ:</label>
+        <input type="text" id="ans-9" placeholder="введи ответ" autocomplete="off">
+      </div>
+    </div>
+
+    <!-- Задание 10 -->
+    <div class="task-block" id="task-10">
+      <div class="task-header"><span class="task-num">10</span><span class="task-title">Отношение отрезков (клетки)</span><span class="task-mark" id="mark-10"></span></div>
+      <div class="task-question" id="questionText10">Загрузка...</div>
+      <div class="task-controls"><button class="btn-clear" onclick="clearPaint(10)">🗑 Очистить рисование</button></div>
+      <div class="canvas-container" id="container10">
+        <canvas class="cv-bg" width="350" height="450"></canvas>
+        <canvas class="paint-layer" width="350" height="450"></canvas>
+      </div>
+      <div class="answer-row">
+        <label>Ответ:</label>
+        <input type="text" id="ans-10" placeholder="введи ответ" autocomplete="off">
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-check" id="btnCheck">✅ Проверить ответы</button>
+  
+  <div class="btn-group">
+    <button class="btn-next" id="btnNext">🔄 Сменить задание</button>
+    <button class="btn-reset" id="btnReset">🔒 Очистить всё</button>
+  </div>
+
+  <div class="summary-box" id="summaryBox">
+    <div class="summary-title">📊 Результат</div>
+    <div class="summary-stats">
+      <div class="summary-stat"><span class="num ok" id="statOk">0</span><span class="lbl">✅ верно</span></div>
+      <div class="summary-stat"><span class="num err" id="statErr">0</span><span class="lbl">❌ неверно</span></div>
+      <div class="summary-stat"><span class="num" id="statPercent">0%</span><span class="lbl">📊 процент</span></div>
+    </div>
+    <div class="summary-line" id="summaryLine">—</div>
+  </div>
+
+  <div class="result-area" id="resultArea">
+    <div class="result-text" id="resultText"></div>
+    <div class="result-hint">👇 Скопируй текст и отправь учителю</div>
+    <button class="btn-copy" id="btnCopy">📋 Скопировать результат</button>
+    <a class="btn-max" href="https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes" target="_blank" rel="noopener">💬 Отправить учителю в Макс</a>
+  </div>
+
+</div>
+
+<!-- МОДАЛКА СБРОСА -->
+<div class="modal-overlay" id="resetModal">
+  <div class="modal-box">
+    <div class="modal-title">🔒 Сброс задания</div>
+    <div class="modal-text">Введи пароль, чтобы очистить все ответы и разблокировать поля.</div>
+    <input type="password" id="resetPass" class="modal-input" placeholder="Пароль" autocomplete="off">
+    <div class="modal-err" id="resetErr"></div>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" id="resetCancel">Отмена</button>
+      <button class="modal-btn confirm" id="resetConfirm">Сбросить</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   ДАТА
+   ============================================================ */
+(function(){
+  const el=document.getElementById('dateDisplay');
+  const d=new Date();
+  el.textContent='📅 '+d.toLocaleDateString('ru-RU',{day:'2-digit',month:'long',year:'numeric'});
+})();
+
+/* ============================================================
+   ИНИЦИАЛИЗАЦИЯ ХОЛСТОВ
+   ============================================================ */
+const paintLayers = {};
+
+function initPaintLayer(containerId) {
+    const container = document.getElementById(containerId);
+    const canvas = container.querySelector('.paint-layer');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.strokeStyle = '#0e7c66'; ctx.lineWidth = 2.5;
+
+    function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return { x: (clientX - rect.left) * (canvas.width / rect.width), y: (clientY - rect.top) * (canvas.height / rect.height) };
+    }
+
+    canvas.addEventListener('mousedown', (e) => { isDrawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); });
+    canvas.addEventListener('mousemove', (e) => { if (isDrawing) { const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); } });
+    window.addEventListener('mouseup', () => isDrawing = false);
+
+    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); isDrawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); }, {passive: false});
+    canvas.addEventListener('touchmove', (e) => { e.preventDefault(); if (isDrawing) { const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); } }, {passive: false});
+    canvas.addEventListener('touchend', () => isDrawing = false);
+
+    paintLayers[containerId] = ctx;
+}
+
+function clearPaint(num) {
+    const ctx = paintLayers['container' + num];
+    if (!ctx) return;
+    const canvas = ctx.canvas;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+/* ============================================================
+   НОРМАЛИЗАЦИЯ
+   ============================================================ */
+function normAnswer(s){
+  return String(s||'').trim().replace(/\s+/g,'').replace(',','.').replace(/[°Ссм]+$/gi,'').replace(/^0+(?=\d)/,'').replace('−','-');
+}
+function checkNumeric(userAns, correctAns){
+  const u = normAnswer(userAns);
+  const c = normAnswer(correctAns);
+  if (!u) return false;
+  if (u === c) return true;
+  const un = parseFloat(u), cn = parseFloat(c);
+  if (!isNaN(un) && !isNaN(cn) && Math.abs(un-cn) < 0.01) return true;
+  return false;
+}
+
+/* ============================================================
+   ГЕНЕРАТОРЫ
+   ============================================================ */
+
+/* Задание 1 — только целые AM.
+   AM = AB − AB·MN/AC — целое во всех наборах. */
+function generateTask1() {
+    const sets = [
+        { AB: 9,  AC: 6,  MN: 4,  AM: 3 },
+        { AB: 12, AC: 9,  MN: 6,  AM: 4 },
+        { AB: 15, AC: 10, MN: 6,  AM: 6 },
+        { AB: 10, AC: 8,  MN: 4,  AM: 5 },
+        { AB: 14, AC: 7,  MN: 4,  AM: 6 },
+        { AB: 18, AC: 12, MN: 8,  AM: 6 },
+        { AB: 21, AC: 14, MN: 10, AM: 6 },
+        { AB: 8,  AC: 4,  MN: 2,  AM: 4 },
+        { AB: 6,  AC: 3,  MN: 1,  AM: 4 },
+        { AB: 20, AC: 10, MN: 6,  AM: 8 },
+        { AB: 15, AC: 5,  MN: 2,  AM: 9 }
+    ];
+    return sets[Math.floor(Math.random() * sets.length)];
+}
+
+/* Задание 2 — AC целое: KM кратно m, тогда AC = k·(m+n). */
+function generateTask2() {
+    const pairs = [[1, 2], [1, 3], [1, 4], [2, 3], [2, 5], [3, 4], [3, 5]];
+    const p = pairs[Math.floor(Math.random() * pairs.length)];
+    const KM = p[0] * (Math.floor(Math.random() * 6) + 1); // кратно m
+    const AC = (KM * (p[0] + p[1])) / p[0];
+    return { m: p[0], n: p[1], KM: KM, AC: AC };
+}
+
+/* Задание 3 — только целая высота h.
+   Тройки (3k, 4k, 5k), k кратно 5 → h = 12k/5 — целое. */
+function generateTask3() {
+    const bases = [
+        { a: 15, c: 20, h: 12 },
+        { a: 20, c: 15, h: 12 },
+        { a: 30, c: 40, h: 24 },
+        { a: 40, c: 30, h: 24 },
+        { a: 45, c: 60, h: 36 },
+        { a: 60, c: 45, h: 36 },
+        { a: 60, c: 80, h: 48 },
+        { a: 80, c: 60, h: 48 }
+    ];
+    return bases[Math.floor(Math.random() * bases.length)];
+}
+
+function generateTask4() {
+    const trapezoidParams = [{ b: 6, a: 13 }, { b: 4, a: 6 }, { b: 5, a: 7 }, { b: 2, a: 3 }, { b: 8, a: 12 }, { b: 3, a: 5 }, { b: 7, a: 5 }];
+    let p = trapezoidParams[Math.floor(Math.random() * trapezoidParams.length)];
+    const mult = Math.floor(Math.random() * 3) + 1; 
+    const AC = (p.b + p.a) * mult;
+    const AO = (AC * p.b) / (p.b + p.a);
+    return { b: p.b, a: p.a, AC: AC, AO: AO };
+}
+
+function generateTask5() {
+    const pairs = [
+        { A: 45, B: 60, BC: '4√6', ans: 12 }, { A: 60, B: 45, BC: '4√6', ans: 8 },
+        { A: 30, B: 45, BC: '4√2', ans: 8 },  { A: 45, B: 30, BC: '4√2', ans: 4 },
+        { A: 120, B: 45, BC: '4√6', ans: 8 }, { A: 135, B: 30, BC: '4√2', ans: 4 },
+        { A: 150, B: 45, BC: '4√2', ans: 8 }, { A: 60, B: 60, BC: '6', ans: 6 },
+        { A: 120, B: 30, BC: '2√3', ans: 2 }, { A: 150, B: 30, BC: '4', ans: 4 }
+    ];
+    return pairs[Math.floor(Math.random() * pairs.length)];
+}
+
+function generateTask6() {
+    const curated = [
+        { AB: 5, BC: 8, AC: 7, cos: '0.5' },    { AB: 5, BC: 10, AC: 7, cos: '0.76' },
+        { AB: 6, BC: 10, AC: 10, cos: '0.3' },  { AB: 5, BC: 6, AC: 7, cos: '0.2' },
+        { AB: 7, BC: 10, AC: 11, cos: '0.2' },  { AB: 8, BC: 10, AC: 10, cos: '0.4' },
+        { AB: 12, BC: 15, AC: 18, cos: '0.125' }, { AB: 4, BC: 5, AC: 6, cos: '0.125' },
+        { AB: 9, BC: 12, AC: 15, cos: '0' },    { AB: 6, BC: 8, AC: 10, cos: '0' },
+        { AB: 10, BC: 10, AC: 16, cos: '-0.28' }, { AB: 5, BC: 5, AC: 8, cos: '-0.28' },
+        { AB: 10, BC: 15, AC: 20, cos: '-0.25' }, { AB: 10, BC: 10, AC: 15, cos: '-0.125' }
+    ];
+    return curated[Math.floor(Math.random() * curated.length)];
+}
+
+function generateTask7() {
+    const pairs = [
+        { AC: '7√3', BC: '1', angle: 150, ans: 13 }, { AC: '3', BC: '5', angle: 120, ans: 7 },
+        { AC: '7', BC: '8', angle: 120, ans: 13 },   { AC: '5', BC: '8', angle: 60, ans: 7 },
+        { AC: '8', BC: '5', angle: 60, ans: 7 },     { AC: '7', BC: '15', angle: 60, ans: 13 },
+        { AC: '15', BC: '7', angle: 60, ans: 13 },   { AC: '3', BC: '8', angle: 60, ans: 7 },
+        { AC: '7√3', BC: '7', angle: 30, ans: 7 },   { AC: '7', BC: '7√3', angle: 30, ans: 7 },
+        { AC: '3√3', BC: '3', angle: 30, ans: 3 },   { AC: '8√3', BC: '8', angle: 30, ans: 8 }
+    ];
+    return pairs[Math.floor(Math.random() * pairs.length)];
+}
+
+function generateTask8() {
+    const pairs = [
+        { AB: '√2', C: 45, R: 1 }, { AB: '4√2', C: 45, R: 4 }, { AB: '6', C: 30, R: 6 },
+        { AB: '5', C: 30, R: 5 }, { AB: '10', C: 30, R: 10 }, { AB: '4', C: 150, R: 4 },
+        { AB: '5', C: 150, R: 5 }, { AB: '8', C: 150, R: 8 }, { AB: '3', C: 150, R: 3 },
+        { AB: '4√3', C: 120, R: 4 }, { AB: '5√3', C: 120, R: 5 }, { AB: '8√3', C: 120, R: 8 },
+        { AB: '2√2', C: 135, R: 2 }, { AB: '5√2', C: 135, R: 5 }, { AB: '6√2', C: 135, R: 6 },
+        { AB: '4', C: 90, R: 2 }
+    ];
+    return pairs[Math.floor(Math.random() * pairs.length)];
+}
+
+/* Задание 9 — ответ = shift (длина AB в клетках), 1..3 */
+function generateTask9() {
+    const shifts = [3, 2, 1];
+    return shifts[Math.floor(Math.random() * shifts.length)];
+}
+
+function generateTask10() {
+    return Math.floor(Math.random() * 5) + 1;
+}
+
+/* ============================================================
+   ОТРИСОВКА
+   ============================================================ */
+function drawTriangle1(AB, AC, MN) {
+    const ctx = document.querySelector('#container1 .cv-bg').getContext('2d');
+    ctx.clearRect(0, 0, 700, 394);
+    const B = { x: 200, y: 60 };
+    const A = { x: 50, y: 300 };
+    const C = { x: 350, y: 300 };
+    const t = MN / AC;
+    const M = { x: B.x + t * (A.x - B.x), y: B.y + t * (A.y - B.y) };
+    const N = { x: B.x + t * (C.x - B.x), y: B.y + t * (C.y - B.y) };
+
+    ctx.strokeStyle = '#0e7c66'; ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.lineTo(C.x, C.y); ctx.closePath(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(M.x, M.y); ctx.lineTo(N.x, N.y); ctx.stroke();
+
+    ctx.font = 'bold italic 20px Georgia'; ctx.fillStyle = '#0e7c66'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('A', A.x - 20, A.y + 15); ctx.fillText('B', B.x, B.y - 25);
+    ctx.fillText('C', C.x + 20, C.y + 15); ctx.fillText('M', M.x - 20, M.y + 5); ctx.fillText('N', N.x + 20, N.y + 5);
+}
+
+function drawTriangle2(m, n, KM) {
+    const ctx = document.querySelector('#container2 .cv-bg').getContext('2d');
+    ctx.clearRect(0, 0, 700, 394);
+    const B = { x: 200, y: 50 };
+    const A = { x: 30, y: 300 };
+    const C = { x: 370, y: 300 };
+    const t = m / (m + n);
+    const K = { x: B.x + t * (A.x - B.x), y: B.y + t * (A.y - B.y) };
+    const M = { x: B.x + t * (C.x - B.x), y: B.y + t * (C.y - B.y) };
+    const extend = 60;
+    const dx = M.x - K.x, dy = M.y - K.y, len = Math.sqrt(dx*dx + dy*dy);
+    const ux = dx / len, uy = dy / len;
+    const K_ext = { x: K.x - ux * extend, y: K.y - uy * extend };
+    const M_ext = { x: M.x + ux * extend, y: M.y + uy * extend };
+
+    ctx.strokeStyle = '#0e7c66'; ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.lineTo(C.x, C.y); ctx.closePath(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(K_ext.x, K_ext.y); ctx.lineTo(M_ext.x, M_ext.y); ctx.stroke();
+
+    ctx.font = 'bold italic 20px Georgia'; ctx.fillStyle = '#0e7c66'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('A', A.x - 20, A.y + 15); ctx.fillText('B', B.x, B.y - 25);
+    ctx.fillText('C', C.x + 20, C.y + 15); ctx.fillText('K', K.x - 20, K.y - 5); ctx.fillText('M', M.x + 20, M.y - 5);
+}
+
+function drawTriangle3(a, c) {
+    const ctx = document.querySelector('#container3 .cv-bg').getContext('2d');
+    ctx.clearRect(0, 0, 700, 394);
+    const A = { x: 80, y: 300 };
+    const B = { x: 80, y: 50 };
+    const C = { x: 380, y: 300 };
+
+    const BCx = C.x - B.x, BCy = C.y - B.y;
+    const BAx = A.x - B.x, BAy = A.y - B.y;
+    const dot = BAx * BCx + BAy * BCy;
+    const lenBC2 = BCx * BCx + BCy * BCy;
+    const t = dot / lenBC2;
+    const H = { x: B.x + t * BCx, y: B.y + t * BCy };
+
+    ctx.strokeStyle = '#0e7c66'; ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.lineTo(C.x, C.y); ctx.closePath(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(H.x, H.y); ctx.stroke();
+
+    const s = 20;
+    ctx.beginPath(); ctx.moveTo(A.x + s, A.y); ctx.lineTo(A.x + s, A.y - s); ctx.lineTo(A.x, A.y - s);
+    ctx.strokeStyle = '#c9a32b'; ctx.lineWidth = 2.5; ctx.stroke();
+
+    ctx.font = 'bold italic 20px Georgia'; ctx.fillStyle = '#0e7c66'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('A', A.x - 20, A.y + 15); ctx.fillText('B', B.x - 20, B.y - 10); ctx.fillText('C', C.x + 20, C.y + 15);
+}
+
+function drawTriangle4(BC, AD) {
+    const ctx = document.querySelector('#container4 .cv-bg').getContext('2d');
+    ctx.clearRect(0, 0, 700, 394);
+    const B = { x: 150, y: 70 };
+    const C = { x: 350, y: 70 };
+    const A = { x: 50, y: 300 };
+    const D = { x: 450, y: 300 };
+
+    const k = BC / (BC + AD);
+    const O = { x: A.x + k * (C.x - A.x), y: A.y + k * (C.y - A.y) };
+
+    ctx.strokeStyle = '#0e7c66'; ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath(); ctx.moveTo(B.x, B.y); ctx.lineTo(C.x, C.y); ctx.lineTo(D.x, D.y); ctx.lineTo(A.x, A.y); ctx.closePath(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(C.x, C.y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(B.x, B.y); ctx.lineTo(D.x, D.y); ctx.stroke();
+
+    ctx.font = 'bold italic 20px Georgia'; ctx.fillStyle = '#0e7c66'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('A', A.x - 20, A.y + 15); ctx.fillText('B', B.x - 20, B.y - 15);
+    ctx.fillText('C', C.x + 20, C.y - 15); ctx.fillText('D', D.x + 20, D.y + 15);
+}
+
+function drawTriangle5(A_deg, B_deg) {
+    const ctx = document.querySelector('#container5 .cv-bg').getContext('2d');
+    ctx.clearRect(0, 0, 700, 394);
+    const A = { x: 80, y: 300 };
+    const B = { x: 400, y: 300 };
+    const C = { x: 240, y: 70 };
+
+    ctx.strokeStyle = '#0e7c66'; ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.lineTo(C.x, C.y); ctx.closePath(); ctx.stroke();
+
+    ctx.font = 'bold italic 20px Georgia'; ctx.fillStyle = '#0e7c66'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('A', A.x - 20, A.y + 15); ctx.fillText('B', B.x + 20, B.y + 15); ctx.fillText('C', C.x, C.y - 25);
+
+    ctx.font = 'bold 18px Georgia'; ctx.fillStyle = '#c0392b';
+    ctx.fillText(A_deg + '°', A.x + 45, A.y - 15);
+    ctx.fillText(B_deg + '°', B.x - 45, B.y - 15);
+}
+
+function drawTriangle6(AB, BC, AC) {
+    const ctx = document.querySelector('#container6 .cv-bg').getContext('2d');
+    ctx.clearRect(0, 0, 700, 394);
+    const A = { x: 80, y: 300 };
+    const C = { x: 400, y: 300 };
+    const baseLen = C.x - A.x; 
+    
+    const cosA = (AC*AC + AB*AB - BC*BC) / (2 * AC * AB);
+    const sinA = Math.sqrt(1 - cosA*cosA);
+    
+    const scale = baseLen / AC;
+    const AB_img = AB * scale;
+    
+    const B = { x: A.x + AB_img * cosA, y: A.y - AB_img * sinA };
+
+    ctx.strokeStyle = '#0e7c66'; ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.lineTo(C.x, C.y); ctx.closePath(); ctx.stroke();
+
+    ctx.font = 'bold italic 20px Georgia'; ctx.fillStyle = '#0e7c66'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('A', A.x - 20, A.y + 15); ctx.fillText('B', B.x, B.y - 25); ctx.fillText('C', C.x + 20, C.y + 15);
+}
+
+function drawTriangle7(AC_str, BC_str, angle) {
+    const ctx = document.querySelector('#container7 .cv-bg').getContext('2d');
+    ctx.clearRect(0, 0, 700, 394);
+    
+    const parseStr = (s) => {
+        if (s.includes('√')) {
+            const parts = s.split('√');
+            const coef = parts[0] ? parseFloat(parts[0]) : 1;
+            return coef * Math.sqrt(parseFloat(parts[1]));
+        }
+        return parseFloat(s);
+    };
+    
+    const ac = parseStr(AC_str);
+    const bc = parseStr(BC_str);
+    const rad = angle * Math.PI / 180;
+
+    const A = { x: 60, y: 280 };
+    const scale = 300 / (ac + bc); 
+    const C = { x: A.x + ac * scale, y: 280 };
+    
+    const B = { 
+        x: C.x + bc * scale * Math.cos(Math.PI - rad), 
+        y: C.y - bc * scale * Math.sin(Math.PI - rad) 
+    };
+
+    ctx.strokeStyle = '#0e7c66'; ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(C.x, C.y); ctx.lineTo(B.x, B.y); ctx.closePath(); ctx.stroke();
+
+    ctx.font = 'bold italic 20px Georgia'; ctx.fillStyle = '#0e7c66'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('A', A.x - 20, A.y + 15); 
+    ctx.fillText('B', B.x, B.y - 25); 
+    ctx.fillText('C', C.x + 20, C.y + 15);
+    
+    ctx.font = 'bold 18px Georgia'; ctx.fillStyle = '#c0392b';
+    ctx.fillText(angle + '°', C.x - 35, C.y - 15);
+}
+
+function drawTriangle8(AB_str, C_angle) {
+    const ctx = document.querySelector('#container8 .cv-bg').getContext('2d');
+    ctx.clearRect(0, 0, 700, 394);
+    const A = { x: 80, y: 280 };
+    const C = { x: 380, y: 280 };
+    const B = { x: 200, y: 70 }; 
+
+    ctx.strokeStyle = '#0e7c66'; ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.lineTo(C.x, C.y); ctx.closePath(); ctx.stroke();
+
+    ctx.font = 'bold italic 20px Georgia'; ctx.fillStyle = '#0e7c66'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('A', A.x - 20, A.y + 15); 
+    ctx.fillText('B', B.x, B.y - 25); 
+    ctx.fillText('C', C.x + 20, C.y + 15);
+    
+    ctx.font = 'bold 18px Georgia'; ctx.fillStyle = '#c0392b';
+    ctx.fillText(C_angle + '°', C.x - 35, C.y - 15);
+}
+
+/* Задание 9 — всё на сетке 50px, длина AB = shift клеток.
+   A(250,250), B(450,150), C(250,50); vX = A.x + (4−shift)·50.
+   OX=200 центрирует рисунок на холсте 700×394. */
+function drawTriangle9(shift) {
+    const ctx = document.querySelector('#container9 .cv-bg').getContext('2d');
+    ctx.clearRect(0, 0, 700, 394);
+
+    const CELL = 50;
+    const OX = 200;
+    const OY = 0;
+
+    const A_ang = { x: OX + 1 * CELL, y: OY + 5 * CELL }; // (250, 250)
+    const B_ang = { x: OX + 5 * CELL, y: OY + 3 * CELL }; // (450, 150)
+    const C_ang = { x: OX + 1 * CELL, y: OY + 1 * CELL }; // (250,  50)
+
+    const vX = A_ang.x + (4 - shift) * CELL;
+
+    const topY = C_ang.y + (vX - C_ang.x) * (B_ang.y - C_ang.y) / (B_ang.x - C_ang.x);
+    const botY = A_ang.y + (vX - A_ang.x) * (B_ang.y - A_ang.y) / (B_ang.x - A_ang.x);
+
+    const V_top = { x: vX, y: topY };
+    const V_bot = { x: vX, y: botY };
+
+    ctx.strokeStyle = '#0e7c66';
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    ctx.beginPath(); ctx.moveTo(A_ang.x, A_ang.y); ctx.lineTo(B_ang.x, B_ang.y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(C_ang.x, C_ang.y); ctx.lineTo(B_ang.x, B_ang.y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(V_top.x, V_top.y); ctx.lineTo(V_bot.x, V_bot.y); ctx.stroke();
+
+    ctx.font = 'bold italic 22px Georgia';
+    ctx.fillStyle = '#0e7c66';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    ctx.fillText('A', V_top.x + 5, V_top.y - 10);
+    ctx.fillText('B', V_bot.x + 5, V_bot.y + 15);
+}
+
+/* Задание 10 — как во втором файле: 7×9 клеток, 350×450,
+   B(150,100), A(50,350), C(300,400), M на BC (step/6). */
+function drawTriangle10(variant) {
+    const ctx = document.querySelector('#container10 .cv-bg').getContext('2d');
+    ctx.clearRect(0, 0, 350, 450);
+
+    const CELL = 50;
+
+    const B = { x: 3 * CELL, y: 450 - 7 * CELL }; // (150, 100)
+    const A = { x: 1 * CELL, y: 450 - 2 * CELL }; // ( 50, 350)
+    const C = { x: 6 * CELL, y: 450 - 1 * CELL }; // (300, 400)
+
+    const step = variant;
+    const M = {
+        x: B.x + (C.x - B.x) * (step / 6),
+        y: B.y + (C.y - B.y) * (step / 6)
+    };
+
+    ctx.strokeStyle = '#0e7c66';
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(B.x, B.y); ctx.lineTo(C.x, C.y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(C.x, C.y); ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(M.x, M.y, 6, 0, 2 * Math.PI);
+    ctx.fillStyle = '#0e7c66';
+    ctx.fill();
+
+    ctx.font = 'bold italic 20px Georgia';
+    ctx.fillStyle = '#0e7c66';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    ctx.fillText('B', B.x, B.y - 20);
+    ctx.fillText('A', A.x - 20, A.y + 10);
+    ctx.fillText('C', C.x + 15, C.y + 20);
+    ctx.fillText('M', M.x + 20, M.y - 10);
+}
+
+/* ============================================================
+   ИНИЦИАЛИЗАЦИЯ И ЛОГИКА
+   ============================================================ */
+const STORAGE_KEY = 'dz19_treug_state';
+let checked = false;
+let currentAnswers = {}; 
+let currentTask10Variant = 1;
+
+const nameInput = document.getElementById('studentName');
+const savedName = localStorage.getItem('dz19_treug_name');
+if(savedName) nameInput.value = savedName;
+nameInput.addEventListener('input', ()=>{
+  localStorage.setItem('dz19_treug_name', nameInput.value.trim());
+});
+
+function saveState(state){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+function loadState(){
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); }
+  catch(e){ return null; }
+}
+
+function applyState(state){
+  if (!state) return;
+  if (state.name) nameInput.value = state.name;
+  nameInput.disabled = true;
+
+  if (state.answers){
+    for (let i=1; i<=10; i++){
+      const r = state.answers[i];
+      if (!r) continue;
+      const inp = document.getElementById('ans-'+i);
+      inp.value = r.user;
+      inp.classList.add(r.ok ? 'correct' : 'wrong');
+      inp.disabled = true;
+      const mark = document.getElementById('mark-'+i);
+      mark.textContent = r.ok ? '✅' : '❌';
+      mark.className = 'task-mark ' + (r.ok ? 'ok' : 'err');
+      document.getElementById('task-'+i).classList.add(r.ok ? 'correct' : 'wrong');
+    }
+  }
+
+  document.getElementById('statOk').textContent = state.okCount;
+  document.getElementById('statErr').textContent = state.errCount;
+  document.getElementById('statPercent').textContent = state.percent + '%';
+  document.getElementById('summaryLine').textContent = state.summaryLine;
+  document.getElementById('summaryBox').classList.add('show');
+  document.getElementById('resultText').textContent = state.resultText;
+  document.getElementById('resultArea').classList.add('show');
+
+  const btn = document.getElementById('btnCheck');
+  btn.disabled = true;
+  btn.textContent = '✓ Проверено';
+  btn.style.background = 'linear-gradient(135deg,#2ecc71,#27ae60)';
+  btn.style.color = '#fff';
+
+  checked = true;
+}
+
+function renderNewTasks() {
+    // 1
+    const t1 = generateTask1();
+    currentAnswers[1] = String(t1.AM);
+    document.getElementById('questionText1').innerHTML = `Прямая, параллельная стороне AC треугольника ABC, пересекает стороны AB и BC в точках M и N соответственно. AB = <b>${t1.AB}</b>, AC = <b>${t1.AC}</b>, MN = <b>${t1.MN}</b>. Найдите <b>AM</b>.`;
+    drawTriangle1(t1.AB, t1.AC, t1.MN);
+
+    // 2
+    const t2 = generateTask2();
+    currentAnswers[2] = String(t2.AC);
+    document.getElementById('questionText2').innerHTML = `Прямая, параллельная стороне AC треугольника ABC, пересекает стороны AB и BC в точках K и M соответственно. Найдите AC, если BK : KA = <b>${t2.m} : ${t2.n}</b>, KM = <b>${t2.KM}</b>.`;
+    drawTriangle2(t2.m, t2.n, t2.KM);
+
+    // 3
+    const t3 = generateTask3();
+    currentAnswers[3] = String(t3.h);
+    document.getElementById('questionText3').innerHTML = `Катеты прямоугольного треугольника равны <b>${t3.a}</b> и <b>${t3.c}</b>. Найдите высоту, проведённую к гипотенузе.`;
+    drawTriangle3(t3.a, t3.c);
+
+    // 4
+    const t4 = generateTask4();
+    currentAnswers[4] = String(t4.AO);
+    document.getElementById('questionText4').innerHTML = `Диагонали AC и BD трапеции ABCD с основаниями BC и AD пересекаются в точке O, BC = <b>${t4.b}</b>, AD = <b>${t4.a}</b>, AC = <b>${t4.AC}</b>. Найдите <b>AO</b>.`;
+    drawTriangle4(t4.b, t4.a);
+
+    // 5
+    const t5 = generateTask5();
+    currentAnswers[5] = String(t5.ans);
+    document.getElementById('questionText5').innerHTML = `В треугольнике ABC угол A равен <b>${t5.A}°</b>, угол B равен <b>${t5.B}°</b>, BC = <b>${t5.BC}</b>. Найдите <b>AC</b>.`;
+    drawTriangle5(t5.A, t5.B);
+
+    // 6
+    const t6 = generateTask6();
+    currentAnswers[6] = String(t6.cos);
+    document.getElementById('questionText6').innerHTML = `В треугольнике ABC известно, что AB = <b>${t6.AB}</b>, BC = <b>${t6.BC}</b>, AC = <b>${t6.AC}</b>. Найдите <b>cos∠ABC</b>.`;
+    drawTriangle6(t6.AB, t6.BC, t6.AC);
+
+    // 7
+    const t7 = generateTask7();
+    currentAnswers[7] = String(t7.ans);
+    document.getElementById('questionText7').innerHTML = `В треугольнике ABC сторона AC равна <b>${t7.AC}</b> см, сторона BC = <b>${t7.BC}</b> см. Угол C = <b>${t7.angle}°</b>. Найдите длину стороны <b>AB</b>.`;
+    drawTriangle7(t7.AC, t7.BC, t7.angle);
+
+    // 8
+    const t8 = generateTask8();
+    currentAnswers[8] = String(t8.R);
+    document.getElementById('questionText8').innerHTML = `Для треугольника ABC, в котором AB = <b>${t8.AB}</b> и ∠ACB = <b>${t8.C}°</b>, найдите длину радиуса описанной окружности.`;
+    drawTriangle8(t8.AB, t8.C);
+
+    // 9
+    const t9 = generateTask9();
+    currentAnswers[9] = String(t9);
+    document.getElementById('questionText9').innerHTML = `На клетчатой бумаге с размером клетки <b>1×1</b> изображён угол. Найдите длину отрезка <b>AB</b> по данным чертежа (в клетках).`;
+    drawTriangle9(t9);
+
+    // 10
+    currentTask10Variant = generateTask10();
+    updateTask10Question();
+
+    [1,2,3,4,5,6,7,8,9,10].forEach(n => clearPaint(n));
+}
+
+function updateTask10Question() {
+    const variant = currentTask10Variant;
+    drawTriangle10(variant);
+
+    const bm = variant;
+    const cm = 6 - variant;
+
+    let qText = '';
+    let answer = '';
+
+    if (bm > cm) {
+        qText = `Во сколько раз отрезок <b>BM</b> больше отрезка <b>CM</b>?`;
+        answer = (bm / cm).toString();
+    } else if (cm > bm) {
+        qText = `Во сколько раз отрезок <b>CM</b> больше отрезка <b>BM</b>?`;
+        answer = (cm / bm).toString();
+    } else {
+        qText = `Во сколько раз отрезок <b>BM</b> больше отрезка <b>CM</b>?`;
+        answer = '1';
+    }
+
+    document.getElementById('questionText10').innerHTML = qText;
+    currentAnswers[10] = answer;
+}
+
+for(let i=1; i<=10; i++) { initPaintLayer('container' + i); }
+renderNewTasks();
+
+const savedState = loadState();
+if (savedState) applyState(savedState);
+
+/* КНОПКА СМЕНИТЬ ЗАДАНИЕ */
+document.getElementById('btnNext').addEventListener('click', function() {
+    localStorage.removeItem(STORAGE_KEY);
+    location.reload();
+});
+
+/* ПРОВЕРКА */
+document.getElementById('btnCheck').addEventListener('click', function(){
+  if (checked) return;
+
+  const name = nameInput.value.trim();
+  if (!name) { alert('Введи имя ученика!'); nameInput.focus(); return; }
+
+  // Собираем пустые поля
+  const empty = [];
+  for(let i=1; i<=10; i++){
+    const v = document.getElementById('ans-'+i).value.trim();
+    if (!v) empty.push(i);
+  }
+
+  // Если есть пустые — спрашиваем подтверждение
+  if (empty.length > 0){
+    const listStr = empty.map(n => '№' + n).join(', ');
+    const msg = 'Не заполнены ответы: ' + listStr + '.\n\n' +
+                'Вы действительно хотите закончить?\n' +
+                '(Пустые задания будут засчитаны как неверные)';
+    if (!confirm(msg)) {
+      const firstEmpty = document.getElementById('ans-' + empty[0]);
+      if (firstEmpty) { firstEmpty.focus(); firstEmpty.scrollIntoView({behavior:'smooth', block:'center'}); }
+      return;
+    }
+  }
+
+  let okCount = 0;
+  let errCount = 0;
+  const results = {};
+
+  for(let i=1; i<=10; i++){
+    const inp = document.getElementById('ans-'+i);
+    const val = inp.value.trim();
+    const isOk = val !== '' && checkNumeric(val, currentAnswers[i]);
+    results[i] = { user: val || '—', correct: currentAnswers[i], ok: isOk };
+
+    inp.classList.add(isOk ? 'correct' : 'wrong');
+    inp.disabled = true;
+    const mark = document.getElementById('mark-'+i);
+    mark.textContent = isOk ? '✅' : '❌';
+    mark.className = 'task-mark ' + (isOk ? 'ok' : 'err');
+    document.getElementById('task-'+i).classList.add(isOk ? 'correct' : 'wrong');
+    if (isOk) okCount++; else errCount++;
+  }
+
+  const percent = Math.round(okCount / 10 * 100);
+  document.getElementById('statOk').textContent = okCount;
+  document.getElementById('statErr').textContent = errCount;
+  document.getElementById('statPercent').textContent = percent + '%';
+
+  let line = '';
+  if (percent >= 90) line = '🌟 Великолепно! Почти всё верно!';
+  else if (percent >= 75) line = '👍 Хороший результат!';
+  else if (percent >= 50) line = '💪 Есть над чем поработать';
+  else line = '📚 Стоит повторить тему';
+  document.getElementById('summaryLine').textContent = line;
+  document.getElementById('summaryBox').classList.add('show');
+
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
+  let text = '📐 ОТВЕТЫ · 19. Тренажер Прямоугольный треугольник\n';
+  text += 'Дата: ' + dateStr + '\n';
+  text += 'Ученик: ' + name + '\n\n';
+  for(let i=1; i<=10; i++){
+    const r = results[i];
+    text += '  №' + i + '. Ответ: ' + (r.user === '—' ? '(не заполнено)' : r.user);
+    if (r.ok) text += ' ✅';
+    else text += ' ❌ (верно: ' + r.correct + ')';
+    text += '\n';
+  }
+  text += '\n📊 ИТОГО: ' + okCount + ' из 10 верно (' + percent + '%)';
+
+  document.getElementById('resultText').textContent = text;
+  document.getElementById('resultArea').classList.add('show');
+
+  checked = true;
+  this.disabled = true;
+  this.textContent = '✓ Проверено';
+  this.style.background = 'linear-gradient(135deg,#2ecc71,#27ae60)';
+  this.style.color = '#fff';
+
+  saveState({
+    name: name,
+    answers: results,
+    okCount: okCount,
+    errCount: errCount,
+    percent: percent,
+    summaryLine: line,
+    resultText: text
+  });
+
+  document.getElementById('summaryBox').scrollIntoView({behavior:'smooth', block:'start'});
+});
+
+/* КОПИРОВАНИЕ */
+document.getElementById('btnCopy').addEventListener('click', async function(){
+  const text = document.getElementById('resultText').textContent;
+  try{
+    await navigator.clipboard.writeText(text);
+    this.textContent = '✓ Скопировано!';
+    this.classList.add('copied');
+    setTimeout(()=>{ this.textContent='📋 Скопировать результат'; this.classList.remove('copied'); }, 2500);
+  }catch(e){
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+    this.textContent = '✓ Скопировано!';
+    this.classList.add('copied');
+    setTimeout(()=>{ this.textContent='📋 Скопировать результат'; this.classList.remove('copied'); }, 2500);
+  }
+});
+
+/* СБРОС */
+const resetModal = document.getElementById('resetModal');
+const resetPass = document.getElementById('resetPass');
+const resetErr = document.getElementById('resetErr');
+
+document.getElementById('btnReset').addEventListener('click', ()=>{
+  resetPass.value = '';
+  resetErr.textContent = '';
+  resetModal.classList.add('show');
+  setTimeout(()=>resetPass.focus(), 100);
+});
+document.getElementById('resetCancel').addEventListener('click', ()=>{
+  resetModal.classList.remove('show');
+});
+resetModal.addEventListener('click', (e)=>{
+  if (e.target === resetModal) resetModal.classList.remove('show');
+});
+resetPass.addEventListener('keydown', (e)=>{
+  if (e.key === 'Enter') document.getElementById('resetConfirm').click();
+});
+document.getElementById('resetConfirm').addEventListener('click', ()=>{
+  if (resetPass.value.trim() === '2810'){
+    localStorage.clear();
+    location.reload();
+  } else {
+    resetErr.textContent = 'Неверный пароль';
+  }
+});
+</script>
+</body>
+</html>
