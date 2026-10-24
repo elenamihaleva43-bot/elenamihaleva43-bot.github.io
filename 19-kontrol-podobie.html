@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Контроль к теме 19 «Произвольный треугольник»</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<style>
+  :root {
+    --bg: #143d37;
+    --panel: rgba(32, 102, 94, 0.65);
+    --bg2: #0e2e2a;
+    --line: rgba(66, 230, 198, 0.35);
+    --turq: #42e6c6;
+    --mint: #7fffd4;
+    --gold: #f4d35e;
+    --text: #e0f2ec;
+    --coral: #ff6b6b;
+    --green: #2ecc71;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background-color: var(--bg);
+    background-image: radial-gradient(circle at 15% 10%, rgba(66, 230, 198, 0.12) 0%, transparent 40%),
+                      radial-gradient(circle at 85% 90%, rgba(66, 230, 198, 0.08) 0%, transparent 40%);
+    background-attachment: fixed; color: var(--text);
+    font-family: Georgia, serif; padding: 0; margin: 0;
+    display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+  }
+  
+  .wrap { max-width: 750px; width: 100%; padding: 0 20px 40px 20px; }
+  
+  /* ШАПКА */
+  .sticky-header {
+    position: sticky; top: 0; width: 100%; background: rgba(14, 46, 42, 0.95);
+    backdrop-filter: blur(10px); z-index: 100; border-bottom: 1px solid var(--line);
+    padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  }
+  .logo-block { display: flex; align-items: center; gap: 8px; }
+  .logo-dots { display: flex; flex-direction: column; gap: 1px; font-size: 5px; color: var(--turq); line-height: 1.1; }
+  .logo-dots div { display: flex; gap: 2px; }
+  .logo-info { display: flex; flex-direction: column; }
+  .logo-text { font-family: 'Times New Roman', serif; font-size: 14px; font-weight: bold; color: var(--turq); letter-spacing: 1px; line-height: 1; }
+  .logo-sub { font-size: 8px; color: var(--text-soft); font-style: italic; margin-top: 2px; }
+  .header-info { text-align: right; font-size: 12px; font-family: 'Courier New', monospace; color: var(--mint); }
+  .progress { font-weight: bold; margin-top: 3px; color: var(--gold); }
+
+  /* ЗАГОЛОВОК */
+  .header-title {
+    text-align: center; margin: 25px 0 20px;
+    color: var(--gold); font-size: 26px; font-weight: bold;
+    text-shadow: 0 0 12px rgba(244, 211, 94, 0.3);
+    letter-spacing: 1px;
+    line-height: 1.2;
+  }
+  .header-subtitle {
+    display: block;
+    font-size: 16px;
+    color: var(--text);
+    font-weight: normal;
+    margin-top: 8px;
+    opacity: 0.85;
+    letter-spacing: 0;
+  }
+
+  /* ИМЯ */
+  .name-block {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+    padding: 15px; margin-bottom: 20px; display: flex; gap: 15px; align-items: center;
+  }
+  .name-block label { font-size: 15px; color: var(--mint); font-weight: bold; white-space: nowrap; }
+  .name-block input {
+    flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--line);
+    background: var(--bg2); color: var(--text); font-family: Georgia, serif; outline: none;
+  }
+
+  /* ТЕКСТ ТЕОРИИ */
+  .theory-block {
+    background: rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 15px 20px;
+    font-size: 15px; line-height: 1.6; margin-bottom: 20px; border-left: 4px solid var(--gold);
+  }
+  .theory-block b { color: var(--gold); }
+  .katex { font-size: 1.1em; color: var(--mint); }
+
+  /* ТАБЛИЦА */
+  .table-container { overflow-x: auto; margin-bottom: 25px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; background: rgba(0,0,0,0.2); border-radius: 8px; overflow: hidden; }
+  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: center; }
+  th { background: rgba(66, 230, 198, 0.15); color: var(--mint); font-weight: bold; }
+  td { color: var(--text); }
+  tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+
+  /* КАРТОЧКИ ЗАДАЧ */
+  .task-card {
+    background: var(--panel); backdrop-filter: blur(12px);
+    border: 1px solid var(--line); border-radius: 16px; padding: 20px; margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3); transition: border-color 0.3s;
+  }
+  .task-card.correct { border-color: var(--green); box-shadow: 0 0 15px rgba(46, 204, 113, 0.2); }
+  .task-card.wrong { border-color: var(--coral); box-shadow: 0 0 15px rgba(255, 107, 107, 0.2); }
+  
+  .task-header { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; }
+  .task-num-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; }
+  .task-num {
+    background: linear-gradient(135deg, var(--turq), #1a9a82);
+    color: #0b2b27; font-weight: bold; font-size: 16px;
+    width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+    border-radius: 8px; font-family: "Courier New", monospace;
+  }
+  .task-score {
+    font-size: 10px; color: var(--gold); font-family: 'Courier New', monospace;
+    background: rgba(244, 211, 94, 0.1); padding: 2px 6px; border-radius: 4px;
+    border: 1px solid rgba(244, 211, 94, 0.3); white-space: nowrap;
+  }
+  .task-body { font-size: 16px; line-height: 1.5; flex: 1; }
+  .task-body b { color: var(--gold); }
+  
+  /* ЧЕРТЕЖИ */
+  .drawing { margin: 15px 0 5px 0; text-align: center; background: #f8fdfb; padding: 10px; border-radius: 12px; border: 1px solid rgba(66, 230, 198, 0.2); }
+  .drawing svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+
+  /* ПОЛЕ ВВОДА */
+  .answer-row { margin-top: 15px; }
+  .answer-row input {
+    width: 100%; padding: 12px; border-radius: 10px; border: 1.5px solid var(--line);
+    background: var(--bg2); color: var(--text); font-size: 16px; font-family: "Courier New", monospace;
+    outline: none; transition: 0.3s;
+  }
+  .answer-row input:focus { border-color: var(--turq); box-shadow: 0 0 10px rgba(66,230,198,0.2); }
+  .answer-row input:disabled { opacity: 0.7; cursor: not-allowed; background: #061d1a; }
+  .answer-row input.correct { border-color: var(--green); color: var(--green); }
+  .answer-row input.wrong { border-color: var(--coral); color: var(--coral); }
+
+  .status { margin-top: 12px; font-weight: bold; display: none; font-size: 14px; padding: 10px; border-radius: 8px; }
+  .status.ok { display: block; background: rgba(46,204,113,0.15); color: var(--green); border: 1px solid var(--green); }
+  .status.err { display: block; background: rgba(255,107,107,0.15); color: var(--coral); border: 1px solid var(--coral); }
+
+  /* КНОПКИ */
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
+  .btn {
+    padding: 14px 20px; border: none; border-radius: 12px;
+    font-family: Georgia, serif; font-size: 16px; font-weight: bold;
+    cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+    text-decoration: none;
+  }
+  .btn-primary { background: linear-gradient(135deg, var(--turq), #1a9a82); color: #0b2b27; flex: 1; box-shadow: 0 4px 15px rgba(66,230,198,0.3); min-width: 200px;}
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(66,230,198,0.5); }
+  .btn-outline { background: transparent; border: 1.5px solid var(--turq); color: var(--turq); }
+  .btn-outline:hover { background: rgba(66, 230, 198, 0.1); }
+  .btn-coral { background: transparent; border: 1.5px solid var(--coral); color: var(--coral); }
+  .btn-coral:hover { background: rgba(255, 107, 107, 0.1); }
+
+  /* МОДАЛКИ */
+  .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 1000; }
+  .modal { background: var(--bg); border: 1px solid var(--line); border-radius: 16px; padding: 24px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+  .modal h3 { margin-top: 0; color: var(--turq); margin-bottom: 15px; }
+  .modal p { margin-bottom: 20px; }
+  .modal input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg2); color: var(--text); text-align: center; font-size: 18px; margin-bottom: 15px; font-family: "Courier New", monospace; outline: none; }
+  .modal-btns { display: flex; gap: 10px; }
+  .modal-btns .btn { flex: 1; padding: 10px; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<!-- ШАПКА -->
+<div class="sticky-header">
+  <div class="logo-block">
+    <div class="logo-dots">
+      <div>●</div>
+      <div>● ●</div>
+      <div>● ● ●</div>
+      <div>● ● ● ●</div>
+    </div>
+    <div class="logo-info">
+      <div class="logo-text">ΤΕΤΡΑΚΤΥΣ</div>
+      <div class="logo-sub">Школа Елены Михалевой</div>
+    </div>
+  </div>
+  <div class="header-info">
+    <div id="dateDisplay"></div>
+    <div class="progress" id="progressDisplay">✅ 0 / 11</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="header-title">
+    Контроль к теме 19
+    <span class="header-subtitle">«Произвольный треугольник»<br>(Равенство, подобие, теоремы синусов и косинусов)</span>
+  </div>
+
+  <!-- ИМЯ ПОД ЗАГОЛОВКОМ -->
+  <div class="name-block">
+    <label>Ученик:</label>
+    <input type="text" id="studentName" placeholder="Введи своё имя..." oninput="saveName()">
+  </div>
+
+  <!-- Вводный текст с таблицей -->
+  <div class="theory-block">
+    <b>Задание 3.</b> Хозяин дачного участка строит баню с парным отделением. Парное отделение имеет размеры: длина 3,4 м, ширина 2 м, высота 2,1 м. Окон в парном отделении нет, для доступа внутрь планируется дверь шириной 62 см, высота дверного проёма 1,8 м. Для прогрева парного отделения можно использовать электрическую или дровяную печь. В таблице представлены характеристики трёх печей.
+  </div>
+  
+  <div class="table-container">
+    <table>
+      <tr>
+        <th>Номер печи</th>
+        <th>Тип</th>
+        <th>Объём помещения (куб. м)</th>
+        <th>Масса (кг)</th>
+        <th>Стоимость (руб.)</th>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>дровяная</td>
+        <td>8 – 12</td>
+        <td>39</td>
+        <td>22 000</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>дровяная</td>
+        <td>10 – 19,5</td>
+        <td>41</td>
+        <td>28 000</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>электрическая</td>
+        <td>9 – 17</td>
+        <td>17</td>
+        <td>19 500</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="theory-block" style="border-left-color: var(--turq);">
+    Для установки дровяной печи дополнительных затрат не потребуется. Установка электрической печи потребует подведения специального кабеля, что обойдётся в 6800 руб.
+  </div>
+
+  <div id="tasks-container"></div>
+
+  <!-- КНОПКИ -->
+  <div class="actions">
+    <button class="btn btn-primary" onclick="checkAll()" id="btnCheck">✅ Проверить всё</button>
+    <button class="btn btn-outline" onclick="copyAnswers()">📋 Скопировать</button>
+    <button class="btn btn-coral" onclick="openClearModal()">🔒 Сбросить</button>
+  </div>
+
+  <div style="text-align:center; margin-top: 15px;">
+    <a class="btn btn-primary" style="display:inline-flex; width: 100%;" href="https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes" target="_blank" onclick="copyAnswers()">💬 Отправить в Макс</a>
+  </div>
+</div>
+
+<!-- МОДАЛКА ПУСТЫЕ ПОЛЯ -->
+<div class="modal-overlay" id="emptyModal">
+  <div class="modal">
+    <h3>Заполни все поля!</h3>
+    <p id="emptyList"></p>
+    <div class="modal-btns">
+      <button class="btn btn-primary" onclick="closeModal('emptyModal')">Понятно</button>
+    </div>
+  </div>
+</div>
+
+<!-- МОДАЛКА СБРОСА -->
+<div class="modal-overlay" id="clearModal">
+  <div class="modal">
+    <h3>Сбросить всё?</h3>
+    <p>Введи пароль для сброса:</p>
+    <input type="password" id="clearPassword" placeholder="Пароль...">
+    <div class="modal-btns">
+      <button class="btn btn-outline" onclick="closeModal('clearModal')">Отмена</button>
+      <button class="btn btn-coral" onclick="confirmClear()">Сбросить</button>
+    </div>
+    <p id="passError" style="color: var(--coral); display: none; margin-top: 10px; font-size: 14px;">Неверный пароль</p>
+  </div>
+</div>
+
+<script>
+  let tasks = {};
+  let checkedState = {};
+  const TOTAL = 11;
+  const STORAGE_KEY = 'control_19_triangle_';
+
+  // --- SVG ЧЕРТЕЖИ ---
+  function getSVG(type) {
+    if (type === 5) {
+      // Задание 5: арка кожуха
+      return `<svg viewBox="0 0 320 200" style="max-width:280px; width:100%;">
+        <rect x="60" y="20" width="100" height="150" fill="#d6e6e2" stroke="#1b5e20" stroke-width="1.5"/>
+        <rect x="85" y="100" width="50" height="55" fill="none" stroke="#1b5e20" stroke-width="1.5"/>
+        <path d="M 60 95 Q 110 45 160 95" fill="none" stroke="#1b5e20" stroke-width="1.5"/>
+        <line x1="110" y1="128" x2="60" y2="95" stroke="#a02020" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="95" y="112" font-family="Georgia, serif" font-size="14" font-style="italic" font-weight="bold" fill="#a02020">R</text>
+        <line x1="35" y1="95" x2="35" y2="170" stroke="#1b5e20" stroke-width="1.5"/>
+        <line x1="30" y1="95" x2="40" y2="95" stroke="#1b5e20" stroke-width="1.5"/>
+        <line x1="30" y1="170" x2="40" y2="170" stroke="#1b5e20" stroke-width="1.5"/>
+        <text x="20" y="135" font-family="Courier New, monospace" font-size="14" font-weight="bold" fill="#1b5e20" text-anchor="middle">44</text>
+        <line x1="60" y1="185" x2="160" y2="185" stroke="#1b5e20" stroke-width="1.5"/>
+        <line x1="60" y1="180" x2="60" y2="190" stroke="#1b5e20" stroke-width="1.5"/>
+        <line x1="160" y1="180" x2="160" y2="190" stroke="#1b5e20" stroke-width="1.5"/>
+        <text x="110" y="198" font-family="Courier New, monospace" font-size="14" font-weight="bold" fill="#1b5e20" text-anchor="middle">66</text>
+        <line x1="160" y1="95" x2="200" y2="95" stroke="#1b5e20" stroke-width="1"/>
+        <text x="205" y="99" font-family="Georgia, serif" font-size="13" fill="#1b5e20">арка кожуха</text>
+        <line x1="135" y1="128" x2="200" y2="128" stroke="#1b5e20" stroke-width="1"/>
+        <text x="205" y="132" font-family="Georgia, serif" font-size="13" fill="#1b5e20">дверца топки</text>
+      </svg>`;
+    }
+    if (type === 7) {
+      // Задание 7: числовая прямая
+      let ticks = '';
+      let labels = '';
+      for (let i = 0; i < 10; i++) {
+        const x = 40 + i * 22;
+        ticks += `<line x1="${x}" y1="42" x2="${x}" y2="52" stroke="#1b5e20" stroke-width="1.5"/>`;
+      }
+      labels += `<text x="40" y="72" font-family="Courier New, monospace" font-size="12" font-weight="bold" fill="#1b5e20" text-anchor="middle">0</text>`;
+      labels += `<text x="62" y="72" font-family="Courier New, monospace" font-size="12" font-weight="bold" fill="#1b5e20" text-anchor="middle">1</text>`;
+      const dotX = 141.2;
+
+      return `<svg viewBox="0 0 280 90" style="max-width:260px; width:100%;">
+        <line x1="30" y1="47" x2="260" y2="47" stroke="#1b5e20" stroke-width="1.5"/>
+        <polygon points="260,43 270,47 260,51" fill="#1b5e20"/>
+        ${ticks}
+        ${labels}
+        <circle cx="${dotX}" cy="47" r="3.5" fill="#2e7d32"/>
+        <text x="${dotX}" y="72" font-family="Georgia, serif" font-size="14" font-style="italic" font-weight="bold" fill="#2e7d32" text-anchor="middle">a</text>
+      </svg>`;
+    }
+    if (type === 9) {
+      // Задание 9: треугольник и параллельная прямая
+      return `<svg viewBox="0 0 260 140" style="max-width:240px; width:100%;">
+        <polygon points="40,110 220,110 130,20" fill="none" stroke="#1b5e20" stroke-width="1.5"/>
+        <line x1="65" y1="63" x2="195" y2="63" stroke="#1b5e20" stroke-width="1.5"/>
+        <text x="25" y="125" font-family="Georgia, serif" font-size="16" font-weight="bold" font-style="italic" fill="#1b5e20">A</text>
+        <text x="125" y="15" font-family="Georgia, serif" font-size="16" font-weight="bold" font-style="italic" fill="#1b5e20">B</text>
+        <text x="228" y="125" font-family="Georgia, serif" font-size="16" font-weight="bold" font-style="italic" fill="#1b5e20">C</text>
+        <text x="82" y="55" font-family="Georgia, serif" font-size="16" font-weight="bold" font-style="italic" fill="#1b5e20">K</text>
+        <text x="175" y="55" font-family="Georgia, serif" font-size="16" font-weight="bold" font-style="italic" fill="#1b5e20">M</text>
+      </svg>`;
+    }
+    if (type === 10) {
+      // Задание 10: ИДЕАЛЬНЫЙ ЧЕРТЕЖ БЕЗ ИЗМЕНЕНИЙ
+      return `<svg viewBox="0 0 180 180" style="max-width:220px; width:100%;">
+        <!-- Сетка 6x6 -->
+        <line x1="20" y1="20" x2="20" y2="140" stroke="#d0e8e0" stroke-width="1"/>
+        <line x1="40" y1="20" x2="40" y2="140" stroke="#d0e8e0" stroke-width="1"/>
+        <line x1="60" y1="20" x2="60" y2="140" stroke="#d0e8e0" stroke-width="1"/>
+        <line x1="80" y1="20" x2="80" y2="140" stroke="#d0e8e0" stroke-width="1"/>
+        <line x1="100" y1="20" x2="100" y2="140" stroke="#d0e8e0" stroke-width="1"/>
+        <line x1="120" y1="20" x2="120" y2="140" stroke="#d0e8e0" stroke-width="1"/>
+        <line x1="140" y1="20" x2="140" y2="140" stroke="#d0e8e0" stroke-width="1"/>
+        
+        <line x1="20" y1="20" x2="140" y2="20" stroke="#d0e8e0" stroke-width="1"/>
+        <line x1="20" y1="40" x2="140" y2="40" stroke="#d0e8e0" stroke-width="1"/>
+        <line x1="20" y1="60" x2="140" y2="60" stroke="#d0e8e0" stroke-width="1"/>
+        <line x1="20" y1="80" x2="140" y2="80" stroke="#d0e8e0" stroke-width="1"/>
+        <line x1="20" y1="100" x2="140" y2="100" stroke="#d0e8e0" stroke-width="1"/>
+        <line x1="20" y1="120" x2="140" y2="120" stroke="#d0e8e0" stroke-width="1"/>
+        <line x1="20" y1="140" x2="140" y2="140" stroke="#d0e8e0" stroke-width="1"/>
+        
+        <!-- Стороны угла -->
+        <line x1="40" y1="84" x2="120" y2="120" stroke="#1b5e20" stroke-width="2"/>
+        <line x1="40" y1="84" x2="120" y2="40" stroke="#1b5e20" stroke-width="2"/>
+        
+        <!-- Вертикальный отрезок AB -->
+        <line x1="60" y1="73" x2="60" y2="93" stroke="#1b5e20" stroke-width="2"/>
+        
+        <!-- Буквы A и B -->
+        <text x="50" y="68" font-family="Georgia, serif" font-size="16" font-weight="bold" font-style="italic" fill="#1b5e20">B</text>
+        <text x="50" y="108" font-family="Georgia, serif" font-size="16" font-weight="bold" font-style="italic" fill="#1b5e20">A</text>
+      </svg>`;
+    }
+    return '';
+  }
+
+  // --- ГЕНЕРАТОРЫ ЗАДАЧ ---
+  function genTask1() {
+    return { text: `Установите соответствие между массами и номерами печей. В бланк ответов перенесите последовательность трёх цифр без пробелов.`, answer: '312', score: '1 балл' };
+  }
+  function genTask2() {
+    return { text: `Найдите площадь пола парного отделения строящейся бани. Ответ дайте в квадратных метрах.`, answer: '6.8', score: '1 балл' };
+  }
+  function genTask3() {
+    return { text: `Во сколько рублей обойдётся покупка электрической печи с установкой и доставкой, если доставка печи до дачного участка будет стоить 1000 рублей?`, answer: '27300', score: '1 балл' };
+  }
+  function genTask4() {
+    return { text: `Доставка любой печи из магазина до участка стоит 800 рублей. При покупке печи стоимостью больше 20 000 рублей магазин делает скидку 15% на товар и 20% на доставку. Сколько рублей будет стоить покупка печи номер 1 с доставкой на этих условиях?`, answer: '19340', score: '1 балл' };
+  }
+  function genTask5() {
+    return { text: `Печь снабжена кожухом вокруг дверцы топки. Верхняя часть кожуха выполнена в виде арки, приваренной к передней стенке печки по дуге окружности с центром в середине нижней части кожуха. Для установки печки хозяину понадобилось узнать радиус закругления арки R. Размеры кожуха в сантиметрах показаны на рисунке. Найдите радиус закругления арки в сантиметрах.`, answer: '36.25', score: '1 балл', showDrawing: 5 };
+  }
+  function genTask6() {
+    return { text: `Найдите значение выражения: <div style="text-align:center; margin:10px 0; font-size:18px;">${katex.renderToString('\\frac{21}{5} \\cdot \\frac{3}{7}', {displayMode:true})}</div>`, answer: '1.8', score: '1 балл' };
+  }
+  function genTask7() {
+    return { text: `На координатной прямой отмечено число a. Какое из утверждений для этого числа является верным?<br><br>1) 5−a&lt;0 &nbsp;&nbsp; 2) a−6&gt;0 &nbsp;&nbsp; 3) a−5&lt;0 &nbsp;&nbsp; 4) 4−a&gt;0<br><br><i>В ответе укажите номер верного утверждения.</i>`, answer: '4', score: '1 балл', showDrawing: 7 };
+  }
+  function genTask8() {
+    return { text: `Найдите значение выражения: <div style="text-align:center; margin:10px 0; font-size:18px;">${katex.renderToString('\\frac{5^9 \\cdot 8^{11}}{40^9}', {displayMode:true})}</div>`, answer: '1024', score: '1 балл' };
+  }
+  function genTask9() {
+    return { text: `Прямая, параллельная стороне AC треугольника ABC, пересекает стороны AB и BC в точках K и M соответственно. Найдите AC, если BK : KA = 4:5, KM = 16.`, answer: '36', score: '1 балл', showDrawing: 9 };
+  }
+  function genTask10() {
+    return { text: `На клетчатой бумаге с размером клетки 1×1 изображена фигура. Найдите длину отрезка AB по данным чертежа.`, answer: '5', score: '1 балл', showDrawing: 10 };
+  }
+  function genTask11() {
+    return { text: `Какие из следующих утверждений верны?<br><br>
+      1) Длина гипотенузы прямоугольного треугольника меньше суммы длин катетов.<br>
+      2) В тупоугольном треугольнике все углы тупые.<br>
+      3) Средняя линия трапеции равна полусумме её оснований.<br><br>
+      В ответ запишите номера выбранных утверждений без пробелов, запятых и других дополнительных символов.`, answer: '13', score: '1 балл' };
+  }
+
+  // --- ОТРИСОВКА ---
+  function renderAll() {
+    const container = document.getElementById('tasks-container');
+    container.innerHTML = '';
+    
+    for (let i = 1; i <= TOTAL; i++) {
+      const t = tasks[i];
+      const isChecked = checkedState[i] !== undefined;
+      const isOk = checkedState[i] === 'ok';
+      
+      let cardClass = isChecked ? (isOk ? 'correct' : 'wrong') : '';
+      let statusClass = isChecked ? (isOk ? 'status ok' : 'status err') : 'status';
+      let statusText = isChecked ? (isOk ? '✅ Верно!' : `❌ Неверно. Правильный ответ: ${t.answer}`) : '';
+      let inputClass = isChecked ? (isOk ? 'correct' : 'wrong') : '';
+      let disabled = isChecked ? 'disabled' : '';
+      let savedVal = localStorage.getItem(STORAGE_KEY + 'ans_' + i) || '';
+
+      container.innerHTML += `
+        <div class="task-card ${cardClass}" id="task${i}">
+          <div class="task-header">
+            <div class="task-num-wrap">
+              <div class="task-num">${i}</div>
+              <div class="task-score">${t.score}</div>
+            </div>
+            <div class="task-body">${t.text}</div>
+          </div>
+          ${t.showDrawing ? `<div class="drawing">${getSVG(t.showDrawing)}</div>` : ''}
+          <div class="answer-row">
+            <input type="text" id="input${i}" value="${savedVal}" placeholder="Введи ответ..." autocomplete="off" class="${inputClass}" ${disabled} oninput="saveAnswer(${i})">
+          </div>
+          <div class="${statusClass}" id="status${i}">${statusText}</div>
+        </div>
+      `;
+    }
+    
+    // 12-я задача (без проверки, без поля ввода)
+    container.innerHTML += `
+      <div class="task-card">
+        <div class="task-header">
+          <div class="task-num-wrap">
+            <div class="task-num">12</div>
+            <div class="task-score">2 балла</div>
+          </div>
+          <div class="task-body">
+            Из A в B одновременно выехали два автомобиля. Первый проехал с постоянной скоростью весь путь. Второй проехал первую половину пути со скоростью 57 км/ч, а вторую половину пути проехал со скоростью на 38 км/ч больше скорости первого, в результате чего прибыл в B одновременно с первым автомобилем. Найдите скорость первого автомобиля.
+          </div>
+        </div>
+        <div class="theory-block" style="margin-top: 15px; border-left-color: var(--gold);">
+          <b>📷 Реши в тетради</b> и пришли фото решения учителю в Макс.
+        </div>
+      </div>
+    `;
+    
+    updateProgress();
+  }
+
+  // --- ЛОГИКА ---
+  function generateAll() {
+    tasks[1] = genTask1(); tasks[2] = genTask2(); tasks[3] = genTask3();
+    tasks[4] = genTask4(); tasks[5] = genTask5(); tasks[6] = genTask6();
+    tasks[7] = genTask7(); tasks[8] = genTask8(); tasks[9] = genTask9();
+    tasks[10] = genTask10(); tasks[11] = genTask11();
+    
+    for(let i=1; i<=TOTAL; i++) localStorage.removeItem(STORAGE_KEY + 'ans_' + i);
+    checkedState = {};
+    localStorage.removeItem(STORAGE_KEY + 'checked');
+    
+    renderAll();
+  }
+
+  function saveAnswer(n) {
+    localStorage.setItem(STORAGE_KEY + 'ans_' + n, document.getElementById('input'+n).value);
+  }
+
+  function saveName() {
+    localStorage.setItem(STORAGE_KEY + 'name', document.getElementById('studentName').value);
+  }
+
+  // Нормализация ответа: убрать пробелы, заменить запятую на точку
+  function normalize(str) {
+    return str.trim().replace(/,/g, '.').replace(/\s/g, '');
+  }
+
+  function checkAll() {
+    let empty = [];
+    for (let i = 1; i <= TOTAL; i++) {
+      if (!document.getElementById('input'+i).value.trim()) empty.push('№' + i);
+    }
+    
+    if (empty.length > 0) {
+      document.getElementById('emptyList').innerText = 'У тебя пустые: ' + empty.join(', ');
+      document.getElementById('emptyModal').style.display = 'flex';
+      return;
+    }
+
+    for (let i = 1; i <= TOTAL; i++) {
+      const inp = document.getElementById('input'+i);
+      let userAns = normalize(inp.value);
+      let correctAns = normalize(tasks[i].answer);
+      
+      const isOk = (userAns === correctAns);
+      checkedState[i] = isOk ? 'ok' : 'fail';
+      
+      inp.classList.add(isOk ? 'correct' : 'wrong');
+      inp.disabled = true;
+      
+      const st = document.getElementById('status'+i);
+      if (isOk) { st.className = 'status ok'; st.innerHTML = '✅ Верно!'; }
+      else { st.className = 'status err'; st.innerHTML = `❌ Неверно. Твой ответ: ${userAns}. <b>Правильный ответ: ${tasks[i].answer}</b>`; }
+      document.getElementById('task'+i).className = isOk ? 'task-card correct' : 'task-card wrong';
+    }
+
+    localStorage.setItem(STORAGE_KEY + 'checked', JSON.stringify(checkedState));
+    updateProgress();
+    
+    const btn = document.getElementById('btnCheck');
+    btn.disabled = true; btn.style.opacity = '0.5'; btn.textContent = 'Проверено';
+  }
+
+  function updateProgress() {
+    let count = 0;
+    for (let i = 1; i <= TOTAL; i++) { if (checkedState[i] === 'ok') count++; }
+    document.getElementById('progressDisplay').innerText = `✅ ${count} / ${TOTAL}`;
+  }
+
+  // --- ОТПРАВКА ---
+  function generateReport() {
+    const name = document.getElementById('studentName').value.trim() || 'Без имени';
+    let text = `📐 ОТВЕТЫ · Контроль к теме 19 «Произвольный треугольник»\nУченик: ${name}\n\n`;
+    let correctCount = 0;
+    for (let i = 1; i <= TOTAL; i++) {
+      const ans = document.getElementById('input'+i).value.trim() || '—';
+      if (checkedState[i] === 'ok') { text += `✅ Задание ${i}. Ответ: ${ans}\n`; correctCount++; }
+      else if (checkedState[i] === 'fail') text += `❌ Задание ${i}. Ответ: ${ans} (верно: ${tasks[i].answer})\n`;
+      else text += `— Задание ${i}. Ответ: ${ans} (не проверено)\n`;
+    }
+    text += `\n📷 Задание 12. Решение в тетради (фото отдельно).`;
+    text += `\n✅ Итог: ${correctCount} из ${TOTAL} верно (плюс баллы за задание 12 при проверке)`;
+    return text;
+  }
+
+  function copyAnswers() {
+    navigator.clipboard.writeText(generateReport()).then(() => {
+      alert('Текст скопирован в буфер обмена!');
+    });
+  }
+
+  // --- СБРОС ---
+  function openClearModal() {
+    document.getElementById('clearPassword').value = '';
+    document.getElementById('passError').style.display = 'none';
+    document.getElementById('clearModal').style.display = 'flex';
+  }
+  function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+  function confirmClear() {
+    if (document.getElementById('clearPassword').value === '2810') {
+      const name = localStorage.getItem(STORAGE_KEY + 'name');
+      localStorage.clear();
+      if (name) localStorage.setItem(STORAGE_KEY + 'name', name);
+      location.reload();
+    } else {
+      document.getElementById('passError').style.display = 'block';
+    }
+  }
+
+  // --- ИНИЦИАЛИЗАЦИЯ ---
+  window.onload = () => {
+    const now = new Date();
+    document.getElementById('dateDisplay').innerText = now.toLocaleDateString('ru-RU');
+    
+    const savedName = localStorage.getItem(STORAGE_KEY + 'name');
+    if (savedName) document.getElementById('studentName').value = savedName;
+    
+    const savedState = localStorage.getItem(STORAGE_KEY + 'checked');
+    if (savedState) checkedState = JSON.parse(savedState);
+
+    setTimeout(() => {
+      generateAll();
+
+      if (Object.keys(checkedState).length > 0) {
+        for (let i = 1; i <= TOTAL; i++) {
+          const inp = document.getElementById('input'+i);
+          if (checkedState[i]) {
+            inp.disabled = true;
+            inp.className = checkedState[i] === 'ok' ? 'correct' : 'wrong';
+            const st = document.getElementById('status'+i);
+            st.className = checkedState[i] === 'ok' ? 'status ok' : 'status err';
+            st.innerHTML = checkedState[i] === 'ok' ? '✅ Верно!' : `❌ Неверно. Правильный ответ: ${tasks[i].answer}`;
+            document.getElementById('task'+i).className = checkedState[i] === 'ok' ? 'task-card correct' : 'task-card wrong';
+          }
+        }
+        const btn = document.getElementById('btnCheck');
+        btn.disabled = true; btn.style.opacity = '0.5'; btn.textContent = 'Проверено';
+        updateProgress();
+      }
+    }, 100);
+  };
+</script>
+
+</body>
+</html>
