@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ΤΕΤΡΑΚΤΥΣ | Тренажёр: Перевод дробей</title>
+
+<!-- KaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+<style>
+  :root {
+    --bg: #113c38; 
+    --panel: rgba(22, 83, 77, 0.7); 
+    --bg2: #0b2b27;
+    --line: rgba(66, 230, 198, 0.3); 
+    --turq: #42e6c6; 
+    --mint: #7fffd4; 
+    --gold: #f4d35e; 
+    --text: #e0f2ec; 
+    --coral: #ff6b6b;
+    --green: #2ecc71;
+  }
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    background-color: var(--bg);
+    background-image: radial-gradient(circle at 15% 10%, rgba(66, 230, 198, 0.12) 0%, transparent 40%),
+                      radial-gradient(circle at 85% 90%, rgba(66, 230, 198, 0.08) 0%, transparent 40%);
+    background-attachment: fixed; color: var(--text);
+    font-family: Georgia, serif; min-height: 100vh;
+    display: flex; flex-direction: column; overflow-x: hidden;
+  }
+
+  /* Шапка */
+  header {
+    position: sticky; top: 0; z-index: 100; width: 100%;
+    background: rgba(17, 60, 56, 0.95); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line); padding: 15px 20px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-dots { display: flex; flex-direction: column; gap: 2px; font-size: 10px; color: var(--gold); line-height: 1; }
+  .logo-text { font-family: 'Times New Roman', serif; font-weight: bold; font-size: 20px; color: var(--turq); letter-spacing: 2px; text-shadow: 0 0 12px rgba(66,230,198,0.4); }
+  .logo-text small { display: block; font-size: 10px; color: var(--mint); letter-spacing: 3px; text-transform: uppercase; }
+  
+  .header-info { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .chip {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+    padding: 6px 12px; font-size: 13px; color: var(--mint); font-family: "Courier New", monospace;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .chip.home { cursor: pointer; text-decoration: none; transition: 0.2s; }
+  .chip.home:hover { border-color: var(--turq); color: var(--turq); }
+  .chip-btn { cursor: pointer; transition: 0.2s; font-size: 16px; padding: 4px 10px; }
+  .chip-btn:hover { border-color: var(--turq); background: rgba(66,230,198,0.1); }
+
+  /* Контент */
+  .container { flex: 1; max-width: 800px; margin: 0 auto; padding: 30px 20px; width: 100%; display: flex; flex-direction: column; align-items: center; }
+
+  .header-title {
+    font-family: 'Times New Roman', serif; color: var(--turq); 
+    font-size: 1.8rem; margin-bottom: 20px; text-align: center;
+    text-shadow: 0 0 15px rgba(66, 230, 198, 0.3);
+  }
+
+  /* Жизни */
+  .lives-panel {
+    display: flex; gap: 10px; margin-bottom: 30px; font-size: 32px;
+  }
+  .heart { color: var(--coral); filter: drop-shadow(0 0 10px rgba(255,107,107,0.5)); transition: 0.3s; }
+  .heart.lost { color: #444; filter: none; transform: scale(0.8); opacity: 0.5; }
+
+  /* Карточка тренажера */
+  .trainer-card {
+    background: var(--panel); backdrop-filter: blur(12px);
+    border: 1px solid var(--line); border-radius: 20px;
+    padding: 40px; width: 100%; max-width: 500px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    text-align: center;
+    position: relative;
+  }
+
+  .task-counter {
+    font-family: 'Courier New', monospace; color: var(--mint); 
+    font-size: 14px; margin-bottom: 20px; letter-spacing: 1px;
+  }
+
+  .task-fraction {
+    font-size: 4rem; color: var(--gold); margin-bottom: 30px;
+    min-height: 90px; display: flex; align-items: center; justify-content: center;
+  }
+
+  /* Ввод */
+  .input-group { display: flex; flex-direction: column; gap: 15px; align-items: center; }
+  .ans-input {
+    width: 100%; max-width: 300px; padding: 15px 20px; border-radius: 12px; 
+    border: 2px solid var(--line); background: var(--bg2); color: var(--text); 
+    font-family: "Courier New", monospace; font-size: 2rem; text-align: center; 
+    outline: none; transition: 0.2s;
+  }
+  .ans-input:focus { border-color: var(--turq); box-shadow: 0 0 15px rgba(66,230,198,0.3); }
+  .ans-input.ok { border-color: var(--green); background: rgba(46, 204, 113, 0.1); color: var(--green); }
+  .ans-input.err { border-color: var(--coral); background: rgba(255, 107, 107, 0.1); color: var(--coral); animation: shake 0.3s; }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+  }
+
+  .btn-check {
+    background: linear-gradient(135deg, var(--turq), #1a9a82); color: var(--bg2);
+    border: none; padding: 15px 40px; border-radius: 12px; font-weight: bold;
+    font-size: 1.2rem; cursor: pointer; transition: 0.2s; font-family: Georgia, serif;
+    width: 100%; max-width: 300px;
+  }
+  .btn-check:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(66,230,198,0.4); }
+
+  /* Сообщения */
+  .feedback {
+    margin-top: 20px; font-size: 1.2rem; font-weight: bold; min-height: 30px;
+  }
+  .feedback.ok { color: var(--green); }
+  .feedback.err { color: var(--coral); }
+
+  /* Game Over */
+  .game-over {
+    display: none; flex-direction: column; align-items: center; gap: 20px;
+  }
+  .game-over h2 { color: var(--coral); font-size: 2rem; margin-bottom: 10px; }
+  .game-over p { color: var(--mint); font-size: 1.2rem; }
+  .btn-restart {
+    background: linear-gradient(135deg, var(--gold), #d4a017); color: var(--bg2);
+    border: none; padding: 15px 30px; border-radius: 12px; font-weight: bold;
+    font-size: 1.2rem; cursor: pointer; transition: 0.2s; font-family: Georgia, serif;
+    margin-top: 10px;
+  }
+  .btn-restart:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(244, 211, 94, 0.4); }
+
+  /* Шпаргалка */
+  .side-panel {
+    position: fixed; top: 70px; right: 20px; z-index: 200;
+    width: 340px; max-height: calc(100vh - 100px);
+    background: rgba(11, 43, 39, 0.98); backdrop-filter: blur(15px);
+    border: 1px solid var(--turq); border-radius: 16px;
+    padding: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    transform: translateX(120%); opacity: 0; pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto; color: var(--text);
+  }
+  .side-panel.open { transform: translateX(0); opacity: 1; pointer-events: auto; }
+  .side-panel h3 { color: var(--gold); margin-bottom: 15px; font-size: 18px; border-bottom: 1px solid var(--line); padding-bottom: 10px; }
+  .side-panel .close-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; color: var(--coral); font-size: 20px; cursor: pointer; }
+  
+  .cheat-section { margin-bottom: 20px; }
+  .cheat-section h4 { color: var(--mint); font-size: 15px; margin-bottom: 10px; }
+  .cheat-section p, .cheat-section li { font-size: 15px; color: #b0c4cc; line-height: 1.6; margin-bottom: 8px; }
+  .cheat-section ul { padding-left: 20px; }
+  .cheat-section b { color: var(--gold); }
+
+  .katex { font-size: 1.1em; }
+
+  @media (max-width: 700px) {
+    .header-info { display: none; }
+    .task-fraction { font-size: 3rem; }
+    .trainer-card { padding: 25px 15px; }
+    .header-title { font-size: 1.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dots"><span>●</span><span>● ●</span><span>● ● ●</span><span>● ● ● ●</span></div>
+    <div class="logo-text">ΤΕΤΡΑΚΤΥΣ<small>ШКОЛА МАТЕМАТИКИ ЕЛЕНЫ МИХАЛЕВОЙ</small></div>
+  </div>
+  <div class="header-info">
+    <button class="chip chip-btn" onclick="togglePanel()" title="Шпаргалка">📐 Шпаргалка</button>
+    <a href="26-drobnye-uravneniya.html" class="chip home">🏠 На главную</a>
+  </div>
+</header>
+
+<!-- Шпаргалка -->
+<div class="side-panel" id="cheatPanel">
+  <button class="close-btn" onclick="togglePanel()">✕</button>
+  <h3>📐 Как переводить?</h3>
+  
+  <div class="cheat-section">
+    <h4>Суть метода</h4>
+    <p>Нужно домножить числитель и знаменатель на такое число, чтобы в знаменателе получилось <b>10, 100 или 1000</b>.</p>
+  </div>
+
+  <div class="cheat-section">
+    <h4>На что домножать?</h4>
+    <ul>
+      <li>Знаменатель <b>2</b> → домножаем на <b>5</b> (получаем 10).</li>
+      <li>Знаменатель <b>4</b> → домножаем на <b>25</b> (получаем 100).</li>
+      <li>Знаменатель <b>5</b> → домножаем на <b>2</b> (получаем 10).</li>
+      <li>Знаменатель <b>8</b> → домножаем на <b>125</b> (получаем 1000).</li>
+      <li>Знаменатель <b>25</b> → домножаем на <b>4</b> (получаем 100).</li>
+      <li>Знаменатель <b>125</b> → домножаем на <b>8</b> (получаем 1000).</li>
+    </ul>
+  </div>
+
+  <div class="cheat-section">
+    <h4>Запись ответа</h4>
+    <p>После запятой отделяем <b>столько цифр</b>, сколько нулей в новом знаменателе.</p>
+    <p style="text-align: center; margin-top: 10px;">
+      \(\frac{3}{4} = \frac{3 \cdot 25}{4 \cdot 25} = \frac{75}{100} = 0,75\)
+    </p>
+  </div>
+</div>
+
+<div class="container">
+  <h1 class="header-title">Перевод в десятичную дробь</h1>
+
+  <div class="lives-panel" id="lives-panel">
+    <span class="heart" id="life-1">❤️</span>
+    <span class="heart" id="life-2">❤️</span>
+    <span class="heart" id="life-3">❤️</span>
+  </div>
+
+  <div class="trainer-card" id="trainer-card">
+    <div class="task-counter" id="task-counter">Задание 1 из 10</div>
+    <div class="task-fraction" id="task-fraction"></div>
+    
+    <div class="input-group">
+      <input type="text" class="ans-input" id="ans-input" placeholder="..." autocomplete="off">
+      <button class="btn-check" id="btn-check" onclick="checkAnswer()">Проверить</button>
+    </div>
+    
+    <div class="feedback" id="feedback"></div>
+  </div>
+
+  <div class="trainer-card game-over" id="game-over">
+    <h2>💔 Игра окончена</h2>
+    <p>Вы потеряли все жизни. Попробуйте ещё раз!</p>
+    <button class="btn-restart" onclick="startGame()">🔄 Начать заново</button>
+  </div>
+
+  <div class="trainer-card game-over" id="win-screen" style="border-color: var(--gold);">
+    <h2 style="color: var(--gold);">🏆 Победа!</h2>
+    <p>Вы успешно перевели все 10 дробей!</p>
+    <button class="btn-restart" onclick="startGame()">🔄 Пройти ещё раз</button>
+  </div>
+</div>
+
+<script>
+  // --- Звуки (синтез через Web Audio API) ---
+  let audioCtx = null;
+  function playSound(type) {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    
+    const now = audioCtx.currentTime;
+    
+    if (type === 'ok') {
+      // Веселый "дзынь" (два тона)
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(800, now);
+      osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
+      gain.gain.setValueAtTime(0.3, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+      osc.start(now);
+      osc.stop(now + 0.3);
+    } else {
+      // Грустный "бум" (низкий тон)
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(150, now);
+      osc.frequency.exponentialRampToValueAtTime(80, now + 0.3);
+      gain.gain.setValueAtTime(0.4, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+      osc.start(now);
+      osc.stop(now + 0.4);
+    }
+  }
+
+  // --- Константы ---
+  const DENOMINATORS = [2, 4, 5, 8, 25, 125];
+  const TOTAL_TASKS = 10;
+  
+  // --- Состояние ---
+  let tasks = [];
+  let currentIndex = 0;
+  let lives = 3;
+  let isGameOver = false;
+  let isWaiting = false; // Блокировка кликов во время показа ответа
+
+  // --- DOM ---
+  const taskCounterEl = document.getElementById('task-counter');
+  const taskFractionEl = document.getElementById('task-fraction');
+  const ansInput = document.getElementById('ans-input');
+  const feedbackEl = document.getElementById('feedback');
+  const cardEl = document.getElementById('trainer-card');
+  const gameOverEl = document.getElementById('game-over');
+  const winScreenEl = document.getElementById('win-screen');
+  const btnCheck = document.getElementById('btn-check');
+
+  // --- Логика ---
+  function generateTask() {
+    const den = DENOMINATORS[Math.floor(Math.random() * DENOMINATORS.length)];
+    const num = Math.floor(Math.random() * 99) + 1;
+    
+    // Вычисляем десятичное значение
+    const decimalValue = num / den;
+    const decimalStr = parseFloat(decimalValue.toFixed(6)).toString().replace('.', ',');
+
+    return {
+      num,
+      den,
+      ans: decimalStr,
+      fracTex: `\\frac{${num}}{${den}}`
+    };
+  }
+
+  function startGame() {
+    tasks = [];
+    for (let i = 0; i < TOTAL_TASKS; i++) {
+      let newTask = generateTask();
+      // Избегаем одинаковых дробей подряд
+      while (tasks.length > 0 && tasks[tasks.length - 1].num === newTask.num && tasks[tasks.length - 1].den === newTask.den) {
+        newTask = generateTask();
+      }
+      tasks.push(newTask);
+    }
+    
+    currentIndex = 0;
+    lives = 3;
+    isGameOver = false;
+    isWaiting = false;
+    
+    updateLivesUI();
+    cardEl.style.display = 'block';
+    gameOverEl.style.display = 'none';
+    winScreenEl.style.display = 'none';
+    
+    showTask();
+  }
+
+  function showTask() {
+    if (currentIndex >= TOTAL_TASKS) {
+      winGame();
+      return;
+    }
+    
+    const task = tasks[currentIndex];
+    taskCounterEl.textContent = `Задание ${currentIndex + 1} из ${TOTAL_TASKS}`;
+    
+    katex.render(task.fracTex, taskFractionEl, {throwOnError: false});
+    
+    ansInput.value = '';
+    ansInput.className = 'ans-input';
+    ansInput.disabled = false;
+    btnCheck.disabled = false;
+    feedbackEl.textContent = '';
+    feedbackEl.className = 'feedback';
+    isWaiting = false;
+    
+    setTimeout(() => ansInput.focus(), 100);
+  }
+
+  function updateLivesUI() {
+    for (let i = 1; i <= 3; i++) {
+      const heart = document.getElementById(`life-${i}`);
+      if (i <= lives) {
+        heart.classList.remove('lost');
+        heart.textContent = '❤️';
+      } else {
+        heart.classList.add('lost');
+        heart.textContent = '❤️';
+      }
+    }
+  }
+
+  function checkAnswer() {
+    if (isGameOver || isWaiting) return;
+    
+    const userVal = ansInput.value.trim();
+    if (userVal === '') return;
+
+    const task = tasks[currentIndex];
+    
+    let normalizedUser = userVal.replace(',', '.').replace(/\s+/g, '');
+    if (normalizedUser.startsWith('.')) normalizedUser = '0' + normalizedUser;
+    
+    const userNum = parseFloat(normalizedUser);
+    const correctNum = parseFloat(task.ans.replace(',', '.'));
+
+    const isCorrect = !isNaN(userNum) && Math.abs(userNum - correctNum) < 1e-9;
+
+    if (isCorrect) {
+      playSound('ok');
+      ansInput.classList.remove('err');
+      ansInput.classList.add('ok');
+      feedbackEl.textContent = '✅ Верно!';
+      feedbackEl.className = 'feedback ok';
+      
+      ansInput.disabled = true;
+      btnCheck.disabled = true;
+      isWaiting = true;
+      
+      setTimeout(() => {
+        currentIndex++;
+        showTask();
+      }, 1000);
+    } else {
+      playSound('err');
+      ansInput.classList.remove('ok');
+      ansInput.classList.add('err');
+      feedbackEl.textContent = `❌ Неверно. Правильный ответ: ${task.ans}`;
+      feedbackEl.className = 'feedback err';
+      
+      lives--;
+      updateLivesUI();
+      
+      ansInput.disabled = true;
+      btnCheck.disabled = true;
+      isWaiting = true;
+      
+      if (lives <= 0) {
+        setTimeout(() => {
+          isGameOver = true;
+          cardEl.style.display = 'none';
+          gameOverEl.style.display = 'flex';
+        }, 2000);
+      } else {
+        // Показываем правильный ответ 5 секунд и даем новое задание
+        setTimeout(() => {
+          currentIndex++;
+          showTask();
+        }, 5000);
+      }
+    }
+  }
+
+  function endGame() {
+    // Заглушка, логика перенесена в checkAnswer
+  }
+
+  function winGame() {
+    cardEl.style.display = 'none';
+    winScreenEl.style.display = 'flex';
+  }
+
+  ansInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') checkAnswer();
+  });
+
+  function togglePanel() {
+    const panel = document.getElementById('cheatPanel');
+    panel.classList.toggle('open');
+  }
+
+  // --- Инициализация ---
+  window.addEventListener('load', () => {
+    let tries = 0;
+    const interval = setInterval(() => {
+      if (window.katex) {
+        clearInterval(interval);
+        startGame();
+        // Рендерим формулы в шпаргалке
+        if (window.renderMathInElement) {
+          renderMathInElement(document.getElementById('cheatPanel'), {
+            delimiters: [
+              {left: '\\(', right: '\\)', display: false},
+              {left: '$$', right: '$$', display: true}
+            ],
+            throwOnError: false
+          });
+        }
+      }
+      tries++;
+      if (tries > 100) clearInterval(interval);
+    }, 50);
+  });
+</script>
+</body>
+</html>
