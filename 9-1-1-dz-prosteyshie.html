@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>ДЗ · Простейшие показательные уравнения · ΤΕΤΡΑΚΤΥΣ</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--mint-soft:#a8f0dc;
+    --coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass:rgba(255,255,255,0.04);--glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{
+    min-height:100%;font-family:Georgia,'Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.06),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;overflow-x:hidden;
+  }
+  .glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.5;}
+  .glow.g1{width:520px;height:520px;top:-120px;left:-120px;background:radial-gradient(circle,rgba(26,188,156,0.55),transparent 70%);animation:pulse 9s ease-in-out infinite;}
+  .glow.g2{width:600px;height:600px;bottom:-200px;right:-180px;background:radial-gradient(circle,rgba(127,255,212,0.45),transparent 70%);animation:pulse 11s ease-in-out infinite reverse;}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:0.35;}50%{transform:scale(1.15);opacity:0.6;}}
+
+  .header{position:sticky;top:0;z-index:50;background:rgba(10,42,51,0.85);border:1.5px solid rgba(26,188,156,0.4);border-radius:0 0 20px 20px;backdrop-filter:blur(14px);padding:14px 24px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 4px 20px rgba(0,0,0,0.3);margin-bottom:20px;}
+  .logo-block{display:flex;align-items:center;gap:12px;}
+  .logo-dots{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:var(--mint);line-height:1.05;text-align:center;}
+  .logo-text{display:flex;flex-direction:column;line-height:1.1;}
+  .logo-text .gr{font-size:16px;letter-spacing:2px;font-weight:700;color:var(--teal);}
+  .logo-text .ru{font-size:10px;letter-spacing:3px;color:var(--text-soft);}
+  .logo-text .school{font-size:11px;font-style:italic;color:var(--text-soft);margin-top:2px;}
+  .header-right{display:flex;align-items:center;gap:16px;}
+  .date-box, .counter-box{font-family:'Courier New',monospace;font-size:15px;color:var(--mint);padding:6px 12px;background:rgba(26,188,156,0.1);border-radius:8px;border:1px solid rgba(26,188,156,0.3);}
+  .counter-box{color:var(--gold-light);}
+  .counter-box .ok{color:var(--ok);}
+  .counter-box .total{color:var(--text-soft);}
+
+  .wrap{position:relative;z-index:10;max-width:900px;margin:0 auto;padding:0 16px 60px;}
+  .page-title{text-align:center;margin-bottom:20px;}
+  .page-title h1{font-family:'Times New Roman',serif;font-size:30px;color:var(--mint);text-shadow:0 0 20px rgba(127,255,212,0.3);margin-bottom:4px;}
+  .page-title .sub{font-size:14px;color:var(--text-soft);font-style:italic;}
+
+  .card{background:var(--glass);border:1.5px solid var(--glass-brd);border-radius:18px;backdrop-filter:blur(12px);box-shadow:0 6px 24px rgba(0,0,0,0.3);padding:22px 24px;margin-bottom:20px;}
+  .card h2{font-family:'Times New Roman',serif;color:var(--gold);font-size:20px;margin-bottom:12px;}
+  .name-row{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap;}
+  .name-row label{font-size:15px;color:var(--text-soft);}
+  .name-row input{flex:1;min-width:200px;padding:10px 14px;background:rgba(10,42,51,0.55);border:1.5px solid rgba(26,188,156,0.45);border-radius:12px;color:var(--gold-light);font-family:'Georgia',serif;font-size:16px;outline:none;transition:0.2s;}
+  .name-row input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+  .instr p{font-size:14.5px;line-height:1.6;color:var(--text);margin-bottom:8px;}
+  .instr .warn-box{background:rgba(255,107,107,0.1);border-left:4px solid var(--coral);padding:10px 14px;border-radius:0 10px 10px 0;font-size:14px;color:#ffc9c9;margin-top:10px;}
+
+  .progress-wrap{margin:20px 0;}
+  .progress-label{display:flex;justify-content:space-between;font-size:13px;color:var(--text-soft);margin-bottom:6px;font-family:'Courier New',monospace;}
+  .progress-bar-bg{height:10px;background:rgba(255,255,255,0.08);border-radius:5px;overflow:hidden;}
+  .progress-bar-fill{height:100%;background:linear-gradient(90deg,#1abc9c,#7fffd4,#f4d35e);border-radius:5px;width:0%;transition:width 0.4s ease;}
+
+  .task-card{background:var(--glass);border:1.5px solid var(--glass-brd);border-radius:18px;backdrop-filter:blur(12px);box-shadow:0 6px 24px rgba(0,0,0,0.3);padding:20px 24px;margin-bottom:16px;transition:border-color 0.3s;}
+  .task-card.correct{border-color:var(--ok);}
+  .task-card.incorrect{border-color:var(--err);}
+  .task-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+  .task-num{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;font-family:'Courier New',monospace;font-size:16px;font-weight:bold;}
+  .task-title{font-family:'Times New Roman',serif;color:var(--gold);font-size:16px;text-transform:uppercase;letter-spacing:1px;}
+  .task-text{font-size:20px;line-height:2;color:var(--text);margin-bottom:16px;padding:12px 16px;background:rgba(10,42,51,0.4);border-radius:12px;overflow-x:auto;}
+  .task-text .katex-display{margin:0;}
+  .task-text .katex{font-size:1.3em;color:var(--gold-light);}
+  .task-text sup{font-size:0.7em;vertical-align:super;line-height:0;}
+  .frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1.1;margin:0 2px;}
+  .frac .num{border-bottom:1.5px solid currentColor;padding:0 3px;font-size:0.85em;}
+  .frac .den{padding:0 3px;font-size:0.85em;}
+
+  .input-group{display:flex;flex-direction:column;gap:8px;}
+  .answer-input{padding:12px 16px;background:rgba(10,42,51,0.55);border:1.5px solid rgba(26,188,156,0.45);border-radius:14px;color:var(--gold-light);font-family:'Courier New',monospace;font-size:18px;outline:none;transition:0.2s;}
+  .answer-input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+  .answer-input.correct{border-color:var(--ok);color:var(--ok);}
+  .answer-input.wrong{border-color:var(--err);color:var(--err);}
+  .answer-input:disabled{opacity:0.85;cursor:default;}
+
+  .sym-row{display:flex;flex-wrap:wrap;gap:6px;}
+  .sym-btn{min-width:36px;height:36px;padding:0 8px;background:rgba(26,188,156,0.1);border:1px solid rgba(26,188,156,0.4);border-radius:8px;color:var(--mint);font-family:'Cambria Math',serif;font-size:16px;cursor:pointer;transition:all 0.15s;display:inline-flex;align-items:center;justify-content:center;}
+  .sym-btn:hover{background:rgba(26,188,156,0.25);border-color:var(--mint);}
+  .sym-btn:active{transform:scale(0.95);}
+  .sym-btn:disabled{opacity:0.4;cursor:default;}
+
+  .verdict{margin-top:12px;padding:10px 14px;border-radius:10px;font-size:14px;display:none;line-height:1.5;}
+  .verdict.show{display:block;}
+  .verdict.ok{background:rgba(46,204,113,0.1);border-left:4px solid var(--ok);color:#b9ffd4;}
+  .verdict.err{background:rgba(255,107,107,0.1);border-left:4px solid var(--err);color:#ffc9c9;}
+
+  .actions-bar{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:30px 0;}
+  .btn{padding:14px 28px;border:none;border-radius:14px;font-family:Georgia,serif;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.2s;letter-spacing:0.5px;display:inline-flex;align-items:center;gap:8px;}
+  .btn:hover{transform:translateY(-2px);}
+  .btn:active{transform:scale(0.98);}
+  .btn-primary{background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;box-shadow:0 6px 20px rgba(26,188,156,0.4);}
+  .btn-gold{background:linear-gradient(135deg,#f4d35e,#c9a32b);color:#2a1f00;box-shadow:0 6px 20px rgba(244,211,94,0.4);}
+  .btn-coral{background:linear-gradient(135deg,#ff6b6b,#d94a4a);color:#fff;box-shadow:0 6px 20px rgba(255,107,107,0.4);}
+  .btn:disabled{opacity:0.5;cursor:default;transform:none;}
+
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(4px);padding:20px;}
+  .modal-overlay.show{display:flex;}
+  .modal{background:#0d3b47;border:1.5px solid var(--glass-brd);border-radius:20px;padding:28px 32px;max-width:460px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.5);animation:fade 0.2s ease;}
+  .modal h3{font-family:'Times New Roman',serif;color:var(--gold);font-size:20px;margin-bottom:14px;}
+  .modal p{font-size:15px;color:var(--text);line-height:1.6;margin-bottom:20px;}
+  .modal-btns{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;}
+  .modal-btns .btn{padding:10px 20px;font-size:14px;}
+  .modal input{padding:10px 14px;background:rgba(10,42,51,0.55);border:1.5px solid var(--glass-brd);border-radius:10px;color:var(--text);font-family:'Courier New',monospace;font-size:16px;width:100%;margin-bottom:8px;outline:none;}
+  .modal input:focus{border-color:var(--mint);}
+  .modal .err-msg{color:var(--coral);font-size:13px;min-height:18px;margin-bottom:12px;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+  .hint-card{background:rgba(26,188,156,0.06);border-left:4px solid var(--teal);}
+  .hint-card h2{color:var(--mint);}
+  .hint-card ol{margin:10px 0 0 20px;color:var(--text-soft);font-size:14.5px;line-height:1.8;}
+  .hint-card ol li{margin-bottom:6px;}
+
+  .footer{text-align:center;padding:30px 20px;color:var(--text-soft);font-size:13px;font-family:'Times New Roman',serif;letter-spacing:2px;}
+  .footer .f-logo{color:var(--teal);font-size:15px;margin-bottom:6px;}
+
+  @media(max-width:600px){
+    .header{flex-direction:column;gap:10px;padding:12px 16px;}
+    .header-right{width:100%;justify-content:space-between;}
+    .task-text{font-size:17px;}
+    .task-text .katex{font-size:1.1em;}
+    .page-title h1{font-size:23px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div>
+<div class="glow g2"></div>
+
+<div class="header">
+  <div class="logo-block">
+    <div class="logo-dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+    <div class="logo-text">
+      <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+      <div class="ru">ТЕТРАКТИС</div>
+      <div class="school">Школа математики Елены Михалевой</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="date-box" id="headerDate">--.--.----</div>
+    <div class="counter-box" id="headerCounter">✅ <span class="ok">0</span> / <span class="total">6</span></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="page-title">
+    <h1>ДЗ · Простейшие показательные уравнения</h1>
+    <div class="sub">6 уравнений · нарастающая сложность · 9-1</div>
+  </div>
+
+  <div class="card">
+    <div class="name-row">
+      <label>👤 Имя ученика:</label>
+      <input type="text" id="studentName" placeholder="Введи имя и фамилию...">
+    </div>
+    <div class="instr">
+      <h2>📖 Инструкция</h2>
+      <p>Реши уравнение и введи значение <b>x</b> в поле. Ответ может быть целым числом, десятичной дробью или обыкновенной дробью: пиши <b>4,5</b> или <b>4.5</b>, а дробь — как <b>2/3</b> (кнопка «/» под полем).</p>
+      <div class="warn-box">⚠ Заполни ВСЕ поля, потом жми «Проверить все ответы». После проверки изменить ответы нельзя!</div>
+    </div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span>📊 Прогресс: <span id="progText">0 / 6</span></span>
+      <span id="progStats">✅ 0 · ❌ 0 · <span id="progPercent">0%</span></span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progFill"></div>
+    </div>
+  </div>
+
+  <div id="tasksContainer"></div>
+
+  <div class="actions-bar">
+    <button class="btn btn-primary" id="btnCheckAll">✅ Проверить все ответы</button>
+    <button class="btn btn-gold" id="btnCopy">📋 Скопировать</button>
+    <button class="btn btn-primary" id="btnSend">💬 Отправить в Макс</button>
+    <button class="btn btn-coral" id="btnClear">🔒 Очистить всё</button>
+  </div>
+
+  <div class="card hint-card">
+    <h2>💡 Как сдавать</h2>
+    <ol>
+      <li>Введи имя в поле выше.</li>
+      <li>Заполни все поля ответов (можно пользоваться кнопками-символами).</li>
+      <li>Нажми «✅ Проверить все ответы» — верные подсветятся зелёным, неверные красным с правильным ответом.</li>
+      <li>Нажми «💬 Отправить в Макс» — текст скопируется, откроется чат учителя. Вставь текст и отправь.</li>
+    </ol>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="f-logo">ΤΕΤΡΑΚΤΥΣ · ТЕТРАКТИС</div>
+  <div>где математика превращается в приключение</div>
+</div>
+
+<div class="modal-overlay" id="modalConfirm">
+  <div class="modal">
+    <h3>⚠ Не все поля заполнены</h3>
+    <p>У тебя не заполнены задания: <b id="modalEmptyList"></b>.<br><br>Ты уверен, что готов проверить ответы?</p>
+    <div class="modal-btns">
+      <button class="btn btn-primary" id="btnConfirmYes">Да, проверить</button>
+      <button class="btn btn-gold" id="btnConfirmNo">Нет, вернуться</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalClear">
+  <div class="modal">
+    <h3>🔒 Очистить все ответы?</h3>
+    <p>Это действие сбросит все поля. Введи пароль учителя.</p>
+    <input type="password" id="clearPassword" placeholder="Пароль...">
+    <div class="err-msg" id="clearPasswordError"></div>
+    <div class="modal-btns">
+      <button class="btn btn-coral" id="btnClearConfirm">Подтвердить</button>
+      <button class="btn btn-gold" id="btnClearCancel">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══ ДАТА ═══ */
+(function(){
+  const el = document.getElementById('headerDate');
+  const d = new Date();
+  el.textContent = String(d.getDate()).padStart(2,'0') + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' + d.getFullYear();
+})();
+
+/* ═══ ДАННЫЕ ЗАДАНИЙ ═══ */
+const TASKS = [
+  { id: 1, html: '2<sup>x</sup> = 16', ans: 4 },
+  { id: 2, html: '3<sup>x−1</sup> = 27', ans: 4 },
+  { id: 3, html: '5<sup>2x</sup> = 125', ans: 1.5 },
+  { id: 4, html: '(1/2)<sup>x</sup> = 8', ans: -3 },
+  { id: 5, html: '4<sup>x+1</sup> = <span class="frac"><span class="num">1</span><span class="den">8</span></span>', ans: -2.5 },
+  { id: 6, html: '27<sup>x−1</sup> = 9<sup>2x+3</sup>', ans: -9 }
+];
+const LS_PREFIX = 'tetraktus.prosteyshie.dz.v1';
+const TEACHER_PASSWORD = '2810';
+let checked = false;
+
+const tasksContainer = document.getElementById('tasksContainer');
+const modalConfirm = document.getElementById('modalConfirm');
+const modalClear = document.getElementById('modalClear');
+
+/* ═══ РЕНДЕР ЗАДАНИЙ ═══ */
+function renderTasks() {
+  tasksContainer.innerHTML = TASKS.map(t => `
+    <div class="task-card" id="card-${t.id}">
+      <div class="task-header">
+        <div class="task-num">${t.id}</div>
+        <div class="task-title">Задание ${t.id}</div>
+      </div>
+                  <div class="task-text">${t.html}</div>
+      <div class="input-group">
+        <input type="text" class="answer-input" id="input-${t.id}" placeholder="x = ?" autocomplete="off">
+        <div class="sym-row">
+          <button class="sym-btn" data-target="input-${t.id}" data-sym="(">(</button>
+          <button class="sym-btn" data-target="input-${t.id}" data-sym=")">)</button>
+          <button class="sym-btn" data-target="input-${t.id}" data-sym="/">/</button>
+          <button class="sym-btn" data-target="input-${t.id}" data-sym=",">,</button>
+          <button class="sym-btn" data-target="input-${t.id}" data-sym="-">−</button>
+          <button class="sym-btn" data-target="input-${t.id}" data-sym=".">.</button>
+          <button class="sym-btn" data-target="input-${t.id}" data-sym="back">←</button>
+        </div>
+      </div>
+      <div class="verdict" id="verdict-${t.id}"></div>
+    </div>
+  `).join('');
+
+  document.querySelectorAll('.sym-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const inp = document.getElementById(btn.dataset.target);
+      if (!inp || inp.disabled) return;
+      if (btn.dataset.sym === 'back') {
+        inp.value = inp.value.slice(0, -1);
+      } else {
+        inp.value += btn.dataset.sym;
+      }
+      inp.focus();
+    });
+  });
+
+  const savedName = localStorage.getItem(LS_PREFIX + '.name');
+  if (savedName) document.getElementById('studentName').value = savedName;
+
+  TASKS.forEach(t => {
+    const savedVal = localStorage.getItem(LS_PREFIX + '.ans.' + t.id);
+    const savedStatus = localStorage.getItem(LS_PREFIX + '.status.' + t.id);
+    if (savedVal !== null) {
+      const inp = document.getElementById('input-' + t.id);
+      if (inp) {
+        inp.value = savedVal;
+        if (savedStatus === 'ok') inp.classList.add('correct');
+        if (savedStatus === 'fail') inp.classList.add('wrong');
+      }
+    }
+  });
+
+  if (localStorage.getItem(LS_PREFIX + '.checked') === '1') {
+    lockAll();
+    checked = true;
+  }
+  updateProgress();
+}
+
+document.getElementById('studentName').addEventListener('input', function() {
+  localStorage.setItem(LS_PREFIX + '.name', this.value);
+});
+
+document.getElementById('btnCheckAll').addEventListener('click', () => {
+  if (checked) return;
+  const empty = [];
+  TASKS.forEach(t => {
+    const inp = document.getElementById('input-' + t.id);
+    if (!inp.value.trim()) empty.push(t.id);
+  });
+  if (empty.length > 0) {
+    document.getElementById('modalEmptyList').textContent = empty.join(', ');
+    modalConfirm.classList.add('show');
+    return;
+  }
+  checkAll();
+});
+
+document.getElementById('btnConfirmYes').addEventListener('click', () => {
+  modalConfirm.classList.remove('show');
+  checkAll();
+});
+document.getElementById('btnConfirmNo').addEventListener('click', () => {
+  modalConfirm.classList.remove('show');
+});
+
+/* ═══ НОРМАЛИЗАЦИЯ ═══ */
+function normalizeAns(val) {
+  return val.trim()
+    .replace(/\s+/g, '')
+    .replace(/,/g, '.')
+    .replace(/−/g, '-')
+    .replace(/х/g, 'x')
+    .replace(/Х/g, 'x');
+}
+function parseNumber(str) {
+  if (!str) return NaN;
+  if (str.includes('/')) {
+    const parts = str.split('/');
+    if (parts.length !== 2) return NaN;
+    const a = parseFloat(parts[0]);
+    const b = parseFloat(parts[1]);
+    if (isNaN(a) || isNaN(b) || b === 0) return NaN;
+    return a / b;
+  }
+  return parseFloat(str);
+}
+
+/* ═══ ПРОВЕРКА ═══ */
+function checkAll() {
+  checked = true;
+
+  TASKS.forEach(t => {
+    const inp = document.getElementById('input-' + t.id);
+    const verdict = document.getElementById('verdict-' + t.id);
+    const card = document.getElementById('card-' + t.id);
+    const raw = normalizeAns(inp.value);
+    const num = parseNumber(raw);
+    const isCorrect = !isNaN(num) && Math.abs(num - t.ans) < 1e-6;
+
+    if (isCorrect) {
+      inp.classList.add('correct');
+      verdict.className = 'verdict ok show';
+      verdict.innerHTML = '✅ Верно!';
+      card.classList.add('correct');
+      localStorage.setItem(LS_PREFIX + '.status.' + t.id, 'ok');
+    } else {
+      inp.classList.add('wrong');
+      verdict.className = 'verdict err show';
+      verdict.innerHTML = '❌ Неверно. Правильный ответ: <b>' + t.ans + '</b>';
+      card.classList.add('incorrect');
+      localStorage.setItem(LS_PREFIX + '.status.' + t.id, 'fail');
+    }
+
+    inp.disabled = true;
+    localStorage.setItem(LS_PREFIX + '.ans.' + t.id, inp.value);
+  });
+
+  localStorage.setItem(LS_PREFIX + '.checked', '1');
+  document.getElementById('btnCheckAll').disabled = true;
+  disableSymButtons();
+  updateProgress();
+}
+
+function lockAll() {
+  TASKS.forEach(t => {
+    const inp = document.getElementById('input-' + t.id);
+    if (inp) inp.disabled = true;
+    const status = localStorage.getItem(LS_PREFIX + '.status.' + t.id);
+    const verdict = document.getElementById('verdict-' + t.id);
+    const card = document.getElementById('card-' + t.id);
+    if (status === 'ok') {
+      inp.classList.add('correct');
+      verdict.className = 'verdict ok show';
+      verdict.innerHTML = '✅ Верно!';
+      if (card) card.classList.add('correct');
+    } else if (status === 'fail') {
+      inp.classList.add('wrong');
+      const task = TASKS.find(x => x.id === t.id);
+      verdict.className = 'verdict err show';
+      verdict.innerHTML = '❌ Неверно. Правильный ответ: <b>' + task.ans + '</b>';
+      if (card) card.classList.add('incorrect');
+    }
+  });
+  document.getElementById('btnCheckAll').disabled = true;
+  disableSymButtons();
+}
+
+function disableSymButtons() {
+  document.querySelectorAll('.sym-btn').forEach(b => b.disabled = true);
+}
+
+function updateProgress() {
+  let okCount = 0, failCount = 0;
+  TASKS.forEach(t => {
+    const s = localStorage.getItem(LS_PREFIX + '.status.' + t.id);
+    if (s === 'ok') okCount++;
+    if (s === 'fail') failCount++;
+  });
+  const total = TASKS.length;
+  const percent = Math.round((okCount / total) * 100);
+
+  document.getElementById('headerCounter').innerHTML = '✅ <span class="ok">' + okCount + '</span> / <span class="total">' + total + '</span>';
+  document.getElementById('progText').textContent = (okCount + failCount) + ' / ' + total;
+  document.getElementById('progStats').innerHTML = '✅ ' + okCount + ' · ❌ ' + failCount + ' · <span id="progPercent">' + percent + '%</span>';
+  document.getElementById('progFill').style.width = percent + '%';
+}
+
+/* ═══ ОТЧЁТ ═══ */
+function buildReportText() {
+  const name = document.getElementById('studentName').value || 'Ученик';
+  const date = new Date().toLocaleString('ru-RU');
+
+  let text = '📐 ОТВЕТЫ · ДЗ · Простейшие показательные уравнения\n';
+  text += 'Дата: ' + date + '\n';
+  text += 'Ученик: ' + name + '\n\n';
+
+  let correct = 0;
+  TASKS.forEach(t => {
+    const inp = document.getElementById('input-' + t.id);
+    const val = inp ? inp.value : '—';
+    const status = localStorage.getItem(LS_PREFIX + '.status.' + t.id);
+    if (status === 'ok') {
+      text += '✅ Задание ' + t.id + '. Ответ: ' + val + '\n';
+      correct++;
+    } else if (status === 'fail') {
+      text += '❌ Задание ' + t.id + '. Ответ: ' + val + '  (правильный: ' + t.ans + ')\n';
+    } else {
+      text += '— Задание ' + t.id + '. Ответ: —  (не проверено)\n';
+    }
+  });
+
+  text += '\n✅ Итог: ' + correct + ' из ' + TASKS.length + ' верно';
+  return text;
+}
+
+document.getElementById('btnCopy').addEventListener('click', () => {
+  const text = buildReportText();
+  navigator.clipboard.writeText(text).then(() => {
+    alert('✅ Текст скопирован в буфер обмена!');
+  }).catch(() => {
+    alert('Не удалось скопировать автоматически. Вот текст:\n\n' + text);
+  });
+});
+
+document.getElementById('btnSend').addEventListener('click', () => {
+  const text = buildReportText();
+  navigator.clipboard.writeText(text).then(() => {
+    alert('✅ Текст скопирован в буфер обмена!\n\nСейчас откроется чат Макс. Вставь текст (Ctrl+V) и отправь.');
+    window.open('https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes', '_blank');
+  }).catch(() => {
+    alert('Не удалось скопировать автоматически. Вот текст:\n\n' + text);
+    window.open('https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes', '_blank');
+  });
+});
+
+/* ═══ ОЧИСТКА ПО ПАРОЛЮ ═══ */
+document.getElementById('btnClear').addEventListener('click', () => {
+  modalClear.classList.add('show');
+  document.getElementById('clearPassword').value = '';
+  document.getElementById('clearPasswordError').textContent = '';
+});
+
+document.getElementById('btnClearCancel').addEventListener('click', () => {
+  modalClear.classList.remove('show');
+});
+
+document.getElementById('btnClearConfirm').addEventListener('click', () => {
+  const passInput = document.getElementById('clearPassword');
+  const errEl = document.getElementById('clearPasswordError');
+  const entered = passInput.value;
+
+  if (!entered) {
+    errEl.textContent = 'Введите пароль';
+    return;
+  }
+
+  if (entered !== TEACHER_PASSWORD) {
+    errEl.textContent = 'Неверный пароль';
+    passInput.value = '';
+    return;
+  }
+
+  try {
+    localStorage.clear();
+    sessionStorage.clear();
+    if (window.indexedDB && indexedDB.databases) {
+      indexedDB.databases().then(dbs => {
+        dbs.forEach(db => { if (db.name) indexedDB.deleteDatabase(db.name); });
+      }).catch(() => {});
+    }
+  } catch (e) {
+    console.warn('Clear error:', e);
+  }
+
+  modalClear.classList.remove('show');
+  alert('🔒 Все ответы очищены. Страница будет перезагружена.');
+  location.reload();
+});
+
+/* ═══ ЗАКРЫТИЕ МОДАЛОК ПО КЛИКУ НА ФОН ═══ */
+modalConfirm.addEventListener('click', (e) => {
+  if (e.target === modalConfirm) modalConfirm.classList.remove('show');
+});
+modalClear.addEventListener('click', (e) => {
+  if (e.target === modalClear) modalClear.classList.remove('show');
+});
+
+/* ═══ ENTER В ПОЛЕ ПАРОЛЯ ═══ */
+document.getElementById('clearPassword').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') document.getElementById('btnClearConfirm').click();
+});
+
+/* ═══ СТАРТ ═══ */
+renderTasks();
+</script>
+</body>
+</html>
