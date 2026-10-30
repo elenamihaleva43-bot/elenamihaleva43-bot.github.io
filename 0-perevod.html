@@ -267,7 +267,6 @@
     const now = audioCtx.currentTime;
     
     if (type === 'ok') {
-      // Веселый "дзынь" (два тона)
       osc.type = 'sine';
       osc.frequency.setValueAtTime(800, now);
       osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
@@ -276,7 +275,6 @@
       osc.start(now);
       osc.stop(now + 0.3);
     } else {
-      // Грустный "бум" (низкий тон)
       osc.type = 'triangle';
       osc.frequency.setValueAtTime(150, now);
       osc.frequency.exponentialRampToValueAtTime(80, now + 0.3);
@@ -296,7 +294,8 @@
   let currentIndex = 0;
   let lives = 3;
   let isGameOver = false;
-  let isWaiting = false; // Блокировка кликов во время показа ответа
+  let isWaiting = false; 
+  let katexReady = false;
 
   // --- DOM ---
   const taskCounterEl = document.getElementById('task-counter');
@@ -313,7 +312,6 @@
     const den = DENOMINATORS[Math.floor(Math.random() * DENOMINATORS.length)];
     const num = Math.floor(Math.random() * 99) + 1;
     
-    // Вычисляем десятичное значение
     const decimalValue = num / den;
     const decimalStr = parseFloat(decimalValue.toFixed(6)).toString().replace('.', ',');
 
@@ -329,7 +327,6 @@
     tasks = [];
     for (let i = 0; i < TOTAL_TASKS; i++) {
       let newTask = generateTask();
-      // Избегаем одинаковых дробей подряд
       while (tasks.length > 0 && tasks[tasks.length - 1].num === newTask.num && tasks[tasks.length - 1].den === newTask.den) {
         newTask = generateTask();
       }
@@ -358,7 +355,16 @@
     const task = tasks[currentIndex];
     taskCounterEl.textContent = `Задание ${currentIndex + 1} из ${TOTAL_TASKS}`;
     
-    katex.render(task.fracTex, taskFractionEl, {throwOnError: false});
+    // Рендерим формулу только если KaTeX точно загружен
+    if (katexReady) {
+      try {
+        katex.render(task.fracTex, taskFractionEl, {throwOnError: false});
+      } catch(e) {
+        taskFractionEl.textContent = `${task.num}/${task.den}`; // fallback
+      }
+    } else {
+      taskFractionEl.textContent = `${task.num} / ${task.den}`;
+    }
     
     ansInput.value = '';
     ansInput.className = 'ans-input';
@@ -436,17 +442,12 @@
           gameOverEl.style.display = 'flex';
         }, 2000);
       } else {
-        // Показываем правильный ответ 5 секунд и даем новое задание
         setTimeout(() => {
           currentIndex++;
           showTask();
         }, 5000);
       }
     }
-  }
-
-  function endGame() {
-    // Заглушка, логика перенесена в checkAnswer
   }
 
   function winGame() {
@@ -467,10 +468,12 @@
   window.addEventListener('load', () => {
     let tries = 0;
     const interval = setInterval(() => {
+      // Ждем, пока KaTeX полностью загрузится
       if (window.katex) {
+        katexReady = true;
         clearInterval(interval);
-        startGame();
-        // Рендерим формулы в шпаргалке
+        
+        // Рендерим шпаргалку
         if (window.renderMathInElement) {
           renderMathInElement(document.getElementById('cheatPanel'), {
             delimiters: [
@@ -480,9 +483,15 @@
             throwOnError: false
           });
         }
+        
+        // Запускаем игру
+        startGame();
       }
       tries++;
-      if (tries > 100) clearInterval(interval);
+      if (tries > 100) { // через 5 секунд ожидания просто запускаем без формул
+        clearInterval(interval);
+        startGame();
+      }
     }, 50);
   });
 </script>
