@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Маркировка шин · ТЕТРАКТИС · тренажёр</title>
+
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true
+    },
+    svg: { fontCache: 'global' },
+    options: {
+      skipHtmlTags: ['script','noscript','style','textarea','pre','code']
+    }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--mint-soft:#a8f0dc;
+    --coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass:rgba(255,255,255,0.04);
+    --glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{
+    min-height:100%;
+    font-family:'Georgia','Times New Roman',serif;
+    color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(26,188,156,0.22), transparent 55%),
+      radial-gradient(ellipse at 85% 90%, rgba(127,255,212,0.15), transparent 55%),
+      radial-gradient(ellipse at 50% 50%, rgba(244,211,94,0.06), transparent 70%),
+      linear-gradient(160deg, #0a2a33 0%, #0d3b47 50%, #134e5e 100%);
+    background-attachment:fixed;overflow-x:hidden;
+  }
+  .glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.5;}
+  .glow.g1{width:520px;height:520px;top:-120px;left:-120px;background:radial-gradient(circle,rgba(26,188,156,0.55),transparent 70%);animation:pulse 9s ease-in-out infinite;}
+  .glow.g2{width:600px;height:600px;bottom:-200px;right:-180px;background:radial-gradient(circle,rgba(127,255,212,0.45),transparent 70%);animation:pulse 11s ease-in-out infinite reverse;}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:0.35;}50%{transform:scale(1.15);opacity:0.6;}}
+
+  .corner-logo{
+    position:fixed;top:14px;left:16px;z-index:50;
+    font-family:'Times New Roman',serif;text-align:center;line-height:1;
+    padding:6px 12px 8px;background:rgba(10,42,51,0.6);
+    border:1px solid var(--glass-brd);border-radius:10px;
+    backdrop-filter:blur(8px);box-shadow:0 4px 20px rgba(0,0,0,0.35);
+  }
+  .corner-logo .dots{font-size:8px;letter-spacing:2px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:12px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:3px;}
+  .corner-logo .ru{font-size:8px;letter-spacing:2px;color:var(--text-soft);margin-top:2px;}
+
+  .topbar-right{
+    position:fixed;top:14px;right:16px;z-index:50;display:flex;gap:8px;align-items:center;
+  }
+  .date-badge,.timer-box{
+    padding:8px 14px;border-radius:10px;background:rgba(10,42,51,0.75);
+    border:1px solid var(--glass-brd);backdrop-filter:blur(8px);
+    font-family:'Courier New',monospace;color:var(--mint);font-size:14px;
+  }
+  .timer-box{color:#fff;font-weight:700;letter-spacing:1.5px;}
+
+  .topbar-link{
+    padding:8px 14px;border-radius:10px;
+    background:rgba(10,42,51,0.75);border:1px solid rgba(107,184,255,0.5);
+    backdrop-filter:blur(8px);
+    font-family:'Courier New',monospace;color:#6bb8ff;font-size:14px;
+    text-decoration:none;transition:all 0.15s;font-weight:700;
+  }
+  .topbar-link:hover{background:rgba(107,184,255,0.15);color:#a5d4ff;}
+
+  .app{position:relative;z-index:10;max-width:980px;margin:0 auto;padding:80px 18px 60px;}
+
+  .page-head{text-align:center;margin-bottom:18px;}
+  .page-head h1{font-family:'Times New Roman',serif;font-size:clamp(20px,3vw,26px);color:var(--mint);letter-spacing:1.5px;margin-bottom:6px;}
+  .page-head .sub{font-size:13px;color:var(--text-soft);font-style:italic;}
+
+  .toolbar{
+    display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:16px;
+  }
+  .new-btn{
+    padding:12px 26px;border-radius:12px;border:1.5px solid var(--glass-brd);
+    background:rgba(10,42,51,0.7);color:var(--mint);
+    font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;
+    transition:all 0.15s;backdrop-filter:blur(8px);letter-spacing:0.5px;
+    box-shadow:0 4px 16px rgba(0,0,0,0.3);
+  }
+  .new-btn:hover{background:rgba(26,188,156,0.18);transform:translateY(-2px);box-shadow:0 8px 22px rgba(26,188,156,0.35);}
+
+  .link-btn{
+    padding:12px 26px;border-radius:12px;border:1.5px solid rgba(107,184,255,0.5);
+    background:rgba(10,42,51,0.7);color:#6bb8ff;
+    font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;
+    transition:all 0.15s;backdrop-filter:blur(8px);letter-spacing:0.5px;
+    box-shadow:0 4px 16px rgba(0,0,0,0.3);
+    text-decoration:none;display:inline-flex;align-items:center;gap:6px;
+  }
+  .link-btn:hover{background:rgba(107,184,255,0.15);transform:translateY(-2px);box-shadow:0 8px 22px rgba(107,184,255,0.35);}
+
+  .intro{
+    background:var(--glass);border:1.5px solid var(--glass-brd);
+    border-radius:16px;padding:16px 20px;margin-bottom:16px;
+    backdrop-filter:blur(12px);box-shadow:0 8px 30px rgba(0,0,0,0.35);
+    font-size:15px;line-height:1.7;color:var(--text);
+  }
+  .intro p{margin-bottom:8px;}
+  .intro p:last-child{margin-bottom:0;}
+  .intro b{color:var(--gold-light);}
+
+  .table-wrap{
+    background:var(--glass);border:1.5px solid var(--glass-brd);
+    border-radius:16px;padding:14px;margin-bottom:16px;
+    backdrop-filter:blur(12px);box-shadow:0 8px 30px rgba(0,0,0,0.35);
+    overflow-x:auto;
+  }
+  table.tyres{
+    border-collapse:collapse;width:100%;min-width:520px;
+    font-family:'Courier New',monospace;font-size:14px;
+  }
+  table.tyres th,table.tyres td{
+    border:1px solid rgba(26,188,156,0.3);
+    padding:8px 10px;text-align:center;
+  }
+  table.tyres th{
+    background:rgba(26,188,156,0.18);color:var(--mint);
+    font-weight:700;font-family:'Georgia',serif;
+  }
+  table.tyres th.rowhead{
+    background:rgba(26,188,156,0.12);color:var(--mint);
+  }
+  table.tyres td{color:var(--text);}
+  table.tyres td.empty{color:rgba(184,216,208,0.4);}
+
+  .task-list{counter-reset:task;}
+  .task{
+    background:var(--glass);border:1.5px solid var(--glass-brd);
+    border-radius:16px;padding:16px 20px;margin-bottom:12px;
+    backdrop-filter:blur(12px);box-shadow:0 6px 24px rgba(0,0,0,0.3);
+    transition:border-color 0.2s, box-shadow 0.2s;
+  }
+  .task:hover{border-color:rgba(127,255,212,0.5);box-shadow:0 10px 32px rgba(26,188,156,0.2);}
+  .task-head{
+    display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;
+  }
+  .task-head .num{
+    display:inline-flex;align-items:center;justify-content:center;
+    min-width:32px;height:32px;padding:0 8px;
+    border-radius:9px;
+    background:rgba(26,188,156,0.15);border:1px solid var(--glass-brd);
+    font-family:'Courier New',monospace;font-size:15px;font-weight:700;
+    color:var(--mint);flex-shrink:0;
+  }
+  .task-head .text{
+    font-size:15px;line-height:1.65;color:var(--text);
+    flex:1;
+  }
+  .task-head .text b{color:var(--gold-light);}
+
+  .answer-row{
+    display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+    padding-left:44px;
+  }
+  .answer-row input{
+    width:170px;padding:9px 14px;border-radius:10px;
+    border:1.5px solid var(--glass-brd);background:rgba(255,255,255,0.05);
+    color:var(--text);font-family:'Cambria Math','Times New Roman',serif;
+    font-size:16px;outline:none;text-align:center;
+    transition:border-color 0.2s, box-shadow 0.2s;
+  }
+  .answer-row input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.2);}
+  .answer-row input.ok{border-color:var(--ok);background:rgba(46,204,113,0.1);}
+  .answer-row input.err{border-color:var(--err);background:rgba(255,107,107,0.1);}
+  .mark{
+    font-size:20px;min-width:22px;text-align:center;
+    font-weight:700;
+  }
+  .mark.ok{color:var(--ok);}
+  .mark.err{color:var(--err);}
+
+  .result{
+    text-align:center;margin-top:18px;
+  }
+  .check-all-btn{
+    padding:12px 30px;border-radius:12px;border:none;
+    background:linear-gradient(135deg,#1abc9c,#16a085);
+    color:#04231d;font-family:inherit;font-size:15px;font-weight:700;
+    cursor:pointer;transition:transform 0.1s, box-shadow 0.2s;
+    letter-spacing:0.5px;
+    box-shadow:0 4px 16px rgba(26,188,156,0.3);
+  }
+  .check-all-btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(26,188,156,0.45);}
+  .score{
+    display:none;margin-top:16px;padding:14px 20px;
+    background:rgba(26,188,156,0.12);
+    border:1px solid var(--glass-brd);
+    border-radius:12px;
+    font-size:15px;color:var(--text);
+    text-align:center;letter-spacing:0.5px;
+  }
+  .score.show{display:block;}
+  .score b{color:var(--gold-light);font-size:18px;}
+
+  @media (max-width:720px){
+    .app{padding:70px 10px 50px;}
+    .task{padding:14px;}
+    .answer-row{padding-left:0;}
+    .intro{padding:14px 16px;font-size:14px;}
+    table.tyres{font-size:12px;}
+    table.tyres th,table.tyres td{padding:6px 6px;}
+    .topbar-link{padding:6px 10px;font-size:12px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div>
+<div class="glow g2"></div>
+
+<div class="corner-logo">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+</div>
+
+<div class="topbar-right">
+  <a class="topbar-link" href="shiny.html" title="Калькулятор шин">🧮 Калькулятор</a>
+  <span class="date-badge" id="dateBadge">--.--.----</span>
+  <span class="timer-box" id="timerBox">⏱ 00:00</span>
+</div>
+
+<div class="app">
+
+  <div class="page-head">
+    <h1>Маркировка шин · тренажёр</h1>
+    <div class="sub">Задания 1–5 · практико-ориентированная задача</div>
+  </div>
+
+  <div class="toolbar">
+    <button class="new-btn" id="newTaskBtn">🎲 Новое задание</button>
+    <a class="link-btn" href="shiny.html">🧮 Калькулятор шин</a>
+  </div>
+
+  <div class="intro" id="introBlock">
+    <p>Завод производит легковые автомобили определённой модели и устанавливает на них колёса с шинами маркировки <b id="factoryMark">185/60 R14</b>.</p>
+    <p>Завод допускает установку шин с другими маркировками. В таблице показаны разрешённые размеры шин.</p>
+  </div>
+
+  <div class="table-wrap">
+    <table class="tyres" id="tyresTable">
+      <thead id="tyresHead">
+        <tr>
+          <th rowspan="2" class="rowhead">Ширина шины (мм)</th>
+          <th colspan="3">Диаметр диска (дюймы)</th>
+        </tr>
+        <tr id="tyresDiamRow">
+          <th>14</th><th>15</th><th>16</th>
+        </tr>
+      </thead>
+      <tbody id="tyresBody"></tbody>
+    </table>
+  </div>
+
+  <div class="task-list">
+
+    <div class="task" data-task="1">
+      <div class="task-head">
+        <span class="num">1</span>
+        <span class="text" id="q1text"></span>
+      </div>
+      <div class="answer-row">
+        <input type="text" placeholder="ответ" autocomplete="off">
+        <span class="mark"></span>
+      </div>
+    </div>
+
+    <div class="task" data-task="2">
+      <div class="task-head">
+        <span class="num">2</span>
+        <span class="text" id="q2text"></span>
+      </div>
+      <div class="answer-row">
+        <input type="text" placeholder="ответ" autocomplete="off">
+        <span class="mark"></span>
+      </div>
+    </div>
+
+    <div class="task" data-task="3">
+      <div class="task-head">
+        <span class="num">3</span>
+        <span class="text" id="q3text"></span>
+      </div>
+      <div class="answer-row">
+        <input type="text" placeholder="ответ" autocomplete="off">
+        <span class="mark"></span>
+      </div>
+    </div>
+
+    <div class="task" data-task="4">
+      <div class="task-head">
+        <span class="num">4</span>
+        <span class="text">Найдите диаметр колеса автомобиля, выходящего с завода. Ответ дайте в миллиметрах.</span>
+      </div>
+      <div class="answer-row">
+        <input type="text" placeholder="ответ" autocomplete="off">
+        <span class="mark"></span>
+      </div>
+    </div>
+
+    <div class="task" data-task="5">
+      <div class="task-head">
+        <span class="num">5</span>
+        <span class="text" id="q5text"></span>
+      </div>
+      <div class="answer-row">
+        <input type="text" placeholder="ответ" autocomplete="off">
+        <span class="mark"></span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="result">
+    <button class="check-all-btn" id="checkAll">✅ Проверить все ответы</button>
+    <div class="score" id="score"></div>
+  </div>
+
+</div>
+
+<script>
+/* ===== ДАТА ===== */
+(function(){
+  const el = document.getElementById('dateBadge');
+  function upd(){
+    const d = new Date();
+    el.textContent = String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();
+  }
+  upd(); setInterval(upd, 60000);
+})();
+
+/* ===== ТАЙМЕР ===== */
+(function(){
+  const el = document.getElementById('timerBox');
+  let s = 0;
+  setInterval(function(){
+    const m = Math.floor(s/60), ss = s%60;
+    el.textContent = '⏱ ' + String(m).padStart(2,'0') + ':' + String(ss).padStart(2,'0');
+    s++;
+  }, 1000);
+})();
+
+/* ============================================================
+   ГЕНЕРАЦИЯ УСЛОВИЙ
+============================================================ */
+
+const WIDTHS = [185, 195, 205, 215];
+const DIAMETERS = [14, 15, 16];
+const PROFILES = [40, 45, 50, 55, 60, 65, 70];
+
+const INCH = 25.4;
+
+function cellProfiles(width, diameter, forceFilled){
+  const base = 65 - (width - 185) * 0.35 - (diameter - 14) * 5;
+  const candidates = PROFILES.filter(p => Math.abs(p - base) <= 10);
+  if(candidates.length === 0) return [];
+
+  const filled = forceFilled || (Math.random() < 0.65);
+  if(!filled) return [];
+
+  const sorted = candidates.slice().sort((a,b)=>b-a);
+  const count = (sorted.length >= 2 && Math.random() < 0.35) ? 2 : 1;
+  const start = Math.floor(Math.random() * (sorted.length - count + 1));
+  const chosen = sorted.slice(start, start + count);
+  return chosen;
+}
+
+function buildTable(factory){
+  const table = [];
+  for(const w of WIDTHS){
+    const row = {width: w, cells: {}};
+    for(const d of DIAMETERS){
+      const forceFilled = (w === factory.width && d === factory.diameter);
+      row.cells[d] = cellProfiles(w, d, forceFilled);
+    }
+    table.push(row);
+  }
+  return table;
+}
+
+function collectMarks(table){
+  const list = [];
+  for(const row of table){
+    for(const d of DIAMETERS){
+      const profs = row.cells[d];
+      if(profs && profs.length > 0){
+        for(const p of profs){
+          list.push({width: row.width, profile: p, diameter: d});
+        }
+      }
+    }
+  }
+  return list;
+}
+
+function shuffle(a){
+  a = a.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function generateTask(){
+  let factory = null;
+  let guard = 0;
+  while(!factory && guard < 200){
+    guard++;
+    const w = WIDTHS[Math.floor(Math.random()*WIDTHS.length)];
+    const d = DIAMETERS[Math.floor(Math.random()*DIAMETERS.length)];
+    const base = 65 - (w - 185) * 0.35 - (d - 14) * 5;
+    const candidates = PROFILES.filter(p => Math.abs(p - base) <= 10);
+    if(candidates.length === 0) continue;
+    const p = candidates[Math.floor(Math.random()*candidates.length)];
+    factory = {width: w, profile: p, diameter: d};
+  }
+  if(!factory) factory = {width: 185, profile: 60, diameter: 14};
+
+  const table = buildTable(factory);
+  const allMarks = collectMarks(table);
+
+  let pair2 = null;
+  const byDiam = {};
+  for(const m of allMarks){
+    (byDiam[m.diameter] = byDiam[m.diameter] || []).push(m);
+  }
+  const diamKeys = shuffle(Object.keys(byDiam).map(Number));
+  outer2:
+  for(const d of diamKeys){
+    const list = byDiam[d];
+    for(let i=0;i<list.length;i++){
+      for(let j=0;j<list.length;j++){
+        if(i===j) continue;
+        if(list[i].width !== list[j].width){
+          pair2 = [list[i], list[j]];
+          break outer2;
+        }
+      }
+    }
+  }
+
+  let mark3 = null;
+  for(const m of shuffle(allMarks)){
+    if(m.diameter !== factory.diameter){
+      mark3 = m; break;
+    }
+  }
+
+  let mark5 = null;
+  for(const m of shuffle(allMarks)){
+    if(m.diameter !== factory.diameter && !(m.width===mark3.width && m.profile===mark3.profile && m.diameter===mark3.diameter)){
+      mark5 = m; break;
+    }
+  }
+  if(!mark5){
+    for(const m of shuffle(allMarks)){
+      if(m.diameter !== factory.diameter){ mark5 = m; break; }
+    }
+  }
+
+  if(!pair2){
+    pair2 = [
+      {width: factory.width, profile: factory.profile, diameter: factory.diameter},
+      {width: factory.width + 10, profile: factory.profile - 5, diameter: factory.diameter}
+    ];
+  }
+  if(!mark3){
+    mark3 = {width: factory.width, profile: factory.profile, diameter: factory.diameter === 14 ? 15 : 14};
+  }
+  if(!mark5){
+    mark5 = {width: factory.width, profile: factory.profile, diameter: factory.diameter === 14 ? 15 : 14};
+  }
+
+  const d1 = mark5.diameter;
+  let minWidth = Infinity;
+  for(const row of table){
+    if(row.cells[d1] && row.cells[d1].length > 0){
+      if(row.width < minWidth) minWidth = row.width;
+    }
+  }
+  if(!isFinite(minWidth)) minWidth = WIDTHS[0];
+
+  return {factory, table, pair2, mark3, mark5, d1, minWidth};
+}
+
+/* ============================================================
+   РАСЧЁТЫ
+============================================================ */
+function wheelDiameter(mark){
+  return mark.diameter * INCH + 2 * mark.width * (mark.profile/100);
+}
+function wheelRadius(mark){
+  return wheelDiameter(mark) / 2;
+}
+
+/* ============================================================
+   ОТРИСОВКА
+============================================================ */
+let CURRENT = null;
+
+function renderTask(data){
+  CURRENT = data;
+  const {factory, table, pair2, mark3, mark5, d1, minWidth} = data;
+
+  document.getElementById('introBlock').innerHTML =
+    '<p>Завод производит легковые автомобили определённой модели и устанавливает на них колёса с шинами маркировки <b>' +
+    factory.width + '/' + factory.profile + ' R' + factory.diameter + '</b>.</p>' +
+    '<p>Завод допускает установку шин с другими маркировками. В таблице показаны разрешённые размеры шин.</p>';
+
+  const tbody = document.getElementById('tyresBody');
+  tbody.innerHTML = '';
+  for(const row of table){
+    const tr = document.createElement('tr');
+    const td0 = document.createElement('td');
+    td0.className = 'first';
+    td0.textContent = row.width;
+    tr.appendChild(td0);
+    for(const d of DIAMETERS){
+      const td = document.createElement('td');
+      const profs = row.cells[d];
+      if(profs && profs.length > 0){
+        td.textContent = profs.map(p => row.width + '/' + p).join('; ');
+      } else {
+        td.textContent = '—';
+        td.className = 'empty';
+      }
+      tr.appendChild(td);
+    }
+    tbody.appendChild(tr);
+  }
+
+  document.getElementById('q1text').innerHTML =
+    'Шины какой наименьшей ширины можно устанавливать на автомобиль, если диаметр диска равен <b>' +
+    d1 + ' дюймам</b>? Ответ дайте в миллиметрах.';
+
+  document.getElementById('q2text').innerHTML =
+    'На сколько миллиметров радиус колеса с шиной маркировки <b>' +
+    pair2[0].width + '/' + pair2[0].profile + ' R' + pair2[0].diameter + '</b> меньше, чем радиус колеса с шиной маркировки <b>' +
+    pair2[1].width + '/' + pair2[1].profile + ' R' + pair2[1].diameter + '</b>?';
+
+  document.getElementById('q3text').innerHTML =
+    'На сколько миллиметров увеличится диаметр колеса, если заменить колёса, установленные на заводе, колёсами с шинами маркировки <b>' +
+    mark3.width + '/' + mark3.profile + ' R' + mark3.diameter + '</b>?';
+
+  document.getElementById('q5text').innerHTML =
+    'На сколько процентов увеличится пробег автомобиля при одном обороте колеса, если заменить колёса, установленные на заводе, колёсами с шинами маркировки <b>' +
+    mark5.width + '/' + mark5.profile + ' R' + mark5.diameter + '</b>? Результат округлите до десятых.';
+
+  document.querySelectorAll('.task').forEach(function(task){
+    const input = task.querySelector('input');
+    const mark = task.querySelector('.mark');
+    input.value = '';
+    input.disabled = false;
+    input.classList.remove('ok','err');
+    mark.textContent = '';
+    mark.classList.remove('ok','err');
+  });
+  document.getElementById('score').classList.remove('show');
+  document.getElementById('score').innerHTML = '';
+}
+
+/* ============================================================
+   ОТВЕТЫ
+============================================================ */
+function computeAnswers(data){
+  const {factory, pair2, mark3, mark5, minWidth} = data;
+
+  const r2a = wheelRadius(pair2[0]);
+  const r2b = wheelRadius(pair2[1]);
+  const ans2 = Math.abs(r2b - r2a);
+
+  const dFactory = wheelDiameter(factory);
+  const d3 = wheelDiameter(mark3);
+  const ans3 = Math.abs(d3 - dFactory);
+
+  const ans4 = dFactory;
+
+  const d5 = wheelDiameter(mark5);
+  const ratio = Math.max(d5, dFactory) / Math.min(d5, dFactory);
+  const ans5 = Math.round((ratio - 1) * 1000) / 10;
+
+  return {
+    '1': minWidth,
+    '2': ans2,
+    '3': ans3,
+    '4': ans4,
+    '5': ans5
+  };
+}
+
+/* ============================================================
+   ПРОВЕРКА
+============================================================ */
+function normalize(s){
+  return String(s || '').toLowerCase()
+    .replace(/[\u2212\u2013\u2014\u2012\u2015]/g, '-')
+    .replace(/\u00A0/g, ' ').replace(/\s+/g, '')
+    .replace(/ё/g,'е').replace(/,/g, '.')
+    .replace(/руб\.?/g,'')
+    .replace(/мм/g,'')
+    .replace(/%/g,'')
+    .trim();
+}
+function parseNum(s){
+  s = normalize(s);
+  if(s.includes('/')){
+    const p = s.split('/');
+    const a = parseFloat(p[0]), b = parseFloat(p[1]);
+    if(!isNaN(a) && !isNaN(b) && b !== 0) return a / b;
+    return NaN;
+  }
+  return parseFloat(s);
+}
+function approxEq(a, b, eps){
+  eps = eps || 1e-2;
+  return Math.abs(a - b) < eps;
+}
+function checkTask(num, raw, correctValue){
+  const s = normalize(raw);
+  if(s === '') return false;
+  const v = parseNum(s);
+  if(isNaN(v)) return false;
+  if(typeof correctValue === 'number'){
+    return approxEq(v, correctValue, 1e-2);
+  }
+  return false;
+}
+
+/* ============================================================
+   СОБЫТИЯ
+============================================================ */
+document.getElementById('newTaskBtn').addEventListener('click', function(){
+  const data = generateTask();
+  renderTask(data);
+});
+
+document.getElementById('checkAll').addEventListener('click', function(){
+  if(!CURRENT) return;
+  const answers = computeAnswers(CURRENT);
+  let correct = 0, total = 0;
+
+  document.querySelectorAll('.task').forEach(function(task){
+    const num = task.dataset.task;
+    const input = task.querySelector('input');
+    const mark = task.querySelector('.mark');
+    const raw = input.value;
+    const ok = checkTask(num, raw, answers[num]);
+
+    input.classList.remove('ok','err');
+    mark.classList.remove('ok','err');
+
+    if(ok){
+      input.classList.add('ok');
+      mark.textContent = '✓';
+      mark.classList.add('ok');
+      correct++;
+    } else {
+      input.classList.add('err');
+      mark.textContent = '✗';
+      mark.classList.add('err');
+    }
+    total++;
+  });
+
+  const score = document.getElementById('score');
+  score.classList.add('show');
+  score.innerHTML = 'Правильно: <b>' + correct + '</b> из <b>' + total + '</b>';
+});
+
+/* ===== СТАРТ ===== */
+document.getElementById('newTaskBtn').click();
+</script>
+</body>
+</html>
