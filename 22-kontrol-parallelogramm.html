@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<script>
+  MathJax = {
+    tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+    svg: {fontCache: 'global'}
+  };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<title>ДЗ 22 · Тарифы · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{min-height:100vh;font-family:Georgia,'Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.06),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;padding:20px;overflow-x:hidden;display:flex;justify-content:center;}
+  .glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.5;}
+  .glow.g1{width:520px;height:520px;top:-120px;left:-120px;background:radial-gradient(circle,rgba(26,188,156,0.55),transparent 70%);}
+  .glow.g2{width:600px;height:600px;bottom:-200px;right:-180px;background:radial-gradient(circle,rgba(127,255,212,0.4),transparent 70%);}
+  
+  .corner-logo{position:fixed;top:14px;left:16px;z-index:50;font-family:'Times New Roman',serif;text-align:center;line-height:1;padding:10px 18px 12px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(26,188,156,0.45);border-radius:14px;backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(0,0,0,0.35);}
+  .corner-logo .dots{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:16px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:4px;}
+  .corner-logo .ru{font-size:10px;letter-spacing:3px;color:var(--text-soft);margin-top:2px;}
+  
+  .app{max-width:900px;width:100%;background:rgba(255,255,255,0.04);border:1.5px solid var(--glass-brd);border-radius:24px;padding:28px 30px;backdrop-filter:blur(12px);box-shadow:0 12px 50px rgba(0,0,0,0.5);position:relative;z-index:2;margin-top:50px;}
+  
+  .header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:1px solid rgba(26,188,156,0.2);padding-bottom:14px;margin-bottom:24px;}
+  .header-title{font-size:14px;color:var(--text-soft);font-style:italic;}
+  h1{font-size:clamp(18px,2.6vw,24px);color:var(--mint);letter-spacing:1.5px;text-align:center;margin-bottom:6px;}
+  .subtitle{text-align:center;font-size:14px;color:var(--text-soft);font-style:italic;margin-bottom:20px;}
+  
+  .name-block{background:linear-gradient(135deg,rgba(244,211,94,0.12),rgba(26,188,156,0.08));border:1.5px solid var(--gold);border-radius:14px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .name-block label{font-size:15px;color:var(--gold-light);font-weight:700;white-space:nowrap;}
+  .name-block input{flex:1;min-width:200px;padding:10px 14px;border-radius:10px;border:2px solid rgba(244,211,94,0.4);background:rgba(0,0,0,0.3);color:#fff;font-family:Georgia,serif;font-size:16px;outline:none;transition:0.2s;}
+  .name-block input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(244,211,94,0.25);}
+  
+  .intro-block{background:rgba(255,255,255,0.03);border-radius:16px;padding:18px 22px;margin-bottom:20px;border-left:4px solid var(--teal);font-size:15px;line-height:1.75;color:var(--text);}
+  .intro-block b{color:var(--mint);}
+  .intro-block .signature{display:block;text-align:right;font-size:13px;color:var(--text-soft);font-style:italic;margin-top:10px;}
+  
+  .task-block{background:rgba(0,0,0,0.2);border-radius:16px;padding:18px 22px;margin-bottom:16px;border-left:4px solid var(--mint);transition:0.3s;}
+  .task-block.correct{border-left-color:var(--ok);background:rgba(46,204,113,0.08);}
+  .task-block.wrong{border-left-color:var(--err);background:rgba(255,107,107,0.08);}
+  
+  .task-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
+  .task-num{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;background:linear-gradient(135deg,var(--gold),#c9a32b);color:#2a1f00;border-radius:10px;font-family:'Courier New',monospace;font-weight:700;font-size:15px;flex-shrink:0;}
+  .task-mark{float:right;font-size:20px;font-weight:800;padding-top:4px;}
+  .task-mark.ok{color:var(--ok);}
+  .task-mark.err{color:var(--err);}
+  
+  .task-question{font-size:16px;color:var(--text);margin-bottom:12px;line-height:1.6;}
+  .task-question b{color:var(--mint);}
+  
+  .task-graph { background: transparent; border: none; padding: 0; display: flex; justify-content: center; margin-bottom: 15px; }
+  .task-graph svg { display: block; max-width: 100%; height: auto; }
+
+  .answer-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px;}
+  .answer-row label{font-size:15px;color:var(--gold-light);font-weight:700;min-width:80px;}
+  .answer-row input{flex:1;min-width:180px;padding:11px 14px;border-radius:10px;border:1.5px solid var(--glass-brd);background:rgba(10,42,51,0.5);color:var(--text);font-family:'Cambria Math',serif;font-size:16px;outline:none;transition:0.2s;}
+  .answer-row input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+  .answer-row input.correct{border-color:var(--ok);background:rgba(46,204,113,0.15);}
+  .answer-row input.wrong{border-color:var(--err);background:rgba(255,107,107,0.15);}
+  .answer-row input:disabled{opacity:0.5;cursor:not-allowed;background:rgba(0,0,0,0.6);}
+
+  .photo-note{background:rgba(244,211,94,0.08);border-left:4px solid var(--gold);border-radius:0 12px 12px 0;padding:14px 18px;font-size:15px;line-height:1.6;color:var(--text);margin-top:10px;}
+  .photo-note b{color:var(--gold-light);}
+
+  /* Кнопки */
+  .btn-check{width:100%;padding:16px 32px;font-size:18px;font-weight:700;font-family:inherit;letter-spacing:1px;border:none;border-radius:16px;background:linear-gradient(135deg,#f4d35e,#c9a32b);color:#2a1f00;cursor:pointer;transition:0.3s;box-shadow:0 6px 24px rgba(244,211,94,0.4);margin-top:16px;}
+  .btn-check:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(244,211,94,0.55);}
+  .btn-check:disabled{opacity:0.5;cursor:default;transform:none;}
+  .btn-reset{display:block;width:100%;margin-top:12px;padding:14px 24px;font-size:15px;font-weight:700;font-family:inherit;border:2px solid var(--coral);border-radius:12px;background:transparent;color:var(--coral);cursor:pointer;transition:0.25s;letter-spacing:1px;}
+  .btn-reset:hover{background:rgba(255,107,107,0.12);}
+
+  /* Итоги */
+  .summary-box{display:none;background:linear-gradient(135deg,rgba(26,188,156,0.15),rgba(244,211,94,0.10));border:2px solid var(--mint);border-radius:16px;padding:20px;margin-top:20px;text-align:center;}
+  .summary-box.show{display:block;animation:fade 0.5s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .summary-title{font-size:16px;color:var(--mint);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:14px;}
+  .summary-stats{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:10px;}
+  .summary-stat{display:flex;flex-direction:column;align-items:center;gap:4px;}
+  .summary-stat .num{font-family:'Courier New',monospace;font-size:38px;font-weight:800;color:var(--gold);line-height:1;}
+  .summary-stat .lbl{font-size:12px;color:var(--text-soft);letter-spacing:1.5px;text-transform:uppercase;}
+  .summary-stat .num.ok{color:var(--ok);}
+  .summary-stat .num.err{color:var(--err);}
+  .summary-line{font-size:15px;color:var(--text);margin-top:8px;font-style:italic;}
+
+  /* Текст для учителя */
+  .result-area{margin-top:20px;display:none;}
+  .result-area.show{display:block;animation:fade 0.4s ease;}
+  .result-text{background:rgba(0,0,0,0.35);border:1.5px solid var(--mint);border-radius:12px;padding:16px 18px;font-family:'Courier New',monospace;font-size:13px;color:var(--text);white-space:pre-wrap;line-height:1.7;user-select:all;cursor:text;}
+  .btn-copy{display:block;width:100%;margin-top:12px;padding:13px 24px;font-size:15px;font-weight:700;font-family:inherit;border:2px solid var(--glass-brd);border-radius:12px;background:transparent;color:var(--mint);cursor:pointer;transition:0.25s;letter-spacing:1px;}
+  .btn-copy:hover{background:rgba(26,188,156,0.15);}
+  .btn-max{display:block;width:100%;margin-top:12px;padding:14px 24px;font-size:16px;font-weight:700;font-family:inherit;border:none;border-radius:12px;background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;cursor:pointer;text-decoration:none;text-align:center;letter-spacing:1px;box-shadow:0 6px 20px rgba(26,188,156,0.4);transition:0.2s;}
+  .btn-max:hover{transform:translateY(-2px);}
+
+  /* Модалка */
+  .modal-overlay{display:none;position:fixed;inset:0;z-index:100;background:rgba(4,20,24,0.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px;}
+  .modal-overlay.show{display:flex;}
+  .modal-box{background:linear-gradient(160deg,#0d3b47,#134e5e);border:1.5px solid var(--coral);border-radius:18px;padding:24px 26px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.6);}
+  .modal-title{font-family:'Times New Roman',serif;font-size:20px;color:var(--coral);margin-bottom:10px;letter-spacing:1px;}
+  .modal-text{font-size:14px;color:var(--text-soft);line-height:1.6;margin-bottom:16px;}
+  .modal-input{width:100%;padding:12px 14px;border-radius:10px;border:2px solid rgba(255,107,107,0.4);background:rgba(0,0,0,0.35);color:#fff;font-family:'Courier New',monospace;font-size:18px;letter-spacing:3px;text-align:center;outline:none;}
+  .modal-input:focus{border-color:var(--coral);box-shadow:0 0 0 3px rgba(255,107,107,0.2);}
+  .modal-err{color:var(--coral);font-size:13px;min-height:18px;margin-top:8px;text-align:center;font-style:italic;}
+  .modal-actions{display:flex;gap:10px;margin-top:14px;}
+  .modal-btn{flex:1;padding:11px 16px;border-radius:10px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:0.2s;border:none;}
+  .modal-btn.cancel{background:transparent;border:1.5px solid var(--glass-brd);color:var(--text-soft);}
+  .modal-btn.confirm{background:linear-gradient(135deg,#ff6b6b,#c0392b);color:#fff;}
+
+  @media(max-width:600px){
+    .app{padding:18px 14px;}
+    .name-block{flex-direction:column;align-items:stretch;gap:8px;}
+    .name-block label{text-align:center;}
+    .task-block{padding:14px 16px;}
+    .answer-row label{min-width:60px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div><div class="glow g2"></div>
+
+<div class="corner-logo">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+</div>
+
+<div class="app">
+  <div class="header">
+    <div class="header-title">ДЗ 22 · Тарифы</div>
+    <div style="font-size:13px;color:var(--text-soft);">Математика</div>
+  </div>
+
+  <h1>Тарифы</h1>
+  <div class="subtitle">ОГЭ · Задания 1–14</div>
+
+  <div class="name-block">
+    <label for="studentName">👤 Имя ученика:</label>
+    <input type="text" id="studentName" placeholder="Введи своё имя и фамилию..." maxlength="60" autocomplete="off">
+  </div>
+
+  <div class="intro-block">
+    <b>📐 Как выполнять:</b><br>
+    • Задания 1–12 — реши и впиши число-ответ.<br>
+    • Задания 13 и 14 — реши в тетради и пришли фото.<br>
+    • Нажми <b>«Проверить»</b>.
+    <span class="signature">ΤΕΤΡΑΚΤΥΣ · Школа математики Елены Михалевой</span>
+  </div>
+
+  <!-- Задача 1 -->
+  <div class="task-block" id="task-1">
+    <div class="task-header">
+      <span class="task-num">1</span>
+      <span class="task-mark" id="mark-1"></span>
+    </div>
+    <div class="task-question">
+      1. Пользуясь рисунком, поставьте в соответствие каждому из указанных периодов времени характеристику израсходованных минут и гигабайтов.
+    </div>
+    
+    <div class="task-graph">
+      <svg width="800" height="520" viewBox="0 0 800 520">
+        <style>
+            .grid-line { stroke: rgba(127, 255, 212, 0.25); stroke-width: 1; }
+            .grid-line-thick { stroke: rgba(127, 255, 212, 0.45); stroke-width: 1.8; }
+            .grid-line-half { stroke: rgba(127, 255, 212, 0.12); stroke-width: 0.6; }
+            .axis { stroke: #7fffd4; stroke-width: 2; }
+            .tick { stroke: #7fffd4; stroke-width: 1.5; }
+            .tick-label { font-family: 'Georgia', serif; font-size: 14px; fill: #b8d8d0; text-anchor: end; }
+            .tick-label-x { font-family: 'Georgia', serif; font-size: 14px; fill: #b8d8d0; text-anchor: middle; }
+            .tick-label-right { font-family: 'Georgia', serif; font-size: 14px; fill: #b8d8d0; text-anchor: start; }
+            .axis-label { font-family: 'Georgia', serif; font-size: 16px; fill: #f4d35e; text-anchor: end; font-weight: bold; }
+            .legend-line { stroke: #7fffd4; stroke-width: 2; }
+            .legend-line-dashed { stroke: #f4d35e; stroke-width: 1.5; stroke-dasharray: 6,4; }
+            .bg { fill: transparent; }
+            .graph-line-solid { stroke: #7fffd4; stroke-width: 2; fill: none; stroke-linejoin: round; stroke-linecap: round; }
+            .graph-line-dashed { stroke: #f4d35e; stroke-width: 2; fill: none; stroke-linejoin: round; stroke-linecap: round; stroke-dasharray: 6,4; }
+        </style>
+        
+        <rect x="60" y="30" width="700" height="400" class="bg"/>
+        
+        <!-- ГОРИЗОНТАЛЬНЫЕ ЛИНИИ -->
+        <g class="grid-line">
+            <line x1="60" y1="30" x2="760" y2="30"/>
+            <line x1="60" y1="80" x2="760" y2="80"/>
+            <line x1="60" y1="180" x2="760" y2="180"/>
+            <line x1="60" y1="280" x2="760" y2="280"/>
+            <line x1="60" y1="380" x2="760" y2="380"/>
+            <line x1="60" y1="430" x2="760" y2="430"/>
+        </g>
+        <g class="grid-line-thick">
+            <line x1="60" y1="130" x2="760" y2="130"/>
+            <line x1="60" y1="230" x2="760" y2="230"/>
+            <line x1="60" y1="330" x2="760" y2="330"/>
+            <line x1="60" y1="30" x2="760" y2="30"/>
+        </g>
+        <g class="grid-line-half">
+            <line x1="60" y1="55" x2="760" y2="55"/>
+            <line x1="60" y1="105" x2="760" y2="105"/>
+            <line x1="60" y1="155" x2="760" y2="155"/>
+            <line x1="60" y1="205" x2="760" y2="205"/>
+            <line x1="60" y1="255" x2="760" y2="255"/>
+            <line x1="60" y1="305" x2="760" y2="305"/>
+            <line x1="60" y1="355" x2="760" y2="355"/>
+            <line x1="60" y1="405" x2="760" y2="405"/>
+        </g>
+        
+        <!-- ВЕРТИКАЛЬНЫЕ ЛИНИИ -->
+        <g class="grid-line">
+            <line x1="60" y1="30" x2="60" y2="430"/>
+            <line x1="115" y1="30" x2="115" y2="430"/>
+            <line x1="170" y1="30" x2="170" y2="430"/>
+            <line x1="225" y1="30" x2="225" y2="430"/>
+            <line x1="280" y1="30" x2="280" y2="430"/>
+            <line x1="335" y1="30" x2="335" y2="430"/>
+            <line x1="390" y1="30" x2="390" y2="430"/>
+            <line x1="445" y1="30" x2="445" y2="430"/>
+            <line x1="500" y1="30" x2="500" y2="430"/>
+            <line x1="555" y1="30" x2="555" y2="430"/>
+            <line x1="610" y1="30" x2="610" y2="430"/>
+            <line x1="665" y1="30" x2="665" y2="430"/>
+            <line x1="720" y1="30" x2="720" y2="430"/>
+        </g>
+        
+        <!-- ОСЬ Y ЛЕВАЯ -->
+        <line x1="60" y1="30" x2="60" y2="460" class="axis"/>
+        <polygon points="60,20 52,32 68,32" fill="#7fffd4"/>
+        <text x="120" y="20" class="axis-label" text-anchor="end">Минуты</text>
+        <line x1="125" y1="15" x2="165" y2="15" class="legend-line"/>
+        <g class="tick-label">
+            <line x1="52" y1="430" x2="60" y2="430" class="tick"/> <text x="45" y="435">0</text>
+            <line x1="52" y1="380" x2="60" y2="380" class="tick"/> <text x="45" y="385">50</text>
+            <line x1="52" y1="330" x2="60" y2="330" class="tick"/> <text x="45" y="335">100</text>
+            <line x1="52" y1="280" x2="60" y2="280" class="tick"/> <text x="45" y="285">150</text>
+            <line x1="52" y1="230" x2="60" y2="230" class="tick"/> <text x="45" y="235">200</text>
+            <line x1="52" y1="180" x2="60" y2="180" class="tick"/> <text x="45" y="185">250</text>
+            <line x1="52" y1="130" x2="60" y2="130" class="tick"/> <text x="45" y="135">300</text>
+            <line x1="52" y1="80" x2="60" y2="80" class="tick"/> <text x="45" y="85">350</text>
+            <line x1="52" y1="30" x2="60" y2="30" class="tick"/> <text x="45" y="35">400</text>
+        </g>
+        
+        <!-- ОСЬ Y ПРАВАЯ -->
+        <line x1="760" y1="30" x2="760" y2="430" class="axis"/>
+        <polygon points="760,20 752,32 768,32" fill="#7fffd4"/>
+        <text x="750" y="20" class="axis-label" text-anchor="end">Гб</text>
+        <line x1="755" y1="15" x2="795" y2="15" class="legend-line-dashed"/>
+        <g class="tick-label-right">
+            <line x1="760" y1="430" x2="768" y2="430" class="tick"/> <text x="775" y="435">0</text>
+            <line x1="760" y1="380" x2="768" y2="380" class="tick"/> <text x="775" y="385">0,5</text>
+            <line x1="760" y1="330" x2="768" y2="330" class="tick"/> <text x="775" y="335">1</text>
+            <line x1="760" y1="280" x2="768" y2="280" class="tick"/> <text x="775" y="285">1,5</text>
+            <line x1="760" y1="230" x2="768" y2="230" class="tick"/> <text x="775" y="235">2</text>
+            <line x1="760" y1="180" x2="768" y2="180" class="tick"/> <text x="775" y="185">2,5</text>
+            <line x1="760" y1="130" x2="768" y2="130" class="tick"/> <text x="775" y="135">3</text>
+            <line x1="760" y1="80" x2="768" y2="80" class="tick"/> <text x="775" y="85">3,5</text>
+            <line x1="760" y1="30" x2="768" y2="30" class="tick"/> <text x="775" y="35">4</text>
+        </g>
+        
+        <!-- ОСЬ X -->
+        <line x1="60" y1="430" x2="780" y2="430" class="axis"/>
+        <polygon points="780,430 768,422 768,438" fill="#7fffd4"/>
+        <g class="tick-label-x">
+            <line x1="60" y1="430" x2="60" y2="438" class="tick"/> <text x="60" y="458">0</text>
+            <line x1="115" y1="430" x2="115" y2="438" class="tick"/> <text x="115" y="458">1</text>
+            <line x1="170" y1="430" x2="170" y2="438" class="tick"/> <text x="170" y="458">2</text>
+            <line x1="225" y1="430" x2="225" y2="438" class="tick"/> <text x="225" y="458">3</text>
+            <line x1="280" y1="430" x2="280" y2="438" class="tick"/> <text x="280" y="458">4</text>
+            <line x1="335" y1="430" x2="335" y2="438" class="tick"/> <text x="335" y="458">5</text>
+            <line x1="390" y1="430" x2="390" y2="438" class="tick"/> <text x="390" y="458">6</text>
+            <line x1="445" y1="430" x2="445" y2="438" class="tick"/> <text x="445" y="458">7</text>
+            <line x1="500" y1="430" x2="500" y2="438" class="tick"/> <text x="500" y="458">8</text>
+            <line x1="555" y1="430" x2="555" y2="438" class="tick"/> <text x="555" y="458">9</text>
+            <line x1="610" y1="430" x2="610" y2="438" class="tick"/> <text x="610" y="458">10</text>
+            <line x1="665" y1="430" x2="665" y2="438" class="tick"/> <text x="665" y="458">11</text>
+            <line x1="720" y1="430" x2="720" y2="438" class="tick"/> <text x="720" y="458">12</text>
+        </g>
+        
+        <!-- Сплошной график (Минуты) -->
+        <polyline points="
+            115,105
+            170,205
+            225,130
+            280,205
+            335,80
+            390,180
+            445,230
+            500,180
+            555,255
+            610,80
+            665,55
+            720,105
+        " class="graph-line-solid"/>
+
+        <!-- Пунктирный график (Гб) -->
+        <polyline points="
+            115,205
+            170,105
+            225,55
+            280,130
+            335,155
+            390,330
+            445,280
+            500,130
+            555,30
+            610,230
+            665,80
+            720,180
+        " class="graph-line-dashed"/>
+      </svg>
+    </div>
+
+    <div class="task-question">
+      <table style="width:100%; border-collapse: collapse; margin-bottom:10px; font-size:14px; color:var(--text);">
+        <tr style="border-bottom: 1px solid var(--glass-brd);"><th style="padding:6px; text-align:left;">Периоды</th><th style="padding:6px; text-align:left;">Характеристики</th></tr>
+        <tr><td style="padding:6px;">А) февраль — март</td><td style="padding:6px;">1) расход минут увеличился, а расход гигабайтов уменьшился</td></tr>
+        <tr><td style="padding:6px;">Б) март — апрель</td><td style="padding:6px;">2) расход гигабайтов увеличился, а расход минут уменьшился</td></tr>
+        <tr><td style="padding:6px;">В) август — сентябрь</td><td style="padding:6px;">3) расход минут увеличился и расход гигабайтов увеличился</td></tr>
+        <tr><td style="padding:6px;">Г) апрель — май</td><td style="padding:6px;">4) расход минут уменьшился и расход гигабайтов уменьшился</td></tr>
+      </table>
+      <div>В таблице под каждой буквой укажите соответствующий номер. В ответ запишите последовательность цифр без пробелов.</div>
+    </div>
+
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-1" autocomplete="off" placeholder="например: 5472">
+    </div>
+  </div>
+
+  <!-- Задача 2 -->
+  <div class="task-block" id="task-2">
+    <div class="task-header">
+      <span class="task-num">2</span>
+      <span class="task-mark" id="mark-2"></span>
+    </div>
+        <div class="task-question">
+      2. Сколько рублей потратил абонент на услуги связи в марте?
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-2" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- Задача 3 -->
+  <div class="task-block" id="task-3">
+    <div class="task-header">
+      <span class="task-num">3</span>
+      <span class="task-mark" id="mark-3"></span>
+    </div>
+    <div class="task-question">
+      3. Сколько месяцев в 2019 году абонент не превышал лимит ни по пакету минут, ни по пакету мобильного интернета?
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-3" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- Задача 4 -->
+  <div class="task-block" id="task-4">
+    <div class="task-header">
+      <span class="task-num">4</span>
+      <span class="task-mark" id="mark-4"></span>
+    </div>
+    <div class="task-question">
+      4. На сколько процентов увеличился трафик мобильного интернета в августе по сравнению с июлем 2019 года?
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-4" autocomplete="off">
+    </div>
+  </div>
+
+   <!-- Задача 5 -->
+  <div class="task-block" id="task-5">
+    <div class="task-header">
+      <span class="task-num">5</span>
+      <span class="task-mark" id="mark-5"></span>
+    </div>
+    <div class="task-question">
+      5. Абонент хочет приобрести новый смартфон. В трёх салонах сотовой связи этот смартфон продаётся в кредит (сначала делается первоначальный взнос, а потом ежемесячно в течение всего срока кредита вносятся платежи) на разных условиях. Условия приведены в таблице.
+    </div>
+    
+    <div style="overflow-x: auto; margin: 15px 0;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: var(--text); background: rgba(0,0,0,0.15); border-radius: 10px; overflow: hidden;">
+        <thead>
+          <tr style="background: rgba(26,188,156,0.15); border-bottom: 2px solid var(--mint);">
+            <th style="padding: 10px 8px; text-align: center; border-right: 1px solid var(--glass-brd);">Салон</th>
+            <th style="padding: 10px 8px; text-align: center; border-right: 1px solid var(--glass-brd);">Стоимость смартфона (руб.)</th>
+            <th style="padding: 10px 8px; text-align: center; border-right: 1px solid var(--glass-brd);">Первоначальный взнос (% от стоимости)</th>
+            <th style="padding: 10px 8px; text-align: center; border-right: 1px solid var(--glass-brd);">Срок кредита (мес.)</th>
+            <th style="padding: 10px 8px; text-align: center;">Ежемесячный платёж (руб.)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom: 1px solid var(--glass-brd);">
+            <td style="padding: 10px 8px; text-align: center; border-right: 1px solid var(--glass-brd);">А</td>
+            <td style="padding: 10px 8px; text-align: center; border-right: 1px solid var(--glass-brd);">18 000</td>
+            <td style="padding: 10px 8px; text-align: center; border-right: 1px solid var(--glass-brd);">20</td>
+            <td style="padding: 10px 8px; text-align: center; border-right: 1px solid var(--glass-brd);">6</td>
+            <td style="padding: 10px 8px; text-align: center;">2650</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--glass-brd);">
+            <td style="padding: 10px 8px; text-align: center; border-right: 1px solid var(--glass-brd);">Б</td>
+            <td style="padding: 10px 8px; text-align: center; border-right: 1px solid var(--glass-brd);">17 500</td>
+            <td style="padding: 10px 8px; text-align: center; border-right: 1px solid var(--glass-brd);">30</td>
+            <td style="padding: 10px 8px; text-align: center; border-right: 1px solid var(--glass-brd);">12</td>
+            <td style="padding: 10px 8px; text-align: center;">1200</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 8px; text-align: center; border-right: 1px solid var(--glass-brd);">В</td>
+            <td style="padding: 10px 8px; text-align: center; border-right: 1px solid var(--glass-brd);">17 600</td>
+            <td style="padding: 10px 8px; text-align: center; border-right: 1px solid var(--glass-brd);">25</td>
+            <td style="padding: 10px 8px; text-align: center; border-right: 1px solid var(--glass-brd);">12</td>
+            <td style="padding: 10px 8px; text-align: center;">1300</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="task-question">
+      Определите, в каком из салонов покупка смартфона с учётом полностью выплаченного кредита обойдётся дешевле. В ответ запишите эту сумму в рублях.
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-5" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- Задача 6 -->
+  <div class="task-block" id="task-6">
+    <div class="task-header">
+      <span class="task-num">6</span>
+      <span class="task-mark" id="mark-6"></span>
+    </div>
+    <div class="task-question">
+      6. Представьте выражение 
+      <span style="display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: 1.2em; margin: 0 5px;">
+        <span style="border-bottom: 2px solid var(--mint); padding: 0 5px;">6</span>
+        <span style="padding: 2px 5px;">7</span>
+      </span> 
+      − 
+      <span style="display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: 1.2em; margin: 0 5px;">
+        <span style="border-bottom: 2px solid var(--mint); padding: 0 5px;">3</span>
+        <span style="padding: 2px 5px;">5</span>
+      </span>
+      в виде дроби со знаменателем 70. В ответ запишите числитель полученной дроби.
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-6" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- Задача 7 -->
+  <div class="task-block" id="task-7">
+    <div class="task-header">
+      <span class="task-num">7</span>
+      <span class="task-mark" id="mark-7"></span>
+    </div>
+    <div class="task-question">
+      7. На координатной прямой отмечены числа x, y и z. Какая из разностей z − x, y − z, x − y отрицательна?
+    </div>
+    
+    <div class="task-graph">
+      <svg width="400" height="100" viewBox="0 0 400 100">
+        <!-- Линия -->
+        <line x1="20" y1="50" x2="380" y2="50" stroke="var(--mint)" stroke-width="2"/>
+        <polygon points="380,50 370,44 370,56" fill="var(--mint)"/>
+        
+        <!-- Точки -->
+        <circle cx="80" cy="50" r="4" fill="var(--mint)"/>
+        <text x="80" y="80" font-family="Times New Roman" font-size="20" fill="var(--mint)" text-anchor="middle" font-style="italic">z</text>
+        
+        <circle cx="180" cy="50" r="4" fill="var(--mint)"/>
+        <text x="180" y="80" font-family="Times New Roman" font-size="20" fill="var(--mint)" text-anchor="middle" font-style="italic">y</text>
+        
+        <circle cx="320" cy="50" r="4" fill="var(--mint)"/>
+        <text x="320" y="80" font-family="Times New Roman" font-size="20" fill="var(--mint)" text-anchor="middle" font-style="italic">x</text>
+      </svg>
+    </div>
+
+    <div class="task-question">
+      1) z − x &nbsp;&nbsp; 2) y − z &nbsp;&nbsp; 3) x − y &nbsp;&nbsp; 4) невозможно определить
+    </div>
+    <div class="answer-row">
+      <label>Ответ (цифра):</label>
+      <input type="text" id="ans-7" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- Задача 8 -->
+  <div class="task-block" id="task-8">
+    <div class="task-header">
+      <span class="task-num">8</span>
+      <span class="task-mark" id="mark-8"></span>
+    </div>
+    <div class="task-question">
+      8. Найдите значение выражения: 
+      <span style="display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; font-size: 1.2em; margin: 0 5px;">
+        <span style="border-bottom: 2px solid var(--mint); padding: 0 5px;">13<sup>−4</sup> · 13<sup>−16</sup></span>
+        <span style="padding: 2px 5px;">13<sup>−21</sup></span>
+      </span>
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-8" autocomplete="off">
+    </div>
+  </div>
+  <!-- Задача 9 -->
+  <div class="task-block" id="task-9">
+    <div class="task-header">
+      <span class="task-num">9</span>
+      <span class="task-mark" id="mark-9"></span>
+    </div>
+    <div class="task-question">
+      9. В треугольнике ABC известно, что ∠BAC = 82°, AD — биссектриса. Найдите угол BAD. Ответ дайте в градусах.
+    </div>
+    
+    <div class="task-graph">
+      <svg width="280" height="160" viewBox="0 0 280 160">
+        <!-- Треугольник -->
+        <polygon points="40,120 200,120 150,40" fill="none" stroke="var(--mint)" stroke-width="2"/>
+        <!-- Биссектриса -->
+        <line x1="40" y1="120" x2="180" y2="80" stroke="var(--mint)" stroke-width="1.5"/>
+        
+        <!-- Буквы -->
+        <text x="30" y="135" font-family="Times New Roman" font-size="20" fill="var(--mint)" font-weight="bold">A</text>
+        <text x="195" y="135" font-family="Times New Roman" font-size="20" fill="var(--mint)" font-weight="bold">C</text>
+        <text x="145" y="25" font-family="Times New Roman" font-size="20" fill="var(--mint)" font-weight="bold">B</text>
+        <text x="175" y="70" font-family="Times New Roman" font-size="20" fill="var(--mint)" font-weight="bold">D</text>
+      </svg>
+    </div>
+
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-9" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- Задача 10 -->
+  <div class="task-block" id="task-10">
+    <div class="task-header">
+      <span class="task-num">10</span>
+      <span class="task-mark" id="mark-10"></span>
+    </div>
+    <div class="task-question">
+      10. Диагональ BD параллелограмма ABCD образует с его сторонами углы, равные 65° и 80°. Найдите меньший угол параллелограмма.
+    </div>
+    
+    <div class="task-graph">
+      <svg width="300" height="160" viewBox="0 0 300 160">
+        <!-- Параллелограмм -->
+        <polygon points="40,120 80,40 220,40 180,120" fill="none" stroke="var(--mint)" stroke-width="2"/>
+        <!-- Диагональ -->
+        <line x1="80" y1="40" x2="180" y2="120" stroke="var(--mint)" stroke-width="1.5"/>
+        
+        <!-- Буквы -->
+        <text x="25" y="135" font-family="Times New Roman" font-size="20" fill="var(--mint)" font-weight="bold">A</text>
+        <text x="75" y="25" font-family="Times New Roman" font-size="20" fill="var(--mint)" font-weight="bold">B</text>
+        <text x="225" y="25" font-family="Times New Roman" font-size="20" fill="var(--mint)" font-weight="bold">C</text>
+        <text x="185" y="135" font-family="Times New Roman" font-size="20" fill="var(--mint)" font-weight="bold">D</text>
+      </svg>
+    </div>
+
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-10" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- Задача 11 -->
+  <div class="task-block" id="task-11">
+    <div class="task-header">
+      <span class="task-num">11</span>
+      <span class="task-mark" id="mark-11"></span>
+    </div>
+    <div class="task-question">
+      11. На клетчатой бумаге с размером клетки 1 см × 1 см изображена фигура. Найдите её площадь. Ответ дайте в квадратных сантиметрах.
+    </div>
+    
+    <div class="task-graph">
+      <svg width="280" height="120" viewBox="0 0 280 120">
+        <defs>
+          <pattern id="grid11" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(127,255,212,0.3)" stroke-width="1"/>
+          </pattern>
+        </defs>
+        <rect width="280" height="120" fill="url(#grid11)" />
+        
+        <!-- Параллелограмм на клетках: основание 7, высота 2 -->
+        <polygon points="40,80 180,80 220,40 80,40" fill="none" stroke="var(--mint)" stroke-width="2"/>
+      </svg>
+    </div>
+
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-11" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- Задача 12 -->
+  <div class="task-block" id="task-12">
+    <div class="task-header">
+      <span class="task-num">12</span>
+      <span class="task-mark" id="mark-12"></span>
+    </div>
+    <div class="task-question">
+      12. Какое из следующих утверждений верно?
+    </div>
+    <div class="options" style="margin-top:10px; line-height:1.8;">
+      1) В параллелограмме есть два равных угла.<br>
+      2) В тупоугольном треугольнике все углы тупые.<br>
+      3) Площадь прямоугольника равна произведению длин всех его сторон.
+    </div>
+    <div class="task-question" style="font-style:italic; margin-top:10px;">
+      В ответ запишите номер выбранного утверждения.
+    </div>
+    <div class="answer-row">
+      <label>Ответ (цифра):</label>
+      <input type="text" id="ans-12" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- Задача 13 -->
+  <div class="task-block" id="task-13">
+    <div class="task-header">
+      <span class="task-num">13</span>
+    </div>
+    <div class="task-question">
+      13. Расстояние между пристанями A и B равно 108 км. Из A в B по течению реки отправился плот, а через час вслед за ним отправилась моторная лодка, которая, прибыв в пункт B, тотчас повернула обратно и возвратилась в A. К этому времени плот прошёл 50 км. Найдите скорость лодки в неподвижной воде, если скорость течения реки равна 5 км/ч.
+    </div>
+    <div class="photo-note">
+      📷 <b>Реши в тетради</b> и пришли фото решения учителю в Макс.
+    </div>
+  </div>
+
+  <!-- Задача 14 -->
+  <div class="task-block" id="task-14">
+    <div class="task-header">
+      <span class="task-num">14</span>
+    </div>
+    <div class="task-question">
+      14. Катет и гипотенуза прямоугольного треугольника равны 20 и 52. Найдите высоту, проведённую к гипотенузе.
+    </div>
+    <div class="photo-note">
+      📷 <b>Реши в тетради</b> и пришли фото решения учителю в Макс.
+    </div>
+  </div>
+
+  <button class="btn-check" id="btnCheck">✅ Проверить тест</button>
+  <button class="btn-reset" id="btnReset">🔒 Очистить всё</button>
+
+  <div class="summary-box" id="summaryBox">
+    <div class="summary-title">📊 Результат</div>
+    <div class="summary-stats">
+      <div class="summary-stat">
+        <span class="num ok" id="statOk">0</span>
+        <span class="lbl">✅ верно</span>
+      </div>
+      <div class="summary-stat">
+        <span class="num err" id="statErr">0</span>
+        <span class="lbl">❌ неверно</span>
+      </div>
+      <div class="summary-stat">
+        <span class="num" id="statPercent">0%</span>
+        <span class="lbl">📊 процент</span>
+      </div>
+    </div>
+    <div class="summary-line" id="summaryLine">—</div>
+  </div>
+
+  <div class="result-area" id="resultArea">
+    <div class="result-text" id="resultText"></div>
+    <div class="result-hint" style="text-align:center;font-size:13px;color:var(--gold-light);margin-top:10px;">👇 Скопируй текст или отправь учителю</div>
+    <button class="btn-copy" id="btnCopy">📋 Скопировать результат</button>
+    <a class="btn-max" href="https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes" target="_blank" rel="noopener">💬 Отправить в Макс</a>
+  </div>
+
+</div>
+
+<!-- МОДАЛКА СБРОСА -->
+<div class="modal-overlay" id="resetModal">
+  <div class="modal-box">
+    <div class="modal-title">🔒 Сброс теста</div>
+    <div class="modal-text">Введи пароль, чтобы очистить все ответы и разблокировать поля.</div>
+    <input type="password" id="resetPass" class="modal-input" placeholder="Пароль" autocomplete="off">
+    <div class="modal-err" id="resetErr"></div>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" id="resetCancel">Отмена</button>
+      <button class="modal-btn confirm" id="resetConfirm">Сбросить</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ===== ОТВЕТЫ ===== */
+  const TASKS_CORRECT = {
+    1: '3421',
+    2: '530',
+    3: '4',
+    4: '100',
+    5: '19500',
+    6: '18',
+    7: '1',
+    8: '13',
+    9: '41',
+    10: '35',
+    11: '14',
+    12: '1'
+  };
+
+  /* ===== СОХРАНЕНИЕ ИМЕНИ ===== */
+  const nameInput = document.getElementById('studentName');
+  const savedName = localStorage.getItem('dz22_tarify_name');
+  if(savedName) nameInput.value = savedName;
+  nameInput.addEventListener('input', ()=>{
+    localStorage.setItem('dz22_tarify_name', nameInput.value.trim());
+  });
+
+  function normAnswer(s){
+    return String(s||'').trim().replace(/\s+/g,'').replace(',','.');
+  }
+  function checkNumeric(userAns, correctAns){
+    const u = normAnswer(userAns);
+    const c = normAnswer(correctAns);
+    if (!u) return false;
+    if (u === c) return true;
+    const un = parseFloat(u), cn = parseFloat(c);
+    if (!isNaN(un) && !isNaN(cn) && Math.abs(un-cn) < 0.01) return true;
+    return false;
+  }
+
+  /* ===== ПРОВЕРКА ===== */
+  let checked = false;
+  document.getElementById('btnCheck').addEventListener('click', function(){
+    if (checked) return;
+
+    const name = nameInput.value.trim();
+    if (!name) { alert('Введи имя ученика!'); nameInput.focus(); return; }
+
+    const empty = [];
+    [1,2,3,4,5,6,7,8,9,10,11,12].forEach(n => {
+      if (!document.getElementById('ans-'+n).value.trim()) empty.push('Задание '+n);
+    });
+    if (empty.length > 0) { 
+      alert('Заполни все поля! Не хватает: ' + empty.join(', ')); 
+      return; 
+    }
+
+    let okCount = 0, errCount = 0;
+    let text = '📐 ОТВЕТЫ · ДЗ 22 (Тарифы)\nУченик: ' + name + '\n\n';
+
+    [1,2,3,4,5,6,7,8,9,10,11,12].forEach(n => {
+      const inp = document.getElementById('ans-'+n);
+      const val = inp.value.trim();
+      const isOk = checkNumeric(val, TASKS_CORRECT[n]);
+      
+      inp.classList.add(isOk ? 'correct' : 'wrong');
+      inp.disabled = true;
+      const mark = document.getElementById('mark-'+n);
+      mark.textContent = isOk ? '✅' : '❌';
+      mark.className = 'task-mark ' + (isOk ? 'ok' : 'err');
+      document.getElementById('task-'+n).classList.add(isOk ? 'correct' : 'wrong');
+      
+      if (isOk) {
+        okCount++;
+        text += '№' + n + '. ' + val + ' ✅ верно\n';
+      } else {
+        errCount++;
+        text += '№' + n + '. ' + val + ' ❌ неверно (верный ответ: ' + TASKS_CORRECT[n] + ')\n';
+      }
+    });
+
+    nameInput.disabled = true;
+
+    const totalCheckable = 12;
+    const percent = Math.round(okCount / totalCheckable * 100);
+
+    document.getElementById('statOk').textContent = okCount;
+    document.getElementById('statErr').textContent = errCount;
+    document.getElementById('statPercent').textContent = percent + '%';
+
+    let line = '';
+    if (okCount === 12) line = '🌟 Идеально! Всё верно!';
+    else if (okCount >= 9) line = '👍 Отличный результат!';
+    else if (okCount >= 6) line = '💪 Есть над чем поработать';
+    else line = '📚 Стоит повторить материал.';
+    document.getElementById('summaryLine').textContent = line;
+    document.getElementById('summaryBox').classList.add('show');
+
+    text += '\n📊 ИТОГО: ' + okCount + ' из ' + totalCheckable + ' верно.';
+    text += '\n📷 Задания 13 и 14. Решение в тетради (фото отдельно).';
+
+    document.getElementById('resultText').textContent = text;
+    document.getElementById('resultArea').classList.add('show');
+
+    checked = true;
+    this.disabled = true;
+    this.textContent = '✓ Тест проверен';
+    this.style.background = 'linear-gradient(135deg,#2ecc71,#27ae60)';
+    this.style.color = '#fff';
+    this.style.boxShadow = '0 6px 24px rgba(46,204,113,0.4)';
+
+    const saveData = {
+      name: name,
+      answers: {},
+      checked: true,
+      okCount: okCount,
+      errCount: errCount,
+      percent: percent,
+      text: text
+    };
+    [1,2,3,4,5,6,7,8,9,10,11,12].forEach(n => {
+      saveData.answers[n] = document.getElementById('ans-'+n).value;
+    });
+    localStorage.setItem('dz22_tarify_state', JSON.stringify(saveData));
+
+    document.getElementById('summaryBox').scrollIntoView({behavior:'smooth', block:'start'});
+  });
+
+  /* ===== КОПИРОВАНИЕ ===== */
+  document.getElementById('btnCopy').addEventListener('click', async function(){
+    const text = document.getElementById('resultText').textContent;
+    try{
+      await navigator.clipboard.writeText(text);
+      this.textContent = '✓ Скопировано!';
+      this.classList.add('copied');
+      setTimeout(()=>{ this.textContent='📋 Скопировать результат'; this.classList.remove('copied'); }, 2500);
+    }catch(e){
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+      this.textContent = '✓ Скопировано!';
+      this.classList.add('copied');
+      setTimeout(()=>{ this.textContent='📋 Скопировать результат'; this.classList.remove('copied'); }, 2500);
+    }
+  });
+
+  /* ===== СБРОС ПО ПАРОЛЮ ===== */
+  const resetModal = document.getElementById('resetModal');
+  const resetPass = document.getElementById('resetPass');
+  const resetErr = document.getElementById('resetErr');
+
+  document.getElementById('btnReset').addEventListener('click', () => {
+    resetModal.classList.add('show');
+    resetPass.value = '';
+    resetErr.textContent = '';
+    resetPass.focus();
+  });
+  document.getElementById('resetCancel').addEventListener('click', () => {
+    resetModal.classList.remove('show');
+  });
+  resetModal.addEventListener('click', (e) => {
+    if (e.target === resetModal) resetModal.classList.remove('show');
+  });
+  resetPass.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('resetConfirm').click();
+  });
+  document.getElementById('resetConfirm').addEventListener('click', () => {
+    if (resetPass.value.trim() === '2810') {
+      localStorage.removeItem('dz22_tarify_state');
+      location.reload();
+    } else {
+      resetErr.textContent = 'Неверный пароль';
+    }
+  });
+
+  /* ===== ВОССТАНОВЛЕНИЕ ===== */
+  const savedState = localStorage.getItem('dz22_tarify_state');
+  if(savedState) {
+    try {
+      const state = JSON.parse(savedState);
+      if(state.name) nameInput.value = state.name;
+      
+      if(state.answers) {
+        [1,2,3,4,5,6,7,8,9,10,11,12].forEach(n => {
+          const inp = document.getElementById('ans-'+n);
+          if(inp && state.answers[n]) inp.value = state.answers[n];
+        });
+      }
+      
+      if(state.checked) {
+        setTimeout(() => { document.getElementById('btnCheck').click(); }, 100);
+      }
+    } catch(e) { console.log('Ошибка восстановления', e); }
+  }
+</script>
+</body>
+</html>
