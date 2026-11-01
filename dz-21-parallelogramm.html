@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>ДЗ 21 · Параллелограмм · ΤΕΤΡΑΚΤΥΣ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{min-height:100vh;font-family:Georgia,'Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.06),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;padding:20px;overflow-x:hidden;display:flex;justify-content:center;}
+  .glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.5;}
+  .glow.g1{width:520px;height:520px;top:-120px;left:-120px;background:radial-gradient(circle,rgba(26,188,156,0.55),transparent 70%);}
+  .glow.g2{width:600px;height:600px;bottom:-200px;right:-180px;background:radial-gradient(circle,rgba(127,255,212,0.4),transparent 70%);}
+  
+  .corner-logo{position:fixed;top:14px;left:16px;z-index:50;font-family:'Times New Roman',serif;text-align:center;line-height:1;padding:10px 18px 12px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(26,188,156,0.45);border-radius:14px;backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(0,0,0,0.35);}
+  .corner-logo .dots{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:16px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:4px;}
+  .corner-logo .ru{font-size:10px;letter-spacing:3px;color:var(--text-soft);margin-top:2px;}
+  
+  .app{max-width:900px;width:100%;background:rgba(255,255,255,0.04);border:1.5px solid var(--glass-brd);border-radius:24px;padding:28px 30px;backdrop-filter:blur(12px);box-shadow:0 12px 50px rgba(0,0,0,0.5);position:relative;z-index:2;margin-top:50px;}
+  
+  .header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:1px solid rgba(26,188,156,0.2);padding-bottom:14px;margin-bottom:24px;}
+  .header-title{font-size:14px;color:var(--text-soft);font-style:italic;}
+  h1{font-size:clamp(18px,2.6vw,24px);color:var(--mint);letter-spacing:1.5px;text-align:center;margin-bottom:6px;}
+  .subtitle{text-align:center;font-size:14px;color:var(--text-soft);font-style:italic;margin-bottom:20px;}
+  
+  .name-block{background:linear-gradient(135deg,rgba(244,211,94,0.12),rgba(26,188,156,0.08));border:1.5px solid var(--gold);border-radius:14px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .name-block label{font-size:15px;color:var(--gold-light);font-weight:700;white-space:nowrap;}
+  .name-block input{flex:1;min-width:200px;padding:10px 14px;border-radius:10px;border:2px solid rgba(244,211,94,0.4);background:rgba(0,0,0,0.3);color:#fff;font-family:Georgia,serif;font-size:16px;outline:none;transition:0.2s;}
+  .name-block input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(244,211,94,0.25);}
+  .name-block input::placeholder{color:#a89a6a;font-style:italic;}
+  
+  .intro-block{background:rgba(255,255,255,0.03);border-radius:16px;padding:18px 22px;margin-bottom:20px;border-left:4px solid var(--teal);font-size:15px;line-height:1.75;color:var(--text);}
+  .intro-block b{color:var(--mint);}
+  .intro-block .signature{display:block;text-align:right;font-size:13px;color:var(--text-soft);font-style:italic;margin-top:10px;}
+  
+  .task-block{background:rgba(0,0,0,0.2);border-radius:16px;padding:18px 22px;margin-bottom:16px;border-left:4px solid var(--mint);transition:0.3s;}
+  .task-block.correct{border-left-color:var(--ok);background:rgba(46,204,113,0.08);}
+  .task-block.wrong{border-left-color:var(--err);background:rgba(255,107,107,0.08);}
+  
+  .task-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
+  .task-num{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;background:linear-gradient(135deg,var(--gold),#c9a32b);color:#2a1f00;border-radius:10px;font-family:'Courier New',monospace;font-weight:700;font-size:15px;flex-shrink:0;}
+  .task-mark{float:right;font-size:20px;font-weight:800;padding-top:4px;}
+  .task-mark.ok{color:var(--ok);}
+  .task-mark.err{color:var(--err);}
+  
+  .task-question{font-size:16px;color:var(--text);margin-bottom:12px;line-height:1.6;}
+  .task-question b{color:var(--mint);}
+  
+  /* Задачи с чертежами */
+  .task-graph { background: transparent; border: none; padding: 0; display: flex; justify-content: center; margin-bottom: 15px; }
+  .task-graph svg { display: block; max-width: 100%; height: auto; }
+
+  .answer-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px;}
+  .answer-row label{font-size:15px;color:var(--gold-light);font-weight:700;min-width:80px;}
+  .answer-row input{flex:1;min-width:180px;padding:11px 14px;border-radius:10px;border:1.5px solid var(--glass-brd);background:rgba(10,42,51,0.5);color:var(--text);font-family:'Cambria Math',serif;font-size:16px;outline:none;transition:0.2s;}
+  .answer-row input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+  .answer-row input::placeholder{color:var(--text-soft);opacity:0.5;font-style:italic;}
+  .answer-row input.correct{border-color:var(--ok);background:rgba(46,204,113,0.15);}
+  .answer-row input.wrong{border-color:var(--err);background:rgba(255,107,107,0.15);}
+  .answer-row input:disabled{opacity:0.5;cursor:not-allowed;background:rgba(0,0,0,0.6);}
+
+  /* Задание 11 */
+  .claims-list{display:flex;flex-direction:column;gap:8px;margin-top:10px;}
+  .claim{display:flex;gap:12px;align-items:flex-start;padding:10px 14px;background:rgba(255,255,255,0.02);border:1px solid rgba(26,188,156,0.2);border-radius:10px;cursor:pointer;transition:0.2s;}
+  .claim:hover{border-color:var(--mint);background:rgba(26,188,156,0.05);}
+  .claim input{width:22px;height:22px;accent-color:var(--teal);cursor:pointer;flex-shrink:0;margin-top:2px;}
+  .claim .claim-num{font-family:'Courier New',monospace;color:var(--gold);font-weight:700;min-width:22px;flex-shrink:0;}
+  .claim .claim-text{font-size:15px;line-height:1.5;color:var(--text);}
+  .claim.correct{border-color:var(--ok);background:rgba(46,204,113,0.08);}
+  .claim.wrong{border-color:var(--err);background:rgba(255,107,107,0.08);}
+  
+  .photo-note{background:rgba(244,211,94,0.08);border-left:4px solid var(--gold);border-radius:0 12px 12px 0;padding:14px 18px;font-size:15px;line-height:1.6;color:var(--text);margin-top:10px;}
+  .photo-note b{color:var(--gold-light);}
+
+  /* Кнопки */
+  .btn-check{width:100%;padding:16px 32px;font-size:18px;font-weight:700;font-family:inherit;letter-spacing:1px;border:none;border-radius:16px;background:linear-gradient(135deg,#f4d35e,#c9a32b);color:#2a1f00;cursor:pointer;transition:0.3s;box-shadow:0 6px 24px rgba(244,211,94,0.4);margin-top:16px;}
+  .btn-check:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(244,211,94,0.55);}
+  .btn-check:disabled{opacity:0.5;cursor:default;transform:none;}
+  .btn-reset{display:block;width:100%;margin-top:12px;padding:14px 24px;font-size:15px;font-weight:700;font-family:inherit;border:2px solid var(--coral);border-radius:12px;background:transparent;color:var(--coral);cursor:pointer;transition:0.25s;letter-spacing:1px;}
+  .btn-reset:hover{background:rgba(255,107,107,0.12);}
+
+  /* Итоги */
+  .summary-box{display:none;background:linear-gradient(135deg,rgba(26,188,156,0.15),rgba(244,211,94,0.10));border:2px solid var(--mint);border-radius:16px;padding:20px;margin-top:20px;text-align:center;}
+  .summary-box.show{display:block;animation:fade 0.5s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .summary-title{font-size:16px;color:var(--mint);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:14px;}
+  .summary-stats{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:10px;}
+  .summary-stat{display:flex;flex-direction:column;align-items:center;gap:4px;}
+  .summary-stat .num{font-family:'Courier New',monospace;font-size:38px;font-weight:800;color:var(--gold);line-height:1;}
+  .summary-stat .lbl{font-size:12px;color:var(--text-soft);letter-spacing:1.5px;text-transform:uppercase;}
+  .summary-stat .num.ok{color:var(--ok);}
+  .summary-stat .num.err{color:var(--err);}
+  .summary-line{font-size:15px;color:var(--text);margin-top:8px;font-style:italic;}
+
+  /* Текст для учителя */
+  .result-area{margin-top:20px;display:none;}
+  .result-area.show{display:block;animation:fade 0.4s ease;}
+  .result-text{background:rgba(0,0,0,0.35);border:1.5px solid var(--mint);border-radius:12px;padding:16px 18px;font-family:'Courier New',monospace;font-size:13px;color:var(--text);white-space:pre-wrap;line-height:1.7;user-select:all;cursor:text;}
+  .btn-copy{display:block;width:100%;margin-top:12px;padding:13px 24px;font-size:15px;font-weight:700;font-family:inherit;border:2px solid var(--glass-brd);border-radius:12px;background:transparent;color:var(--mint);cursor:pointer;transition:0.25s;letter-spacing:1px;}
+  .btn-copy:hover{background:rgba(26,188,156,0.15);}
+  .btn-max{display:block;width:100%;margin-top:12px;padding:14px 24px;font-size:16px;font-weight:700;font-family:inherit;border:none;border-radius:12px;background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;cursor:pointer;text-decoration:none;text-align:center;letter-spacing:1px;box-shadow:0 6px 20px rgba(26,188,156,0.4);transition:0.2s;}
+  .btn-max:hover{transform:translateY(-2px);}
+
+  /* Модалка */
+  .modal-overlay{display:none;position:fixed;inset:0;z-index:100;background:rgba(4,20,24,0.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px;}
+  .modal-overlay.show{display:flex;}
+  .modal-box{background:linear-gradient(160deg,#0d3b47,#134e5e);border:1.5px solid var(--coral);border-radius:18px;padding:24px 26px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.6);}
+  .modal-title{font-family:'Times New Roman',serif;font-size:20px;color:var(--coral);margin-bottom:10px;letter-spacing:1px;}
+  .modal-text{font-size:14px;color:var(--text-soft);line-height:1.6;margin-bottom:16px;}
+  .modal-input{width:100%;padding:12px 14px;border-radius:10px;border:2px solid rgba(255,107,107,0.4);background:rgba(0,0,0,0.35);color:#fff;font-family:'Courier New',monospace;font-size:18px;letter-spacing:3px;text-align:center;outline:none;}
+  .modal-input:focus{border-color:var(--coral);box-shadow:0 0 0 3px rgba(255,107,107,0.2);}
+  .modal-err{color:var(--coral);font-size:13px;min-height:18px;margin-top:8px;text-align:center;font-style:italic;}
+  .modal-actions{display:flex;gap:10px;margin-top:14px;}
+  .modal-btn{flex:1;padding:11px 16px;border-radius:10px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:0.2s;border:none;}
+  .modal-btn.cancel{background:transparent;border:1.5px solid var(--glass-brd);color:var(--text-soft);}
+  .modal-btn.confirm{background:linear-gradient(135deg,#ff6b6b,#c0392b);color:#fff;}
+
+  @media(max-width:600px){
+    .app{padding:18px 14px;}
+    .name-block{flex-direction:column;align-items:stretch;gap:8px;}
+    .name-block label{text-align:center;}
+    .task-block{padding:14px 16px;}
+    .answer-row label{min-width:60px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div><div class="glow g2"></div>
+
+<div class="corner-logo">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+</div>
+
+<div class="app">
+  <div class="header">
+    <div class="header-title">ДЗ 21 · Параллелограмм · 12 заданий</div>
+    <div style="font-size:13px;color:var(--text-soft);">Геометрия</div>
+  </div>
+
+  <h1>Параллелограмм</h1>
+  <div class="subtitle">Свойства, углы, площадь</div>
+
+  <div class="name-block">
+    <label for="studentName">👤 Имя ученика:</label>
+    <input type="text" id="studentName" placeholder="Введи своё имя и фамилию..." maxlength="60" autocomplete="off">
+  </div>
+
+  <div class="intro-block">
+    <b>📐 Как выполнять:</b><br>
+    • Задания 1–10, 12 — реши и впиши число-ответ.<br>
+    • Задание 11 — отметь верные утверждения галочками.<br>
+    • Задание 12 — реши в тетради (фото отдельно).<br>
+    • Нажми <b>«Проверить»</b>.
+    <span class="signature">ΤΕΤΡΑΚΤΥΣ · Школа математики Елены Михалевой</span>
+  </div>
+
+  <!-- Задача 1 -->
+  <div class="task-block" id="task-1">
+    <div class="task-header">
+      <span class="task-num">1</span>
+      <span class="task-mark" id="mark-1"></span>
+    </div>
+    <div class="task-question">
+      Диагонали AC и BD параллелограмма ABCD пересекаются в точке O, AC = <b>6</b>, BD = <b>12</b>, AB = <b>4</b>. Найдите DO.
+    </div>
+    <div class="task-graph">
+      <svg width="240" height="140" viewBox="0 0 240 140">
+        <polygon points="40,110 80,30 200,30 160,110" fill="none" stroke="var(--mint)" stroke-width="2"/>
+        <line x1="40" y1="110" x2="200" y2="30" stroke="var(--mint)" stroke-width="1.5"/>
+        <line x1="80" y1="30" x2="160" y2="110" stroke="var(--mint)" stroke-width="1.5"/>
+        <circle cx="120" cy="70" r="3" fill="var(--mint)"/>
+        <text x="25" y="125" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">A</text>
+        <text x="75" y="20" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">B</text>
+        <text x="205" y="20" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">C</text>
+        <text x="155" y="125" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">D</text>
+        <text x="130" y="70" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">O</text>
+      </svg>
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-1" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- Задача 2 -->
+  <div class="task-block" id="task-2">
+    <div class="task-header">
+      <span class="task-num">2</span>
+      <span class="task-mark" id="mark-2"></span>
+    </div>
+    <div class="task-question">
+      Один из углов параллелограмма равен <b>102°</b>. Найдите меньший угол этого параллелограмма. Ответ дайте в градусах.
+    </div>
+    <div class="task-graph">
+      <svg width="200" height="100" viewBox="0 0 200 100">
+        <polygon points="20,10 160,10 180,80 40,80" fill="none" stroke="var(--mint)" stroke-width="2"/>
+      </svg>
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-2" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- Задача 3 -->
+  <div class="task-block" id="task-3">
+    <div class="task-header">
+      <span class="task-num">3</span>
+      <span class="task-mark" id="mark-3"></span>
+    </div>
+    <div class="task-question">
+      Диагональ AC параллелограмма ABCD образует с его сторонами углы, равные <b>30°</b> и <b>45°</b>. Найдите больший угол параллелограмма.
+    </div>
+    <div class="task-graph">
+      <svg width="240" height="140" viewBox="0 0 240 140">
+        <polygon points="40,110 80,30 200,30 160,110" fill="none" stroke="var(--mint)" stroke-width="2"/>
+        <line x1="40" y1="110" x2="200" y2="30" stroke="var(--mint)" stroke-width="1.5"/>
+        <text x="25" y="125" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">A</text>
+        <text x="75" y="20" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">B</text>
+        <text x="205" y="20" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">C</text>
+        <text x="155" y="125" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">D</text>
+      </svg>
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-3" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- Задача 4 -->
+  <div class="task-block" id="task-4">
+    <div class="task-header">
+      <span class="task-num">4</span>
+      <span class="task-mark" id="mark-4"></span>
+    </div>
+    <div class="task-question">
+      Найдите острый угол параллелограмма ABCD, если биссектриса угла A образует со стороной BC угол, равный <b>9°</b>. Ответ дайте в градусах.
+    </div>
+    <div class="task-graph">
+      <svg width="240" height="140" viewBox="0 0 240 140">
+        <polygon points="40,110 80,30 200,30 160,110" fill="none" stroke="var(--mint)" stroke-width="2"/>
+        <line x1="40" y1="110" x2="160" y2="30" stroke="var(--mint)" stroke-width="1.5"/>
+        <text x="25" y="125" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">A</text>
+        <text x="75" y="20" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">B</text>
+        <text x="205" y="20" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">C</text>
+        <text x="155" y="125" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">D</text>
+        <text x="155" y="20" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">E</text>
+      </svg>
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-4" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- Задача 5 -->
+  <div class="task-block" id="task-5">
+    <div class="task-header">
+      <span class="task-num">5</span>
+      <span class="task-mark" id="mark-5"></span>
+    </div>
+    <div class="task-question">
+      Площадь параллелограмма равна <b>60</b>, а две его стороны равны <b>4</b> и <b>20</b>. Найдите его высоты. В ответе укажите большую высоту.
+    </div>
+    <div class="task-graph">
+      <svg width="240" height="120" viewBox="0 0 240 120">
+        <polygon points="40,100 80,20 200,20 160,100" fill="none" stroke="var(--mint)" stroke-width="2"/>
+        <text x="25" y="115" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">A</text>
+        <text x="75" y="15" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">B</text>
+        <text x="205" y="15" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">C</text>
+        <text x="155" y="115" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">D</text>
+      </svg>
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-5" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- Задача 6 -->
+  <div class="task-block" id="task-6">
+    <div class="task-header">
+      <span class="task-num">6</span>
+      <span class="task-mark" id="mark-6"></span>
+    </div>
+    <div class="task-question">
+      Найдите площадь параллелограмма, изображённого на рисунке:
+    </div>
+    <div class="task-graph">
+      <svg width="240" height="110" viewBox="0 0 240 110">
+        <polygon points="100,20 220,20 140,80 20,80" fill="none" stroke="var(--mint)" stroke-width="2"/>
+        <line x1="100" y1="20" x2="100" y2="80" stroke="var(--mint)" stroke-width="1.5"/>
+        <polyline points="100,70 110,70 110,80" fill="none" stroke="var(--mint)" stroke-width="1.2"/>
+        <text x="55" y="52" font-family="Times New Roman" font-size="16" fill="var(--mint)" font-weight="bold">5</text>
+        <text x="50" y="95" font-family="Times New Roman" font-size="16" fill="var(--mint)" font-weight="bold">3</text>
+        <text x="110" y="55" font-family="Times New Roman" font-size="16" fill="var(--mint)" font-weight="bold">4</text>
+        <text x="120" y="95" font-family="Times New Roman" font-size="16" fill="var(--mint)" font-weight="bold">2</text>
+      </svg>
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-6" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- Задача 7 -->
+  <div class="task-block" id="task-7">
+    <div class="task-header">
+      <span class="task-num">7</span>
+      <span class="task-mark" id="mark-7"></span>
+    </div>
+    <div class="task-question">
+      Площадь параллелограмма ABCD равна <b>68</b>. Точка E — середина стороны AB. Найдите площадь треугольника CBE.
+    </div>
+    <div class="task-graph">
+      <svg width="240" height="140" viewBox="0 0 240 140">
+        <polygon points="40,120 80,20 200,20 160,120" fill="none" stroke="var(--mint)" stroke-width="2"/>
+        <circle cx="60" cy="70" r="2.5" fill="var(--mint)"/>
+        <line x1="200" y1="20" x2="60" y2="70" stroke="var(--mint)" stroke-width="1.5"/>
+        <text x="25" y="135" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">A</text>
+        <text x="75" y="15" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">B</text>
+        <text x="205" y="15" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">C</text>
+        <text x="155" y="135" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">D</text>
+        <text x="45" y="65" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">E</text>
+      </svg>
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-7" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- Задача 8 -->
+  <div class="task-block" id="task-8">
+    <div class="task-header">
+      <span class="task-num">8</span>
+      <span class="task-mark" id="mark-8"></span>
+    </div>
+    <div class="task-question">
+      В параллелограмме ABCD диагональ AC в 2 раза больше стороны AB и ∠ACD = <b>169°</b>. Найдите угол между диагоналями параллелограмма.
+    </div>
+    <div class="task-graph">
+      <svg width="280" height="140" viewBox="0 0 280 140">
+        <polygon points="30,100 100,40 240,40 170,100" fill="none" stroke="var(--mint)" stroke-width="2"/>
+        <line x1="30" y1="100" x2="240" y2="40" stroke="var(--mint)" stroke-width="1.5"/>
+        <line x1="100" y1="40" x2="170" y2="100" stroke="var(--mint)" stroke-width="1.5"/>
+        <text x="15" y="115" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">A</text>
+        <text x="95" y="25" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">B</text>
+        <text x="245" y="35" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">C</text>
+        <text x="175" y="115" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">D</text>
+      </svg>
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-8" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- Задача 9 -->
+  <div class="task-block" id="task-9">
+    <div class="task-header">
+      <span class="task-num">9</span>
+      <span class="task-mark" id="mark-9"></span>
+    </div>
+    <div class="task-question">
+      Высота BH параллелограмма ABCD делит его сторону AD на отрезки AH=2 и HD=64. Диагональ параллелограмма BD равна 80. Найдите площадь параллелограмма.
+    </div>
+    <div class="task-graph">
+      <svg width="260" height="140" viewBox="0 0 260 140">
+        <polygon points="30,110 70,20 210,20 170,110" fill="none" stroke="var(--mint)" stroke-width="2"/>
+        <line x1="70" y1="20" x2="70" y2="110" stroke="var(--mint)" stroke-width="1.5"/>
+        <polyline points="70,100 80,100 80,110" fill="none" stroke="var(--mint)" stroke-width="1.2"/>
+        <line x1="70" y1="20" x2="170" y2="110" stroke="var(--mint)" stroke-width="1.5"/>
+        <text x="15" y="125" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">A</text>
+        <text x="60" y="15" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">B</text>
+        <text x="215" y="15" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">C</text>
+        <text x="165" y="125" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">D</text>
+        <text x="75" y="125" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">H</text>
+      </svg>
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-9" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- Задача 10 -->
+  <div class="task-block" id="task-10">
+    <div class="task-header">
+      <span class="task-num">10</span>
+      <span class="task-mark" id="mark-10"></span>
+    </div>
+    <div class="task-question">
+      Площадь параллелограмма ABCD равна <b>76</b>. Точка E — середина стороны AB. Найдите площадь трапеции DAEC.
+    </div>
+    <div class="task-graph">
+      <svg width="240" height="140" viewBox="0 0 240 140">
+        <polygon points="40,120 80,20 200,20 160,120" fill="none" stroke="var(--mint)" stroke-width="2"/>
+        <line x1="200" y1="20" x2="60" y2="70" stroke="var(--mint)" stroke-width="1.5"/>
+        <circle cx="60" cy="70" r="2.5" fill="var(--mint)"/>
+        <text x="25" y="135" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">A</text>
+        <text x="75" y="15" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">B</text>
+        <text x="205" y="15" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">C</text>
+        <text x="155" y="135" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">D</text>
+        <text x="45" y="65" font-family="Times New Roman" font-size="18" fill="var(--mint)" font-weight="bold">E</text>
+      </svg>
+    </div>
+    <div class="answer-row">
+      <label>Ответ:</label>
+      <input type="text" id="ans-10" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- Задача 11 (Чекбоксы) -->
+  <div class="task-block" id="task-11">
+    <div class="task-header">
+      <span class="task-num">11</span>
+      <span class="task-mark" id="mark-11"></span>
+    </div>
+    <div class="task-question">
+      Отметьте верные высказывания.
+    </div>
+    <div class="claims-list" id="claimsList11">
+      <!-- Сюда будут добавлены чекбоксы через JS -->
+    </div>
+  </div>
+
+  <!-- Задача 12 (Развернутый ответ) -->
+  <div class="task-block" id="task-12">
+    <div class="task-header">
+      <span class="task-num">12</span>
+    </div>
+    <div class="task-question">
+      Расстояние между пристанями А и В равно <b>48 км</b>. Из А в В по течению реки отправился плот, а через час вслед за ним отправилась моторная лодка, которая, прибыв в пункт В, тотчас повернула обратно и возвратилась в А. К этому времени плот прошёл <b>25 км</b>. Найдите скорость лодки в неподвижной воде, если скорость течения реки равна <b>5 км/ч</b>.
+    </div>
+    <div class="photo-note">
+      📷 <b>Реши в тетради</b> и пришли фото решения учителю в Макс.
+    </div>
+  </div>
+
+  <button class="btn-check" id="btnCheck">✅ Проверить</button>
+  <button class="btn-reset" id="btnReset">🔒 Очистить всё</button>
+
+  <!-- Итоги -->
+  <div class="summary-box" id="summaryBox">
+    <div class="summary-title">📊 Результат</div>
+    <div class="summary-stats">
+      <div class="summary-stat">
+        <span class="num ok" id="statOk">0</span>
+        <span class="lbl">✅ верно</span>
+      </div>
+      <div class="summary-stat">
+        <span class="num err" id="statErr">0</span>
+        <span class="lbl">❌ неверно</span>
+      </div>
+      <div class="summary-stat">
+        <span class="num" id="statPercent">0%</span>
+        <span class="lbl">📊 процент</span>
+      </div>
+    </div>
+    <div class="summary-line" id="summaryLine">—</div>
+  </div>
+
+  <!-- Текст для учителя -->
+  <div class="result-area" id="resultArea">
+    <div class="result-text" id="resultText"></div>
+    <div class="hint" style="text-align:center;font-size:13px;color:var(--gold-light);margin-top:10px;">👇 Скопируй текст или отправь учителю</div>
+    <button class="btn-copy" id="btnCopy">📋 Скопировать результат</button>
+    <a class="btn-max" href="https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes" target="_blank" rel="noopener">💬 Отправить в Макс</a>
+  </div>
+
+</div>
+
+<!-- МОДАЛКА СБРОСА -->
+<div class="modal-overlay" id="resetModal">
+  <div class="modal-box">
+    <div class="modal-title">🔒 Сброс теста</div>
+    <div class="modal-text">Введи пароль, чтобы очистить все ответы и разблокировать поля.</div>
+    <input type="password" id="resetPass" class="modal-input" placeholder="Пароль" autocomplete="off">
+    <div class="modal-err" id="resetErr"></div>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" id="resetCancel">Отмена</button>
+      <button class="modal-btn confirm" id="resetConfirm">Сбросить</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ===== ОТВЕТЫ ===== */
+  const TASKS_CORRECT = {
+    1: '6',
+    2: '78',
+    3: '105',
+    4: '18',
+    5: '15',
+    6: '20',
+    7: '17',
+    8: '5.5',
+    9: '3168',
+    10: '57'
+  };
+
+  const CLAIMS11_CORRECT = [2, 4, 7];
+  const CLAIMS11_TEXT = [
+    'Если стороны одного четырёхугольника соответственно равны сторонам другого четырёхугольника, то такие четырёхугольники равны.',
+    'Сумма углов выпуклого четырёхугольника равна 360 градусам.',
+    'Диагонали параллелограмма равны',
+    'В параллелограмме есть два равных угла.',
+    'Площадь любого параллелограмма равна произведению длин его сторон.',
+    'Площадь параллелограмма равна половине произведения его диагоналей.',
+    'Диагональ параллелограмма делит его на два равных треугольника.'
+  ];
+
+  // Рендер чекбоксов
+  (function renderClaims() {
+    const box = document.getElementById('claimsList11');
+    CLAIMS11_TEXT.forEach((text, i) => {
+      const el = document.createElement('label');
+      el.className = 'claim';
+      el.id = 'c11-' + (i + 1);
+      el.innerHTML = `
+        <input type="checkbox" data-claim="${i + 1}" id="c11-cb-${i + 1}">
+        <span class="claim-num">${i + 1}.</span>
+        <span class="claim-text">${text}</span>
+      `;
+      box.appendChild(el);
+    });
+  })();
+
+  /* ===== СОХРАНЕНИЕ ИМЕНИ ===== */
+  const nameInput = document.getElementById('studentName');
+  const savedName = localStorage.getItem('dz21_parallelogram_name');
+  if(savedName) nameInput.value = savedName;
+  nameInput.addEventListener('input', ()=>{
+    localStorage.setItem('dz21_parallelogram_name', nameInput.value.trim());
+  });
+
+  function normAnswer(s){
+    return String(s||'').trim().replace(/\s+/g,'').replace(',','.');
+  }
+  function checkNumeric(userAns, correctAns){
+    const u = normAnswer(userAns);
+    const c = normAnswer(correctAns);
+    if (!u) return false;
+    if (u === c) return true;
+    const un = parseFloat(u), cn = parseFloat(c);
+    if (!isNaN(un) && !isNaN(cn) && Math.abs(un-cn) < 0.01) return true;
+    return false;
+  }
+
+  /* ===== ПРОВЕРКА ===== */
+  let checked = false;
+  document.getElementById('btnCheck').addEventListener('click', function(){
+    if (checked) return;
+
+    const name = nameInput.value.trim();
+    if (!name) { alert('Введи имя ученика!'); nameInput.focus(); return; }
+
+    const empty = [];
+    [1,2,3,4,5,6,7,8,9,10].forEach(n => {
+      if (!document.getElementById('ans-'+n).value.trim()) empty.push('Задание '+n);
+    });
+    if (document.querySelectorAll('#claimsList11 input:checked').length === 0) empty.push('Задание 11');
+
+    if (empty.length > 0) { 
+      alert('Заполни все поля! Не хватает: ' + empty.join(', ')); 
+      return; 
+    }
+
+    let okCount = 0, errCount = 0;
+    let text = '📐 ОТВЕТЫ · ДЗ 21 (Параллелограмм)\nУченик: ' + name + '\n\n';
+
+    [1,2,3,4,5,6,7,8,9,10].forEach(n => {
+      const inp = document.getElementById('ans-'+n);
+      const val = inp.value.trim();
+      const isOk = checkNumeric(val, TASKS_CORRECT[n]);
+      
+      inp.classList.add(isOk ? 'correct' : 'wrong');
+      inp.disabled = true;
+      const mark = document.getElementById('mark-'+n);
+      mark.textContent = isOk ? '✅' : '❌';
+      mark.className = 'task-mark ' + (isOk ? 'ok' : 'err');
+      document.getElementById('task-'+n).classList.add(isOk ? 'correct' : 'wrong');
+      
+      if (isOk) {
+        okCount++;
+        text += '№' + n + '. ' + val + ' ✅ верно\n';
+      } else {
+        errCount++;
+        text += '№' + n + '. ' + val + ' ❌ неверно (верный ответ: ' + TASKS_CORRECT[n] + ')\n';
+      }
+    });
+
+    const selected11 = [];
+    document.querySelectorAll('#claimsList11 input:checked').forEach(cb => {
+      selected11.push(parseInt(cb.dataset.claim));
+    });
+    selected11.sort((a,b)=>a-b);
+    const task11Ok = selected11.length === CLAIMS11_CORRECT.length && 
+                     selected11.every((v,i) => v === CLAIMS11_CORRECT[i]);
+
+    for (let i=1; i<=CLAIMS11_TEXT.length; i++) {
+      const el = document.getElementById('c11-'+i);
+      const cb = document.getElementById('c11-cb-'+i);
+      cb.disabled = true;
+      const isCorrect = CLAIMS11_CORRECT.includes(i);
+      const isChecked = selected11.includes(i);
+      if (isCorrect === isChecked) el.classList.add('correct');
+      else el.classList.add('wrong');
+    }
+    const m11 = document.getElementById('mark-11');
+    m11.textContent = task11Ok ? '✅' : '❌';
+    m11.className = 'task-mark ' + (task11Ok ? 'ok' : 'err');
+    document.getElementById('task-11').classList.add(task11Ok ? 'correct' : 'wrong');
+
+    if (task11Ok) {
+      okCount++;
+      text += '№11. ' + selected11.join(', ') + ' ✅ верно\n';
+    } else {
+      errCount++;
+      text += '№11. ' + selected11.join(', ') + ' ❌ неверно (верные: ' + CLAIMS11_CORRECT.join(', ') + ')\n';
+    }
+
+    nameInput.disabled = true;
+
+    const totalCheckable = 11;
+    const percent = Math.round(okCount / totalCheckable * 100);
+
+    document.getElementById('statOk').textContent = okCount;
+    document.getElementById('statErr').textContent = errCount;
+    document.getElementById('statPercent').textContent = percent + '%';
+
+    let line = '';
+    if (okCount === 11) line = '🌟 Идеально! Тест сдан на максимум!';
+    else if (okCount >= 9) line = '👍 Отличный результат!';
+    else if (okCount >= 6) line = '💪 Есть над чем поработать';
+    else line = '📚 Стоит повторить материал.';
+    document.getElementById('summaryLine').textContent = line;
+    document.getElementById('summaryBox').classList.add('show');
+
+    text += '\n📊 ИТОГО: ' + okCount + ' из ' + totalCheckable + ' верно.';
+    text += '\n📷 Задание 12. Решение в тетради (фото отдельно).';
+
+    document.getElementById('resultText').textContent = text;
+    document.getElementById('resultArea').classList.add('show');
+
+    checked = true;
+    this.disabled = true;
+    this.textContent = '✓ Тест проверен';
+    this.style.background = 'linear-gradient(135deg,#2ecc71,#27ae60)';
+    this.style.color = '#fff';
+    this.style.boxShadow = '0 6px 24px rgba(46,204,113,0.4)';
+
+    // СОХРАНЕНИЕ
+    const saveData = {
+      name: name,
+      answers: {},
+      claims11: selected11,
+      checked: true,
+      okCount: okCount,
+      errCount: errCount,
+      percent: percent,
+      text: text
+    };
+    [1,2,3,4,5,6,7,8,9,10].forEach(n => {
+      saveData.answers[n] = document.getElementById('ans-'+n).value;
+    });
+    localStorage.setItem('dz21_parallelogram_state', JSON.stringify(saveData));
+
+    document.getElementById('summaryBox').scrollIntoView({behavior:'smooth', block:'start'});
+  });
+
+  /* ===== КОПИРОВАНИЕ ===== */
+  document.getElementById('btnCopy').addEventListener('click', async function(){
+    const text = document.getElementById('resultText').textContent;
+    try{
+      await navigator.clipboard.writeText(text);
+      this.textContent = '✓ Скопировано!';
+      this.classList.add('copied');
+      setTimeout(()=>{ this.textContent='📋 Скопировать результат'; this.classList.remove('copied'); }, 2500);
+    }catch(e){
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+      this.textContent = '✓ Скопировано!';
+      this.classList.add('copied');
+      setTimeout(()=>{ this.textContent='📋 Скопировать результат'; this.classList.remove('copied'); }, 2500);
+    }
+  });
+
+  /* ===== СБРОС ПО ПАРОЛЮ ===== */
+  const resetModal = document.getElementById('resetModal');
+  const resetPass = document.getElementById('resetPass');
+  const resetErr = document.getElementById('resetErr');
+
+  document.getElementById('btnReset').addEventListener('click', () => {
+    resetModal.classList.add('show');
+    resetPass.value = '';
+    resetErr.textContent = '';
+    resetPass.focus();
+  });
+  document.getElementById('resetCancel').addEventListener('click', () => {
+    resetModal.classList.remove('show');
+  });
+  resetModal.addEventListener('click', (e) => {
+    if (e.target === resetModal) resetModal.classList.remove('show');
+  });
+  resetPass.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('resetConfirm').click();
+  });
+  document.getElementById('resetConfirm').addEventListener('click', () => {
+    if (resetPass.value.trim() === '2810') {
+      localStorage.removeItem('dz21_parallelogram_state');
+      location.reload();
+    } else {
+      resetErr.textContent = 'Неверный пароль';
+    }
+  });
+
+  /* ===== ВОССТАНОВЛЕНИЕ ===== */
+  const savedState = localStorage.getItem('dz21_parallelogram_state');
+  if(savedState) {
+    try {
+      const state = JSON.parse(savedState);
+      if(state.name) nameInput.value = state.name;
+      
+      if(state.answers) {
+        [1,2,3,4,5,6,7,8,9,10].forEach(n => {
+          const inp = document.getElementById('ans-'+n);
+          if(inp && state.answers[n]) inp.value = state.answers[n];
+        });
+      }
+      
+      if (state.claims11) {
+        state.claims11.forEach(num => {
+          const cb = document.getElementById('c11-cb-'+num);
+          if (cb) cb.checked = true;
+        });
+      }
+      
+      if(state.checked) {
+        setTimeout(() => { document.getElementById('btnCheck').click(); }, 100);
+      }
+    } catch(e) { console.log('Ошибка восстановления', e); }
+  }
+</script>
+</body>
+</html>
