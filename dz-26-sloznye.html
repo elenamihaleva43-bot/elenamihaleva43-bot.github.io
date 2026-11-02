@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>ДЗ · Тема 6 · ΤΕΤΡΑΚΤΥΣ</title>
+
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass-brd:rgba(26,188,156,0.4);
+  }
+  
+  html,body{
+    min-height:100vh;
+    font-family:Georgia,'Times New Roman',serif;
+    color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.06),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;
+    padding: 20px;
+    overflow-x:hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.5;}
+  .glow.g1{width:520px;height:520px;top:-120px;left:-120px;background:radial-gradient(circle,rgba(26,188,156,0.55),transparent 70%);}
+  .glow.g2{width:600px;height:600px;bottom:-200px;right:-180px;background:radial-gradient(circle,rgba(127,255,212,0.4),transparent 70%);}
+  
+  .corner-logo{position:fixed;top:14px;left:16px;z-index:50;font-family:'Times New Roman',serif;text-align:center;line-height:1;padding:10px 18px 12px;background:rgba(10,42,51,0.65);border:1.5px solid rgba(26,188,156,0.45);border-radius:14px;backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(0,0,0,0.35);}
+  .corner-logo .dots{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:var(--mint);line-height:1.05;}
+  .corner-logo .gr{font-size:16px;letter-spacing:2px;font-weight:700;color:var(--teal);margin-top:4px;}
+  .corner-logo .ru{font-size:10px;letter-spacing:3px;color:var(--text-soft);margin-top:2px;}
+  
+  .app{
+    max-width: 900px;
+    width: 100%;
+    background:rgba(255,255,255,0.04);
+    border:1.5px solid var(--glass-brd);
+    border-radius:24px;
+    padding:35px 40px;
+    backdrop-filter:blur(12px);
+    box-shadow:0 12px 50px rgba(0,0,0,0.5);
+    position:relative;
+    z-index:2;
+    margin-top:50px;
+    margin-bottom:40px;
+  }
+  
+  .sheet-header { text-align: center; margin-bottom: 30px; }
+  .sheet-title { font-size: 24px; font-weight: bold; line-height: 1.2; color: var(--mint); }
+  .sheet-subtitle { font-size: 16px; font-weight: bold; color: var(--text); margin-top: 8px; }
+  
+  /* Список задач */
+  .tasks-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .task-item {
+    background: rgba(0,0,0,0.2);
+    border-radius: 14px;
+    padding: 20px 24px;
+    border-left: 4px solid var(--teal);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    border-right: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: 0.2s;
+  }
+  .task-item:hover {
+    background: rgba(26,188,156,0.08);
+    border-left-color: var(--mint);
+  }
+
+  .task-text {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+  .task-text b { color: var(--mint); }
+
+  /* Кнопка отправки внизу */
+  .send-block {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px dashed rgba(26,188,156,0.3);
+  }
+  .btn-max {
+    display: inline-block;
+    padding: 16px 40px;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: inherit;
+    color: #04231d;
+    background: linear-gradient(135deg, #1abc9c, #16a085);
+    border: none;
+    border-radius: 14px;
+    text-decoration: none;
+    box-shadow: 0 6px 20px rgba(26,188,156,0.4);
+    transition: 0.3s;
+    cursor: pointer;
+  }
+  .btn-max:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(26,188,156,0.6);
+  }
+
+  @media(max-width: 600px){
+    .app{padding:20px 15px;}
+    .task-item { padding: 15px; }
+    .task-text { font-size: 15px; }
+    .btn-max { width: 100%; padding: 16px 20px; font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div><div class="glow g2"></div>
+
+<div class="corner-logo">
+  <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+  <div class="gr">ΤΕΤΡΑΚΤΥΣ</div>
+  <div class="ru">ТЕТРАКТИС</div>
+</div>
+
+<div class="app">
+  <div class="sheet-header">
+    <div class="sheet-title">Домашнее задание. Тема 6.</div>
+    <div class="sheet-subtitle">Максимальный балл 18. Ваш балл _____</div>
+  </div>
+
+  <div class="tasks-container">
+    
+    <!-- Задача 1 -->
+    <div class="task-item">
+      <div class="task-text">
+        <b>1.</b> Биссектриса угла A параллелограмма ABCD пересекает сторону BC в точке K. Найдите периметр параллелограмма, если BK = <b>8</b>, CK = <b>13</b>.
+      </div>
+    </div>
+
+    <!-- Задача 2 -->
+    <div class="task-item">
+      <div class="task-text">
+        <b>2.</b> Биссектрисы углов A и B параллелограмма ABCD пересекаются в точке K. Найдите площадь параллелограмма, если BC = <b>18</b>, а расстояние от точки K до стороны AB равно <b>1</b>.
+      </div>
+    </div>
+
+    <!-- Задача 3 -->
+    <div class="task-item">
+      <div class="task-text">
+        <b>3.</b> Расстояние от точки пересечения диагоналей ромба до одной из его сторон равно <b>19</b>, а одна из диагоналей ромба равна <b>76</b>. Найдите углы ромба.
+      </div>
+    </div>
+
+    <!-- Задача 4 -->
+    <div class="task-item">
+      <div class="task-text">
+        <b>4.</b> Высота AH ромба ABCD делит сторону CD на отрезки DH = <b>24</b> и CH = <b>1</b>. Найдите высоту ромба.
+      </div>
+    </div>
+
+    <!-- Задача 5 -->
+    <div class="task-item">
+      <div class="task-text">
+        <b>5.</b> Биссектрисы углов A и B при боковой стороне AB трапеции ABCD пересекаются в точке F. Найдите AB, если AF = <b>20</b>, BF = <b>15</b>.
+      </div>
+    </div>
+
+    <!-- Задача 6 -->
+    <div class="task-item">
+      <div class="task-text">
+        <b>6.</b> Найдите боковую сторону AB трапеции ABCD, если углы ABC и BCD равны соответственно <b>60°</b> и <b>150°</b>, а CD = <b>33</b>.
+      </div>
+    </div>
+
+    <!-- Задача 7 -->
+    <div class="task-item">
+      <div class="task-text">
+        <b>7.</b> Биссектрисы углов A и D параллелограмма ABCD пересекаются в точке, лежащей на стороне BC. Найдите BC, если AB = <b>28</b>.
+      </div>
+    </div>
+
+    <!-- Задача 8 -->
+    <div class="task-item">
+      <div class="task-text">
+        <b>8.</b> Найдите площадь трапеции, диагонали которой равны <b>17</b> и <b>15</b>, а средняя линия равна <b>4</b>.
+      </div>
+    </div>
+
+    <!-- Задача 9 -->
+    <div class="task-item">
+      <div class="task-text">
+        <b>9.</b> Прямая, параллельная основаниям трапеции ABCD, пересекает её боковые стороны AB и CD в точках E и F соответственно. Найдите длину отрезка EF, если AD = <b>35</b>, BC = <b>21</b>, CF : DF = <b>5 : 2</b>.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Блок с кнопкой отправки -->
+  <div class="send-block">
+    <a href="https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes" target="_blank" rel="noopener" class="btn-max">
+      📷 Отправить фото решения в Макс
+    </a>
+  </div>
+
+</div>
+
+</body>
+</html>
