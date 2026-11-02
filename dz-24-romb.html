@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>ДЗ-24 Ромб · ΤΕΤΡΑΚΤΥΣ</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{min-height:100vh;font-family:Georgia,'Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.06),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;padding:0 20px 40px;overflow-x:hidden;display:flex;justify-content:center;}
+  .glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.5;}
+  .glow.g1{width:520px;height:520px;top:-120px;left:-120px;background:radial-gradient(circle,rgba(26,188,156,0.55),transparent 70%);}
+  .glow.g2{width:600px;height:600px;bottom:-200px;right:-180px;background:radial-gradient(circle,rgba(127,255,212,0.4),transparent 70%);}
+
+  .page-wrap{max-width:940px;width:100%;margin:0 auto;position:relative;z-index:2;display:flex;flex-direction:column;}
+  .sticky-header{position:sticky;top:0;z-index:60;width:100%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;padding:10px 18px;background:rgba(10,42,51,0.85);backdrop-filter:blur(14px);border:1.5px solid rgba(26,188,156,0.45);border-top:none;border-radius:0 0 18px 18px;box-shadow:0 8px 30px rgba(0,0,0,0.45);}
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand .dots{font-family:'Courier New',monospace;font-size:9px;letter-spacing:1px;color:var(--mint);line-height:1.05;text-align:center;}
+  .brand .name{font-family:'Times New Roman',serif;font-size:16px;letter-spacing:2px;font-weight:700;color:var(--teal);}
+  .brand .sub{font-size:9px;letter-spacing:3px;color:var(--text-soft);display:block;margin-top:2px;}
+  .header-right{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .header-date{font-size:12px;color:var(--text-soft);font-style:italic;font-family:'Courier New',monospace;}
+  .progress-badge{font-family:'Courier New',monospace;font-size:13px;font-weight:700;color:var(--gold);background:rgba(244,211,94,0.12);border:1.5px solid var(--gold);padding:6px 12px;border-radius:20px;white-space:nowrap;}
+
+  .app{width:100%;background:rgba(255,255,255,0.04);border:1.5px solid var(--glass-brd);border-radius:0 0 24px 24px;padding:26px 30px 30px;backdrop-filter:blur(12px);box-shadow:0 12px 50px rgba(0,0,0,0.5);}
+  .header-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:1px solid rgba(26,188,156,0.2);padding-bottom:14px;margin-bottom:24px;}
+  .header-title{font-size:14px;color:var(--text-soft);font-style:italic;}
+  .header-meta{font-size:13px;color:var(--text-soft);}
+  h1{font-family:'Times New Roman',serif;font-size:clamp(18px,2.6vw,24px);color:var(--mint);letter-spacing:1.5px;text-align:center;margin-bottom:6px;}
+  .subtitle{text-align:center;font-size:14px;color:var(--text-soft);font-style:italic;margin-bottom:20px;}
+
+  .name-block{background:linear-gradient(135deg,rgba(244,211,94,0.12),rgba(26,188,156,0.08));border:1.5px solid var(--gold);border-radius:14px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .name-block label{font-size:15px;color:var(--gold-light);font-weight:700;white-space:nowrap;}
+  .name-block input{flex:1;min-width:200px;padding:10px 14px;border-radius:10px;border:2px solid rgba(244,211,94,0.4);background:rgba(0,0,0,0.3);color:#fff;font-family:Georgia,serif;font-size:16px;outline:none;transition:0.2s;}
+  .name-block input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(244,211,94,0.25);}
+
+  .intro-block{background:rgba(255,255,255,0.03);border-radius:16px;padding:18px 22px;margin-bottom:20px;border-left:4px solid var(--teal);font-size:15px;line-height:1.75;color:var(--text);}
+  .intro-block b{color:var(--mint);}
+  .intro-block ul{margin:8px 0 0 20px;line-height:1.7;}
+  .intro-block .signature{display:block;text-align:right;font-size:13px;color:var(--text-soft);font-style:italic;margin-top:10px;}
+
+  .task-block{background:rgba(0,0,0,0.2);border-radius:18px;padding:18px 22px;margin-bottom:16px;border-left:4px solid var(--mint);border-top:1px solid rgba(255,255,255,0.06);border-right:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(6px);box-shadow:0 4px 18px rgba(0,0,0,0.25);transition:0.3s;}
+  .task-block.correct{border-left-color:var(--ok);background:rgba(46,204,113,0.08);}
+  .task-block.wrong{border-left-color:var(--err);background:rgba(255,107,107,0.08);}
+
+  .task-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
+  .task-num{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;background:linear-gradient(135deg,var(--gold),#c9a32b);color:#2a1f00;border-radius:10px;font-family:'Courier New',monospace;font-weight:700;font-size:15px;flex-shrink:0;}
+  .task-mark{float:right;font-size:20px;font-weight:800;padding-top:4px;}
+  .task-mark.ok{color:var(--ok);}
+  .task-mark.err{color:var(--err);}
+
+  .task-question{font-size:16px;color:var(--text);margin-bottom:12px;line-height:1.6;}
+  .task-question b{color:var(--mint);}
+  .task-question .katex{color:var(--text);font-size:1.05em;}
+
+  .task-graph{background:transparent;border:none;padding:0;display:flex;justify-content:center;margin-bottom:15px;}
+  .task-graph svg{display:block;max-width:100%;height:auto;overflow:visible;}
+
+  .answer-row{display:flex;gap:10px;flex-wrap:nowrap;align-items:center;margin-top:12px;}
+  .answer-row > label{font-size:15px;color:var(--gold-light);font-weight:700;white-space:nowrap;flex-shrink:0;}
+  .answer-row input{flex:1;min-width:0;width:100%;padding:11px 14px;border-radius:10px;border:1.5px solid var(--glass-brd);background:rgba(10,42,51,0.5);color:var(--text);font-family:'Courier New',monospace;font-size:18px;outline:none;transition:0.2s;}
+  .answer-row input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+  .answer-row input.correct{border-color:var(--ok);background:rgba(46,204,113,0.15);}
+  .answer-row input.wrong{border-color:var(--err);background:rgba(255,107,107,0.15);}
+  .answer-row input:disabled{opacity:0.6;cursor:not-allowed;background:rgba(0,0,0,0.55);}
+
+  .feedback{font-size:14px;font-weight:700;margin-top:8px;min-height:18px;}
+  .feedback.ok{color:var(--ok);}
+  .feedback.err{color:var(--err);}
+  .feedback .correct-answer{font-family:'Courier New',monospace;color:var(--gold-light);}
+
+  /* Чекбоксы для 14 задания */
+  .claims-list{display:flex;flex-direction:column;gap:8px;margin-top:10px;}
+  .claim{display:flex;gap:12px;align-items:flex-start;padding:10px 14px;background:rgba(255,255,255,0.02);border:1px solid rgba(26,188,156,0.2);border-radius:10px;cursor:pointer;transition:0.2s;line-height:1.5;}
+  .claim:hover{border-color:var(--mint);background:rgba(26,188,156,0.05);}
+  .claim input{width:22px;height:22px;accent-color:var(--teal);cursor:pointer;flex-shrink:0;margin-top:2px;}
+  .claim .claim-num{font-family:'Courier New',monospace;color:var(--gold);font-weight:700;min-width:22px;flex-shrink:0;}
+  .claim .claim-text{font-size:15px;color:var(--text);}
+  .claim.correct{border-color:var(--ok);background:rgba(46,204,113,0.08);}
+  .claim.wrong{border-color:var(--err);background:rgba(255,107,107,0.08);}
+  .claim input:disabled{cursor:not-allowed;}
+
+  /* Блок фото-заметки */
+  .photo-note{background:rgba(244,211,94,0.08);border-left:4px solid var(--gold);border-radius:0 12px 12px 0;padding:14px 18px;font-size:15px;line-height:1.6;color:var(--text);margin-top:10px;}
+  .photo-note b{color:var(--gold-light);}
+
+  .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;}
+  .btn{flex:1;min-width:180px;padding:14px 20px;font-size:15px;font-weight:700;font-family:inherit;letter-spacing:0.5px;border-radius:14px;cursor:pointer;transition:0.25s;border:none;}
+  .btn-check{background:linear-gradient(135deg,#f4d35e,#c9a32b);color:#2a1f00;box-shadow:0 6px 24px rgba(244,211,94,0.4);}
+  .btn-check:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(244,211,94,0.55);}
+  .btn-check:disabled{opacity:0.55;cursor:default;transform:none;box-shadow:none;}
+  .btn-copy{border:2px solid var(--glass-brd);background:transparent;color:var(--mint);}
+  .btn-copy:hover{background:rgba(26,188,156,0.15);}
+  .btn-max{border:none;background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;box-shadow:0 6px 20px rgba(26,188,156,0.4);}
+  .btn-max:hover{transform:translateY(-2px);}
+  .btn-reset{border:2px solid var(--coral);background:transparent;color:var(--coral);}
+  .btn-reset:hover{background:rgba(255,107,107,0.12);}
+
+  .summary-box{display:none;background:linear-gradient(135deg,rgba(26,188,156,0.15),rgba(244,211,94,0.10));border:2px solid var(--mint);border-radius:16px;padding:20px;margin-top:20px;text-align:center;}
+  .summary-box.show{display:block;animation:fade 0.5s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .summary-title{font-size:16px;color:var(--mint);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:14px;}
+  .summary-stats{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:10px;}
+  .summary-stat{display:flex;flex-direction:column;align-items:center;gap:4px;}
+  .summary-stat .num{font-family:'Courier New',monospace;font-size:38px;font-weight:800;color:var(--gold);line-height:1;}
+  .summary-stat .lbl{font-size:12px;color:var(--text-soft);letter-spacing:1.5px;text-transform:uppercase;}
+  .summary-stat .num.ok{color:var(--ok);}
+  .summary-stat .num.err{color:var(--err);}
+  .summary-line{font-size:15px;color:var(--text);margin-top:8px;font-style:italic;}
+
+  .modal-overlay{display:none;position:fixed;inset:0;z-index:100;background:rgba(4,20,24,0.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px;}
+  .modal-overlay.show{display:flex;}
+  .modal-box{background:linear-gradient(160deg,#0d3b47,#134e5e);border:1.5px solid var(--coral);border-radius:18px;padding:24px 26px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.6);}
+  .modal-box.gold{border-color:var(--gold);}
+  .modal-title{font-family:'Times New Roman',serif;font-size:20px;color:var(--coral);margin-bottom:10px;letter-spacing:1px;}
+  .modal-box.gold .modal-title{color:var(--gold-light);}
+  .modal-text{font-size:14px;color:var(--text-soft);line-height:1.6;margin-bottom:16px;}
+  .modal-text b{color:var(--gold-light);}
+  .modal-input{width:100%;padding:12px 14px;border-radius:10px;border:2px solid rgba(255,107,107,0.4);background:rgba(0,0,0,0.35);color:#fff;font-family:'Courier New',monospace;font-size:18px;letter-spacing:3px;text-align:center;outline:none;}
+  .modal-input:focus{border-color:var(--coral);box-shadow:0 0 0 3px rgba(255,107,107,0.2);}
+  .modal-err{color:var(--coral);font-size:13px;min-height:18px;margin-top:8px;text-align:center;font-style:italic;}
+  .modal-actions{display:flex;gap:10px;margin-top:14px;}
+  .modal-btn{flex:1;padding:11px 16px;border-radius:10px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:0.2s;border:none;}
+  .modal-btn.cancel{background:transparent;border:1.5px solid var(--glass-brd);color:var(--text-soft);}
+  .modal-btn.confirm{background:linear-gradient(135deg,#ff6b6b,#c0392b);color:#fff;}
+
+  @media(max-width: 600px){
+    html,body{padding:0 10px 30px;}
+    .app{padding:18px 14px;border-radius:0 0 18px 18px;}
+    .sticky-header{padding:8px 12px;}
+    .header-date{display:none;}
+    .name-block{flex-direction:column;align-items:stretch;gap:8px;}
+    .name-block label{text-align:center;}
+    .task-block{padding:14px 16px;}
+    .answer-row{flex-wrap:wrap;}
+    .answer-row > label{min-width:0;}
+    .answer-row input{flex:1 1 100%;}
+    .btn{min-width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div><div class="glow g2"></div>
+
+<div class="page-wrap">
+
+  <header class="sticky-header">
+    <div class="brand">
+      <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+      <div>
+        <div class="name">ΤΕΤΡΑΚΤΥΣ</div>
+        <span class="sub">ТЕТРАКТИС</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="header-date" id="headerDate"></span>
+      <span class="progress-badge" id="progressBadge">✅ 0 / 14</span>
+    </div>
+  </header>
+
+  <div class="app">
+    <div class="header-inner">
+      <div class="header-title">ДЗ 24 · Ромб и квадрат</div>
+      <div class="header-meta">Геометрия</div>
+    </div>
+
+    <h1>Ромб и Квадрат</h1>
+    <div class="subtitle">Свойства, площадь, диагонали</div>
+
+    <div class="name-block">
+      <label for="studentName">👤 Имя ученика:</label>
+      <input type="text" id="studentName" placeholder="Введи своё имя и фамилию..." maxlength="60" autocomplete="off">
+    </div>
+
+    <div class="intro-block">
+      <b>Как записывать ответы:</b>
+      <ul>
+        <li>Десятичные дроби — через запятую или точку: <b>5,8</b> или <b>5.8</b>.</li>
+        <li>В 14-м задании выбери верные утверждения (галочками).</li>
+        <li>Пиши только число, без единиц измерения.</li>
+      </ul>
+      <span class="signature">— Школа математики Елены Михалевой</span>
+    </div>
+    <!-- 1 -->
+    <div class="task-block" id="task-1">
+      <div class="task-header"><span class="task-num">1</span><span class="task-mark" id="mark-1"></span></div>
+      <div class="task-question">Один из углов ромба равен <b>93°</b>. Найдите меньший угол этого ромба. Ответ дайте в градусах.</div>
+      <div class="task-graph">
+        <svg width="200" height="100" viewBox="0 0 200 100">
+          <polygon points="60,10 180,10 140,90 20,90" fill="none" stroke="var(--mint)" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="answer-row"><label>Ответ:</label><input type="text" id="ans-1" autocomplete="off"></div>
+      <div class="feedback" id="fb-1"></div>
+    </div>
+
+    <!-- 2 -->
+    <div class="task-block" id="task-2">
+      <div class="task-header"><span class="task-num">2</span><span class="task-mark" id="mark-2"></span></div>
+      <div class="task-question">В ромбе ABCD угол ABC равен <b>68°</b>. Найдите угол ACD. Ответ дайте в градусах.</div>
+      <div class="task-graph">
+        <svg width="220" height="120" viewBox="0 0 220 120">
+          <polygon points="50,20 190,20 170,100 30,100" fill="none" stroke="var(--mint)" stroke-width="2"/>
+          <line x1="50" y1="20" x2="170" y2="100" stroke="var(--mint)" stroke-width="1.5"/>
+          <line x1="30" y1="100" x2="190" y2="20" stroke="var(--mint)" stroke-width="1.5"/>
+          <text x="40" y="15" font-family="Times New Roman" font-size="16" fill="var(--text-soft)">B</text>
+          <text x="195" y="15" font-family="Times New Roman" font-size="16" fill="var(--text-soft)">C</text>
+          <text x="20" y="115" font-family="Times New Roman" font-size="16" fill="var(--text-soft)">A</text>
+          <text x="175" y="115" font-family="Times New Roman" font-size="16" fill="var(--text-soft)">D</text>
+        </svg>
+      </div>
+      <div class="answer-row"><label>Ответ:</label><input type="text" id="ans-2" autocomplete="off"></div>
+      <div class="feedback" id="fb-2"></div>
+    </div>
+
+    <!-- 3 -->
+    <div class="task-block" id="task-3">
+      <div class="task-header"><span class="task-num">3</span><span class="task-mark" id="mark-3"></span></div>
+      <div class="task-question">Сторона ромба равна <b>22</b>, а один из углов этого ромба равен <b>150°</b>. Найдите высоту этого ромба.</div>
+      <div class="task-graph">
+        <svg width="220" height="120" viewBox="0 0 220 120">
+          <polygon points="60,20 160,20 140,100 40,100" fill="none" stroke="var(--mint)" stroke-width="2"/>
+          <line x1="60" y1="20" x2="60" y2="100" stroke="var(--mint)" stroke-width="1.5"/>
+          <polyline points="60,90 70,90 70,100" fill="none" stroke="var(--mint)" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="answer-row"><label>Ответ:</label><input type="text" id="ans-3" autocomplete="off"></div>
+      <div class="feedback" id="fb-3"></div>
+    </div>
+
+    <!-- 4 -->
+    <div class="task-block" id="task-4">
+      <div class="task-header"><span class="task-num">4</span><span class="task-mark" id="mark-4"></span></div>
+      <div class="task-question">Найдите площадь ромба, если его диагонали равны <b>19</b> и <b>6</b>.</div>
+      <div class="task-graph">
+        <svg width="220" height="110" viewBox="0 0 220 110">
+          <polygon points="110,10 210,55 110,100 10,55" fill="none" stroke="var(--mint)" stroke-width="2"/>
+          <line x1="10" y1="55" x2="210" y2="55" stroke="var(--mint)" stroke-width="1.5"/>
+          <line x1="110" y1="10" x2="110" y2="100" stroke="var(--mint)" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="answer-row"><label>Ответ:</label><input type="text" id="ans-4" autocomplete="off"></div>
+      <div class="feedback" id="fb-4"></div>
+    </div>
+
+    <!-- 5 -->
+    <div class="task-block" id="task-5">
+      <div class="task-header"><span class="task-num">5</span><span class="task-mark" id="mark-5"></span></div>
+      <div class="task-question">Периметр ромба равен <b>72</b>, а один из углов равен <b>30°</b>. Найдите площадь ромба.</div>
+      <div class="task-graph">
+        <svg width="200" height="100" viewBox="0 0 200 100">
+          <polygon points="60,10 180,10 140,90 20,90" fill="none" stroke="var(--mint)" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="answer-row"><label>Ответ:</label><input type="text" id="ans-5" autocomplete="off"></div>
+      <div class="feedback" id="fb-5"></div>
+    </div>
+
+    <!-- 6 -->
+    <div class="task-block" id="task-6">
+      <div class="task-header"><span class="task-num">6</span><span class="task-mark" id="mark-6"></span></div>
+      <div class="task-question">Сторона ромба равна <b>12</b>, а расстояние от точки пересечения диагоналей ромба до неё равно <b>4</b>. Найдите площадь ромба.</div>
+      <div class="task-graph">
+        <svg width="260" height="140" viewBox="0 0 260 140">
+          <polygon points="130,10 240,60 130,110 20,60" fill="none" stroke="var(--mint)" stroke-width="2"/>
+          <line x1="20" y1="60" x2="240" y2="60" stroke="var(--mint)" stroke-width="1.5"/>
+          <line x1="130" y1="10" x2="130" y2="110" stroke="var(--mint)" stroke-width="1.5"/>
+          <line x1="130" y1="60" x2="182" y2="84" stroke="var(--mint)" stroke-width="2"/>
+          <polyline points="172,77 175,69 182,73" fill="none" stroke="var(--mint)" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="answer-row"><label>Ответ:</label><input type="text" id="ans-6" autocomplete="off"></div>
+      <div class="feedback" id="fb-6"></div>
+    </div>
+
+    <!-- 7 -->
+    <div class="task-block" id="task-7">
+      <div class="task-header"><span class="task-num">7</span><span class="task-mark" id="mark-7"></span></div>
+      <div class="task-question">Сторона ромба равна <b>95</b>, а диагональ равна <b>114</b>. Найдите площадь ромба.</div>
+      <div class="task-graph">
+        <svg width="200" height="100" viewBox="0 0 200 100">
+          <polygon points="70,10 180,10 130,90 20,90" fill="none" stroke="var(--mint)" stroke-width="2"/>
+          <line x1="70" y1="10" x2="130" y2="90" stroke="var(--mint)" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="answer-row"><label>Ответ:</label><input type="text" id="ans-7" autocomplete="off"></div>
+      <div class="feedback" id="fb-7"></div>
+    </div>
+
+    <!-- 8 -->
+    <div class="task-block" id="task-8">
+      <div class="task-header"><span class="task-num">8</span><span class="task-mark" id="mark-8"></span></div>
+      <div class="task-question">Площадь ромба равна <b>5</b>, а периметр равен <b>20</b>. Найдите высоту ромба.</div>
+      <div class="task-graph">
+        <svg width="200" height="100" viewBox="0 0 200 100">
+          <polygon points="60,10 180,10 140,90 20,90" fill="none" stroke="var(--mint)" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="answer-row"><label>Ответ:</label><input type="text" id="ans-8" autocomplete="off"></div>
+      <div class="feedback" id="fb-8"></div>
+    </div>
+    <!-- 9 -->
+    <div class="task-block" id="task-9">
+      <div class="task-header"><span class="task-num">9</span><span class="task-mark" id="mark-9"></span></div>
+      <div class="task-question">Высота ВН ромба ABCD делит его сторону AD на отрезки АН = <b>21</b> и HD = <b>54</b>. Найдите площадь ромба.</div>
+      <div class="task-graph">
+        <svg width="240" height="120" viewBox="0 0 240 120">
+          <polygon points="50,100 90,20 210,20 170,100" fill="none" stroke="var(--mint)" stroke-width="2"/>
+          <line x1="90" y1="20" x2="90" y2="100" stroke="var(--mint)" stroke-width="1.5"/>
+          <polyline points="90,90 100,90 100,100" fill="none" stroke="var(--mint)" stroke-width="1.5"/>
+          <text x="80" y="15" font-family="Times New Roman" font-size="16" fill="var(--text-soft)">B</text>
+          <text x="215" y="15" font-family="Times New Roman" font-size="16" fill="var(--text-soft)">C</text>
+          <text x="40" y="115" font-family="Times New Roman" font-size="16" fill="var(--text-soft)">A</text>
+          <text x="175" y="115" font-family="Times New Roman" font-size="16" fill="var(--text-soft)">D</text>
+          <text x="80" y="115" font-family="Times New Roman" font-size="16" fill="var(--text-soft)">H</text>
+        </svg>
+      </div>
+      <div class="answer-row"><label>Ответ:</label><input type="text" id="ans-9" autocomplete="off"></div>
+      <div class="feedback" id="fb-9"></div>
+    </div>
+
+      <!-- 10 -->
+    <div class="task-block" id="task-10">
+      <div class="task-header"><span class="task-num">10</span><span class="task-mark" id="mark-10"></span></div>
+      <div class="task-question">Сторона квадрата равна <span id="tex-10"></span>. Найдите площадь этого квадрата.</div>
+      <div class="task-graph">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <rect x="10" y="10" width="60" height="60" fill="none" stroke="var(--mint)" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="answer-row"><label>Ответ:</label><input type="text" id="ans-10" autocomplete="off"></div>
+      <div class="feedback" id="fb-10"></div>
+    </div>
+
+    <!-- 11 -->
+    <div class="task-block" id="task-11">
+      <div class="task-header"><span class="task-num">11</span><span class="task-mark" id="mark-11"></span></div>
+      <div class="task-question">Периметр квадрата равен <b>160</b>. Найдите площадь квадрата.</div>
+      <div class="task-graph">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <rect x="10" y="10" width="60" height="60" fill="none" stroke="var(--mint)" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="answer-row"><label>Ответ:</label><input type="text" id="ans-11" autocomplete="off"></div>
+      <div class="feedback" id="fb-11"></div>
+    </div>
+
+    <!-- 12 -->
+    <div class="task-block" id="task-12">
+      <div class="task-header"><span class="task-num">12</span><span class="task-mark" id="mark-12"></span></div>
+      <div class="task-question">Сторона квадрата равна <span id="tex-12"></span>. Найдите диагональ этого квадрата.</div>
+      <div class="task-graph">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <rect x="10" y="10" width="60" height="60" fill="none" stroke="var(--mint)" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="answer-row"><label>Ответ:</label><input type="text" id="ans-12" autocomplete="off"></div>
+      <div class="feedback" id="fb-12"></div>
+    </div>
+
+    <!-- 13 -->
+    <div class="task-block" id="task-13">
+      <div class="task-header"><span class="task-num">13</span><span class="task-mark" id="mark-13"></span></div>
+      <div class="task-question">Найдите площадь квадрата, если его диагональ равна <b>21</b>.</div>
+      <div class="task-graph">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <rect x="10" y="10" width="60" height="60" fill="none" stroke="var(--mint)" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="answer-row"><label>Ответ:</label><input type="text" id="ans-13" autocomplete="off" placeholder="можно дробью или через точку"></div>
+      <div class="feedback" id="fb-13"></div>
+    </div>
+
+    <!-- 14 -->
+    <div class="task-block" id="task-14">
+      <div class="task-header"><span class="task-num">14</span><span class="task-mark" id="mark-14"></span></div>
+      <div class="task-question">Отметьте верные утверждения:</div>
+      <div class="claims-list" id="claimsList14"></div>
+      <div class="feedback" id="fb-14"></div>
+    </div>
+
+    <!-- 15 -->
+    <div class="task-block" id="task-15">
+      <div class="task-header"><span class="task-num">15</span><span class="task-mark" id="mark-15"></span></div>
+      <div class="task-question">Теплоход проходит по течению реки до пункта назначения <b>176 км</b> и после стоянки возвращается в пункт отправления. Найдите скорость течения, если скорость теплохода в неподвижной воде равна <b>19 км/ч</b>, стоянка длится <b>1 час</b>, а в пункт отправления теплоход возвращается через <b>20 часов</b> после отплытия из него.</div>
+      
+      <div class="photo-note">
+        📷 <b>Реши в тетради</b> и пришли фото решения учителю в Макс.
+      </div>
+    </div>
+
+    <!-- КНОПКИ -->
+    <div class="actions">
+      <button class="btn btn-check" id="btnCheck">✅ Проверить все ответы</button>
+      <button class="btn btn-copy" id="btnCopy">📋 Скопировать</button>
+      <button class="btn btn-max" id="btnMax">💬 Отправить в Макс</button>
+      <button class="btn btn-reset" id="btnReset">🔒 Очистить</button>
+    </div>
+
+    <div class="summary-box" id="summaryBox">
+      <div class="summary-title">📊 Результат</div>
+      <div class="summary-stats">
+        <div class="summary-stat"><span class="num ok" id="statOk">0</span><span class="lbl">✅ верно</span></div>
+        <div class="summary-stat"><span class="num err" id="statErr">0</span><span class="lbl">❌ неверно</span></div>
+        <div class="summary-stat"><span class="num" id="statPercent">0%</span><span class="lbl">📊 процент</span></div>
+      </div>
+      <div class="summary-line" id="summaryLine">—</div>
+    </div>
+
+  </div> <!-- /app -->
+</div> <!-- /page-wrap -->
+
+<!-- МОДАЛКА: ПУСТЫЕ ПОЛЯ -->
+<div class="modal-overlay" id="emptyModal">
+  <div class="modal-box gold">
+    <div class="modal-title">⚠️ Заполни все поля!</div>
+    <div class="modal-text" id="emptyModalText"></div>
+    <div class="modal-actions">
+      <button class="modal-btn confirm" id="emptyModalOk" style="background:linear-gradient(135deg,#f4d35e,#c9a32b);color:#2a1f00;">Понятно</button>
+    </div>
+  </div>
+</div>
+
+<!-- МОДАЛКА: СБРОС -->
+<div class="modal-overlay" id="resetModal">
+  <div class="modal-box">
+    <div class="modal-title">🔒 Сброс теста</div>
+    <div class="modal-text">Введи пароль, чтобы очистить все ответы и разблокировать поля.</div>
+    <input type="password" id="resetPass" class="modal-input" placeholder="Пароль" autocomplete="off" inputmode="numeric">
+    <div class="modal-err" id="resetErr"></div>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" id="resetCancel">Отмена</button>
+      <button class="modal-btn confirm" id="resetConfirm">Сбросить</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ===== ДАННЫЕ ===== */
+  // 15 задачу убрали из проверяемых
+  const CHECKABLE = [1,2,3,4,5,6,7,8,9,10,11,12,13,14];
+  
+  const TASKS_CORRECT = {
+    1:'87', 2:'56', 3:'11', 4:'57', 5:'162', 6:'96', 7:'8664', 8:'1', 9:'5400',
+    10:'75', 11:'1600', 12:'6', 13:'220.5'
+  };
+  
+  const TASK_DISPLAY = {
+    1:'87', 2:'56', 3:'11', 4:'57', 5:'162', 6:'96', 7:'8664', 8:'1', 9:'5400',
+    10:'75', 11:'1600', 12:'6', 13:'220,5'
+  };
+
+  const CLAIMS14_CORRECT = [1, 4, 5, 9, 11, 13, 14, 16, 17, 18, 19];
+  const CLAIMS14_TEXT = [
+    'Если в параллелограмме диагонали равны и перпендикулярны, то этот параллелограмм является квадратом.',
+    'Если диагонали параллелограмма равны, то этот параллелограмм является квадратом.',
+    'Если диагонали выпуклого четырёхугольника равны и перпендикулярны, то этот четырёхугольник является квадратом.',
+    'Любой квадрат является прямоугольником.',
+    'Площадь квадрата равна произведению двух его смежных сторон.',
+    'Площадь квадрата равна произведению его диагоналей.',
+    'Существует квадрат, который не является прямоугольником.',
+    'Все квадраты имеют равные площади.',
+    'В любой ромб можно вписать окружность.',
+    'Все углы ромба равны.',
+    'Диагонали ромба перпендикулярны.',
+    'Диагонали ромба равны.',
+    'Диагонали ромба точкой пересечения делятся пополам.',
+    'Если в ромбе один из углов равен 90 градусам, то этот ромб является квадратом.',
+    'Если диагонали параллелограмма равны, то этот параллелограмм является ромбом.',
+    'Если диагонали параллелограмма перпендикулярны, то этот параллелограмм является ромбом.',
+    'Площадь ромба равна произведению двух его смежных сторон на синус угла между ними.',
+    'Площадь ромба равна произведению его стороны на высоту, проведённую к этой стороне.',
+    'Если в параллелограмме две соседние стороны равны, то этот параллелограмм является ромбом.'
+  ];
+
+  const LS_NAME = 'dz24_romb_name';
+  const LS_STATE = 'dz24_romb_state';
+  const MAX_URL = 'https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes';
+  const PASSWORD = '2810';
+
+  /* ===== РЕНДЕР ЧЕКБОКСОВ ===== */
+  (function renderClaims() {
+    const box = document.getElementById('claimsList14');
+    CLAIMS14_TEXT.forEach((text, i) => {
+      const el = document.createElement('label');
+      el.className = 'claim';
+      el.id = 'c14-' + (i + 1);
+      el.innerHTML = `
+        <input type="checkbox" data-claim="${i + 1}" id="c14-cb-${i + 1}">
+        <span class="claim-num">${i + 1}.</span>
+        <span class="claim-text">${text}</span>
+      `;
+      box.appendChild(el);
+    });
+  })();
+
+  /* ===== KATEX РЕНДЕР ===== */
+  function renderTex(tex, elId){
+    const el = document.getElementById(elId);
+    if(!el) return;
+    if(typeof katex === 'undefined'){
+      setTimeout(()=>renderTex(tex, elId), 100);
+      return;
+    }
+    try{
+      el.innerHTML = katex.renderToString(tex, {displayMode:false, throwOnError:false});
+    }catch(e){
+      el.textContent = tex;
+    }
+  }
+  renderTex('5\\sqrt{3}', 'tex-10');
+  renderTex('3\\sqrt{2}', 'tex-12');
+
+  /* ===== ДАТА В ШАПКЕ ===== */
+  (function(){
+    const d = new Date();
+    const dd = String(d.getDate()).padStart(2,'0');
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const yyyy = d.getFullYear();
+    const hh = String(d.getHours()).padStart(2,'0');
+    const mi = String(d.getMinutes()).padStart(2,'0');
+    document.getElementById('headerDate').textContent = dd+'.'+mm+'.'+yyyy+' · '+hh+':'+mi;
+  })();
+
+  /* ===== ИМЯ УЧЕНИКА ===== */
+  const nameInput = document.getElementById('studentName');
+  nameInput.value = localStorage.getItem(LS_NAME) || '';
+  nameInput.addEventListener('input', ()=>{
+    localStorage.setItem(LS_NAME, nameInput.value.trim());
+  });
+
+  /* ===== НОРМАЛИЗАЦИЯ ===== */
+  function normAnswer(s){
+    return String(s||'').trim().replace(/\s+/g,'').replace(/[−–—]/g,'-').replace(/,/g,'.').toLowerCase();
+  }
+  function checkAnswer(userAns, correctAns){
+    const u = normAnswer(userAns);
+    const c = normAnswer(correctAns);
+    if(!u) return false;
+    if(u === c) return true;
+    const un = parseFloat(u), cn = parseFloat(c);
+    if(!isNaN(un) && !isNaN(cn) && Math.abs(un-cn) < 1e-4) return true;
+    return false;
+  }
+
+  /* ===== ПРОГРЕСС ===== */
+  function updateProgress(){
+    let filled = 0;
+    [1,2,3,4,5,6,7,8,9,10,11,12,13].forEach(n=>{
+      const inp = document.getElementById('ans-'+n);
+      if(inp && inp.value.trim()) filled++;
+    });
+    if(document.querySelectorAll('#claimsList14 input:checked').length > 0) filled++;
+    document.getElementById('progressBadge').textContent = '✅ ' + filled + ' / ' + CHECKABLE.length;
+  }
+  [1,2,3,4,5,6,7,8,9,10,11,12,13].forEach(n=>{
+    const inp = document.getElementById('ans-'+n);
+    if(inp) inp.addEventListener('input', updateProgress);
+  });
+  document.querySelectorAll('#claimsList14 input').forEach(cb=>{
+    cb.addEventListener('change', updateProgress);
+  });
+  updateProgress();
+
+  /* ===== ПРОВЕРКА ===== */
+  let checked = false;
+  const btnCheck = document.getElementById('btnCheck');
+
+  function setTaskState(n, isOk){
+    const mark = document.getElementById('mark-'+n);
+    const fb = document.getElementById('fb-'+n);
+    const block = document.getElementById('task-'+n);
+    if(mark){
+      mark.textContent = isOk ? '✅' : '❌';
+      mark.className = 'task-mark ' + (isOk ? 'ok' : 'err');
+    }
+    if(block) block.classList.add(isOk ? 'correct' : 'wrong');
+    if(fb){
+      if(isOk){
+        fb.className = 'feedback ok';
+        fb.textContent = '✅ Верно!';
+      }else{
+        fb.className = 'feedback err';
+        if(n === 14){
+          fb.innerHTML = '❌ Неверно. Правильные утверждения: <span class="correct-answer">'+CLAIMS14_CORRECT.join(', ')+'</span>';
+        }else{
+          fb.innerHTML = '❌ Неверно. Правильный ответ: <span class="correct-answer">'+TASK_DISPLAY[n]+'</span>';
+        }
+      }
+    }
+  }
+
+  function buildReport(){
+    const name = nameInput.value.trim() || '(не указано)';
+    const d = new Date();
+    const dd = String(d.getDate()).padStart(2,'0');
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const yyyy = d.getFullYear();
+    const hh = String(d.getHours()).padStart(2,'0');
+    const mi = String(d.getMinutes()).padStart(2,'0');
+    let text = '📐 ОТВЕТЫ · ДЗ · Ромб и Квадрат (Тема 24)\n';
+    text += 'Дата: '+dd+'.'+mm+'.'+yyyy+' '+hh+':'+mi+'\n';
+    text += 'Ученик: '+name+'\n\n';
+    let okCount = 0, errCount = 0;
+    
+    [1,2,3,4,5,6,7,8,9,10,11,12,13].forEach(n=>{
+      const inp = document.getElementById('ans-'+n);
+      const val = inp ? inp.value.trim() : '';
+      const isOk = inp && inp.classList.contains('correct');
+      if(isOk){ okCount++; text += '✅ Задание '+n+'. Ответ: '+val+'\n'; }
+      else if(inp && inp.classList.contains('wrong')){ errCount++; text += '❌ Задание '+n+'. Ответ: '+val+' (правильный: '+TASK_DISPLAY[n]+')\n'; }
+      else { text += '— Задание '+n+'. Ответ: — (не проверено)\n'; }
+    });
+
+    const selected14 = [];
+    document.querySelectorAll('#claimsList14 input:checked').forEach(cb=>selected14.push(parseInt(cb.dataset.claim)));
+    selected14.sort((a,b)=>a-b);
+    const t14 = document.getElementById('task-14');
+    if(t14.classList.contains('correct')){
+      okCount++; text += '✅ Задание 14. Отмечено: '+(selected14.join(', ')||'—')+'\n';
+    }else if(t14.classList.contains('wrong')){
+      errCount++; text += '❌ Задание 14. Отмечено: '+(selected14.join(', ')||'—')+' (правильные: '+CLAIMS14_CORRECT.join(', ')+')\n';
+    }else{
+      text += '— Задание 14. Ответ: — (не проверено)\n';
+    }
+    
+    text += '\n✅ Итог: '+okCount+' из '+CHECKABLE.length+' верно.';
+    text += '\n📷 Задание 15. Решение в тетради (фото отдельно).';
+    return {text, okCount, errCount};
+  }
+
+  btnCheck.addEventListener('click', function(){
+    if(checked) return;
+    const name = nameInput.value.trim();
+    if(!name){
+      nameInput.focus();
+      nameInput.style.borderColor = 'var(--coral)';
+      setTimeout(()=>{ nameInput.style.borderColor=''; }, 1500);
+      return;
+    }
+    const empty = [];
+    [1,2,3,4,5,6,7,8,9,10,11,12,13].forEach(n=>{
+      const inp = document.getElementById('ans-'+n);
+      if(!inp.value.trim()) empty.push('№'+n);
+    });
+    if(document.querySelectorAll('#claimsList14 input:checked').length === 0) empty.push('№14');
+    
+    if(empty.length){
+      const m = document.getElementById('emptyModal');
+      document.getElementById('emptyModalText').innerHTML =
+        'У тебя пустые поля: <b>'+empty.join(', ')+'</b>. Заполни их и попробуй снова.';
+      m.classList.add('show');
+      return;
+    }
+
+    let okCount = 0, errCount = 0;
+
+    [1,2,3,4,5,6,7,8,9,10,11,12,13].forEach(n=>{
+      const inp = document.getElementById('ans-'+n);
+      const isOk = checkAnswer(inp.value, TASKS_CORRECT[n]);
+      inp.classList.remove('correct','wrong');
+      inp.classList.add(isOk ? 'correct' : 'wrong');
+      inp.disabled = true;
+      setTaskState(n, isOk);
+      if(isOk) okCount++; else errCount++;
+    });
+
+    const selected14 = [];
+    document.querySelectorAll('#claimsList14 input:checked').forEach(cb=>selected14.push(parseInt(cb.dataset.claim)));
+    selected14.sort((a,b)=>a-b);
+    
+    const t14Ok = selected14.length === CLAIMS14_CORRECT.length && 
+                  selected14.every(v => CLAIMS14_CORRECT.includes(v));
+
+    for(let i=1; i<=CLAIMS14_TEXT.length; i++){
+      const el = document.getElementById('c14-'+i);
+      const cb = document.getElementById('c14-cb-'+i);
+      cb.disabled = true;
+      const isCorrect = CLAIMS14_CORRECT.includes(i);
+      const isChecked = selected14.includes(i);
+      if(isCorrect === isChecked) el.classList.add('correct');
+      else el.classList.add('wrong');
+    }
+    setTaskState(14, t14Ok);
+    if(t14Ok) okCount++; else errCount++;
+
+    nameInput.disabled = true;
+
+    const total = CHECKABLE.length;
+    const percent = Math.round(okCount/total*100);
+    document.getElementById('statOk').textContent = okCount;
+    document.getElementById('statErr').textContent = errCount;
+    document.getElementById('statPercent').textContent = percent+'%';
+    let line = '';
+    if(okCount===total) line = '🌟 Идеально! Всё верно!';
+    else if(okCount>=total*0.75) line = '👍 Отличный результат!';
+    else if(okCount>=total*0.5) line = '💪 Есть над чем поработать';
+    else line = '📚 Стоит повторить материал.';
+    document.getElementById('summaryLine').textContent = line;
+    document.getElementById('summaryBox').classList.add('show');
+
+    document.getElementById('progressBadge').textContent = '✅ '+okCount+' / '+total;
+
+    checked = true;
+    this.disabled = true;
+    this.textContent = '✓ Проверено';
+
+    saveState();
+    document.getElementById('summaryBox').scrollIntoView({behavior:'smooth', block:'start'});
+  });
+
+  /* ===== СОХРАНЕНИЕ ===== */
+  function saveState(){
+    const state = { name: nameInput.value, checked: checked, answers: {}, claims14: [] };
+    [1,2,3,4,5,6,7,8,9,10,11,12,13].forEach(n=>{
+      const inp = document.getElementById('ans-'+n);
+      state.answers[n] = { value: inp.value, disabled: inp.disabled, cls: inp.className };
+    });
+    document.querySelectorAll('#claimsList14 input:checked').forEach(cb=>{
+      state.claims14.push(parseInt(cb.dataset.claim));
+    });
+    localStorage.setItem(LS_STATE, JSON.stringify(state));
+  }
+  
+  [1,2,3,4,5,6,7,8,9,10,11,12,13].forEach(n=>{
+    const inp = document.getElementById('ans-'+n);
+    if(inp) inp.addEventListener('change', ()=>{ if(!checked) saveState(); });
+  });
+  document.querySelectorAll('#claimsList14 input').forEach(cb=>{
+    cb.addEventListener('change', ()=>{ if(!checked) saveState(); });
+  });
+
+  /* ===== ВОССТАНОВЛЕНИЕ ===== */
+  (function restore(){
+    const raw = localStorage.getItem(LS_STATE);
+    if(!raw) return;
+    let state;
+    try{ state = JSON.parse(raw); }catch(e){ return; }
+    if(state.name) nameInput.value = state.name;
+    
+    if(state.answers){
+      [1,2,3,4,5,6,7,8,9,10,11,12,13].forEach(n=>{
+        const inp = document.getElementById('ans-'+n);
+        if(inp && state.answers[n]) inp.value = state.answers[n].value || '';
+      });
+    }
+    if(state.claims14){
+      state.claims14.forEach(num=>{
+        const cb = document.getElementById('c14-cb-'+num);
+        if(cb) cb.checked = true;
+      });
+    }
+    updateProgress();
+
+    if(state.checked){
+      let okCount = 0;
+      [1,2,3,4,5,6,7,8,9,10,11,12,13].forEach(n=>{
+        const inp = document.getElementById('ans-'+n);
+        const saved = (state.answers && state.answers[n]) || {};
+        const cls = saved.cls || '';
+        const isOk = cls.includes('correct');
+        const isWrong = cls.includes('wrong');
+        if(isOk || isWrong){
+          inp.disabled = true;
+          inp.classList.add(isOk ? 'correct' : 'wrong');
+          setTaskState(n, isOk);
+          if(isOk) okCount++;
+        }
+      });
+
+      const selected14 = state.claims14 || [];
+      const t14Ok = selected14.length === CLAIMS14_CORRECT.length && 
+                    selected14.every(v => CLAIMS14_CORRECT.includes(v));
+      
+      for(let i=1; i<=CLAIMS14_TEXT.length; i++){
+        const el = document.getElementById('c14-'+i);
+        const cb = document.getElementById('c14-cb-'+i);
+        if(cb) cb.disabled = true;
+        const isCorrect = CLAIMS14_CORRECT.includes(i);
+        const isChecked = selected14.includes(i);
+        if(isCorrect === isChecked) el.classList.add('correct');
+        else el.classList.add('wrong');
+      }
+      setTaskState(14, t14Ok);
+      if(t14Ok) okCount++;
+
+      nameInput.disabled = true;
+      checked = true;
+      btnCheck.disabled = true;
+      btnCheck.textContent = '✓ Проверено';
+
+      const total = CHECKABLE.length;
+      const percent = Math.round(okCount/total*100);
+      document.getElementById('statOk').textContent = okCount;
+      document.getElementById('statErr').textContent = total-okCount;
+      document.getElementById('statPercent').textContent = percent+'%';
+      document.getElementById('summaryLine').textContent =
+        okCount===total ? '🌟 Идеально! Всё верно!' :
+        okCount>=total*0.75 ? '👍 Отличный результат!' :
+        okCount>=total*0.5 ? '💪 Есть над чем поработать' : '📚 Стоит повторить материал.';
+      document.getElementById('summaryBox').classList.add('show');
+      document.getElementById('progressBadge').textContent = '✅ '+okCount+' / '+total;
+    }
+  })();
+
+  /* ===== КОПИРОВАНИЕ И МАКС ===== */
+  async function copyReport(){
+    const {text} = buildReport();
+    try{
+      await navigator.clipboard.writeText(text);
+    }catch(e){
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try{ document.execCommand('copy'); }catch(_){}
+      ta.remove();
+    }
+    return text;
+  }
+  
+  document.getElementById('btnCopy').addEventListener('click', async function(){
+    await copyReport();
+    const old = this.textContent;
+    this.textContent = '✓ Скопировано!';
+    setTimeout(()=>{ this.textContent = old; }, 2000);
+  });
+  
+  document.getElementById('btnMax').addEventListener('click', async function(){
+    await copyReport();
+    alert('Текст скопирован! Открываю чат Макс…');
+    window.open(MAX_URL, '_blank', 'noopener');
+  });
+
+  /* ===== МОДАЛКИ ===== */
+  document.getElementById('emptyModalOk').addEventListener('click', ()=>{
+    document.getElementById('emptyModal').classList.remove('show');
+  });
+  document.getElementById('emptyModal').addEventListener('click', (e)=>{
+    if(e.target.id==='emptyModal') e.currentTarget.classList.remove('show');
+  });
+
+  const resetModal = document.getElementById('resetModal');
+  const resetPass = document.getElementById('resetPass');
+  const resetErr = document.getElementById('resetErr');
+
+  document.getElementById('btnReset').addEventListener('click', ()=>{
+    resetModal.classList.add('show');
+    resetPass.value = '';
+    resetErr.textContent = '';
+    setTimeout(()=>resetPass.focus(), 50);
+  });
+  document.getElementById('resetCancel').addEventListener('click', ()=>{
+    resetModal.classList.remove('show');
+  });
+  resetModal.addEventListener('click', (e)=>{
+    if(e.target===resetModal) resetModal.classList.remove('show');
+  });
+  resetPass.addEventListener('keydown', (e)=>{
+    if(e.key==='Enter') document.getElementById('resetConfirm').click();
+  });
+  document.getElementById('resetConfirm').addEventListener('click', ()=>{
+    if(resetPass.value.trim() === PASSWORD){
+      localStorage.clear();
+      location.reload();
+    }else{
+      resetErr.textContent = 'Неверный пароль';
+      resetPass.value = '';
+      resetPass.focus();
+    }
+  });
+</script>
+</body>
+</html>
