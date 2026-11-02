@@ -327,7 +327,7 @@
       id: 7, 
       type: 'radio', 
       title: 'Квадратный корень', 
-      text: 'Между какими целыми числами заключено число \\( \\sqrt{56} \\)?', 
+            text: 'Между какими целыми числами заключено число $\\sqrt{56}$?', 
       options: ['55 и 57', '3 и 4', '19 и 21', '7 и 8'], 
       ans: '4' 
     },
@@ -411,13 +411,12 @@
 
     container.innerHTML = html;
 
-    // Рендер KaTeX (для корней и степеней)
-    document.querySelectorAll('.math-el').forEach(el => {
-      const tex = el.getAttribute('data-math');
-      if (window.katex) {
-        try { el.innerHTML = katex.renderToString(tex, {displayMode: true, throwOnError: false}); }
-        catch (e) { console.error(e); }
-      }
+     // Рендер KaTeX внутри текстов (между $ ... $)
+    document.querySelectorAll('.task-question').forEach(el => {
+      el.innerHTML = el.innerHTML.replace(/\$(.*?)\$/g, (match, tex) => {
+        try { return katex.renderToString(tex.trim(), {throwOnError: false}); }
+        catch (e) { return match; }
+      });
     });
   }
 
