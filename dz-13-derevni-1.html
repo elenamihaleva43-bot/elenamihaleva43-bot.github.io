@@ -145,8 +145,6 @@
   }
   .btn-primary { background: linear-gradient(135deg, var(--turq), #1a9a82); color: #0b2b27; box-shadow: 0 4px 15px rgba(47,212,181,0.3); }
   .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(47,212,181,0.5); }
-  .btn-gold { background: transparent; border: 1.5px solid var(--gold); color: var(--gold); }
-  .btn-gold:hover { background: rgba(232, 196, 90, 0.1); }
   .btn-max { background: linear-gradient(135deg, #2fd4b5, #1a9a82); color: #0b2b27; }
 
   .summary-overlay {
@@ -327,7 +325,7 @@
       id: 7, 
       type: 'radio', 
       title: 'Квадратный корень', 
-            text: 'Между какими целыми числами заключено число $\\sqrt{56}$?', 
+      text: 'Между какими целыми числами заключено число $\\sqrt{56}$?',
       options: ['55 и 57', '3 и 4', '19 и 21', '7 и 8'], 
       ans: '4' 
     },
@@ -411,7 +409,16 @@
 
     container.innerHTML = html;
 
-     // Рендер KaTeX внутри текстов (между $ ... $)
+       // 1. Рендер отдельно стоящих формул (math-el)
+    document.querySelectorAll('.math-el').forEach(el => {
+      const tex = el.getAttribute('data-math');
+      if (window.katex) {
+        try { el.innerHTML = katex.renderToString(tex, {displayMode: true, throwOnError: false}); }
+        catch (e) { console.error(e); }
+      }
+    });
+
+    // 2. Рендер KaTeX внутри текстов (между $ ... $)
     document.querySelectorAll('.task-question').forEach(el => {
       el.innerHTML = el.innerHTML.replace(/\$(.*?)\$/g, (match, tex) => {
         try { return katex.renderToString(tex.trim(), {throwOnError: false}); }
@@ -535,3 +542,4 @@
 </script>
 </body>
 </html>
+ 
