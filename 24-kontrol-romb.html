@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>Контроль · Ромб и Квадрат · ΤΕΤΡΑΚΤΥΣ</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--teal-dark:#16a085;--teal-deep:#0e7c66;
+    --mint:#7fffd4;--coral:#ff6b6b;--gold:#f4d35e;--gold-light:#ffe89a;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71;--err:#ff6b6b;
+  }
+  html,body{min-height:100vh;font-family:Georgia,'Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.06),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;padding:0 20px 40px;overflow-x:hidden;display:flex;justify-content:center;}
+  .glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.5;}
+  .glow.g1{width:520px;height:520px;top:-120px;left:-120px;background:radial-gradient(circle,rgba(26,188,156,0.55),transparent 70%);}
+  .glow.g2{width:600px;height:600px;bottom:-200px;right:-180px;background:radial-gradient(circle,rgba(127,255,212,0.4),transparent 70%);}
+
+  .page-wrap{max-width:940px;width:100%;margin:0 auto;position:relative;z-index:2;display:flex;flex-direction:column;}
+  .sticky-header{position:sticky;top:0;z-index:60;width:100%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;padding:10px 18px;background:rgba(10,42,51,0.85);backdrop-filter:blur(14px);border:1.5px solid rgba(26,188,156,0.45);border-top:none;border-radius:0 0 18px 18px;box-shadow:0 8px 30px rgba(0,0,0,0.45);}
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand .dots{font-family:'Courier New',monospace;font-size:9px;letter-spacing:1px;color:var(--mint);line-height:1.05;text-align:center;}
+  .brand .name{font-family:'Times New Roman',serif;font-size:16px;letter-spacing:2px;font-weight:700;color:var(--teal);}
+  .brand .sub{font-size:9px;letter-spacing:3px;color:var(--text-soft);display:block;margin-top:2px;}
+  .header-right{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .header-date{font-size:12px;color:var(--text-soft);font-style:italic;font-family:'Courier New',monospace;}
+  .progress-badge{font-family:'Courier New',monospace;font-size:13px;font-weight:700;color:var(--gold);background:rgba(244,211,94,0.12);border:1.5px solid var(--gold);padding:6px 12px;border-radius:20px;white-space:nowrap;}
+
+  .app{width:100%;background:rgba(255,255,255,0.04);border:1.5px solid var(--glass-brd);border-radius:0 0 24px 24px;padding:26px 30px 30px;backdrop-filter:blur(12px);box-shadow:0 12px 50px rgba(0,0,0,0.5);}
+  .header-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:1px solid rgba(26,188,156,0.2);padding-bottom:14px;margin-bottom:24px;}
+  .header-title{font-size:14px;color:var(--text-soft);font-style:italic;}
+  .header-meta{font-size:13px;color:var(--text-soft);}
+  h1{font-family:'Times New Roman',serif;font-size:clamp(18px,2.6vw,24px);color:var(--mint);letter-spacing:1.5px;text-align:center;margin-bottom:6px;}
+  .subtitle{text-align:center;font-size:14px;color:var(--text-soft);font-style:italic;margin-bottom:20px;}
+
+  .name-block{background:linear-gradient(135deg,rgba(244,211,94,0.12),rgba(26,188,156,0.08));border:1.5px solid var(--gold);border-radius:14px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .name-block label{font-size:15px;color:var(--gold-light);font-weight:700;white-space:nowrap;}
+  .name-block input{flex:1;min-width:200px;padding:10px 14px;border-radius:10px;border:2px solid rgba(244,211,94,0.4);background:rgba(0,0,0,0.3);color:#fff;font-family:Georgia,serif;font-size:16px;outline:none;transition:0.2s;}
+  .name-block input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(244,211,94,0.25);}
+
+  .intro-block{background:rgba(255,255,255,0.03);border-radius:16px;padding:18px 22px;margin-bottom:20px;border-left:4px solid var(--teal);font-size:15px;line-height:1.75;color:var(--text);}
+  .intro-block b{color:var(--mint);}
+  .intro-block ul{margin:8px 0 0 20px;line-height:1.7;}
+  .intro-block .signature{display:block;text-align:right;font-size:13px;color:var(--text-soft);font-style:italic;margin-top:10px;}
+
+  .task-block{background:rgba(0,0,0,0.2);border-radius:18px;padding:18px 22px;margin-bottom:16px;border-left:4px solid var(--mint);border-top:1px solid rgba(255,255,255,0.06);border-right:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(6px);box-shadow:0 4px 18px rgba(0,0,0,0.25);transition:0.3s;}
+  .task-block.correct{border-left-color:var(--ok);background:rgba(46,204,113,0.08);}
+  .task-block.wrong{border-left-color:var(--err);background:rgba(255,107,107,0.08);}
+
+  .task-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
+  .task-num{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;background:linear-gradient(135deg,var(--gold),#c9a32b);color:#2a1f00;border-radius:10px;font-family:'Courier New',monospace;font-weight:700;font-size:15px;flex-shrink:0;}
+  .task-mark{float:right;font-size:20px;font-weight:800;padding-top:4px;}
+  .task-mark.ok{color:var(--ok);}
+  .task-mark.err{color:var(--err);}
+
+  .task-question{font-size:16px;color:var(--text);margin-bottom:12px;line-height:1.6;}
+  .task-question b{color:var(--mint);}
+  .task-question .katex{color:var(--text);font-size:1.05em;}
+
+  .task-graph{background:transparent;border:none;padding:0;display:flex;justify-content:center;margin-bottom:15px;}
+  .task-graph svg{display:block;max-width:100%;height:auto;overflow:visible;}
+
+  .answer-row{display:flex;gap:10px;flex-wrap:nowrap;align-items:center;margin-top:12px;}
+  .answer-row > label{font-size:15px;color:var(--gold-light);font-weight:700;white-space:nowrap;flex-shrink:0;}
+  .answer-row input{flex:1;min-width:0;width:100%;padding:11px 14px;border-radius:10px;border:1.5px solid var(--glass-brd);background:rgba(10,42,51,0.5);color:var(--text);font-family:'Courier New',monospace;font-size:18px;outline:none;transition:0.2s;}
+  .answer-row input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(127,255,212,0.15);}
+  .answer-row input.correct{border-color:var(--ok);background:rgba(46,204,113,0.15);}
+  .answer-row input.wrong{border-color:var(--err);background:rgba(255,107,107,0.15);}
+  .answer-row input:disabled{opacity:0.6;cursor:not-allowed;background:rgba(0,0,0,0.55);}
+
+  .feedback{font-size:14px;font-weight:700;margin-top:8px;min-height:18px;}
+  .feedback.ok{color:var(--ok);}
+  .feedback.err{color:var(--err);}
+  .feedback .correct-answer{font-family:'Courier New',monospace;color:var(--gold-light);}
+
+  .photo-note{background:rgba(244,211,94,0.08);border-left:4px solid var(--gold);border-radius:0 12px 12px 0;padding:14px 18px;font-size:15px;line-height:1.6;color:var(--text);margin-top:10px;}
+  .photo-note b{color:var(--gold-light);}
+
+  .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;}
+  .btn{flex:1;min-width:180px;padding:14px 20px;font-size:15px;font-weight:700;font-family:inherit;letter-spacing:0.5px;border-radius:14px;cursor:pointer;transition:0.25s;border:none;}
+  .btn-check{background:linear-gradient(135deg,#f4d35e,#c9a32b);color:#2a1f00;box-shadow:0 6px 24px rgba(244,211,94,0.4);}
+  .btn-check:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(244,211,94,0.55);}
+  .btn-check:disabled{opacity:0.55;cursor:default;transform:none;box-shadow:none;}
+  .btn-copy{border:2px solid var(--glass-brd);background:transparent;color:var(--mint);}
+  .btn-copy:hover{background:rgba(26,188,156,0.15);}
+  .btn-max{border:none;background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;box-shadow:0 6px 20px rgba(26,188,156,0.4);}
+  .btn-max:hover{transform:translateY(-2px);}
+  .btn-reset{border:2px solid var(--coral);background:transparent;color:var(--coral);}
+  .btn-reset:hover{background:rgba(255,107,107,0.12);}
+
+  .summary-box{display:none;background:linear-gradient(135deg,rgba(26,188,156,0.15),rgba(244,211,94,0.10));border:2px solid var(--mint);border-radius:16px;padding:20px;margin-top:20px;text-align:center;}
+  .summary-box.show{display:block;animation:fade 0.5s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .summary-title{font-size:16px;color:var(--mint);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:14px;}
+  .summary-stats{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:10px;}
+  .summary-stat{display:flex;flex-direction:column;align-items:center;gap:4px;}
+  .summary-stat .num{font-family:'Courier New',monospace;font-size:38px;font-weight:800;color:var(--gold);line-height:1;}
+  .summary-stat .lbl{font-size:12px;color:var(--text-soft);letter-spacing:1.5px;text-transform:uppercase;}
+  .summary-stat .num.ok{color:var(--ok);}
+  .summary-stat .num.err{color:var(--err);}
+  .summary-line{font-size:15px;color:var(--text);margin-top:8px;font-style:italic;}
+
+  .modal-overlay{display:none;position:fixed;inset:0;z-index:100;background:rgba(4,20,24,0.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px;}
+  .modal-overlay.show{display:flex;}
+  .modal-box{background:linear-gradient(160deg,#0d3b47,#134e5e);border:1.5px solid var(--coral);border-radius:18px;padding:24px 26px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.6);}
+  .modal-box.gold{border-color:var(--gold);}
+  .modal-title{font-family:'Times New Roman',serif;font-size:20px;color:var(--coral);margin-bottom:10px;letter-spacing:1px;}
+  .modal-box.gold .modal-title{color:var(--gold-light);}
+  .modal-text{font-size:14px;color:var(--text-soft);line-height:1.6;margin-bottom:16px;}
+  .modal-text b{color:var(--gold-light);}
+  .modal-input{width:100%;padding:12px 14px;border-radius:10px;border:2px solid rgba(255,107,107,0.4);background:rgba(0,0,0,0.35);color:#fff;font-family:'Courier New',monospace;font-size:18px;letter-spacing:3px;text-align:center;outline:none;}
+  .modal-input:focus{border-color:var(--coral);box-shadow:0 0 0 3px rgba(255,107,107,0.2);}
+  .modal-err{color:var(--coral);font-size:13px;min-height:18px;margin-top:8px;text-align:center;font-style:italic;}
+  .modal-actions{display:flex;gap:10px;margin-top:14px;}
+  .modal-btn{flex:1;padding:11px 16px;border-radius:10px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:0.2s;border:none;}
+  .modal-btn.cancel{background:transparent;border:1.5px solid var(--glass-brd);color:var(--text-soft);}
+  .modal-btn.confirm{background:linear-gradient(135deg,#ff6b6b,#c0392b);color:#fff;}
+
+  @media(max-width: 600px){
+    html,body{padding:0 10px 30px;}
+    .app{padding:18px 14px;border-radius:0 0 18px 18px;}
+    .sticky-header{padding:8px 12px;}
+    .header-date{display:none;}
+    .name-block{flex-direction:column;align-items:stretch;gap:8px;}
+    .name-block label{text-align:center;}
+    .task-block{padding:14px 16px;}
+    .answer-row{flex-wrap:wrap;}
+    .answer-row > label{min-width:0;}
+    .answer-row input{flex:1 1 100%;}
+    .btn{min-width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div><div class="glow g2"></div>
+
+<div class="page-wrap">
+
+  <header class="sticky-header">
+    <div class="brand">
+      <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+      <div>
+        <div class="name">ΤΕΤΡΑΚΤΥΣ</div>
+        <span class="sub">ТЕТРАКТИС</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="header-date" id="headerDate"></span>
+      <span class="progress-badge" id="progressBadge">✅ 0 / 12</span>
+    </div>
+  </header>
+
+  <div class="app">
+    <div class="header-inner">
+      <div class="header-title">Контроль · Тема 24</div>
+      <div class="header-meta">Ромб и Квадрат</div>
+    </div>
+
+    <h1>Контроль к теме 24 «Ромб и квадрат»</h1>
+    <div class="subtitle">Максимальный балл 18.</div>
+
+    <div class="name-block">
+      <label for="studentName">👤 Имя ученика:</label>
+      <input type="text" id="studentName" placeholder="Введи своё имя и фамилию..." maxlength="60" autocomplete="off">
+    </div>
+
+    <div class="intro-block">
+      <b>Инструкция:</b>
+      <ul>
+        <li>В задачах 1–12 вводи ответ в поле.</li>
+        <li>Задачи 13, 14, 15 — реши в тетради и пришли фото.</li>
+        <li>В 12-м задании введи номера верных утверждений без пробелов.</li>
+      </ul>
+      <span class="signature">— Школа математики Елены Михалевой</span>
+    </div>
+
+    <!-- 1 -->
+    <div class="task-block" id="task-1">
+      <div class="task-header"><span class="task-num">1</span><span class="task-mark" id="mark-1"></span></div>
+      <div class="task-question">
+        Полина летом отдыхает у дедушки в деревне <b>Ясная</b>. В четверг они собираются съездить на велосипедах в село <b>Майское</b> в магазин. Из деревни Ясная в село Майское можно проехать по прямой лесной дорожке. Есть более длинный путь: по прямолинейному шоссе через деревню <b>Камышёвка</b> до деревни <b>Хомяково</b>, где нужно повернуть под прямым углом налево на другое шоссе, ведущее в село Майское. Есть и третий маршрут: в деревне Камышёвка можно свернуть на прямую тропинку в село Майское, которая идёт мимо пруда.
+        <br><br>
+        Лесная дорожка и тропинка образуют с шоссе прямоугольные треугольники.
+        <br><br>
+        По шоссе Полина с дедушкой едут со скоростью <b>20 км/ч</b>, а по лесной дорожке и тропинке — со скоростью <b>15 км/ч</b>. На плане изображено взаимное расположение населённых пунктов, длина стороны каждой клетки равна <b>2 км</b>.
+        <br><br>
+        <i>Пользуясь описанием, определите, какими цифрами на плане обозначены населённые пункты. Заполните таблицу, в бланк ответов перенесите последовательность трёх цифр без пробелов.</i>
+      </div>
+      
+      <!-- План местности (сетка) -->
+      <div class="task-graph">
+        <svg width="400" height="360" viewBox="0 0 400 360" style="background:#f7fcfa;border-radius:10px;">
+          <defs>
+            <pattern id="g0" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#c8c8c8" stroke-width="0.8"/>
+            </pattern>
+            <radialGradient id="p0" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#87CEEB" stop-opacity="0.9"/>
+              <stop offset="70%" stop-color="#87CEEB" stop-opacity="0.6"/>
+              <stop offset="100%" stop-color="#87CEEB" stop-opacity="0"/>
+            </radialGradient>
+            <filter id="pb0" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"/></filter>
+          </defs>
+          <rect x="0" y="0" width="400" height="360" fill="#f7fcfa"/>
+          <rect x="20" y="40" width="360" height="300" fill="url(#g0)"/>
+          <rect x="20" y="40" width="360" height="300" fill="none" stroke="#999" stroke-width="1.2"/>
+          <ellipse cx="260" cy="240" rx="32" ry="22" fill="url(#p0)" filter="url(#pb0)"/>
+          
+          <line x1="360" y1="80" x2="40" y2="320" stroke="#000" stroke-width="1.4" stroke-dasharray="5,4"/>
+          <line x1="360" y1="80" x2="260" y2="320" stroke="#000" stroke-width="1.4" stroke-dasharray="5,4"/>
+          
+          <line x1="40" y1="320" x2="360" y2="320" stroke="#000" stroke-width="2.5"/>
+          <line x1="360" y1="80" x2="360" y2="320" stroke="#000" stroke-width="2.5"/>
+          
+          <path d="M 28,290 C 28,275 52,275 52,290 C 52,305 43,315 40,320 C 37,315 28,305 28,290 Z" fill="#fff" stroke="#000" stroke-width="1.8"/>
+          <text x="40" y="288" font-family="Georgia,serif" font-size="14" font-weight="700" fill="#1a1a1a" text-anchor="middle" dominant-baseline="central">1</text>
+          
+          <path d="M 248,290 C 248,275 272,275 272,290 C 272,305 263,315 260,320 C 257,315 248,305 248,290 Z" fill="#fff" stroke="#000" stroke-width="1.8"/>
+          <text x="260" y="288" font-family="Georgia,serif" font-size="14" font-weight="700" fill="#1a1a1a" text-anchor="middle" dominant-baseline="central">2</text>
+          
+          <path d="M 348,290 C 348,275 372,275 372,290 C 372,305 363,315 360,320 C 357,315 348,305 348,290 Z" fill="#fff" stroke="#000" stroke-width="1.8"/>
+          <text x="360" y="288" font-family="Georgia,serif" font-size="14" font-weight="700" fill="#1a1a1a" text-anchor="middle" dominant-baseline="central">3</text>
+          
+          <path d="M 348,50 C 348,35 372,35 372,50 C 372,65 363,75 360,80 C 357,75 348,65 348,50 Z" fill="#fff" stroke="#000" stroke-width="1.8"/>
+          <text x="360" y="48" font-family="Georgia,serif" font-size="14" font-weight="700" fill="#1a1a1a" text-anchor="middle" dominant-baseline="central">4</text>
+          
+          <line x1="40" y1="80" x2="60" y2="80" stroke="#000" stroke-width="1.5"/>
+          <line x1="40" y1="77" x2="40" y2="83" stroke="#000" stroke-width="1.5"/>
+          <line x1="60" y1="77" x2="60" y2="83" stroke="#000" stroke-width="1.5"/>
+          <text x="50" y="72" font-family="Georgia,serif" font-size="11" font-weight="600" fill="#1a1a1a" text-anchor="middle">2 км</text>
+        </svg>
+      </div>
+      
+      <table style="width:100%; border-collapse: collapse; background: rgba(0,0,0,0.15); margin-bottom: 15px;">
+        <tr><th style="border: 1px solid var(--glass-brd); padding: 8px;">Насел. пункты</th><th style="border: 1px solid var(--glass-brd); padding: 8px;">д. Ясная</th><th style="border: 1px solid var(--glass-brd); padding: 8px;">д. Камышёвка</th><th style="border: 1px solid var(--glass-brd); padding: 8px;">с. Майское</th></tr>
+        <tr><td style="border: 1px solid var(--glass-brd); padding: 8px;">Цифры</td><td style="border: 1px solid var(--glass-brd); padding: 8px;"></td><td style="border: 1px solid var(--glass-brd); padding: 8px;"></td><td style="border: 1px solid var(--glass-brd); padding: 8px;"></td></tr>
+      </table>
+      
+      <div class="answer-row"><label>Ответ (3 цифры):</label><input type="text" id="ans-1" autocomplete="off"></div>
+      <div class="feedback" id="fb-1"></div>
+    </div>
+
+    <!-- 2 -->
+    <div class="task-block" id="task-2">
+      <div class="task-header"><span class="task-num">2</span><span class="task-mark" id="mark-2"></span></div>
+      <div class="task-question">Сколько километров проедут Полина с дедушкой от деревни <b>Камышёвка</b> до села <b>Майское</b>, если они поедут по шоссе через деревню <b>Хомяково</b>?</div>
+      <div class="answer-row"><label>Ответ:</label><input type="text" id="ans-2" autocomplete="off"></div>
+      <div class="feedback" id="fb-2"></div>
+    </div>
+
+    <!-- 3 -->
+    <div class="task-block" id="task-3">
+      <div class="task-header"><span class="task-num">3</span><span class="task-mark" id="mark-3"></span></div>
+      <div class="task-question">Найдите расстояние от деревни <b>Камышёвка</b> до села <b>Майское</b> по прямой. Ответ дайте в километрах.</div>
+      <div class="answer-row"><label>Ответ:</label><input type="text" id="ans-3" autocomplete="off"></div>
+      <div class="feedback" id="fb-3"></div>
+    </div>
+
+    <!-- 4 -->
+    <div class="task-block" id="task-4">
+      <div class="task-header"><span class="task-num">4</span><span class="task-mark" id="mark-4"></span></div>
+      <div class="task-question">Сколько минут затратят на дорогу из деревни <b>Ясная</b> в село <b>Майское</b> Полина с дедушкой, если они поедут сначала по шоссе, а затем свернут в Камышёвке на прямую тропинку, которая проходит мимо пруда?</div>
+      <div class="answer-row"><label>Ответ:</label><input type="text" id="ans-4" autocomplete="off"></div>
+      <div class="feedback" id="fb-4"></div>
+    </div>
+
+    <!-- 5 -->
+    <div class="task-block" id="task-5">
+      <div class="task-header"><span class="task-num">5</span><span class="task-mark" id="mark-5"></span></div>
+      <div class="task-question">
+        В таблице указана стоимость (в рублях) некоторых продуктов в четырёх магазинах.
+        <br><br>
+        Полина с дедушкой хотят купить 3 л молока, 1 кг сыра «Российский» и 3 кг картофеля. В каком магазине такой набор продуктов будет стоить дешевле всего? В ответ запишите стоимость данного набора в этом магазине.
+      </div>
+      
+      <table style="width:100%; border-collapse: collapse; background: rgba(0,0,0,0.15); margin: 10px 0; font-size: 14px;">
+        <tr><th style="border: 1px solid var(--glass-brd); padding: 6px;">Наименование</th><th style="border: 1px solid var(--glass-brd); padding: 6px;">д. Ясная</th><th style="border: 1px solid var(--glass-brd); padding: 6px;">с. Майское</th><th style="border: 1px solid var(--glass-brd); padding: 6px;">д. Камышёвка</th><th style="border: 1px solid var(--glass-brd); padding: 6px;">д. Хомяково</th></tr>
+        <tr><td style="border: 1px solid var(--glass-brd); padding: 6px;">Молоко (1 л)</td><td style="border: 1px solid var(--glass-brd); padding: 6px;">42</td><td style="border: 1px solid var(--glass-brd); padding: 6px;">38</td><td style="border: 1px solid var(--glass-brd); padding: 6px;">41</td><td style="border: 1px solid var(--glass-brd); padding: 6px;">33</td></tr>
+        <tr><td style="border: 1px solid var(--glass-brd); padding: 6px;">Хлеб (1 батон)</td><td style="border: 1px solid var(--glass-brd); padding: 6px;">25</td><td style="border: 1px solid var(--glass-brd); padding: 6px;">21</td><td style="border: 1px solid var(--glass-brd); padding: 6px;">29</td><td style="border: 1px solid var(--glass-brd); padding: 6px;">30</td></tr>
+               <tr><td style="border: 1px solid var(--glass-brd); padding: 6px;">Сыр «Российский» (1 кг)</td><td style="border: 1px solid var(--glass-brd); padding: 6px;">310</td><td style="border: 1px solid var(--glass-brd); padding: 6px;">320</td><td style="border: 1px solid var(--glass-brd); padding: 6px;">290</td><td style="border: 1px solid var(--glass-brd); padding: 6px;">280</td></tr>
+        <tr><td style="border: 1px solid var(--glass-brd); padding: 6px;">Говядина (1 кг)</td><td style="border: 1px solid var(--glass-brd); padding: 6px;">340</td><td style="border: 1px solid var(--glass-brd); padding: 6px;">380</td><td style="border: 1px solid var(--glass-brd); padding: 6px;">410</td><td style="border: 1px solid var(--glass-brd); padding: 6px;">390</td></tr>
+        <tr><td style="border: 1px solid var(--glass-brd); padding: 6px;">Картофель (1 кг)</td><td style="border: 1px solid var(--glass-brd); padding: 6px;">15</td><td style="border: 1px solid var(--glass-brd); padding: 6px;">20</td><td style="border: 1px solid var(--glass-brd); padding: 6px;">17</td><td style="border: 1px solid var(--glass-brd); padding: 6px;">18</td></tr>
+      </table>
+      
+      <div class="answer-row"><label>Ответ:</label><input type="text" id="ans-5" autocomplete="off"></div>
+      <div class="feedback" id="fb-5"></div>
+    </div>
+
+    <!-- 6 -->
+    <div class="task-block" id="task-6">
+      <div class="task-header"><span class="task-num">6</span><span class="task-mark" id="mark-6"></span></div>
+      <div class="task-question">Найдите значение выражения <span id="tex-6"></span>.</div>
+      <div class="answer-row"><label>Ответ:</label><input type="text" id="ans-6" autocomplete="off"></div>
+      <div class="feedback" id="fb-6"></div>
+    </div>
+
+    <!-- 7 -->
+    <div class="task-block" id="task-7">
+      <div class="task-header"><span class="task-num">7</span><span class="task-mark" id="mark-7"></span></div>
+      <div class="task-question">Между какими целыми числами заключено число <span id="tex-7"></span>?</div>
+      <div style="font-size: 16px; line-height: 1.8; margin-bottom: 12px;">
+        1) 8 и 9<br>
+        2) 9 и 10<br>
+        3) 10 и 11<br>
+        4) 11 и 12
+      </div>
+      <div class="answer-row"><label>Ответ (цифра):</label><input type="text" id="ans-7" autocomplete="off"></div>
+      <div class="feedback" id="fb-7"></div>
+    </div>
+
+    <!-- 8 -->
+    <div class="task-block" id="task-8">
+      <div class="task-header"><span class="task-num">8</span><span class="task-mark" id="mark-8"></span></div>
+      <div class="task-question">Найдите значение выражения <span id="tex-8"></span>.</div>
+      <div class="answer-row"><label>Ответ:</label><input type="text" id="ans-8" autocomplete="off"></div>
+      <div class="feedback" id="fb-8"></div>
+    </div>
+
+    <!-- 9 -->
+    <div class="task-block" id="task-9">
+      <div class="task-header"><span class="task-num">9</span><span class="task-mark" id="mark-9"></span></div>
+      <div class="task-question">В треугольнике два угла равны <b>43°</b> и <b>88°</b>. Найдите его третий угол. Ответ дайте в градусах.</div>
+      <div class="task-graph">
+        <!-- Просто треугольник -->
+        <svg width="160" height="120" viewBox="0 0 160 120">
+          <polygon points="80,10 150,110 10,110" fill="none" stroke="var(--mint)" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="answer-row"><label>Ответ:</label><input type="text" id="ans-9" autocomplete="off"></div>
+      <div class="feedback" id="fb-9"></div>
+    </div>
+
+    <!-- 10 -->
+    <div class="task-block" id="task-10">
+      <div class="task-header"><span class="task-num">10</span><span class="task-mark" id="mark-10"></span></div>
+      <div class="task-question">Площадь ромба равна <b>18</b>, а периметр равен <b>36</b>. Найдите высоту ромба.</div>
+      <div class="answer-row"><label>Ответ:</label><input type="text" id="ans-10" autocomplete="off"></div>
+      <div class="feedback" id="fb-10"></div>
+    </div>
+
+        <!-- 11 -->
+    <div class="task-block" id="task-11">
+      <div class="task-header"><span class="task-num">11</span><span class="task-mark" id="mark-11"></span></div>
+      <div class="task-question">На клетчатой бумаге с размером клетки 1×1 изображён ромб. Найдите длину его большей диагонали.</div>
+      <div class="task-graph">
+        <svg width="240" height="120" viewBox="0 0 240 120">
+          <!-- Ручная отрисовка сетки (клетки 20x20) -->
+          <g stroke="rgba(127,255,212,0.25)" stroke-width="1">
+            <!-- Вертикальные линии -->
+            <line x1="20" y1="0" x2="20" y2="120" />
+            <line x1="40" y1="0" x2="40" y2="120" />
+            <line x1="60" y1="0" x2="60" y2="120" />
+            <line x1="80" y1="0" x2="80" y2="120" />
+            <line x1="100" y1="0" x2="100" y2="120" />
+            <line x1="120" y1="0" x2="120" y2="120" />
+            <line x1="140" y1="0" x2="140" y2="120" />
+            <line x1="160" y1="0" x2="160" y2="120" />
+            <line x1="180" y1="0" x2="180" y2="120" />
+            <line x1="200" y1="0" x2="200" y2="120" />
+            <line x1="220" y1="0" x2="220" y2="120" />
+            <!-- Горизонтальные линии -->
+            <line x1="0" y1="20" x2="240" y2="20" />
+            <line x1="0" y1="40" x2="240" y2="40" />
+            <line x1="0" y1="60" x2="240" y2="60" />
+            <line x1="0" y1="80" x2="240" y2="80" />
+            <line x1="0" y1="100" x2="240" y2="100" />
+          </g>
+          
+          <!-- Ромб: вершины ровно в узлах сетки. 
+               Центр (120, 60). Горизонталь: 10 клеток (x=20 до x=220). 
+               Вертикаль: 4 клетки (y=20 до y=100). -->
+          <polygon points="120,20 220,60 120,100 20,60" fill="none" stroke="var(--mint)" stroke-width="2.5"/>
+        </svg>
+      </div>
+      <div class="answer-row"><label>Ответ:</label><input type="text" id="ans-11" autocomplete="off"></div>
+      <div class="feedback" id="fb-11"></div>
+    </div>
+
+    <!-- 12 -->
+    <div class="task-block" id="task-12">
+      <div class="task-header"><span class="task-num">12</span><span class="task-mark" id="mark-12"></span></div>
+      <div class="task-question">Какие из следующих утверждений верны?</div>
+      <div style="font-size: 16px; line-height: 1.8; margin-bottom: 12px;">
+        1) Все углы ромба равны.<br>
+        2) Площадь квадрата равна произведению двух его смежных сторон.<br>
+        3) Любые два равносторонних треугольника подобны.
+      </div>
+      <div class="task-question" style="font-style:italic;">В ответ запишите номера выбранных утверждений без пробелов, запятых и других дополнительных символов.</div>
+      <div class="answer-row"><label>Ответ:</label><input type="text" id="ans-12" autocomplete="off" placeholder="номера"></div>
+      <div class="feedback" id="fb-12"></div>
+    </div>
+
+    <h2 style="text-align:center; color:var(--gold); margin: 30px 0 20px; font-size: 20px;">2 часть</h2>
+
+    <!-- 13 -->
+    <div class="task-block" id="task-13">
+      <div class="task-header"><span class="task-num">13</span></div>
+      <div class="task-question">Сократите дробь: <span id="tex-13"></span>.</div>
+      <div class="photo-note">
+        📷 <b>Реши в тетради</b> и пришли фото решения учителю в Макс.
+      </div>
+    </div>
+
+    <!-- 14 -->
+    <div class="task-block" id="task-14">
+      <div class="task-header"><span class="task-num">14</span></div>
+      <div class="task-question">Теплоход проходит по течению реки до пункта назначения <b>165 км</b> и после стоянки возвращается в пункт отправления. Найдите скорость течения, если скорость теплохода в неподвижной воде равна <b>26 км/ч</b>, стоянка длится <b>5 часов</b>, а в пункт отправления теплоход возвращается через <b>18 часов</b> после отплытия из него.</div>
+      <div class="photo-note">
+        📷 <b>Реши в тетради</b> и пришли фото решения учителю в Макс.
+      </div>
+    </div>
+
+    <!-- 15 -->
+    <div class="task-block" id="task-15">
+      <div class="task-header"><span class="task-num">15</span></div>
+      <div class="task-question">Отрезки AB и DC лежат на параллельных прямых, а отрезки AC и BD пересекаются в точке M. Найдите MC, если AB = <b>14</b>, DC = <b>42</b>, AC = <b>52</b>.</div>
+      <div class="photo-note">
+        📷 <b>Реши в тетради</b> и пришли фото решения учителю в Макс.
+      </div>
+    </div>
+
+    <!-- КНОПКИ -->
+    <div class="actions">
+      <button class="btn btn-check" id="btnCheck">✅ Проверить все ответы</button>
+      <button class="btn btn-copy" id="btnCopy">📋 Скопировать</button>
+      <button class="btn btn-max" id="btnMax">💬 Отправить в Макс</button>
+      <button class="btn btn-reset" id="btnReset">🔒 Очистить</button>
+    </div>
+
+    <div class="summary-box" id="summaryBox">
+      <div class="summary-title">📊 Результат</div>
+      <div class="summary-stats">
+        <div class="summary-stat"><span class="num ok" id="statOk">0</span><span class="lbl">✅ верно</span></div>
+        <div class="summary-stat"><span class="num err" id="statErr">0</span><span class="lbl">❌ неверно</span></div>
+        <div class="summary-stat"><span class="num" id="statPercent">0%</span><span class="lbl">📊 процент</span></div>
+      </div>
+      <div class="summary-line" id="summaryLine">—</div>
+    </div>
+
+  </div> <!-- /app -->
+</div> <!-- /page-wrap -->
+
+<!-- МОДАЛКА: ПУСТЫЕ ПОЛЯ -->
+<div class="modal-overlay" id="emptyModal">
+  <div class="modal-box gold">
+    <div class="modal-title">⚠️ Заполни все поля!</div>
+    <div class="modal-text" id="emptyModalText"></div>
+    <div class="modal-actions">
+      <button class="modal-btn confirm" id="emptyModalOk" style="background:linear-gradient(135deg,#f4d35e,#c9a32b);color:#2a1f00;">Понятно</button>
+    </div>
+  </div>
+</div>
+
+<!-- МОДАЛКА: СБРОС -->
+<div class="modal-overlay" id="resetModal">
+  <div class="modal-box">
+    <div class="modal-title">🔒 Сброс теста</div>
+    <div class="modal-text">Введи пароль, чтобы очистить все ответы и разблокировать поля.</div>
+    <input type="password" id="resetPass" class="modal-input" placeholder="Пароль" autocomplete="off" inputmode="numeric">
+    <div class="modal-err" id="resetErr"></div>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" id="resetCancel">Отмена</button>
+      <button class="modal-btn confirm" id="resetConfirm">Сбросить</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ===== ДАННЫЕ ===== */
+  const CHECKABLE = [1,2,3,4,5,6,7,8,9,10,11,12];
+  const TASKS_CORRECT = {
+    1:'124', 
+    2:'34', 
+    3:'26', 
+    4:'170', 
+    5:'433', 
+    6:'-23.6', 
+    7:'1', 
+    8:'120', 
+    9:'49', 
+    10:'2', 
+    11:'10', 
+    12:'23'
+  };
+  
+  const TASK_DISPLAY = {
+    1:'124', 2:'34', 3:'26', 4:'170', 5:'433', 6:'−23,6', 7:'1', 8:'120', 9:'49', 10:'2', 11:'10', 12:'23'
+  };
+
+  const LS_NAME = 'dz24_kontrol_name';
+  const LS_STATE = 'dz24_kontrol_state';
+  const MAX_URL = 'https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes';
+  const PASSWORD = '2810';
+
+  /* ===== KATEX РЕНДЕР ===== */
+  function renderTex(tex, elId){
+    const el = document.getElementById(elId);
+    if(!el) return;
+    if(typeof katex === 'undefined'){
+      setTimeout(()=>renderTex(tex, elId), 100);
+      return;
+    }
+    try{
+      el.innerHTML = katex.renderToString(tex, {displayMode:true, throwOnError:false});
+    }catch(e){
+      el.textContent = tex;
+    }
+  }
+  
+  renderTex('\\left(\\frac{4}{9} - 3\\frac{1}{15}\\right) \\cdot 9', 'tex-6');
+  renderTex('\\frac{124}{15}', 'tex-7');
+  renderTex('\\sqrt{24 \\cdot 75 \\cdot 8}', 'tex-8');
+  renderTex('\\frac{48^n}{4^{2n-1} \\cdot 3^{n-3}}', 'tex-13');
+
+  /* ===== ДАТА В ШАПКЕ ===== */
+  (function(){
+    const d = new Date();
+    const dd = String(d.getDate()).padStart(2,'0');
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const yyyy = d.getFullYear();
+    const hh = String(d.getHours()).padStart(2,'0');
+    const mi = String(d.getMinutes()).padStart(2,'0');
+    document.getElementById('headerDate').textContent = dd+'.'+mm+'.'+yyyy+' · '+hh+':'+mi;
+  })();
+
+  /* ===== ИМЯ УЧЕНИКА ===== */
+  const nameInput = document.getElementById('studentName');
+  nameInput.value = localStorage.getItem(LS_NAME) || '';
+  nameInput.addEventListener('input', ()=>{
+    localStorage.setItem(LS_NAME, nameInput.value.trim());
+  });
+
+  /* ===== НОРМАЛИЗАЦИЯ ===== */
+  function normAnswer(s){
+    return String(s||'')
+      .trim()
+      .replace(/\s+/g,'')
+      .replace(/[−–—]/g,'-')
+      .replace(/,/g,'.')
+      .replace(/[хХ]/g,'x')
+      .toLowerCase();
+  }
+  function checkAnswer(userAns, correctAns){
+    const u = normAnswer(userAns);
+    const c = normAnswer(correctAns);
+    if(!u) return false;
+    if(u === c) return true;
+    const un = parseFloat(u), cn = parseFloat(c);
+    if(!isNaN(un) && !isNaN(cn) && Math.abs(un-cn) < 1e-4) return true;
+    return false;
+  }
+
+  /* ===== ПРОГРЕСС ===== */
+  function updateProgress(){
+    let filled = 0;
+    CHECKABLE.forEach(n=>{
+      const inp = document.getElementById('ans-'+n);
+      if(inp && inp.value.trim()) filled++;
+    });
+    document.getElementById('progressBadge').textContent = '✅ ' + filled + ' / ' + CHECKABLE.length;
+  }
+  CHECKABLE.forEach(n=>{
+    const inp = document.getElementById('ans-'+n);
+    if(inp) inp.addEventListener('input', updateProgress);
+  });
+  updateProgress();
+
+  /* ===== ПРОВЕРКА ===== */
+  let checked = false;
+  const btnCheck = document.getElementById('btnCheck');
+
+  function setTaskState(n, isOk){
+    const inp = document.getElementById('ans-'+n);
+    const mark = document.getElementById('mark-'+n);
+    const fb = document.getElementById('fb-'+n);
+    const block = document.getElementById('task-'+n);
+    if(!inp) return;
+    inp.classList.remove('correct','wrong');
+    inp.classList.add(isOk ? 'correct' : 'wrong');
+    inp.disabled = true;
+    if(mark){
+      mark.textContent = isOk ? '✅' : '❌';
+      mark.className = 'task-mark ' + (isOk ? 'ok' : 'err');
+    }
+    if(block) block.classList.add(isOk ? 'correct' : 'wrong');
+    if(fb){
+      if(isOk){
+        fb.className = 'feedback ok';
+        fb.textContent = '✅ Верно!';
+      }else{
+        fb.className = 'feedback err';
+        fb.innerHTML = '❌ Неверно. Правильный ответ: <span class="correct-answer">'+TASK_DISPLAY[n]+'</span>';
+      }
+    }
+  }
+
+  function buildReport(){
+    const name = nameInput.value.trim() || '(не указано)';
+    const d = new Date();
+    const dd = String(d.getDate()).padStart(2,'0');
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const yyyy = d.getFullYear();
+    const hh = String(d.getHours()).padStart(2,'0');
+    const mi = String(d.getMinutes()).padStart(2,'0');
+    let text = '📐 ОТВЕТЫ · КОНТРОЛЬ · Ромб и квадрат (Тема 24)\n';
+    text += 'Дата: '+dd+'.'+mm+'.'+yyyy+' '+hh+':'+mi+'\n';
+    text += 'Ученик: '+name+'\n\n';
+    let okCount = 0, errCount = 0;
+    
+    CHECKABLE.forEach(n=>{
+      const inp = document.getElementById('ans-'+n);
+      const val = inp ? inp.value.trim() : '';
+      const isOk = inp && inp.classList.contains('correct');
+      if(isOk){ okCount++; text += '✅ Задание '+n+'. Ответ: '+val+'\n'; }
+      else if(inp && inp.classList.contains('wrong')){ errCount++; text += '❌ Задание '+n+'. Ответ: '+val+' (правильный: '+TASK_DISPLAY[n]+')\n'; }
+      else { text += '— Задание '+n+'. Ответ: — (не проверено)\n'; }
+    });
+
+    [13,14,15].forEach(n=>{
+      text += '— Задание '+n+'. Ответ: — (решение в тетради, фото отдельно)\n';
+    });
+    
+    text += '\n✅ Итог: '+okCount+' из '+CHECKABLE.length+' верно.';
+    return {text, okCount, errCount};
+  }
+
+  btnCheck.addEventListener('click', function(){
+    if(checked) return;
+    const name = nameInput.value.trim();
+    if(!name){
+      nameInput.focus();
+      nameInput.style.borderColor = 'var(--coral)';
+      setTimeout(()=>{ nameInput.style.borderColor=''; }, 1500);
+      return;
+    }
+    const empty = [];
+    CHECKABLE.forEach(n=>{
+      const inp = document.getElementById('ans-'+n);
+      if(!inp.value.trim()) empty.push('№'+n);
+    });
+    
+    if(empty.length){
+      const m = document.getElementById('emptyModal');
+      document.getElementById('emptyModalText').innerHTML =
+        'У тебя пустые поля: <b>'+empty.join(', ')+'</b>. Заполни их и попробуй снова.';
+      m.classList.add('show');
+      return;
+    }
+
+    let okCount = 0, errCount = 0;
+    CHECKABLE.forEach(n=>{
+      const inp = document.getElementById('ans-'+n);
+      const isOk = checkAnswer(inp.value, TASKS_CORRECT[n]);
+      setTaskState(n, isOk);
+      if(isOk) okCount++; else errCount++;
+    });
+    nameInput.disabled = true;
+
+    const total = CHECKABLE.length;
+    const percent = Math.round(okCount/total*100);
+    document.getElementById('statOk').textContent = okCount;
+    document.getElementById('statErr').textContent = errCount;
+    document.getElementById('statPercent').textContent = percent+'%';
+    let line = '';
+    if(okCount===total) line = '🌟 Идеально! Всё верно!';
+    else if(okCount>=total*0.75) line = '👍 Отличный результат!';
+    else if(okCount>=total*0.5) line = '💪 Есть над чем поработать';
+    else line = '📚 Стоит повторить материал.';
+    document.getElementById('summaryLine').textContent = line;
+    document.getElementById('summaryBox').classList.add('show');
+
+    document.getElementById('progressBadge').textContent = '✅ '+okCount+' / '+total;
+
+    checked = true;
+    this.disabled = true;
+    this.textContent = '✓ Проверено';
+
+    saveState();
+    document.getElementById('summaryBox').scrollIntoView({behavior:'smooth', block:'start'});
+  });
+
+  /* ===== СОХРАНЕНИЕ ===== */
+  function saveState(){
+    const state = { name: nameInput.value, checked: checked, answers: {} };
+    CHECKABLE.forEach(n=>{
+      const inp = document.getElementById('ans-'+n);
+      state.answers[n] = { value: inp.value, disabled: inp.disabled, cls: inp.className };
+    });
+    localStorage.setItem(LS_STATE, JSON.stringify(state));
+  }
+  CHECKABLE.forEach(n=>{
+    const inp = document.getElementById('ans-'+n);
+    if(inp) inp.addEventListener('change', ()=>{ if(!checked) saveState(); });
+  });
+
+  /* ===== ВОССТАНОВЛЕНИЕ ===== */
+  (function restore(){
+    const raw = localStorage.getItem(LS_STATE);
+    if(!raw) return;
+    let state;
+    try{ state = JSON.parse(raw); }catch(e){ return; }
+    if(state.name) nameInput.value = state.name;
+    
+    if(state.answers){
+      CHECKABLE.forEach(n=>{
+        const inp = document.getElementById('ans-'+n);
+        if(inp && state.answers[n]) inp.value = state.answers[n].value || '';
+      });
+    }
+    updateProgress();
+
+    if(state.checked){
+      let okCount = 0;
+      CHECKABLE.forEach(n=>{
+        const inp = document.getElementById('ans-'+n);
+        const saved = state.answers[n] || {};
+        const isOk = (saved.cls||'').includes('correct');
+        const isWrong = (saved.cls||'').includes('wrong');
+        if(isOk || isWrong){
+          setTaskState(n, isOk);
+          if(isOk) okCount++;
+        }
+      });
+      nameInput.disabled = true;
+      checked = true;
+      btnCheck.disabled = true;
+      btnCheck.textContent = '✓ Проверено';
+      
+      const total = CHECKABLE.length;
+      const percent = Math.round(okCount/total*100);
+      document.getElementById('statOk').textContent = okCount;
+      document.getElementById('statErr').textContent = total-okCount;
+      document.getElementById('statPercent').textContent = percent+'%';
+      document.getElementById('summaryLine').textContent =
+        okCount===total ? '🌟 Идеально! Всё верно!' :
+        okCount>=total*0.75 ? '👍 Отличный результат!' :
+        okCount>=total*0.5 ? '💪 Есть над чем поработать' : '📚 Стоит повторить материал.';
+      document.getElementById('summaryBox').classList.add('show');
+      document.getElementById('progressBadge').textContent = '✅ '+okCount+' / '+total;
+    }
+  })();
+
+  /* ===== КОПИРОВАНИЕ И МАКС ===== */
+  async function copyReport(){
+    const {text} = buildReport();
+    try{
+      await navigator.clipboard.writeText(text);
+    }catch(e){
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try{ document.execCommand('copy'); }catch(_){}
+      ta.remove();
+    }
+    return text;
+  }
+  
+  document.getElementById('btnCopy').addEventListener('click', async function(){
+    await copyReport();
+    const old = this.textContent;
+    this.textContent = '✓ Скопировано!';
+    setTimeout(()=>{ this.textContent = old; }, 2000);
+  });
+  
+  document.getElementById('btnMax').addEventListener('click', async function(){
+    await copyReport();
+    alert('Текст скопирован! Открываю чат Макс…');
+    window.open(MAX_URL, '_blank', 'noopener');
+  });
+
+  /* ===== МОДАЛКИ ===== */
+  document.getElementById('emptyModalOk').addEventListener('click', ()=>{
+    document.getElementById('emptyModal').classList.remove('show');
+  });
+  document.getElementById('emptyModal').addEventListener('click', (e)=>{
+    if(e.target.id==='emptyModal') e.currentTarget.classList.remove('show');
+  });
+
+  const resetModal = document.getElementById('resetModal');
+  const resetPass = document.getElementById('resetPass');
+  const resetErr = document.getElementById('resetErr');
+
+  document.getElementById('btnReset').addEventListener('click', ()=>{
+    resetModal.classList.add('show');
+    resetPass.value = '';
+    resetErr.textContent = '';
+    setTimeout(()=>resetPass.focus(), 50);
+  });
+  document.getElementById('resetCancel').addEventListener('click', ()=>{
+    resetModal.classList.remove('show');
+  });
+  resetModal.addEventListener('click', (e)=>{
+    if(e.target===resetModal) resetModal.classList.remove('show');
+  });
+  resetPass.addEventListener('keydown', (e)=>{
+    if(e.key==='Enter') document.getElementById('resetConfirm').click();
+  });
+  document.getElementById('resetConfirm').addEventListener('click', ()=>{
+    if(resetPass.value.trim() === PASSWORD){
+      localStorage.clear();
+      location.reload();
+    }else{
+      resetErr.textContent = 'Неверный пароль';
+      resetPass.value = '';
+      resetPass.focus();
+    }
+  });
+</script>
+</body>
+</html>
