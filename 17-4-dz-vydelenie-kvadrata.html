@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>ΤΕΤΡΑΚΤΥΣ · Общее ДЗ (10 класс)</title>
+
+<!-- KaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
+<style>
+  :root {
+    --bg: #0a2a33; 
+    --panel: rgba(26, 188, 156, 0.08); 
+    --line: rgba(26, 188, 156, 0.35); 
+    --turq: #1abc9c; 
+    --mint: #7fffd4; 
+    --gold: #f4d35e; 
+    --text: #e8f8f5; 
+    --text-soft: #b8d8d0;
+    --coral: #ff6b6b;
+    --ok: #2ecc71;
+  }
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  
+  body {
+    background: linear-gradient(160deg, #0a2a33 0%, #0d3b47 50%, #134e5e 100%);
+    background-attachment: fixed; color: var(--text);
+    font-family: Georgia, serif; min-height: 100vh; padding: 20px; padding-top: 100px;
+    line-height: 1.6; overflow-x: hidden;
+  }
+
+  .top-bar {
+    position: fixed; top: 0; left: 0; width: 100%; height: 80px;
+    background: rgba(10,42,51,0.9); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line); z-index: 100;
+    display: flex; justify-content: space-between; align-items: center; padding: 0 20px;
+  }
+  .logo-area { display: flex; align-items: center; gap: 12px; }
+  .logo-dots { font-size: 11px; line-height: 1.15; letter-spacing: 2px; font-weight: bold; color: var(--turq); }
+  .logo-text { font-family: 'Times New Roman', serif; font-size: 16px; color: var(--turq); font-weight: bold; letter-spacing: 2px; }
+  .logo-text small { display: block; font-size: 10px; color: var(--text-soft); letter-spacing: 1px; }
+  .nav-btn { color: var(--mint); text-decoration: none; padding: 8px 16px; border: 1px solid var(--line); border-radius: 12px; font-size: 14px; transition: 0.2s; }
+  .nav-btn:hover { background: rgba(26,188,156,0.15); border-color: var(--mint); }
+
+  .container { max-width: 800px; margin: 0 auto; }
+
+  .header-title { text-align: center; margin-bottom: 30px; }
+  .header-title h1 { font-size: 28px; color: var(--mint); text-shadow: 0 0 20px rgba(127,255,212,0.3); margin-bottom: 10px; }
+  .header-title p { color: var(--text-soft); font-style: italic; }
+
+  .card {
+    background: var(--panel); border: 1.5px solid var(--line);
+    border-radius: 20px; padding: 25px; margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+  }
+  .card-title { font-size: 18px; color: var(--gold); margin-bottom: 15px; font-family: 'Times New Roman', serif; border-bottom: 1px dashed var(--line); padding-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+  .card-title .num-badge { background: var(--gold); color: #3a2b00; padding: 4px 10px; border-radius: 8px; font-size: 14px; font-weight: bold; }
+
+  .task-item { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .task-item:last-child { border: none; margin-bottom: 0; padding-bottom: 0; }
+  
+  .task-desc { font-size: 16px; margin-bottom: 10px; }
+  .task-eq { font-size: 24px; color: var(--mint); text-align: center; margin: 15px 0; font-family: 'Times New Roman', serif; }
+
+  .answer-input {
+    width: 100%; max-width: 350px; padding: 12px 15px; border-radius: 10px;
+    border: 2px solid var(--line); background: rgba(0,0,0,0.3);
+    color: var(--text); font-family: 'Courier New', monospace; font-size: 18px;
+    text-align: center; font-weight: bold; outline: none; transition: 0.3s;
+    display: block; margin: 0 auto;
+  }
+  .answer-input:focus { border-color: var(--turq); }
+  .answer-input.ok { border-color: var(--ok); color: var(--ok); }
+  .answer-input.err { border-color: var(--coral); color: var(--coral); animation: shake 0.4s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+  .actions { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
+  
+  .btn {
+    padding: 16px; border-radius: 16px; border: none; font-family: Georgia, serif;
+    font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s;
+    display: flex; justify-content: center; align-items: center; gap: 10px;
+  }
+  .btn-check { background: linear-gradient(135deg, var(--turq), #16a085); color: #04231d; box-shadow: 0 8px 25px rgba(26,188,156,0.4); }
+  .btn-check:hover { transform: translateY(-2px); }
+  .btn-send { background: linear-gradient(135deg, #ffe89a, var(--gold)); color: #3a2b00; box-shadow: 0 8px 25px rgba(244,211,94,0.4); }
+  .btn-send:hover { transform: translateY(-2px); }
+  
+  .result-box {
+    display: none; margin-top: 20px; padding: 20px; border-radius: 16px;
+    background: rgba(0,0,0,0.3); border: 2px solid var(--gold); text-align: center;
+  }
+  .result-box.show { display: block; }
+  .result-box h3 { color: var(--gold); margin-bottom: 10px; }
+  .result-score { font-size: 24px; font-weight: bold; color: var(--mint); }
+
+  .toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+    background: var(--mint); color: #04231d; padding: 12px 24px; border-radius: 12px;
+    font-weight: bold; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 200;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="logo-area">
+    <div class="logo-dots">●<br>● ●<br>● ● ●</div>
+    <div class="logo-text">ΤΕΤΡΑΚΤΥΣ<small>Школа Елены Михалевой</small></div>
+  </div>
+  <a href="https://elenamihaleva43-bot.github.io/index.html" class="nav-btn">🏠 На главную</a>
+</div>
+
+<div class="container">
+  <div class="header-title">
+    <h1>Общее ДЗ (10 класс)</h1>
+    <p>Полный квадрат · Разложение на множители · Параметры</p>
+  </div>
+
+  <!-- ЧАСТЬ 1: ПОЛНЫЙ КВАДРАТ -->
+  <div class="card">
+    <div class="card-title"><span class="num-badge">Ч.1</span> Выделение полного квадрата</div>
+
+    <div class="task-item">
+      <div class="task-desc">1. Выделите полный квадрат:</div>
+      <div class="task-eq">\(x^2 - 6x + 5\)</div>
+      <input type="text" class="answer-input" data-task="1" placeholder="Введите ответ...">
+    </div>
+
+    <div class="task-item">
+      <div class="task-desc">2. Выделите полный квадрат:</div>
+      <div class="task-eq">\(x^2 + 8x + 15\)</div>
+      <input type="text" class="answer-input" data-task="2" placeholder="Введите ответ...">
+    </div>
+
+    <div class="task-item">
+      <div class="task-desc">3. Найдите наименьшее значение выражения:</div>
+      <div class="task-eq">\(x^2 - 4x + 7\)</div>
+      <input type="text" class="answer-input" data-task="3" placeholder="Введите число...">
+    </div>
+
+    <div class="task-item">
+      <div class="task-desc">4. Найдите наименьшее значение выражения:</div>
+      <div class="task-eq">\(x^2 + 2x + y^2 - 4y + 8\)</div>
+      <input type="text" class="answer-input" data-task="4" placeholder="Введите число...">
+    </div>
+
+    <div class="task-item">
+      <div class="task-desc">5. Решите уравнение (в ответе укажите значение \(x+y\)):</div>
+      <div class="task-eq">\(x^2 + y^2 - 2x + 4y + 5 = 0\)</div>
+      <input type="text" class="answer-input" data-task="5" placeholder="Введите число...">
+    </div>
+
+    <div class="task-item">
+      <div class="task-desc">6. Найдите наибольшее значение выражения:</div>
+      <div class="task-eq">\(-x^2 + 6x - 5\)</div>
+      <input type="text" class="answer-input" data-task="6" placeholder="Введите число...">
+    </div>
+  </div>
+
+  <!-- ЧАСТЬ 2: РАЗЛОЖЕНИЕ НА МНОЖИТЕЛИ -->
+  <div class="card">
+    <div class="card-title"><span class="num-badge">Ч.2</span> Разложение на множители</div>
+
+    <div class="task-item">
+      <div class="task-desc">7. Разложите на множители:</div>
+      <div class="task-eq">\(4x^2 - 9\)</div>
+      <input type="text" class="answer-input" data-task="7" placeholder="Введите ответ...">
+    </div>
+
+    <div class="task-item">
+      <div class="task-desc">8. Разложите на множители:</div>
+      <div class="task-eq">\(x^2 + 6x + 9\)</div>
+      <input type="text" class="answer-input" data-task="8" placeholder="Введите ответ...">
+    </div>
+
+    <div class="task-item">
+      <div class="task-desc">9. Разложите на множители:</div>
+      <div class="task-eq">\(2x^2 - 8x\)</div>
+      <input type="text" class="answer-input" data-task="9" placeholder="Введите ответ...">
+    </div>
+
+    <div class="task-item">
+      <div class="task-desc">10. Разложите на множители:</div>
+      <div class="task-eq">\(x^3 - 4x\)</div>
+      <input type="text" class="answer-input" data-task="10" placeholder="Введите ответ...">
+    </div>
+
+    <div class="task-item">
+      <div class="task-desc">11. Разложите на множители:</div>
+      <div class="task-eq">\(2x^2 + 5x + 3\)</div>
+      <input type="text" class="answer-input" data-task="11" placeholder="Введите ответ...">
+    </div>
+
+    <div class="task-item">
+      <div class="task-desc">12. Разложите на множители:</div>
+      <div class="task-eq">\(x^3 - 3x^2 + 6x - 8\)</div>
+      <input type="text" class="answer-input" data-task="12" placeholder="Введите ответ...">
+    </div>
+  </div>
+
+  <!-- БЛОК ОТПРАВКИ -->
+  <div class="card">
+    <div class="card-title">📤 Отправка результата</div>
+    <div style="margin-bottom: 15px;">
+      <label style="display:block; margin-bottom:5px; color:var(--mint);">Ваше имя:</label>
+      <input type="text" id="studentName" class="answer-input" style="max-width:100%; text-align:left; padding:10px;" placeholder="Введите ваше имя...">
+    </div>
+    
+    <div class="actions">
+      <button class="btn btn-check" onclick="checkAll()">✅ Проверить все ответы</button>
+      <button class="btn btn-send" onclick="sendToMax()">📩 Отправить учителю в Макс</button>
+    </div>
+
+    <div class="result-box" id="resultBox">
+      <h3>Результат проверки</h3>
+      <div class="result-score" id="resultScore">0 / 12</div>
+      <div style="font-size:14px; color:var(--text-soft); margin-top:5px;">Правильных ответов</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Текст скопирован!</div>
+
+<script>
+  const CORRECT_ANSWERS = {
+    1: ["(x-3)^2-4", "(x-3)^2 - 4"],
+    2: ["(x+4)^2-1", "(x+4)^2 - 1"],
+    3: "3",
+    4: "1",
+    5: "-1",
+    6: "4",
+    7: ["(2x-3)(2x+3)", "(2x+3)(2x-3)"],
+    8: ["(x+3)^2", "(x+3)(x+3)"],
+    9: ["2x(x-4)", "2x*(x-4)"],
+    10: ["x(x-2)(x+2)", "x(x+2)(x-2)"],
+    11: ["(2x+3)(x+1)", "(x+1)(2x+3)"],
+    12: ["(x-2)(x^2-x+4)", "(x-2)(x^2 - x + 4)"]
+  };
+
+  function normalize(str) {
+    if(!str) return "";
+    return str.toLowerCase()
+      .replace(/\s+/g, "")
+      .replace(/\*/g, "")
+      .replace(/[\[\{]/g, "(")
+      .replace(/[\]\}]/g, ")")
+      .replace(/²/g, "^2")
+      .replace(/³/g, "^3")
+      .replace(/−/g, "-");
+  }
+
+  function checkOne(inputEl, correctData) {
+    const val = inputEl.value.trim();
+    if(!val) {
+      inputEl.classList.remove('ok', 'err');
+      return false;
+    }
+    
+    const normUser = normalize(val);
+    let isCorrect = false;
+
+    if(Array.isArray(correctData)) {
+       isCorrect = correctData.some(ans => normalize(ans) === normUser);
+    } else {
+       isCorrect = (normalize(correctData) === normUser);
+    }
+
+    if(!isCorrect && !isNaN(parseFloat(normUser)) && !isNaN(parseFloat(correctData))) {
+      if(Math.abs(parseFloat(normUser) - parseFloat(correctData)) < 0.001) isCorrect = true;
+    }
+
+    if(isCorrect) {
+      inputEl.classList.add('ok');
+      inputEl.classList.remove('err');
+      return true;
+    } else {
+      inputEl.classList.add('err');
+      inputEl.classList.remove('ok');
+      return false;
+    }
+  }
+
+  function checkAll() {
+    const inputs = document.querySelectorAll('.answer-input[data-task]');
+    let score = 0;
+    
+    inputs.forEach(inp => {
+      const taskId = inp.dataset.task;
+      if(checkOne(inp, CORRECT_ANSWERS[taskId])) score++;
+    });
+
+    const resultBox = document.getElementById('resultBox');
+    const resultScore = document.getElementById('resultScore');
+    
+    resultScore.textContent = `${score} / ${inputs.length}`;
+    resultBox.classList.add('show');
+  }
+
+  const MAX_URL = 'https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes';
+
+  function sendToMax() {
+    const name = document.getElementById('studentName').value.trim() || "Ученик";
+    const inputs = document.querySelectorAll('.answer-input[data-task]');
+    let text = `📐 ДЗ (10 класс) · Параметры\nУченик: ${name}\n\n`;
+    
+    inputs.forEach(inp => {
+      const taskId = inp.dataset.task;
+      const val = inp.value.trim() || "—";
+      const isOk = inp.classList.contains('ok');
+      const mark = isOk ? "✅" : (inp.classList.contains('err') ? "❌" : "⚪");
+      text += `Задание ${taskId}: ${mark} ${val}\n`;
+    });
+
+    text += `\n(Проверка выполнена автоматически)`;
+
+    navigator.clipboard.writeText(text).then(() => {
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+      window.open(MAX_URL, '_blank');
+    }).catch(() => {
+       alert("Текст скопирован! Вставьте его в чат.");
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(() => {
+      if (typeof katex !== 'undefined') {
+        document.querySelectorAll('.task-eq').forEach(el => {
+          if (el.innerHTML.includes('\\(')) {
+            el.innerHTML = el.innerHTML.replace(/\\\((.*?)\\\)/g, (match, tex) => {
+              try { return katex.renderToString(tex, {throwOnError: false}); }
+              catch (e) { return match; }
+            });
+          }
+        });
+      }
+    }, 100);
+  });
+</script>
+</body>
+</html>
