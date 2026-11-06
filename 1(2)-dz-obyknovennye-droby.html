@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ΤΕΤΡΑΚΤΥΣ — ДЗ 1. Обыкновенные дроби</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
+    <style>
+        :root {
+            --bg-deep: #073a35;
+            --bg-gradient: radial-gradient(circle at 50% 0%, #126b61 0%, #073a35 80%);
+            --turquoise: #1abc9c;
+            --mint: #7fffd4;
+            --gold: #f4d35e;
+            --coral: #ff6b6b;
+            --text-main: #f0fcf9;
+            --text-muted: #9ccfc7;
+            --card-bg: rgba(18, 107, 97, 0.4);
+            --border-color: rgba(26, 188, 156, 0.25);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            background-image: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'Georgia', serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 40px;
+        }
+
+        /* ШАПКА */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(7, 58, 53, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-symbol {
+            font-family: 'Courier New', monospace;
+            color: var(--gold);
+            font-size: 10px;
+            line-height: 1.1;
+            letter-spacing: 4px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .logo-greek-box {
+            border-top: 1px solid var(--gold);
+            border-bottom: 1px solid var(--gold);
+            padding: 2px 0;
+            font-family: 'Times New Roman', serif;
+            font-size: 16px;
+            letter-spacing: 2px;
+            color: var(--gold);
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: var(--mint);
+            font-weight: bold;
+        }
+
+        .progress-badge {
+            background: rgba(26, 188, 156, 0.2);
+            border: 1px solid var(--turquoise);
+            padding: 4px 12px;
+            border-radius: 20px;
+            color: var(--gold);
+        }
+
+        /* КОНТЕЙНЕР */
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+            flex: 1;
+            width: 100%;
+        }
+
+        .main-title {
+            font-family: 'Times New Roman', serif;
+            text-align: center;
+            font-size: 26px;
+            color: var(--gold);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        /* БЛОКИ ИНСТРУКЦИЙ И ИМЕНИ */
+        .info-block {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .name-input-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .name-input-group label {
+            font-family: 'Times New Roman', serif;
+            font-size: 18px;
+            color: var(--mint);
+        }
+
+        .name-input-group input {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            font-family: 'Georgia', serif;
+            font-size: 16px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            outline: none;
+            flex: 1;
+        }
+
+        .name-input-group input:focus {
+            border-color: var(--gold);
+        }
+
+        .instruction-text {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* КАРТОЧКИ ЗАДАНИЙ */
+        .task-card {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .task-card.is-ok {
+            border-color: #2ecc71;
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
+        }
+
+        .task-card.is-fail {
+            border-color: var(--coral);
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.2);
+        }
+
+        .task-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .task-number {
+            background: linear-gradient(135deg, var(--turquoise), #0e8c72);
+            color: #073a35;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 18px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(26, 188, 156, 0.3);
+        }
+
+        .task-text {
+            font-family: 'Times New Roman', serif;
+            font-size: 20px;
+            color: var(--text-main);
+        }
+
+        .task-formula {
+            font-size: 20px;
+            margin: 10px 0 20px 0;
+            overflow-x: auto;
+            padding: 10px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        /* ВВОД ОТВЕТА */
+        .answer-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .input-row span {
+            font-weight: bold;
+            color: var(--mint);
+        }
+
+        .input-row input {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 300px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .input-row input:focus {
+            border-color: var(--gold);
+            background: rgba(0,0,0,0.3);
+        }
+
+        .input-row input:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* КНОПКИ-СИМВОЛЫ */
+        .symbols-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .sym-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--mint);
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            min-width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.2s;
+        }
+
+        .sym-btn:hover {
+            background: rgba(26, 188, 156, 0.2);
+            border-color: var(--turquoise);
+        }
+
+        /* СТАТУС ОТВЕТА */
+        .status-msg {
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .status-msg.ok { color: #2ecc71; display: block; }
+        .status-msg.fail { color: var(--coral); display: block; }
+
+        /* НИЖНИЕ КНОПКИ */
+        .actions-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+
+        .btn-action {
+            background: var(--card-bg);
+            border: 1px solid var(--turquoise);
+            color: var(--mint);
+            font-family: 'Georgia', serif;
+            font-size: 16px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .btn-action:hover {
+            background: rgba(26, 188, 156, 0.2);
+            color: var(--gold);
+        }
+
+        .btn-action.primary {
+            background: var(--turquoise);
+            color: #073a35;
+            border-color: var(--turquoise);
+            font-weight: bold;
+        }
+
+        .btn-action.primary:hover {
+            background: var(--mint);
+        }
+
+        .btn-action.danger {
+            border-color: var(--coral);
+            color: var(--coral);
+        }
+
+        .btn-action.danger:hover {
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        /* МОДАЛЬНОЕ ОКНО */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-box {
+            background: #073a35;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .modal-box h3 {
+            color: var(--gold);
+            font-family: 'Times New Roman', serif;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        .modal-box p {
+            color: var(--text-main);
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .modal-box input {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            font-size: 18px;
+            padding: 10px;
+            border-radius: 8px;
+            width: 100%;
+            text-align: center;
+            outline: none;
+            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .modal-box button {
+            background: var(--turquoise);
+            color: #073a35;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .header-right { flex-direction: column; gap: 5px; align-items: flex-end; }
+            .actions-panel { flex-direction: column; }
+            .btn-action { width: 100%; justify-content: center; }
+            .logo-symbol { font-size: 8px; }
+            .logo-greek-box { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-left">
+            <div class="logo-symbol">
+                ●<br>● ●<br>● ● ●<br>● ● ● ●
+            </div>
+            <div class="logo-greek-box">ΤΕΤΡΑΚΤΥΣ</div>
+        </div>
+        <div class="header-right">
+            <span id="date-display"></span>
+            <span class="progress-badge" id="progress-badge">✅ 0 / 2</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1 class="main-title">Домашнее задание</h1>
+        <h2 style="text-align: center; color: var(--mint); margin-bottom: 20px; font-family: 'Times New Roman', serif;">Действия с обыкновенными дробями</h2>
+
+        <div class="info-block">
+            <div class="name-input-group">
+                <label>👤 Имя ученика:</label>
+                <input type="text" id="student-name" placeholder="Введите ваше имя..." oninput="saveName()">
+            </div>
+        </div>
+
+        <div class="info-block">
+            <div class="instruction-text">
+                <b>Как записывать ответы:</b><br>
+                • Обыкновенные дроби записывайте через косую черту: <b>1/2</b>, <b>3/4</b>.<br>
+                • Десятичные — через точку или запятую: <b>0.5</b> или <b>0,5</b>.<br>
+                • Смешанные числа: <b>1 1/2</b> (через пробел).<br>
+                • Используйте кнопки ниже поля ввода, если печатать с телефона неудобно.
+            </div>
+        </div>
+
+        <!-- ЗАДАНИЯ -->
+        <div id="tasks-container">
+            <!-- Задание 1 -->
+            <div class="task-card" id="card-1">
+                <div class="task-header">
+                    <div class="task-number">1</div>
+                    <div class="task-text">Вычислите:</div>
+                </div>
+                <div class="task-formula" id="formula-1"></div>
+                <div class="answer-wrapper">
+                    <div class="input-row">
+                        <span>Ответ:</span>
+                        <input type="text" id="input-1" placeholder="Введите ответ" oninput="updateInput(this)">
+                    </div>
+                    <div class="symbols-bar">
+                        <button class="sym-btn" onclick="insertSym('input-1', '(')">(</button>
+                        <button class="sym-btn" onclick="insertSym('input-1', ')')">)</button>
+                        <button class="sym-btn" onclick="insertSym('input-1', '/')">/</button>
+                        <button class="sym-btn" onclick="insertSym('input-1', ' ')">␣</button>
+                        <button class="sym-btn" onclick="insertSym('input-1', '−')">−</button>
+                        <button class="sym-btn" onclick="insertSym('input-1', '.')">.</button>
+                        <button class="sym-btn" onclick="backspace('input-1')">←</button>
+                    </div>
+                    <div class="status-msg" id="status-1"></div>
+                </div>
+            </div>
+
+            <!-- Задание 2 -->
+            <div class="task-card" id="card-2">
+                <div class="task-header">
+                    <div class="task-number">2</div>
+                    <div class="task-text">Вычислите:</div>
+                </div>
+                <div class="task-formula" id="formula-2"></div>
+                <div class="answer-wrapper">
+                    <div class="input-row">
+                        <span>Ответ:</span>
+                        <input type="text" id="input-2" placeholder="Введите ответ" oninput="updateInput(this)">
+                    </div>
+                    <div class="symbols-bar">
+                        <button class="sym-btn" onclick="insertSym('input-2', '(')">(</button>
+                        <button class="sym-btn" onclick="insertSym('input-2', ')')">)</button>
+                        <button class="sym-btn" onclick="insertSym('input-2', '/')">/</button>
+                        <button class="sym-btn" onclick="insertSym('input-2', ' ')">␣</button>
+                        <button class="sym-btn" onclick="insertSym('input-2', '−')">−</button>
+                        <button class="sym-btn" onclick="insertSym('input-2', '.')">.</button>
+                        <button class="sym-btn" onclick="backspace('input-2')">←</button>
+                    </div>
+                    <div class="status-msg" id="status-2"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- КНОПКИ ДЕЙСТВИЙ -->
+        <div class="actions-panel">
+            <button class="btn-action primary" onclick="checkAll()">✅ Проверить все ответы</button>
+            <button class="btn-action" onclick="copyResults()">📋 Скопировать</button>
+            <button class="btn-action" onclick="sendToMax()">💬 Отправить в Макс</button>
+            <button class="btn-action danger" onclick="openClearModal()">🔒 Очистить</button>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ВВОДА ПАРОЛЯ -->
+    <div class="modal-overlay" id="clear-modal">
+        <div class="modal-box">
+            <h3>Очистка данных</h3>
+            <p>Введите пароль для сброса:</p>
+            <input type="password" id="clear-password" placeholder="****">
+            <br>
+            <button onclick="confirmClear()">Подтвердить</button>
+            <button style="background: transparent; color: var(--coral); margin-left: 10px;" onclick="closeClearModal()">Отмена</button>
+        </div>
+    </div>
+
+    <script>
+        // Конфигурация заданий
+        const TASKS = [
+            { id: 1, tex: `\\left( \\frac{2}{3} - \\frac{4}{9} \\right) \\cdot \\frac{3}{8}`, answer: '1/12' },
+            { id: 2, tex: `\\frac{11}{8} - \\frac{15}{16} : \\frac{25}{28}`, answer: '13/40' }
+        ];
+
+        const STORAGE_PREFIX = 'tetraktys_hw_1_';
+
+        // --- ИНИЦИАЛИЗАЦИЯ ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Дата
+            const now = new Date();
+            document.getElementById('date-display').textContent = now.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' });
+
+            // Рендер формул
+            TASKS.forEach(task => {
+                const el = document.getElementById(`formula-${task.id}`);
+                if (el) {
+                    el.innerHTML = katex.renderToString(task.tex, { displayMode: true, throwOnError: false });
+                }
+            });
+
+            // Загрузка сохраненных данных
+            loadState();
+        });
+
+        // --- УТИЛИТЫ ВВОДА ---
+        function insertSym(inputId, sym) {
+            const input = document.getElementById(inputId);
+            if (input.disabled) return;
+            input.value += sym;
+            input.focus();
+            updateInput(input);
+        }
+
+        function backspace(inputId) {
+            const input = document.getElementById(inputId);
+            if (input.disabled) return;
+            input.value = input.value.slice(0, -1);
+            input.focus();
+            updateInput(input);
+        }
+
+        function updateInput(input) {
+            // Просто сохраняем введенное значение (на случай перезагрузки)
+            const id = input.id.replace('input-', '');
+            localStorage.setItem(STORAGE_PREFIX + 'val_' + id, input.value);
+        }
+
+        // --- ЛОГИКА ПРОВЕРКИ ---
+        function normalize(str) {
+            if (!str) return '';
+            return str
+                .replace(/,/g, '.')      // Запятая на точку
+                .replace(/\s+/g, '')     // Убираем пробелы
+                .replace(/[хxХX]/g, 'x') // Русскую х на англ
+                .toLowerCase()
+                .trim();
+        }
+
+        function checkAll() {
+            let emptyTasks = [];
+            let allFilled = true;
+
+            // 1. Проверка на заполненность
+            TASKS.forEach(task => {
+                const input = document.getElementById(`input-${task.id}`);
+                if (!input.value.trim() && !input.disabled) {
+                    emptyTasks.push(task.id);
+                    allFilled = false;
+                }
+            });
+
+            if (!allFilled) {
+                alert(`Заполни все поля! У тебя пустые: №${emptyTasks.join(', №')}`);
+                return;
+            }
+
+            // 2. Проверка ответов
+            TASKS.forEach(task => {
+                const input = document.getElementById(`input-${task.id}`);
+                if (input.disabled) return; // Уже проверено
+
+                const userAnswer = normalize(input.value);
+                const correctAnswer = normalize(task.answer);
+                
+                let status = 'fail';
+                if (userAnswer === correctAnswer) {
+                    status = 'ok';
+                }
+
+                saveResult(task.id, input.value, status);
+                applyResultUI(task.id, input.value, status);
+            });
+
+            updateProgress();
+        }
+
+        // --- UI СТАТУСОВ ---
+        function applyResultUI(taskId, answer, status) {
+            const card = document.getElementById(`card-${taskId}`);
+            const input = document.getElementById(`input-${taskId}`);
+            const statusMsg = document.getElementById(`status-${taskId}`);
+            const task = TASKS.find(t => t.id === taskId);
+
+            input.disabled = true;
+
+            if (status === 'ok') {
+                card.classList.add('is-ok');
+                input.style.borderColor = '#2ecc71';
+                input.style.backgroundColor = 'rgba(46, 204, 113, 0.1)';
+                statusMsg.className = 'status-msg ok';
+                statusMsg.textContent = '✅ Верно!';
+            } else {
+                card.classList.add('is-fail');
+                input.style.borderColor = 'var(--coral)';
+                input.style.backgroundColor = 'rgba(255, 107, 107, 0.1)';
+                statusMsg.className = 'status-msg fail';
+                statusMsg.textContent = `❌ Неверно. Правильный ответ: ${task.answer}`;
+            }
+        }
+
+        function updateProgress() {
+            let checkedCount = 0;
+            let okCount = 0;
+
+            TASKS.forEach(task => {
+                const status = localStorage.getItem(STORAGE_PREFIX + 'status_' + task.id);
+                if (status) {
+                    checkedCount++;
+                    if (status === 'ok') okCount++;
+                }
+            });
+
+            const badge = document.getElementById('progress-badge');
+            if (checkedCount === TASKS.length) {
+                badge.textContent = `✅ ${okCount} / ${TASKS.length} (Готово)`;
+                badge.style.color = okCount === TASKS.length ? '#2ecc71' : 'var(--gold)';
+            } else {
+                badge.textContent = `✅ ${okCount} / ${TASKS.length}`;
+            }
+        }
+
+        // --- СОХРАНЕНИЕ В LOCALSTORAGE ---
+        function saveResult(taskId, answer, status) {
+            localStorage.setItem(STORAGE_PREFIX + 'val_' + taskId, answer);
+            localStorage.setItem(STORAGE_PREFIX + 'status_' + taskId, status);
+        }
+
+        function saveName() {
+            const name = document.getElementById('student-name').value;
+            localStorage.setItem(STORAGE_PREFIX + 'student_name', name);
+        }
+
+        function loadState() {
+            // Имя
+            const savedName = localStorage.getItem(STORAGE_PREFIX + 'student_name');
+            if (savedName) document.getElementById('student-name').value = savedName;
+
+            // Задания
+            TASKS.forEach(task => {
+                const input = document.getElementById(`input-${task.id}`);
+                const savedVal = localStorage.getItem(STORAGE_PREFIX + 'val_' + task.id);
+                const savedStatus = localStorage.getItem(STORAGE_PREFIX + 'status_' + task.id);
+
+                if (savedVal) {
+                    input.value = savedVal;
+                }
+
+                if (savedStatus) {
+                    applyResultUI(task.id, savedVal, savedStatus);
+                }
+            });
+
+            updateProgress();
+        }
+
+        // --- ОТЧЕТЫ ---
+        function generateReportText() {
+            const name = document.getElementById('student-name').value.trim() || 'Не указано';
+            const now = new Date();
+            const dateStr = now.toLocaleString('ru-RU');
+            
+            let text = `📐 ОТВЕТЫ · ДЗ 1 · Обыкновенные дроби\n`;
+            text += `Дата: ${dateStr}\n`;
+            text += `Ученик: ${name}\n\n`;
+
+            let okCount = 0;
+
+            TASKS.forEach(task => {
+                const val = localStorage.getItem(STORAGE_PREFIX + 'val_' + task.id) || '—';
+                const status = localStorage.getItem(STORAGE_PREFIX + 'status_' + task.id);
+                
+                if (status === 'ok') {
+                    text += `✅ Задание ${task.id}. Ответ: ${val}\n`;
+                    okCount++;
+                } else if (status === 'fail') {
+                    text += `❌ Задание ${task.id}. Ответ: ${val} (правильный: ${task.answer})\n`;
+                } else {
+                    text += `— Задание ${task.id}. Ответ: — (не проверено)\n`;
+                }
+            });
+
+            text += `\n✅ Итог: ${okCount} из ${TASKS.length} верно`;
+            return text;
+        }
+
+        function copyResults() {
+            const text = generateReportText();
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Текст скопирован в буфер обмена!');
+            }).catch(err => {
+                alert('Ошибка копирования: ' + err);
+            });
+        }
+
+        function sendToMax() {
+            const text = generateReportText();
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Текст скопирован! Сейчас откроется чат в Макс.');
+                window.open('https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes', '_blank');
+            });
+        }
+
+        // --- ОЧИСТКА ---
+        function openClearModal() {
+            document.getElementById('clear-modal').style.display = 'flex';
+            document.getElementById('clear-password').value = '';
+            document.getElementById('clear-password').focus();
+        }
+
+        function closeClearModal() {
+            document.getElementById('clear-modal').style.display = 'none';
+        }
+
+        function confirmClear() {
+            const pass = document.getElementById('clear-password').value;
+            if (pass === '2810') {
+                localStorage.clear();
+                location.reload();
+            } else {
+                alert('Неверный пароль');
+                document.getElementById('clear-password').value = '';
+            }
+        }
+    </script>
+</body>
+</html>
