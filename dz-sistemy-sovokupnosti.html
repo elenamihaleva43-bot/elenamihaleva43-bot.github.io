@@ -608,7 +608,6 @@
     </div>
 
     <div class="btnrow" id="afterCheck" style="display:none;">
-      <button class="big d" id="btnRetry">🔄 Попробовать снова</button>
       <button class="big l" id="btnForm">📩 Сформировать ответ для учителя</button>
       <button class="big" id="btnCopy">📋 Скопировать ответы</button>
       <button class="big" id="btnMax">💬 Отправить учителю в Макс</button>
@@ -620,7 +619,6 @@
 
 <div class="toast" id="toast"></div>
 
-<!-- ЗДЕСЬ БУДЕТ ЧАСТЬ 2: ВЕСЬ СКРИПТ -->
 <script>
 /* ═══════════════════════════════════════════
    ДАТА
@@ -867,43 +865,6 @@ document.getElementById('btnCheck').addEventListener('click', () => {
   }
 
   checked = true;
-});
-
-/* ═══════════════════════════════════════════
-   СБРОС
-   ═══════════════════════════════════════════ */
-document.getElementById('btnRetry').addEventListener('click', () => {
-  checked = false;
-  score = 0;
-
-  document.querySelectorAll('input[data-ans]').forEach(inp => {
-    inp.value = '';
-    inp.classList.remove('ok','err','locked');
-    inp.disabled = false;
-  });
-  document.querySelectorAll('.task-verdict').forEach(v => {
-    v.textContent = '';
-    v.classList.remove('ok','err');
-  });
-  document.querySelectorAll('.task-correct').forEach(c => {
-    c.classList.remove('show');
-    c.innerHTML = '';
-  });
-  document.querySelectorAll('.btn-kbd').forEach(b => {
-    b.disabled = false;
-    b.style.opacity = '';
-    b.style.cursor = '';
-  });
-  document.querySelectorAll('.mini-kbd').forEach(p => p.classList.remove('show'));
-  document.querySelectorAll('.btn-kbd').forEach(b => b.classList.remove('active'));
-
-  document.getElementById('scoreBox').classList.remove('show');
-  document.getElementById('afterCheck').style.display = 'none';
-  document.getElementById('resultBox').classList.remove('show');
-  document.getElementById('resultBox').textContent = '';
-
-  showToast('🔄 Попробуй ещё раз!');
-  window.scrollTo({ top: 300, behavior: 'smooth' });
 });
 
 /* ═══════════════════════════════════════════
