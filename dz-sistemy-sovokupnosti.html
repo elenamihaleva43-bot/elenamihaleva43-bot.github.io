@@ -668,6 +668,9 @@ document.querySelectorAll('.mini-kbd').forEach(panel => {
       const newPos = start + k.length;
       input.focus();
       try { input.setSelectionRange(newPos, newPos); } catch(err){}
+      
+      // Сохраняем при вставке значка
+      saveAnswers();
     });
     panel.appendChild(btn);
   });
@@ -786,10 +789,97 @@ function checkOne(userVal, expected){
 }
 
 /* ═══════════════════════════════════════════
-   СОСТОЯНИЕ
+   СОХРАНЕНИЕ И ВОССТАНОВЛЕНИЕ (localStorage)
    ═══════════════════════════════════════════ */
+const STORAGE_KEY = 'tetraktis_dz_answers_state';
 let checked = false;
 let score = 0;
+
+function saveAnswers() {
+  const state = {
+    answers: {},
+    checked: checked,
+    score: score
+  };
+  
+  // Сохраняем только те поля, которые не заблокированы (или все, чтобы восстановить после проверки)
+  document.querySelectorAll('input[data-ans]').forEach(inp => {
+    state.answers[inp.dataset.ans] = inp.value;
+  });
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function loadAnswers() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (!saved) return;
+
+  try {
+    const state = JSON.parse(saved);
+    
+    // Восстанавливаем введенные значения
+    if (state.answers) {
+      Object.keys(state.answers).forEach(idx => {
+        const inp = document.querySelector(`input[data-ans="${idx}"]`);
+        if (inp) inp.value = state.answers[idx];
+      });
+    }
+
+    // Восстанавливаем состояние проверки
+    if (state.checked) {
+      checked = true;
+      score = state.score || 0;
+
+      document.querySelectorAll('input[data-ans]').forEach(inp => {
+        const idx = +inp.dataset.ans;
+        const t = TASKS[idx];
+        const vd = document.querySelector(`.task-verdict[data-vd="${idx}"]`);
+        const cor = document.querySelector(`.task-correct[data-correct="${idx}"]`);
+        const userVal = inp.value.trim();
+
+        inp.classList.add('locked');
+        inp.disabled = true;
+        document.querySelector(`.btn-kbd[data-kbd="${idx}"]`).disabled = true;
+        document.querySelector(`.btn-kbd[data-kbd="${idx}"]`).style.opacity = '0.5';
+        document.querySelector(`.btn-kbd[data-kbd="${idx}"]`).style.cursor = 'not-allowed';
+
+        if (!userVal) {
+          inp.classList.add('err');
+          vd.textContent = '—';
+          vd.classList.add('err');
+          return;
+        }
+
+        if (checkOne(userVal, t.answer)) {
+          inp.classList.add('ok');
+          vd.textContent = '✅';
+          vd.classList.add('ok');
+        } else {
+          inp.classList.add('err');
+          vd.textContent = '❌';
+          vd.classList.add('err');
+          cor.innerHTML = `💡 Правильный ответ: <b>${t.answer}</b><br><span style="color:var(--text-soft);font-size:13.5px;">${t.solution}</span>`;
+          cor.classList.add('show');
+        }
+      });
+
+      document.getElementById('scoreNum').textContent = score;
+      document.getElementById('scoreBox').classList.add('show');
+      document.getElementById('afterCheck').style.display = 'flex';
+      document.getElementById('btnCheck').disabled = true;
+      document.getElementById('btnCheck').style.opacity = '0.5';
+    }
+
+  } catch (e) {
+    console.warn('Ошибка восстановления состояния:', e);
+    localStorage.removeItem(STORAGE_KEY);
+  }
+}
+
+/* Сохраняем при вводе с клавиатуры */
+document.querySelectorAll('input[data-ans]').forEach(inp => {
+  inp.addEventListener('input', saveAnswers);
+});
 
 /* ═══════════════════════════════════════════
    ПРОВЕРКА
@@ -855,6 +945,8 @@ document.getElementById('btnCheck').addEventListener('click', () => {
   document.getElementById('scoreNum').textContent = score;
   document.getElementById('scoreBox').classList.add('show');
   document.getElementById('afterCheck').style.display = 'flex';
+  document.getElementById('btnCheck').disabled = true;
+  document.getElementById('btnCheck').style.opacity = '0.5';
 
   if (score === TASKS.length){
     showToast('🎉 Отлично! Все 8 верно!');
@@ -865,6 +957,7 @@ document.getElementById('btnCheck').addEventListener('click', () => {
   }
 
   checked = true;
+  saveAnswers();
 });
 
 /* ═══════════════════════════════════════════
@@ -994,6 +1087,13 @@ document.querySelectorAll('input[data-ans]').forEach(inp => {
       else document.getElementById('btnCheck').click();
     }
   });
+});
+
+/* ═══════════════════════════════════════════
+   ЗАГРУЗКА ПРИ СТАРТЕ
+   ═══════════════════════════════════════════ */
+window.addEventListener('load', () => {
+  loadAnswers();
 });
 </script>
 
