@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ΤΕΤΡΑΚΤΥΣ — ДЗ. Диаграммы</title>
+<style>
+    :root {
+        --bg-deep: #073a35;
+        --bg-gradient: radial-gradient(circle at 50% 0%, #126b61 0%, #073a35 80%);
+        --turquoise: #1abc9c;
+        --mint: #7fffd4;
+        --gold: #f4d35e;
+        --coral: #ff6b6b;
+        --green: #2ecc71;
+        --text-main: #f0fcf9;
+        --text-muted: #9ccfc7;
+        --card-bg: rgba(18, 107, 97, 0.4);
+        --border-color: rgba(26, 188, 156, 0.25);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        background-color: var(--bg-deep);
+        background-image: var(--bg-gradient);
+        background-attachment: fixed;
+        color: var(--text-main);
+        font-family: 'Georgia', serif;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+    }
+
+    /* ШАПКА */
+    header {
+        position: sticky; top: 0; z-index: 100;
+        background: rgba(7, 58, 53, 0.9);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border-color);
+        padding: 8px 20px;
+        display: flex; justify-content: space-between; align-items: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+        gap: 15px;
+    }
+    .logo-left { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+    .logo-symbol { font-family: 'Courier New', monospace; color: var(--gold); font-size: 9px; line-height: 1.1; letter-spacing: 4px; font-weight: bold; text-align: center; }
+    .logo-greek-box { border-top: 1px solid var(--gold); border-bottom: 1px solid var(--gold); padding: 2px 0; font-family: 'Times New Roman', serif; font-size: 15px; letter-spacing: 2px; color: var(--gold); font-weight: bold; line-height: 1; }
+    .logo-sub-box { font-size: 9px; color: var(--mint); font-style: italic; margin-top: 2px; }
+    .header-right { display: flex; align-items: center; gap: 12px; font-family: 'Courier New', monospace; font-size: 13px; color: var(--mint); font-weight: bold; }
+    .progress-box { background: rgba(26, 188, 156, 0.2); padding: 5px 10px; border-radius: 8px; border: 1px solid var(--turquoise); color: var(--gold); white-space: nowrap; }
+
+    /* КОНТЕЙНЕР */
+    .container { max-width: 900px; margin: 15px auto; padding: 0 15px; flex: 1; width: 100%; }
+    .lesson-title { font-family: 'Times New Roman', serif; text-align: center; font-size: 24px; color: var(--gold); margin-bottom: 8px; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+    .lesson-sub { text-align: center; color: var(--text-muted); font-size: 14px; margin-bottom: 18px; }
+
+    /* БЛОКИ */
+    .card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 18px;
+        padding: 16px;
+        margin-bottom: 16px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .card.correct { border-color: var(--green); box-shadow: 0 0 18px rgba(46, 204, 113, 0.25); }
+    .card.wrong { border-color: var(--coral); box-shadow: 0 0 18px rgba(255, 107, 107, 0.25); }
+
+    .card-title { font-family: 'Times New Roman', serif; font-size: 18px; color: var(--mint); margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+    .task-num {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 30px; height: 30px; border-radius: 9px;
+        background: linear-gradient(135deg, var(--turquoise), #0e8a74);
+        color: #073a35; font-family: 'Courier New', monospace; font-weight: bold; font-size: 15px;
+        flex-shrink: 0;
+    }
+    .task-text { font-size: 15px; line-height: 1.5; margin-bottom: 12px; }
+
+    /* УНИВЕРСАЛЬНАЯ СТРУКТУРА ДЛЯ ВСЕХ ГРАФИКОВ */
+    .chart-box {
+        background: rgba(18, 107, 97, 0.2);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 20px 20px 40px 20px;
+        margin: 15px 0;
+    }
+
+    .chart-wrap {
+        position: relative;
+        height: 250px; /* Высота графика */
+        margin-left: 45px; /* Место для цифр */
+        border-left: 2px solid var(--turquoise);
+        border-bottom: 2px solid var(--turquoise);
+    }
+
+    /* Блок с цифрами (слева) */
+    .y-axis {
+        position: absolute;
+        left: -45px;
+        top: 0;
+        height: 100%;
+        width: 45px;
+        font-size: 12px;
+    }
+
+    .y-label {
+        position: absolute;
+        right: 8px;
+        transform: translateY(-50%);
+        color: var(--text-main);
+        font-family: "Courier New", monospace;
+        font-weight: bold;
+        font-size: 12px;
+    }
+
+    /* Сетка */
+    .grid-lines {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column-reverse;
+        justify-content: space-between;
+        pointer-events: none;
+    }
+
+    .grid-line {
+        height: 1px;
+        width: 100%;
+        background-color: rgba(26, 188, 156, 0.15); /* Тонкие линии */
+        position: relative;
+    }
+
+    .grid-line.major {
+        background-color: rgba(26, 188, 156, 0.45); /* Яркие линии */
+        height: 1.5px;
+    }
+
+    .grid-line.zero {
+        background-color: var(--mint); /* Нулевая линия */
+        height: 2px;
+        z-index: 10;
+    }
+
+    .grid-line.top {
+        background-color: var(--turquoise);
+        height: 2px;
+    }
+
+    /* Контейнер для столбцов */
+    .bars-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        justify-content: space-around;
+        align-items: flex-end;
+        padding: 0 10px;
+    }
+
+    .bar-wrapper {
+        position: relative;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+    }
+
+    /* Столбцы (золотые) */
+    .bar {
+        position: absolute;
+        width: 75%;
+        background: linear-gradient(to top, rgba(244, 211, 94, 0.4), rgba(255, 232, 154, 0.8));
+        border: 1px solid var(--gold);
+        box-sizing: border-box;
+        transition: all 0.3s;
+    }
+
+    .bar.pos { bottom: 33.33%; border-radius: 3px 3px 0 0; border-bottom: none; }
+    .bar.neg { top: 66.67%; border-radius: 0 0 3px 3px; border-top: none; }
+
+    /* Подписи оси X */
+    .x-axis-labels {
+        display: flex;
+        justify-content: space-around;
+        padding: 0 10px;
+        margin-left: 45px;
+        margin-top: 8px;
+        font-size: 12px;
+        color: var(--text-main);
+    }
+
+    .x-label {
+        width: 100%;
+        text-align: center;
+        font-family: "Courier New", monospace;
+        white-space: nowrap;
+    }
+
+    .x-label.rotate {
+        transform: rotate(-45deg);
+        transform-origin: top center;
+        margin-top: 10px;
+    }
+
+    /* ВВОД */
+    .answer-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 15px; }
+    .answer-row label { font-size: 14px; color: var(--text-muted); }
+    .answer-input {
+        flex: 1; min-width: 160px;
+        background: rgba(7, 58, 53, 0.75);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        padding: 10px 12px;
+        color: var(--text-main);
+        font-family: 'Courier New', monospace;
+        font-size: 18px;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .answer-input:focus { border-color: var(--turquoise); box-shadow: 0 0 0 3px rgba(26,188,156,0.2); }
+    .answer-input:disabled { opacity: 0.75; cursor: not-allowed; }
+    .answer-input.ok { border-color: var(--green); }
+    .answer-input.fail { border-color: var(--coral); }
+
+    .status-line { margin-top: 8px; font-size: 14px; font-family: 'Courier New', monospace; min-height: 18px; }
+    .status-line.ok { color: var(--green); }
+    .status-line.fail { color: var(--coral); }
+
+    /* БЛОК ИМЕНИ И ИНСТРУКЦИИ */
+    .name-block { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .name-block input {
+        flex: 1; min-width: 180px;
+        background: rgba(7, 58, 53, 0.75);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        padding: 10px 12px;
+        color: var(--text-main);
+        font-family: 'Georgia', serif;
+        font-size: 16px;
+        outline: none;
+    }
+    .name-block input:focus { border-color: var(--turquoise); }
+    .instruction { font-size: 14px; line-height: 1.6; color: var(--text-muted); }
+    .instruction b { color: var(--mint); }
+    .instruction code { font-family: 'Courier New', monospace; color: var(--gold); background: rgba(244,211,94,0.1); padding: 1px 5px; border-radius: 4px; }
+
+    /* НИЖНИЕ КНОПКИ */
+    .bottom-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 20px 0 30px; }
+    .action-btn {
+        border: none; border-radius: 12px; padding: 12px 20px;
+        font-family: 'Georgia', serif; font-weight: bold; font-size: 15px;
+        cursor: pointer; transition: transform 0.15s, filter 0.15s;
+        display: inline-flex; align-items: center; gap: 8px;
+    }
+    .action-btn:hover { transform: translateY(-2px); filter: brightness(1.08); }
+    .action-btn:active { transform: translateY(0); }
+    .btn-check { background: var(--turquoise); color: #073a35; }
+    .btn-copy { background: var(--gold); color: #073a35; }
+    .btn-send { background: var(--coral); color: #2b0a0a; }
+    .btn-clear { background: rgba(7,58,53,0.7); color: var(--text-muted); border: 1px solid var(--border-color); }
+
+    /* МОДАЛКИ */
+    .modal-overlay {
+        position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+        display: none; align-items: center; justify-content: center;
+        z-index: 300; padding: 20px;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+        background: #0b4a43;
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 20px;
+        max-width: 420px; width: 100%;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        animation: pop 0.2s ease-out;
+    }
+    @keyframes pop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal h3 { font-family: 'Times New Roman', serif; color: var(--gold); margin-bottom: 10px; font-size: 20px; }
+    .modal p { font-size: 15px; line-height: 1.5; margin-bottom: 14px; color: var(--text-main); }
+    .modal input {
+        width: 100%; padding: 10px 12px; border-radius: 10px;
+        border: 1px solid var(--border-color);
+        background: rgba(7,58,53,0.75); color: var(--text-main);
+        font-family: 'Courier New', monospace; font-size: 18px;
+        outline: none; margin-bottom: 12px;
+    }
+    .modal input:focus { border-color: var(--turquoise); }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+    .modal-btn {
+        border: none; border-radius: 10px; padding: 9px 16px;
+        font-family: 'Georgia', serif; font-weight: bold; font-size: 14px; cursor: pointer;
+    }
+    .modal-btn.primary { background: var(--turquoise); color: #073a35; }
+    .modal-btn.ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); }
+    .modal-error { color: var(--coral); font-size: 13px; margin-top: -4px; margin-bottom: 10px; min-height: 16px; }
+
+    @media (max-width: 800px) {
+        .logo-sub-box { display: none; }
+        .header-right { font-size: 11px; gap: 8px; }
+        .lesson-title { font-size: 20px; }
+        .chart-wrap { height: 200px; }
+        .x-label { font-size: 10px; }
+        .action-btn { flex: 1 1 45%; justify-content: center; }
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <a href="#" class="logo-left">
+        <div class="logo-symbol">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+        <div>
+            <div class="logo-greek-box">ΤΕΤΡΑΚΤΥΣ</div>
+            <div class="logo-sub-box">Школа математики Елены Михалевой</div>
+        </div>
+    </a>
+    <div class="header-right">
+        <div id="date-display">—</div>
+        <div class="progress-box">✅ <span id="progress">0 / 4</span></div>
+    </div>
+</header>
+
+<div class="container">
+    <h1 class="lesson-title">Домашнее задание: диаграммы</h1>
+    <div class="lesson-sub">Тема: работа с таблицами и диаграммами · 6 класс</div>
+
+    <!-- ИМЯ -->
+    <div class="card">
+        <div class="card-title">👤 Ученик</div>
+        <div class="name-block">
+            <input type="text" id="student-name" placeholder="Введи своё имя и фамилию" autocomplete="off">
+        </div>
+    </div>
+
+    <!-- ИНСТРУКЦИЯ -->
+    <div class="card">
+        <div class="card-title">📖 Как записывать ответы</div>
+        <div class="instruction">
+            <p>• Дроби записывай через косую черту: <code>1/2</code>, <code>-3/4</code>.</p>
+            <p>• Десятичные — с запятой или точкой: <code>0,5</code> или <code>0.5</code> — оба варианта подойдут.</p>
+            <p>• Названия месяцев пиши маленькими буквами: <code>май</code>, <code>сентябрь</code>. Можно сокращённо: <code>сен</code>.</p>
+            <p>• Числа — просто числом: <code>8</code>.</p>
+        </div>
+    </div>
+
+    <!-- ЗАДАНИЕ 1: ВЛАЖНОСТЬ В ПЕРМИ -->
+    <div class="card" id="card-1">
+        <div class="card-title"><span class="task-num">1</span> Влажность в Перми</div>
+        <div class="task-text">На диаграмме показана средняя влажность воздуха в Перми в каждом месяце. По вертикали указана влажность воздуха в процентах, по горизонтали — месяцы. В каком месяце второго полугодия средняя влажность воздуха была самой низкой?</div>
+        
+        <div class="chart-box">
+            <div class="chart-wrap">
+                <!-- Ось Y (от 50 до 90, шаг 5) -->
+                <div class="y-axis">
+                    <div class="y-label" style="top: 100%;">50</div>
+                    <div class="y-label" style="top: 87.5%;">55</div>
+                    <div class="y-label" style="top: 75%;">60</div>
+                    <div class="y-label" style="top: 62.5%;">65</div>
+                    <div class="y-label" style="top: 50%;">70</div>
+                    <div class="y-label" style="top: 37.5%;">75</div>
+                    <div class="y-label" style="top: 25%;">80</div>
+                    <div class="y-label" style="top: 12.5%;">85</div>
+                    <div class="y-label" style="top: 0%;">90</div>
+                </div>
+
+                <!-- Сетка (8 интервалов по 5 единиц = 40 линий) -->
+                <div class="grid-lines">
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line top"></div>
+                </div>
+
+                <div class="bars-container">
+                    <div class="bar-wrapper"><div class="bar" style="height: 72.5%; bottom: 0;"></div></div> <!-- 79 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 72.5%; bottom: 0;"></div></div> <!-- 79 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 52.5%; bottom: 0;"></div></div> <!-- 71 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 42.5%; bottom: 0;"></div></div> <!-- 67 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 10%; bottom: 0;"></div></div> <!-- 54 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 45%; bottom: 0;"></div></div> <!-- 68 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 55%; bottom: 0;"></div></div> <!-- 72 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 67.5%; bottom: 0;"></div></div> <!-- 77 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 82.5%; bottom: 0;"></div></div> <!-- 83 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 87.5%; bottom: 0;"></div></div> <!-- 85 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 85%; bottom: 0;"></div></div> <!-- 84 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 85%; bottom: 0;"></div></div> <!-- 84 -->
+                </div>
+            </div>
+            <div class="x-axis-labels">
+                <div class="x-label">янв</div><div class="x-label">фев</div><div class="x-label">мар</div><div class="x-label">апр</div>
+                <div class="x-label">май</div><div class="x-label">июн</div><div class="x-label">июл</div><div class="x-label">авг</div>
+                <div class="x-label">сен</div><div class="x-label">окт</div><div class="x-label">ноя</div><div class="x-label">дек</div>
+            </div>
+        </div>
+
+        <div class="answer-row">
+            <label>Ответ:</label>
+            <input type="text" class="answer-input" id="ans-1" data-task="1" placeholder="месяц">
+        </div>
+        <div class="status-line" id="status-1"></div>
+    </div>
+
+    <!-- ЗАДАНИЕ 2: ЦЕНА НЕФТИ -->
+    <div class="card" id="card-2">
+        <div class="card-title"><span class="task-num">2</span> Цена нефти в 2015 году</div>
+        <div class="task-text">На диаграмме показана средняя цена нефти в 2015 году по месяцам (в долларах США за 1 баррель). Определите по диаграмме, сколько месяцев в 2015 году средняя цена нефти была меньше 59 долларов США за баррель.</div>
+        
+        <div class="chart-box">
+            <div class="chart-wrap">
+                <!-- Ось Y (от 35 до 65, шаг 5) -->
+                <div class="y-axis">
+                    <div class="y-label" style="top: 100%;">35</div>
+                    <div class="y-label" style="top: 83.3%;">40</div>
+                    <div class="y-label" style="top: 66.6%;">45</div>
+                    <div class="y-label" style="top: 50%;">50</div>
+                    <div class="y-label" style="top: 33.3%;">55</div>
+                    <div class="y-label" style="top: 16.6%;">60</div>
+                    <div class="y-label" style="top: 0%;">65</div>
+                </div>
+
+                <!-- Сетка (6 интервалов по 5 единиц = 30 линий) -->
+                <div class="grid-lines">
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line top"></div>
+                </div>
+
+                <div class="bars-container">
+                    <div class="bar-wrapper"><div class="bar" style="height: 43.33%; bottom: 0;"></div></div> <!-- 48 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 76.66%; bottom: 0;"></div></div> <!-- 58 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 66.66%; bottom: 0;"></div></div> <!-- 55 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 80.00%; bottom: 0;"></div></div> <!-- 59 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 96.66%; bottom: 0;"></div></div> <!-- 64 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 90.00%; bottom: 0;"></div></div> <!-- 62 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 66.66%; bottom: 0;"></div></div> <!-- 55 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 36.66%; bottom: 0;"></div></div> <!-- 46 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 40.00%; bottom: 0;"></div></div> <!-- 47 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 43.33%; bottom: 0;"></div></div> <!-- 48 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 30.00%; bottom: 0;"></div></div> <!-- 44 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 6.66%; bottom: 0;"></div></div> <!-- 37 -->
+                </div>
+            </div>
+            <div class="x-axis-labels">
+                <div class="x-label">янв</div><div class="x-label">фев</div><div class="x-label">мар</div><div class="x-label">апр</div>
+                <div class="x-label">май</div><div class="x-label">июн</div><div class="x-label">июл</div><div class="x-label">авг</div>
+                <div class="x-label">сен</div><div class="x-label">окт</div><div class="x-label">ноя</div><div class="x-label">дек</div>
+            </div>
+        </div>
+
+        <div class="answer-row">
+            <label>Ответ:</label>
+            <input type="text" class="answer-input" id="ans-2" data-task="2" placeholder="число месяцев">
+        </div>
+        <div class="status-line" id="status-2"></div>
+    </div>
+
+    <!-- ЗАДАНИЕ 3: ПРОИЗВОДСТВО ЗЕРНА -->
+    <div class="card" id="card-3">
+        <div class="card-title"><span class="task-num">3</span> Производство зерна</div>
+        <div class="task-text">На диаграмме показаны объёмы производства зерна с 1 июля 2017 года по 30 июня 2018 года 10 крупнейших производителей зерна: девяти стран и Европейского союза (на диаграмме обозначен ЕС). Определите по диаграмме, сколько производителей получили больше 200 млн т зерна.</div>
+        
+        <div class="chart-box" style="padding-bottom: 60px;">
+            <div class="chart-wrap">
+                <!-- Ось Y (0 до 500, шаг 50) -->
+                <div class="y-axis">
+                    <div class="y-label" style="top: 100%;">0</div>
+                    <div class="y-label" style="top: 90%;">50</div>
+                    <div class="y-label" style="top: 80%;">100</div>
+                    <div class="y-label" style="top: 70%;">150</div>
+                    <div class="y-label" style="top: 60%;">200</div>
+                    <div class="y-label" style="top: 50%;">250</div>
+                    <div class="y-label" style="top: 40%;">300</div>
+                    <div class="y-label" style="top: 30%;">350</div>
+                    <div class="y-label" style="top: 20%;">400</div>
+                    <div class="y-label" style="top: 10%;">450</div>
+                    <div class="y-label" style="top: 0%;">500</div>
+                </div>
+
+                <!-- Сетка (10 интервалов по 50 единиц) -->
+                <div class="grid-lines">
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line top"></div>
+                </div>
+
+                <div class="bars-container">
+                    <div class="bar-wrapper"><div class="bar" style="height: 7%; bottom: 0;"></div></div> <!-- 35 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 15%; bottom: 0;"></div></div> <!-- 75 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 61%; bottom: 0;"></div></div> <!-- 305 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 29%; bottom: 0;"></div></div> <!-- 145 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 4%; bottom: 0;"></div></div> <!-- 20 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 12%; bottom: 0;"></div></div> <!-- 60 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 74%; bottom: 0;"></div></div> <!-- 370 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 26%; bottom: 0;"></div></div> <!-- 130 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 87%; bottom: 0;"></div></div> <!-- 435 -->
+                    <div class="bar-wrapper"><div class="bar" style="height: 13%; bottom: 0;"></div></div> <!-- 65 -->
+                </div>
+            </div>
+            <div class="x-axis-labels">
+                <div class="x-label rotate">Австралия</div>
+                <div class="x-label rotate">Аргентина</div>
+                <div class="x-label rotate">ЕС</div>
+                <div class="x-label rotate">Индия</div>
+                <div class="x-label rotate">Казахстан</div>
+                <div class="x-label rotate">Канада</div>
+                <div class="x-label rotate">Китай</div>
+                <div class="x-label rotate">Россия</div>
+                <div class="x-label rotate">США</div>
+                <div class="x-label rotate">Украина</div>
+            </div>
+        </div>
+
+        <div class="answer-row">
+            <label>Ответ:</label>
+            <input type="text" class="answer-input" id="ans-3" data-task="3" placeholder="число производителей">
+        </div>
+        <div class="status-line" id="status-3"></div>
+    </div>
+
+    <!-- ЗАДАНИЕ 4: ТЕМПЕРАТУРА В БАРНАУЛЕ -->
+    <div class="card" id="card-4">
+        <div class="card-title"><span class="task-num">4</span> Температура в Барнауле</div>
+        <div class="task-text">На диаграмме показана средняя дневная температура в каждом месяце в городе Барнауле. На вертикальной оси указана температура в градусах Цельсия, на горизонтальной — месяцы. Сколько месяцев в году в Барнауле средняя дневная температура была выше чем −4 °C?</div>
+        
+        <div class="chart-box">
+            <div class="chart-wrap">
+                <!-- Ось Y (-15 до 30, шаг 5) -->
+                <div class="y-axis">
+                    <div class="y-label" style="top: 100%;">-15</div>
+                    <div class="y-label" style="top: 88.8%;">-10</div>
+                    <div class="y-label" style="top: 77.7%;">-5</div>
+                    <div class="y-label" style="top: 66.6%;">0</div>
+                    <div class="y-label" style="top: 55.5%;">5</div>
+                    <div class="y-label" style="top: 44.4%;">10</div>
+                    <div class="y-label" style="top: 33.3%;">15</div>
+                    <div class="y-label" style="top: 22.2%;">20</div>
+                    <div class="y-label" style="top: 11.1%;">25</div>
+                    <div class="y-label" style="top: 0%;">30</div>
+                </div>
+
+                <!-- Сетка (9 интервалов по 5 единиц = 45 линий) -->
+                <div class="grid-lines">
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line zero"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line major"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div> <div class="grid-line"></div>
+                    <div class="grid-line top"></div>
+                </div>
+
+                <div class="bars-container">
+                    <div class="bar-wrapper"><div class="bar neg" style="height: 27.77%;"></div></div> <!-- -12.5 -->
+                    <div class="bar-wrapper"><div class="bar neg" style="height: 25.55%;"></div></div> <!-- -11.5 -->
+                    <div class="bar-wrapper"><div class="bar neg" style="height: 8.88%;"></div></div> <!-- -4 -->
+                    <div class="bar-wrapper"><div class="bar pos" style="height: 20%;"></div></div> <!-- 9 -->
+                    <div class="bar-wrapper"><div class="bar pos" style="height: 35.55%;"></div></div> <!-- 16 -->
+                    <div class="bar-wrapper"><div class="bar pos" style="height: 47.77%;"></div></div> <!-- 21.5 -->
+                    <div class="bar-wrapper"><div class="bar pos" style="height: 55.55%;"></div></div> <!-- 25 -->
+                    <div class="bar-wrapper"><div class="bar pos" style="height: 47.77%;"></div></div> <!-- 21.5 -->
+                    <div class="bar-wrapper"><div class="bar pos" style="height: 33.33%;"></div></div> <!-- 15 -->
+                    <div class="bar-wrapper"><div class="bar pos" style="height: 13.33%;"></div></div> <!-- 6 -->
+                    <div class="bar-wrapper"><div class="bar neg" style="height: 7.77%;"></div></div> <!-- -3.5 -->
+                    <div class="bar-wrapper"><div class="bar neg" style="height: 24.44%;"></div></div> <!-- -11 -->
+                </div>
+            </div>
+            <div class="x-axis-labels">
+                <div class="x-label">янв</div><div class="x-label">фев</div><div class="x-label">мар</div><div class="x-label">апр</div>
+                <div class="x-label">май</div><div class="x-label">июн</div><div class="x-label">июл</div><div class="x-label">авг</div>
+                <div class="x-label">сен</div><div class="x-label">окт</div><div class="x-label">ноя</div><div class="x-label">дек</div>
+            </div>
+        </div>
+
+        <div class="answer-row">
+            <label>Ответ:</label>
+            <input type="text" class="answer-input" id="ans-4" data-task="4" placeholder="число месяцев">
+        </div>
+        <div class="status-line" id="status-4"></div>
+    </div>
+
+    <!-- НИЖНИЕ КНОПКИ -->
+    <div class="bottom-actions">
+        <button class="action-btn btn-check" onclick="checkAll()">✅ Проверить все ответы</button>
+        <button class="action-btn btn-copy" onclick="copyAnswers()">📋 Скопировать</button>
+        <button class="action-btn btn-send" onclick="sendToMax()">💬 Отправить в Макс</button>
+        <button class="action-btn btn-clear" onclick="openClearModal()">🔒 Очистить</button>
+    </div>
+</div>
+
+<!-- МОДАЛКА: ПУСТЫЕ ПОЛЯ -->
+<div class="modal-overlay" id="modal-empty">
+    <div class="modal">
+        <h3>Заполни все поля!</h3>
+        <p id="modal-empty-text">У тебя есть пустые ответы.</p>
+        <div class="modal-actions">
+            <button class="modal-btn primary" onclick="closeModal('modal-empty')">Понятно</button>
+        </div>
+    </div>
+</div>
+
+<!-- МОДАЛКА: ОЧИСТКА -->
+<div class="modal-overlay" id="modal-clear">
+    <div class="modal">
+        <h3>🔒 Очистить всё</h3>
+        <p>Введи пароль, чтобы удалить все ответы и имя.</p>
+        <input type="password" id="clear-password" placeholder="Пароль" autocomplete="off">
+        <div class="modal-error" id="clear-error"></div>
+        <div class="modal-actions">
+            <button class="modal-btn ghost" onclick="closeModal('modal-clear')">Отмена</button>
+            <button class="modal-btn primary" onclick="confirmClear()">Очистить</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ===== ДАННЫЕ ЗАДАНИЙ =====
+    const TASKS = {
+        1: { title: 'Влажность в Перми', accepts: ['июль', 'июл'] }, 
+        2: { title: 'Цена нефти в 2015', accepts: ['9'] },
+        3: { title: 'Производство зерна', accepts: ['3'] },
+        4: { title: 'Температура в Барнауле', accepts: ['8'] }
+    };
+
+    const MAX_LINK = 'https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes';
+    const STORAGE_KEY = 'tetraktys_dz_diagrams_v3';
+
+    // ===== НОРМАЛИЗАЦИЯ =====
+    function normalize(str) {
+        if (str === null || str === undefined) return '';
+        let s = String(str).trim().toLowerCase();
+        s = s.replace(/,/g, '.');          
+        s = s.replace(/\s+/g, '');         
+        s = s.replace(/−/g, '-');          
+        s = s.replace(/ё/g, 'е');          
+        return s;
+    }
+
+    function isCorrect(taskId, value) {
+        const norm = normalize(value);
+        if (!norm) return false;
+        return TASKS[taskId].accepts.some(a => normalize(a) === norm);
+    }
+
+    // ===== СОСТОЯНИЕ =====
+    let state = {
+        name: '',
+        answers: {},
+    };
+
+    function saveState() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+    }
+
+    function loadState() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return;
+            const parsed = JSON.parse(raw);
+            if (parsed && typeof parsed === 'object') {
+                state.name = parsed.name || '';
+                state.answers = parsed.answers || {};
+            }
+        } catch (e) {}
+    }
+
+    // ===== ОТРИСОВКА =====
+    function renderProgress() {
+        let done = 0;
+        Object.values(TASKS).forEach((_, i) => {
+            const id = i + 1;
+            if (state.answers[id] && state.answers[id].status) done++;
+        });
+        document.getElementById('progress').textContent = done + ' / ' + Object.keys(TASKS).length;
+    }
+
+    function applyTaskState(id) {
+        const input = document.getElementById('ans-' + id);
+        const statusEl = document.getElementById('status-' + id);
+        const card = document.getElementById('card-' + id);
+        const rec = state.answers[id];
+        if (!input || !statusEl || !card) return;
+
+        if (!rec || !rec.status) {
+            input.disabled = false;
+            input.classList.remove('ok', 'fail');
+            card.classList.remove('correct', 'wrong');
+            statusEl.textContent = '';
+            statusEl.className = 'status-line';
+            return;
+        }
+
+        input.value = rec.value;
+        input.disabled = true;
+        statusEl.className = 'status-line ' + rec.status;
+
+        if (rec.status === 'ok') {
+            input.classList.add('ok');
+            input.classList.remove('fail');
+            card.classList.add('correct');
+            card.classList.remove('wrong');
+            statusEl.textContent = '✅ Верно!';
+        } else {
+            input.classList.add('fail');
+            input.classList.remove('ok');
+            card.classList.add('wrong');
+            card.classList.remove('correct');
+            statusEl.textContent = '❌ Неверно. Правильный ответ: ' + TASKS[id].accepts[0];
+        }
+    }
+
+    function renderAll() {
+        const nameInput = document.getElementById('student-name');
+        if (nameInput) nameInput.value = state.name || '';
+        Object.keys(TASKS).forEach(id => applyTaskState(Number(id)));
+        renderProgress();
+    }
+
+    // ===== ВВОД =====
+    function bindInputs() {
+        document.querySelectorAll('.answer-input').forEach(inp => {
+            inp.addEventListener('input', () => {
+                const id = Number(inp.dataset.task);
+                if (state.answers[id] && state.answers[id].status) return;
+                state.answers[id] = state.answers[id] || {};
+                state.answers[id].value = inp.value;
+                saveState();
+            });
+        });
+
+        const nameInput = document.getElementById('student-name');
+        if (nameInput) {
+            nameInput.addEventListener('input', () => {
+                state.name = nameInput.value;
+                saveState();
+            });
+        }
+    }
+
+    // ===== ПРОВЕРКА =====
+    function checkAll() {
+        const empty = [];
+        Object.keys(TASKS).forEach(id => {
+            id = Number(id);
+            const rec = state.answers[id];
+            const val = rec && rec.value ? rec.value.trim() : '';
+            const already = rec && rec.status;
+            if (!already && !val) empty.push(id);
+        });
+
+        if (empty.length > 0) {
+            const list = empty.map(n => '№' + n).join(', ');
+            document.getElementById('modal-empty-text').textContent =
+                'У тебя пустые ответы: ' + list + '. Заполни их и попробуй снова.';
+            openModal('modal-empty');
+            return;
+        }
+
+        Object.keys(TASKS).forEach(id => {
+            id = Number(id);
+            const rec = state.answers[id];
+            if (rec && rec.status) return;
+            const value = rec && rec.value ? rec.value : '';
+            const ok = isCorrect(id, value);
+            state.answers[id] = {
+                value: value,
+                status: ok ? 'ok' : 'fail'
+            };
+        });
+
+        saveState();
+        Object.keys(TASKS).forEach(id => applyTaskState(Number(id)));
+        renderProgress();
+    }
+
+    // ===== ФОРМИРОВАНИЕ ТЕКСТА =====
+    function buildReportText() {
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('ru-RU') + ' ' +
+            now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+
+        let text = '📐 ОТВЕТЫ · ДЗ · Диаграммы\n';
+        text += 'Дата: ' + dateStr + '\n';
+        text += 'Ученик: ' + (state.name || '—') + '\n\n';
+
+        let okCount = 0;
+        const ids = Object.keys(TASKS).map(Number).sort((a, b) => a - b);
+
+        ids.forEach(id => {
+            const rec = state.answers[id];
+            const taskTitle = TASKS[id].title;
+            if (!rec || !rec.status) {
+                text += '— Задание ' + id + '. ' + taskTitle + '. Ответ: — (не проверено)\n';
+            } else if (rec.status === 'ok') {
+                okCount++;
+                text += '✅ Задание ' + id + '. ' + taskTitle + '. Ответ: ' + rec.value + '\n';
+            } else {
+                text += '❌ Задание ' + id + '. ' + taskTitle + '. Ответ: ' + rec.value +
+                    ' (правильный: ' + TASKS[id].accepts[0] + ')\n';
+            }
+        });
+
+        text += '\n✅ Итог: ' + okCount + ' из ' + ids.length + ' верно';
+        return text;
+    }
+
+    async function copyAnswers() {
+        const text = buildReportText();
+        try {
+            await navigator.clipboard.writeText(text);
+            alert('Текст скопирован в буфер обмена!');
+        } catch (e) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            try { document.execCommand('copy'); alert('Текст скопирован!'); }
+            catch (err) { alert('Не удалось скопировать. Выдели текст вручную.'); }
+            document.body.removeChild(ta);
+        }
+    }
+
+    async function sendToMax() {
+        const text = buildReportText();
+        try {
+            await navigator.clipboard.writeText(text);
+            alert('Текст скопирован! Открываю чат Макса — вставь его туда.');
+        } catch (e) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            try { document.execCommand('copy'); alert('Текст скопирован! Открываю чат Макса — вставь его туда.'); }
+            catch (err) { alert('Не удалось скопировать. Скопируй текст вручную.'); }
+            document.body.removeChild(ta);
+        }
+        window.open(MAX_LINK, '_blank');
+    }
+
+    // ===== МОДАЛКИ =====
+    function openModal(id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('show');
+        if (id === 'modal-clear') {
+            const pwd = document.getElementById('clear-password');
+            const err = document.getElementById('clear-error');
+            if (pwd) pwd.value = '';
+            if (err) err.textContent = '';
+            setTimeout(() => { if (pwd) pwd.focus(); }, 50);
+        }
+    }
+
+    function closeModal(id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('show');
+    }
+
+    function openClearModal() { openModal('modal-clear'); }
+
+    function confirmClear() {
+        const pwd = document.getElementById('clear-password');
+        const err = document.getElementById('clear-error');
+        if (!pwd || !err) return;
+        if (pwd.value === '2810') {
+            localStorage.clear();
+            location.reload();
+        } else {
+            err.textContent = 'Неверный пароль';
+        }
+    }
+
+    // Закрытие по клику на фон
+    document.querySelectorAll('.modal-overlay').forEach(ov => {
+        ov.addEventListener('click', (e) => {
+            if (e.target === ov) ov.classList.remove('show');
+        });
+    });
+
+    // Enter в поле пароля
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && document.getElementById('modal-clear').classList.contains('show')) {
+            confirmClear();
+        }
+    });
+
+    // ===== ИНИЦИАЛИЗАЦИЯ =====
+    document.addEventListener('DOMContentLoaded', () => {
+        // дата
+        const now = new Date();
+        document.getElementById('date-display').textContent = now.toLocaleDateString('ru-RU', {
+            weekday: 'short', day: 'numeric', month: 'short'
+        });
+
+        loadState();
+        renderAll();
+        bindInputs();
+    });
+</script>
+</body>
+</html>
