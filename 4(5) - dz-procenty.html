@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ΤΕΤΡΑΚΤΥΣ — ДЗ по процентам</title>
+    
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        :root {
+            --bg-deep: #073a35;
+            --bg-gradient: radial-gradient(circle at 50% 0%, #126b61 0%, #073a35 80%);
+            --turquoise: #1abc9c;
+            --mint: #7fffd4;
+            --gold: #f4d35e;
+            --coral: #ff6b6b;
+            --text-main: #f0fcf9;
+            --text-muted: #9ccfc7;
+            --card-bg: rgba(18, 107, 97, 0.4);
+            --border-color: rgba(26, 188, 156, 0.25);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-deep);
+            background-image: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'Georgia', serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* ШАПКА */
+        header {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(7, 58, 53, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-logo-left { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+        .logo-symbol { font-family: 'Courier New', monospace; color: var(--gold); font-size: 9px; line-height: 1.1; letter-spacing: 4px; font-weight: bold; text-align: center; }
+        .logo-greek-box { border-top: 1px solid var(--gold); border-bottom: 1px solid var(--gold); padding: 2px 0; font-family: 'Times New Roman', serif; font-size: 15px; letter-spacing: 2px; color: var(--gold); font-weight: bold; line-height: 1; }
+        .logo-sub-box { font-size: 9px; color: var(--mint); font-style: italic; margin-top: 2px; }
+
+        .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-family: 'Courier New', monospace; font-size: 13px; color: var(--mint); font-weight: bold; }
+        .progress-box { background: rgba(26, 188, 156, 0.2); padding: 4px 10px; border-radius: 8px; border: 1px solid var(--turquoise); color: var(--gold); }
+
+        /* КОНТЕЙНЕР */
+        .container { max-width: 800px; margin: 20px auto; padding: 0 15px; flex: 1; width: 100%; }
+        .lesson-title { font-family: 'Times New Roman', serif; text-align: center; font-size: 24px; color: var(--gold); margin-bottom: 20px; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+
+        /* БЛОКИ ИНСТРУКЦИЙ */
+        .info-block { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; margin-bottom: 20px; backdrop-filter: blur(10px); }
+        
+        .name-input {
+            width: 100%; padding: 10px; border: 1px solid var(--turquoise); border-radius: 8px;
+            background: rgba(7, 58, 53, 0.6); color: var(--text-main); font-family: 'Courier New', monospace; font-size: 16px;
+            outline: none; margin-top: 5px;
+        }
+        .name-input::placeholder { color: var(--text-muted); }
+
+        .instruction { font-size: 14px; line-height: 1.5; color: var(--text-muted); }
+        .instruction b { color: var(--gold); }
+
+        /* КАРТОЧКИ ЗАДАНИЙ */
+        .task-card {
+            background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 18px;
+            padding: 20px; margin-bottom: 20px; backdrop-filter: blur(10px);
+            transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .task-card.ok { border-color: #2ecc71; box-shadow: 0 0 15px rgba(46, 204, 113, 0.2); }
+        .task-card.fail { border-color: #ff6b6b; box-shadow: 0 0 15px rgba(255, 107, 107, 0.2); }
+
+        .task-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+        .task-num {
+            background: linear-gradient(135deg, var(--turquoise), var(--mint));
+            color: #073a35; font-family: 'Courier New', monospace; font-weight: bold; font-size: 16px;
+            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px;
+        }
+        .task-text { font-size: 16px; line-height: 1.5; margin-bottom: 15px; }
+
+        /* ПОЛЕ ВВОДА И КНОПКИ */
+        .input-group { display: flex; flex-direction: column; gap: 10px; }
+        
+        .answer-input {
+            width: 100%; padding: 12px; font-family: 'Courier New', monospace; font-size: 18px;
+            background: rgba(7, 58, 53, 0.7); border: 1px solid var(--turquoise); border-radius: 8px;
+            color: var(--gold); outline: none; transition: 0.2s;
+        }
+        .answer-input:focus { box-shadow: 0 0 10px rgba(26, 188, 156, 0.3); }
+        .answer-input:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        .keyboard {
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .kb-btn {
+            background: rgba(26, 188, 156, 0.1); border: 1px solid var(--border-color);
+            color: var(--mint); font-family: 'Courier New', monospace; font-size: 16px; font-weight: bold;
+            min-width: 38px; height: 38px; border-radius: 6px; cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .kb-btn:hover { background: rgba(26, 188, 156, 0.3); }
+        .kb-btn:active { transform: scale(0.95); }
+        .kb-btn.delete { color: var(--coral); border-color: rgba(255, 107, 107, 0.3); width: auto; padding: 0 12px; }
+
+        /* СТАТУСЫ */
+        .status-msg { display: none; font-size: 14px; font-weight: bold; margin-top: 10px; }
+        .status-msg.ok { display: block; color: #2ecc71; }
+        .status-msg.fail { display: block; color: #ff6b6b; }
+
+        /* НИЖНЯЯ ПАНЕЛЬ (КНОПКИ) */
+        .bottom-panel { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 30px; margin-bottom: 40px; }
+        .action-btn {
+            background: transparent; border: 1px solid var(--turquoise); color: var(--mint);
+            padding: 12px 20px; border-radius: 10px; font-family: 'Georgia', serif; font-size: 15px; font-weight: bold;
+            cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px;
+        }
+        .action-btn:hover { background: rgba(26, 188, 156, 0.15); transform: translateY(-2px); }
+        .action-btn.primary { background: var(--gold); border-color: var(--gold); color: #073a35; }
+        .action-btn.primary:hover { background: #f7e08b; }
+        .action-btn.danger { border-color: var(--coral); color: var(--coral); }
+        .action-btn.danger:hover { background: rgba(255, 107, 107, 0.1); }
+
+        /* МОДАЛКИ */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); z-index: 1000;
+            display: none; align-items: center; justify-content: center; padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-content {
+            background: #073a35; border: 2px solid var(--turquoise); border-radius: 16px;
+            padding: 25px; max-width: 400px; width: 100%; text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        .modal-title { font-family: 'Times New Roman', serif; font-size: 20px; color: var(--gold); margin-bottom: 15px; }
+        .modal-text { font-size: 15px; line-height: 1.5; margin-bottom: 20px; }
+        .modal-input {
+            width: 100%; padding: 10px; font-family: 'Courier New', monospace; font-size: 18px;
+            background: rgba(255,255,255,0.1); border: 1px solid var(--turquoise); border-radius: 8px;
+            color: var(--text-main); text-align: center; outline: none; margin-bottom: 15px;
+        }
+        .modal-btns { display: flex; gap: 10px; justify-content: center; }
+        .modal-btn {
+            padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; border: none;
+            font-family: 'Georgia', serif;
+        }
+        .modal-btn.yes { background: var(--turquoise); color: #073a35; }
+        .modal-btn.no { background: transparent; border: 1px solid var(--coral); color: var(--coral); }
+
+        @media (max-width: 600px) {
+            .logo-sub-box { display: none; }
+            .header-right { font-size: 11px; }
+            .action-btn { width: 100%; justify-content: center; }
+            .kb-btn { flex: 1; } /* Растягиваем кнопки на мобилке */
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="VPR-6.html" class="header-logo-left">
+            <div class="logo-symbol">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+            <div>
+                <div class="logo-greek-box">ΤΕΤΡΑΚΤΥΣ</div>
+                <div class="logo-sub-box">Школа математики Елены Михалевой</div>
+            </div>
+        </a>
+        <div class="header-right">
+            <div id="date-display">Загрузка...</div>
+            <div class="progress-box" id="progress-display">✅ 0 / 4</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1 class="lesson-title">ДЗ: Решение задач на проценты</h1>
+
+        <div class="info-block">
+            <div style="margin-bottom: 15px;">
+                <label style="font-size: 14px; color: var(--gold); font-weight: bold;">👤 Твоё имя:</label>
+                <input type="text" id="student-name" class="name-input" placeholder="Например: Иван Иванов" oninput="saveName()">
+            </div>
+            <div class="instruction">
+                <b>📝 Как записывать ответы:</b><br>
+                • Только число (без букв «рублей», «%» и т.д.).<br>
+                • Дроби пиши через запятую или точку (например, <b>0,5</b> или <b>0.5</b>).<br>
+                • Если ответ целое число, просто напиши его (например, <b>450</b>).
+            </div>
+        </div>
+
+        <div id="tasks-container">
+            <!-- Задания генерируются скриптом -->
+        </div>
+
+        <div class="bottom-panel">
+            <button class="action-btn primary" onclick="checkAll()">✅ Проверить все ответы</button>
+            <button class="action-btn" onclick="copyResults()">📋 Скопировать</button>
+            <button class="action-btn" onclick="sendToMax()">💬 Отправить в Макс</button>
+            <button class="action-btn danger" onclick="showClearModal()">🔒 Очистить</button>
+        </div>
+    </div>
+
+    <!-- Модалка "Заполни все поля" -->
+    <div class="modal-overlay" id="modal-warning">
+        <div class="modal-content">
+            <div class="modal-title" style="color: var(--coral);">⚠️ Внимание!</div>
+            <div class="modal-text" id="warning-text">Заполни все поля!</div>
+            <div class="modal-btns">
+                <button class="modal-btn yes" onclick="closeModal('modal-warning')">Понятно</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка "Очистка" -->
+    <div class="modal-overlay" id="modal-clear">
+        <div class="modal-content">
+            <div class="modal-title">🔒 Сброс прогресса</div>
+            <div class="modal-text">Введи пароль, чтобы удалить все ответы и начать заново.</div>
+            <input type="password" id="clear-password" class="modal-input" placeholder="Пароль">
+            <div class="modal-btns">
+                <button class="modal-btn no" onclick="closeModal('modal-clear')">Отмена</button>
+                <button class="modal-btn yes" onclick="checkPassword()">Очистить</button>
+            </div>
+            <div id="password-error" style="color: var(--coral); font-size: 13px; margin-top: 10px; display: none;">Неверный пароль</div>
+        </div>
+    </div>
+
+    <script>
+        // --- БАЗА ЗАДАНИЙ ---
+        const tasks = [
+            {
+                id: 1,
+                text: "При предъявлении дисконтной карты магазин одежды делает скидку 4%. Сколько заплатит покупатель за пальто стоимостью 6000 рублей, если он воспользуется дисконтной картой?",
+                correct: "5760",
+                type: "number"
+            },
+            {
+                id: 2,
+                text: "Алик заплатил за покупки в магазине 1300 рублей, причём на продукты он потратил 85% всей суммы. Сколько рублей он потратил на продукты?",
+                correct: "1105",
+                type: "number"
+            },
+            {
+                id: 3,
+                text: "Ботинки на распродаже уценили на 25%, при этом они стали стоить 4500 рублей. Сколько рублей стоили ботинки до распродажи?",
+                correct: "6000",
+                type: "number"
+            },
+            {
+                id: 4,
+                text: "В спортивном магазине футболка из новой коллекции в марте стоила 750 рублей. В июле цену снизили, и футболка стала стоить 450 рублей. На сколько процентов была снижена цена футболки?",
+                correct: "40",
+                type: "number"
+            }
+        ];
+
+        // --- ИНИЦИАЛИЗАЦИЯ ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Дата
+            const now = new Date();
+            document.getElementById('date-display').textContent = now.toLocaleDateString('ru-RU', { weekday: 'short', day: 'numeric', month: 'short' });
+
+            // Имя
+            const savedName = localStorage.getItem('vpr_student_name');
+            if (savedName) document.getElementById('student-name').value = savedName;
+
+            renderTasks();
+            updateProgress();
+        });
+
+        // --- РЕНДЕР ЗАДАНИЙ ---
+        function renderTasks() {
+            const container = document.getElementById('tasks-container');
+            container.innerHTML = '';
+
+            tasks.forEach((task, index) => {
+                const card = document.createElement('div');
+                card.className = 'task-card';
+                card.id = `task-card-${task.id}`;
+
+                // Достаем сохраненный статус
+                const savedStatus = localStorage.getItem(`vpr_task_${task.id}_status`);
+                const savedAnswer = localStorage.getItem(`vpr_task_${task.id}_answer`);
+                
+                if (savedStatus === 'ok') card.classList.add('ok');
+                if (savedStatus === 'fail') card.classList.add('fail');
+
+                card.innerHTML = `
+                    <div class="task-header">
+                        <div class="task-num">${task.id}</div>
+                    </div>
+                    <div class="task-text">${task.text}</div>
+                    <div class="input-group">
+                        <input type="text" class="answer-input" id="input-${task.id}" 
+                               value="${savedAnswer || ''}" 
+                               placeholder="Твой ответ..." 
+                               ${savedStatus ? 'disabled' : ''}>
+                        
+                        <div class="keyboard" id="kb-${task.id}" ${savedStatus ? 'style="display:none;"' : ''}>
+                            <button class="kb-btn" onclick="typeChar(${task.id}, '(')">(</button>
+                            <button class="kb-btn" onclick="typeChar(${task.id}, ')')">)</button>
+                            <button class="kb-btn" onclick="typeChar(${task.id}, ',')">,</button>
+                            <button class="kb-btn" onclick="typeChar(${task.id}, '.')">.</button>
+                            <button class="kb-btn" onclick="typeChar(${task.id}, '-')">−</button>
+                            <button class="kb-btn delete" onclick="deleteChar(${task.id})">← Стереть</button>
+                        </div>
+                        <div class="status-msg ${savedStatus}" id="status-${task.id}">
+                            ${savedStatus === 'ok' ? '✅ Верно!' : (savedStatus === 'fail' ? `❌ Неверно. Правильный ответ: ${task.correct}` : '')}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // --- КЛАВИАТУРА ---
+        function typeChar(id, char) {
+            const input = document.getElementById(`input-${id}`);
+            if (input.disabled) return;
+            input.value += char;
+            input.focus();
+        }
+
+        function deleteChar(id) {
+            const input = document.getElementById(`input-${id}`);
+            if (input.disabled) return;
+            input.value = input.value.slice(0, -1);
+            input.focus();
+        }
+
+        // --- ПРОВЕРКА ---
+        function checkAll() {
+            let emptyTasks = [];
+            let allFilled = true;
+
+            tasks.forEach(task => {
+                const input = document.getElementById(`input-${task.id}`);
+                if (!input.disabled && input.value.trim() === '') {
+                    allFilled = false;
+                    emptyTasks.push(`№${task.id}`);
+                }
+            });
+
+            if (!allFilled) {
+                document.getElementById('warning-text').innerHTML = `Заполни все поля! У тебя пустые: <b>${emptyTasks.join(', ')}</b>`;
+                document.getElementById('modal-warning').classList.add('show');
+                return;
+            }
+
+            // Проверяем
+            tasks.forEach(task => {
+                const input = document.getElementById(`input-${task.id}`);
+                if (input.disabled) return; // Если уже проверено, пропускаем
+
+                const userAnswer = normalize(input.value);
+                const correctAnswer = normalize(task.correct);
+
+                const card = document.getElementById(`task-card-${task.id}`);
+                const statusMsg = document.getElementById(`status-${task.id}`);
+                const kb = document.getElementById(`kb-${task.id}`);
+
+                if (userAnswer === correctAnswer) {
+                    card.classList.add('ok');
+                    statusMsg.className = 'status-msg ok';
+                    statusMsg.innerHTML = '✅ Верно!';
+                    localStorage.setItem(`vpr_task_${task.id}_status`, 'ok');
+                } else {
+                    card.classList.add('fail');
+                    statusMsg.className = 'status-msg fail';
+                    statusMsg.innerHTML = `❌ Неверно. Правильный ответ: ${task.correct}`;
+                    localStorage.setItem(`vpr_task_${task.id}_status`, 'fail');
+                }
+
+                input.disabled = true;
+                if (kb) kb.style.display = 'none';
+                localStorage.setItem(`vpr_task_${task.id}_answer`, input.value);
+            });
+
+            updateProgress();
+        }
+
+        // --- НОРМАЛИЗАЦИЯ ОТВЕТОВ ---
+        function normalize(val) {
+            return val.toString()
+                .trim()
+                .replace(/,/g, '.') // Запятая в точку
+                .replace(/\s+/g, '') // Убрать пробелы
+                .replace(/[хХ]/g, 'x') // Русскую х в англ
+                .replace(/^0+(?=\d)/, ''); // Убрать лишние нули в начале
+        }
+
+        // --- ПРОГРЕСС ---
+        function updateProgress() {
+            let okCount = 0;
+            tasks.forEach(task => {
+                if (localStorage.getItem(`vpr_task_${task.id}_status`) === 'ok') {
+                    okCount++;
+                }
+            });
+            document.getElementById('progress-display').textContent = `✅ ${okCount} / ${tasks.length}`;
+        }
+
+        // --- СОХРАНЕНИЕ ИМЕНИ ---
+        function saveName() {
+            const name = document.getElementById('student-name').value;
+            localStorage.setItem('vpr_student_name', name);
+        }
+
+        // --- МОДАЛКИ ---
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+
+        function showClearModal() {
+            document.getElementById('clear-password').value = '';
+            document.getElementById('password-error').style.display = 'none';
+            document.getElementById('modal-clear').classList.add('show');
+            document.getElementById('clear-password').focus();
+        }
+
+        function checkPassword() {
+            const pass = document.getElementById('clear-password').value;
+            if (pass === '2810') {
+                localStorage.clear();
+                location.reload();
+            } else {
+                document.getElementById('password-error').style.display = 'block';
+            }
+        }
+
+        // --- ОТПРАВКА ОТЧЕТА ---
+        function generateReport() {
+            const name = document.getElementById('student-name').value.trim() || 'Без имени';
+            const dateStr = new Date().toLocaleString('ru-RU');
+            
+            let text = `📐 ОТВЕТЫ · ДЗ · Решение задач на проценты\n`;
+            text += `Дата: ${dateStr}\n`;
+            text += `Ученик: ${name}\n\n`;
+
+            let okCount = 0;
+
+            tasks.forEach(task => {
+                const status = localStorage.getItem(`vpr_task_${task.id}_status`);
+                const answer = localStorage.getItem(`vpr_task_${task.id}_answer`) || '—';
+
+                if (status === 'ok') {
+                    text += `✅ Задание ${task.id}. Ответ: ${answer}\n`;
+                    okCount++;
+                } else if (status === 'fail') {
+                    text += `❌ Задание ${task.id}. Ответ: ${answer} (правильный: ${task.correct})\n`;
+                } else {
+                    text += `— Задание ${task.id}. Ответ: — (не проверено)\n`;
+                }
+            });
+
+            text += `\n✅ Итог: ${okCount} из ${tasks.length} верно`;
+            return text;
+        }
+
+        function copyResults() {
+            const text = generateReport();
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Текст скопирован в буфер обмена!');
+            }).catch(err => {
+                alert('Ошибка при копировании: ' + err);
+            });
+        }
+
+        function sendToMax() {
+            const text = generateReport();
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Текст скопирован! Сейчас откроется чат Макс, вставь текст туда (Ctrl+V или долгое нажатие).');
+                window.open('https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes', '_blank');
+            }).catch(err => {
+                alert('Ошибка при копировании: ' + err);
+            });
+        }
+    </script>
+</body>
+</html>
