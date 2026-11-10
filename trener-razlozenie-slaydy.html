@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>ΤΕΤΡΑΚΤΥΣ · Разложение на множители</title>
+
+<!-- KaTeX для красивых формул -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c; --teal-dark:#16a085; --teal-deep:#0e7c66;
+    --mint:#7fffd4; --mint-soft:#a8f0dc;
+    --coral:#ff6b6b; --gold:#f4d35e; --gold-light:#ffe89a;
+    --text:#e8f8f5; --text-soft:#b8d8d0;
+    --glass:rgba(255,255,255,0.06);
+    --glass-brd:rgba(26,188,156,0.4);
+    --ok:#2ecc71; --err:#ff6b6b;
+  }
+  html,body{
+    min-height:100%;font-family:'Georgia','Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(26,188,156,0.22), transparent 55%),
+      radial-gradient(ellipse at 85% 90%, rgba(127,255,212,0.15), transparent 55%),
+      radial-gradient(ellipse at 50% 50%, rgba(244,211,94,0.08), transparent 70%),
+      linear-gradient(160deg, #0a2a33 0%, #0d3b47 50%, #134e5e 100%);
+    background-attachment:fixed;overflow-x:hidden;
+    display:flex;justify-content:center;padding:20px;
+  }
+  .glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.5;}
+  .glow.g1{width:520px;height:520px;top:-120px;left:-120px;background:radial-gradient(circle,rgba(26,188,156,0.55),transparent 70%);animation:pulse 9s ease-in-out infinite;}
+  .glow.g2{width:600px;height:600px;bottom:-200px;right:-180px;background:radial-gradient(circle,rgba(127,255,212,0.4),transparent 70%);animation:pulse 11s ease-in-out infinite reverse;}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:0.35;}50%{transform:scale(1.15);opacity:0.6;}}
+
+  .container{
+    position:relative;z-index:10;
+    max-width:900px;width:100%;
+    background:rgba(255,255,255,0.04);
+    border:1px solid var(--glass-brd);
+    border-radius:24px;
+    padding:28px 30px 30px;
+    backdrop-filter:blur(12px);
+    box-shadow:0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+  }
+
+  /* Логотип */
+  .logo-corner{position:absolute;top:14px;right:18px;text-align:right;line-height:1.1;opacity:0.75;transition:opacity 0.3s;cursor:default;user-select:none;font-family:'Times New Roman',serif;}
+  .logo-corner:hover{opacity:1;}
+  .logo-corner .symbol{font-size:10px;letter-spacing:3px;font-weight:700;line-height:1.2;color:var(--mint);}
+  .logo-corner .symbol div{display:block;}
+  .logo-corner .greek{font-size:13px;font-weight:700;letter-spacing:1px;color:var(--teal);}
+  .logo-corner .russian{font-size:9px;letter-spacing:1px;font-weight:600;color:var(--text-soft);}
+  .logo-corner .sub{font-size:8px;color:#7a9a94;font-style:italic;}
+
+  h1{text-align:center;font-size:28px;color:var(--mint);margin-bottom:2px;letter-spacing:1.5px;margin-top:10px;}
+  h1 span{color:var(--gold-light);}
+  .subtitle{text-align:center;font-size:15px;color:var(--text-soft);margin-bottom:16px;font-style:italic;}
+
+  /* Вкладки */
+  .tabs{display:flex;justify-content:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
+  .tab-btn{
+    padding:11px 20px;border:2px solid var(--glass-brd);border-radius:40px;
+    background:rgba(255,255,255,0.04);font-family:inherit;font-size:15px;font-weight:700;
+    color:var(--text-soft);cursor:pointer;transition:all 0.25s;
+  }
+  .tab-btn:hover{background:rgba(26,188,156,0.12);transform:translateY(-2px);}
+  .tab-btn.active{
+    background:linear-gradient(135deg,#1abc9c,#16a085);
+    border-color:var(--mint);color:#04231d;
+    box-shadow:0 6px 20px rgba(26,188,156,0.45);
+  }
+  .tab-btn .badge{
+    display:inline-block;background:rgba(255,255,255,0.15);
+    color:var(--mint);border-radius:20px;padding:2px 8px;
+    font-size:12px;font-family:'Courier New',monospace;margin-left:6px;
+  }
+  .tab-btn.active .badge{background:rgba(0,0,0,0.2);color:#fff;}
+
+  .tab-content{display:none;}
+  .tab-content.active{display:block;animation:fadeTab 0.4s ease;}
+  @keyframes fadeTab{0%{opacity:0;transform:translateY(8px);}100%{opacity:1;transform:translateY(0);}}
+
+  .controls{display:flex;justify-content:center;gap:16px;margin-bottom:16px;flex-wrap:wrap;}
+  .btn{
+    padding:11px 32px;border:none;border-radius:40px;font-family:inherit;
+    font-size:15px;font-weight:700;cursor:pointer;letter-spacing:1px;transition:all 0.2s;
+    background:linear-gradient(135deg,#1abc9c,#16a085);color:#04231d;
+    box-shadow:0 4px 0 rgba(0,0,0,0.25);
+  }
+  .btn:hover{transform:translateY(-2px);filter:brightness(1.08);}
+  .btn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,0.25);}
+
+  .mode-info{
+    text-align:center;font-size:14px;color:var(--text-soft);
+    margin-bottom:14px;font-style:italic;
+  }
+  .mode-info span{font-weight:700;color:var(--mint);font-style:normal;}
+
+  /* Таблица */
+  .table{display:flex;flex-direction:column;gap:6px;}
+  .table-header{display:grid;grid-template-columns:1.5fr 1.5fr;gap:6px;}
+  .table-header div{
+    padding:11px 6px;border-radius:10px;text-align:center;
+    font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+    color:#04231d;background:linear-gradient(135deg,#1abc9c,#16a085);
+    box-shadow:0 3px 12px rgba(26,188,156,0.3);
+  }
+  .table-row{display:grid;grid-template-columns:1.5fr 1.5fr;gap:6px;}
+  
+  .cell-example{
+    background:rgba(255,255,255,0.92);border-radius:10px;padding:12px 8px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Cambria Math',serif;font-size:17px;font-weight:600;
+    color:#1a2c2a;min-height:56px;text-align:center;
+    border-left:4px solid var(--teal);
+  }
+  .cell-example .katex { font-size: 1.1em; }
+
+  /* Flip-карточки */
+  .flip-card{background:transparent;perspective:1000px;min-height:56px;cursor:pointer;}
+  .flip-card-inner{
+    position:relative;width:100%;height:100%;min-height:56px;
+    transition:transform 0.6s cubic-bezier(.2,.9,.3,1.2);
+    transform-style:preserve-3d;
+  }
+  .flip-card.flipped .flip-card-inner{transform:rotateY(180deg);}
+  .flip-card-front,.flip-card-back{
+    position:absolute;width:100%;min-height:56px;
+    backface-visibility:hidden;-webkit-backface-visibility:hidden;
+    border-radius:10px;display:flex;align-items:center;justify-content:center;
+    padding:6px 8px;
+  }
+  .flip-card-front{
+    background:rgba(255,255,255,0.05);
+    border:2px dashed rgba(26,188,156,0.35);
+    color:var(--text-soft);font-size:13px;letter-spacing:1px;
+    flex-direction:column;gap:2px;
+  }
+  .flip-card-front .icon{font-size:20px;}
+  .flip-card-front .label{font-size:11px;color:var(--text-soft);opacity:0.75;}
+  
+  .flip-card-back{
+    transform:rotateY(180deg);
+    font-family:'Cambria Math',serif;font-size:17px;font-weight:700;
+    text-align:center;color:#1a2c2a;
+  }
+  .flip-card-back.blue{background:#d6ecf7;border:2px solid #2980b9;color:#0d3d5c;}
+  .flip-card-back .katex { font-size: 1.1em; }
+
+  .footer{
+    text-align:center;font-size:12px;color:var(--text-soft);
+    margin-top:20px;padding-top:14px;
+    border-top:1px solid rgba(255,255,255,0.08);
+    letter-spacing:1px;opacity:0.7;
+  }
+  .hint{
+    text-align:center;font-size:14px;color:var(--text-soft);
+    margin-top:12px;font-style:italic;
+  }
+  .hint span{color:var(--mint);font-weight:700;font-style:normal;}
+
+  @media(max-width:900px){
+    .container{padding:18px 14px 22px;}
+    h1{font-size:22px;}
+    .tab-btn{padding:9px 14px;font-size:13px;}
+    .table-header div{font-size:11px;padding:8px 3px;}
+    .cell-example{font-size:15px;padding:8px 5px;min-height:48px;}
+    .flip-card-front,.flip-card-back{min-height:48px;padding:5px;font-size:14px;}
+    .flip-card-front .icon{font-size:16px;}
+    .flip-card-front .label{font-size:10px;}
+    .btn{padding:9px 22px;font-size:14px;}
+    .logo-corner{top:10px;right:12px;}
+    .logo-corner .symbol{font-size:8px;letter-spacing:2px;}
+    .logo-corner .greek{font-size:11px;}
+    .logo-corner .russian{font-size:7px;}
+    .logo-corner .sub{font-size:6px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div>
+<div class="glow g2"></div>
+
+<div class="container">
+
+  <div class="logo-corner">
+    <div class="symbol">
+      <div>●</div><div>● ●</div><div>● ● ●</div><div>● ● ● ●</div>
+    </div>
+    <div class="greek">ΤΕΤΡΑΚΤΥΣ</div>
+    <div class="russian">ТЕТРАКТИС</div>
+    <div class="sub">Елена Михалева</div>
+  </div>
+
+  <h1>🧩 <span>РАЗЛОЖЕНИЕ</span> на множители</h1>
+  <div class="subtitle">Тренажёр · 4 режима · Более 100 заданий</div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="0">1️⃣ Вынесение <span class="badge">30</span></button>
+    <button class="tab-btn" data-tab="1">2️⃣ Разность кв. <span class="badge">30</span></button>
+    <button class="tab-btn" data-tab="2">3️⃣ Квадрат суммы <span class="badge">30</span></button>
+    <button class="tab-btn" data-tab="3">🔥 Смешанный <span class="badge">40</span></button>
+  </div>
+
+  <!-- РЕЖИМ 1: ВЫНЕСЕНИЕ -->
+  <div class="tab-content active" data-tab="0">
+    <div class="mode-info">📦 Вынесение общего множителя за скобки</div>
+    <div class="controls"><button class="btn" id="btnNew0">🔄 20 новых заданий</button></div>
+    <div class="table">
+      <div class="table-header">
+        <div>📝 Задание</div>
+        <div>🔍 Ответ</div>
+      </div>
+      <div id="rowsContainer0"></div>
+    </div>
+  </div>
+
+  <!-- РЕЖИМ 2: РАЗНОСТЬ КВАДРАТОВ -->
+  <div class="tab-content" data-tab="1">
+    <div class="mode-info">📐 Формула разности квадратов: <span>a² − b² = (a − b)(a + b)</span></div>
+    <div class="controls"><button class="btn" id="btnNew1">🔄 20 новых заданий</button></div>
+    <div class="table">
+      <div class="table-header">
+        <div>📝 Задание</div>
+        <div>🔍 Ответ</div>
+      </div>
+      <div id="rowsContainer1"></div>
+    </div>
+  </div>
+
+  <!-- РЕЖИМ 3: КВАДРАТ СУММЫ/РАЗНОСТИ -->
+  <div class="tab-content" data-tab="2">
+    <div class="mode-info">🧩 Формулы: <span>a² + 2ab + b² = (a + b)²</span> и <span>a² − 2ab + b² = (a − b)²</span></div>
+    <div class="controls"><button class="btn" id="btnNew2">🔄 20 новых заданий</button></div>
+    <div class="table">
+      <div class="table-header">
+        <div>📝 Задание</div>
+        <div>🔍 Ответ</div>
+      </div>
+      <div id="rowsContainer2"></div>
+    </div>
+  </div>
+
+  <!-- РЕЖИМ 4: СМЕШАННЫЙ -->
+  <div class="tab-content" data-tab="3">
+    <div class="mode-info">🔥 Смешанный режим: только 3 базовых типа</div>
+    <div class="controls"><button class="btn" id="btnNew3">🔄 20 новых заданий</button></div>
+    <div class="table">
+      <div class="table-header">
+        <div>📝 Задание</div>
+        <div>🔍 Ответ</div>
+      </div>
+      <div id="rowsContainer3"></div>
+    </div>
+  </div>
+
+  <div class="hint">💡 Нажми на <span>карточку</span>, чтобы перевернуть и увидеть ответ</div>
+  <div class="footer">© 2026 · Τετρακτύς · Школа математики Елены Михалевой</div>
+
+</div>
+
+<script>
+  // Ждем полной загрузки страницы и скриптов KaTeX
+  window.onload = function() {
+    // БАЗА 1: ВЫНЕСЕНИЕ (30)
+    const BANK0 = [
+      '6x + 9 | 3(2x+3)', '10a - 15b | 5(2a-3b)', 'x^3 - x^2 | x^2(x-1)',
+      '4a^2 + 8a | 4a(a+2)', '2x^3 - 6x^2 | 2x^2(x-3)', '14m^2n - 21mn^2 | 7mn(2m-3n)',
+      '15a^3b - 10a^2b^2 | 5a^2b(3a-2b)', '8x^2y - 12xy^2 | 4xy(2x-3y)', '5a^2 - 10a | 5a(a-2)',
+      '6m^3n^2 - 9m^2n^3 | 3m^2n^2(2m-3n)', '12x^2y + 18xy^2 | 6xy(2x+3y)', '7a^3b - 14a^2b^2 | 7a^2b(a-2b)',
+      'x^2 + x | x(x+1)', '3y^2 - 6y | 3y(y-2)', '8m^3 - 4m^2 | 4m^2(2m-1)',
+      '5x^3 + 10x^2 | 5x^2(x+2)', '2a^2b + 4ab^2 | 2ab(a+2b)', '9m^2n - 3mn^2 | 3mn(3m-n)',
+      '15x^2y^2 - 5xy^3 | 5xy^2(3x-y)', '4a^3 - 8a^2 + 12a | 4a(a^2-2a+3)', '6x^2 + 9x | 3x(2x+3)',
+      '10y^3 - 15y^2 | 5y^2(2y-3)', '2a^2 + 6a | 2a(a+3)', 'x^4 - x^3 | x^3(x-1)',
+      '8a^2 - 12a | 4a(2a-3)', '5m^3 + 10m^2 | 5m^2(m+2)', '3x^2 - 9x | 3x(x-3)',
+      '4b^3 + 8b^2 | 4b^2(b+2)', '7a^4 - 14a^2 | 7a^2(a^2-2)', '6x^3y - 9x^2y^2 | 3x^2y(2x-3y)'
+    ];
+
+    // БАЗА 2: РАЗНОСТЬ КВАДРАТОВ (30)
+    const BANK1 = [
+      'x^2 - 16 | (x-4)(x+4)', 'a^2 - 25 | (a-5)(a+5)', '9x^2 - 1 | (3x-1)(3x+1)',
+      '4y^2 - 49 | (2y-7)(2y+7)', '100 - m^2 | (10-m)(10+m)', 'a^4 - b^4 | (a^2-b^2)(a^2+b^2)',
+      'x^6 - 9 | (x^3-3)(x^3+3)', '0.25x^2 - 1 | (0.5x-1)(0.5x+1)', 'x^2y^2 - 4 | (xy-2)(xy+2)',
+      '16c^2 - 9d^2 | (4c-3d)(4c+3d)', '25 - 4x^2 | (5-2x)(5+2x)', '81 - y^4 | (9-y^2)(9+y^2)',
+      'x^4 - 16 | (x^2-4)(x^2+4)', 'a^2b^2 - 1 | (ab-1)(ab+1)', '36m^2 - 49n^2 | (6m-7n)(6m+7n)',
+      '1 - 9a^2 | (1-3a)(1+3a)', '64 - x^2 | (8-x)(8+x)', '4a^4 - 9 | (2a^2-3)(2a^2+3)',
+      'x^2 - 0.01 | (x-0.1)(x+0.1)', '49m^2 - 16n^2 | (7m-4n)(7m+4n)', '121 - 25y^2 | (11-5y)(11+5y)',
+      'a^6 - b^6 | (a^3-b^3)(a^3+b^3)', 'x^2y^4 - 9 | (xy^2-3)(xy^2+3)', '16x^2 - 25 | (4x-5)(4x+5)',
+      '9 - 4c^2 | (3-2c)(3+2c)', '1 - 16m^2 | (1-4m)(1+4m)', '81a^2 - 1 | (9a-1)(9a+1)',
+      '0.09 - y^2 | (0.3-y)(0.3+y)', '36 - 25x^2 | (6-5x)(6+5x)', 'a^8 - 1 | (a^4-1)(a^4+1)'
+    ];
+
+    // БАЗА 3: КВАДРАТ СУММЫ/РАЗНОСТИ (30)
+    const BANK2 = [
+      'x^2 + 2x + 1 | (x+1)^2', 'y^2 - 4y + 4 | (y-2)^2', 'a^2 - 6a + 9 | (a-3)^2',
+      '4x^2 + 12x + 9 | (2x+3)^2', '9y^2 - 24y + 16 | (3y-4)^2', 'm^2 + 10m + 25 | (m+5)^2',
+      '16a^2 - 8a + 1 | (4a-1)^2', '25b^2 + 20b + 4 | (5b+2)^2', 'x^4 - 2x^2 + 1 | (x^2-1)^2',
+      'a^2b^2 + 2ab + 1 | (ab+1)^2', '9x^2 + 6x + 1 | (3x+1)^2', '4y^2 - 12y + 9 | (2y-3)^2',
+      'x^2 + 8x + 16 | (x+4)^2', 'a^2 - 10a + 25 | (a-5)^2', '36m^2 - 12m + 1 | (6m-1)^2',
+      '49n^2 + 14n + 1 | (7n+1)^2', 'x^2 - 2x + 1 | (x-1)^2', '4a^2 + 4a + 1 | (2a+1)^2',
+      '9b^2 - 6b + 1 | (3b-1)^2', 'x^4 + 2x^2 + 1 | (x^2+1)^2', '25a^2 - 10a + 1 | (5a-1)^2',
+      '16m^2 + 24m + 9 | (4m+3)^2', 'y^2 - 14y + 49 | (y-7)^2', 'a^2 + 12a + 36 | (a+6)^2',
+      '4x^2 - 20x + 25 | (2x-5)^2', '9a^2 + 12a + 4 | (3a+2)^2', 'x^2 - 16x + 64 | (x-8)^2',
+      'm^2 + 18m + 81 | (m+9)^2', '4c^2 - 28c + 49 | (2c-7)^2', '100x^2 + 20x + 1 | (10x+1)^2'
+    ];
+
+    // БАЗА 4: СМЕШАННЫЙ (40) - ТОЛЬКО 3 ПРОСТЫХ ТИПА
+    const BANK3 = [
+      // Вынесение
+      '6x + 9 | 3(2x+3)', '10a - 15b | 5(2a-3b)', 'x^3 - x^2 | x^2(x-1)',
+      '4a^2 + 8a | 4a(a+2)', '2x^3 - 6x^2 | 2x^2(x-3)', '5a^2 - 10a | 5a(a-2)',
+      'x^2 + x | x(x+1)', '3y^2 - 6y | 3y(y-2)', '8m^3 - 4m^2 | 4m^2(2m-1)',
+      '5x^3 + 10x^2 | 5x^2(x+2)', '6x^2 + 9x | 3x(2x+3)', '2a^2 + 6a | 2a(a+3)',
+      // Разность квадратов
+      'x^2 - 16 | (x-4)(x+4)', 'a^2 - 25 | (a-5)(a+5)', '9x^2 - 1 | (3x-1)(3x+1)',
+      '4y^2 - 49 | (2y-7)(2y+7)', '100 - m^2 | (10-m)(10+m)', 'x^4 - 16 | (x^2-4)(x^2+4)',
+      '16c^2 - 9d^2 | (4c-3d)(4c+3d)', '25 - 4x^2 | (5-2x)(5+2x)', '36m^2 - 49n^2 | (6m-7n)(6m+7n)',
+      '64 - x^2 | (8-x)(8+x)', '16x^2 - 25 | (4x-5)(4x+5)', '9 - 4c^2 | (3-2c)(3+2c)',
+      '1 - 9a^2 | (1-3a)(1+3a)', '1 - 16m^2 | (1-4m)(1+4m)', '81a^2 - 1 | (9a-1)(9a+1)',
+      // Квадрат суммы/разности
+      'x^2 + 2x + 1 | (x+1)^2', 'y^2 - 4y + 4 | (y-2)^2', 'a^2 - 6a + 9 | (a-3)^2',
+      '4x^2 + 12x + 9 | (2x+3)^2', '9y^2 - 24y + 16 | (3y-4)^2', 'm^2 + 10m + 25 | (m+5)^2',
+      '16a^2 - 8a + 1 | (4a-1)^2', '25b^2 + 20b + 4 | (5b+2)^2', '9x^2 + 6x + 1 | (3x+1)^2',
+      '4y^2 - 12y + 9 | (2y-3)^2', 'x^2 + 8x + 16 | (x+4)^2', 'a^2 - 10a + 25 | (a-5)^2',
+      'x^2 - 2x + 1 | (x-1)^2', '4a^2 + 4a + 1 | (2a+1)^2', '9b^2 - 6b + 1 | (3b-1)^2'
+    ];
+
+    // Функция перемешивания
+    function shuffle(arr){
+      for(let i=arr.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [arr[i],arr[j]]=[arr[j],arr[i]];
+      }
+      return arr;
+    }
+
+    // Рендер таблицы
+    function renderTable(containerId, data){
+      const container=document.getElementById(containerId);
+      container.innerHTML='';
+      const selected=shuffle([...data]).slice(0,20);
+
+      selected.forEach((item)=>{
+        const [q, a] = item.split(' | '); // Разделяем задание и ответ
+        
+        const row=document.createElement('div');
+        row.className='table-row';
+
+        // Столбец 1: Задание
+        const col1=document.createElement('div');
+        col1.className='cell-example';
+        const spanQ = document.createElement('span');
+        katex.render(q, spanQ, {throwOnError: false});
+        col1.appendChild(spanQ);
+
+        // Столбец 2: Ответ (карточка-перевертыш)
+        const col2=document.createElement('div');
+        col2.className='flip-card';
+        col2.innerHTML=`<div class="flip-card-inner"><div class="flip-card-front"><span class="icon">👆</span><span class="label">нажми</span></div><div class="flip-card-back blue"></div></div>`;
+        
+        // Рендерим ответ внутри бэк-карточки
+        const backDiv = col2.querySelector('.flip-card-back');
+        katex.render(a, backDiv, {throwOnError: false});
+        
+        col2.addEventListener('click',function(e){
+          e.stopPropagation();
+          this.classList.toggle('flipped');
+        });
+
+        row.appendChild(col1);
+        row.appendChild(col2);
+        container.appendChild(row);
+      });
+    }
+
+    // Загрузка режимов
+    function loadMode0(){renderTable('rowsContainer0', BANK0);}
+    function loadMode1(){renderTable('rowsContainer1', BANK1);}
+    function loadMode2(){renderTable('rowsContainer2', BANK2);}
+    function loadMode3(){renderTable('rowsContainer3', BANK3);}
+
+    // Переключение вкладок
+    document.querySelectorAll('.tab-btn').forEach((btn)=>{
+      btn.addEventListener('click',function(){
+        const tabId=parseInt(this.dataset.tab);
+        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+        document.querySelector(`.tab-content[data-tab="${tabId}"]`).classList.add('active');
+      });
+    });
+
+    // Кнопки "20 новых"
+    document.getElementById('btnNew0').addEventListener('click',loadMode0);
+    document.getElementById('btnNew1').addEventListener('click',loadMode1);
+    document.getElementById('btnNew2').addEventListener('click',loadMode2);
+    document.getElementById('btnNew3').addEventListener('click',loadMode3);
+
+    // Первичная загрузка
+    loadMode0();
+    loadMode1();
+    loadMode2();
+    loadMode3();
+  };
+</script>
+
+</body>
+</html>
