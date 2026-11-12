@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ΤΕΤΡΑΚΤΥΣ — ДЗ: Симметрия</title>
+    
+    <!-- KaTeX для формул -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        :root {
+            --bg-deep: #073a35;
+            --bg-gradient: radial-gradient(circle at 50% 0%, #126b61 0%, #073a35 80%);
+            --turquoise: #1abc9c;
+            --mint: #7fffd4;
+            --gold: #f4d35e;
+            --coral: #ff6b6b;
+            --text-main: #f0fcf9;
+            --text-muted: #9ccfc7;
+            --card-bg: rgba(18, 107, 97, 0.4);
+            --border-color: rgba(26, 188, 156, 0.25);
+            --success: #2ecc71;
+            --fail: #ff6b6b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-deep);
+            background-image: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'Georgia', serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            padding-bottom: 40px;
+        }
+
+        /* ШАПКА */
+        header {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(7, 58, 53, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-left { display: flex; align-items: center; gap: 12px; flex: 1; }
+        .logo-symbol { font-family: 'Courier New', monospace; color: var(--gold); font-size: 9px; line-height: 1.1; letter-spacing: 4px; font-weight: bold; text-align: center; }
+        .logo-greek-box { border-top: 1px solid var(--gold); border-bottom: 1px solid var(--gold); padding: 2px 0; font-family: 'Times New Roman', serif; font-size: 15px; letter-spacing: 2px; color: var(--gold); font-weight: bold; line-height: 1; }
+        .logo-sub-box { font-size: 9px; color: var(--mint); font-style: italic; margin-top: 2px; }
+        
+        .header-right { display: flex; gap: 15px; align-items: center; font-family: 'Courier New', monospace; font-size: 14px; color: var(--mint); font-weight: bold; }
+        .date-box { background: rgba(26, 188, 156, 0.1); padding: 4px 10px; border-radius: 8px; }
+        .progress-box { background: rgba(26, 188, 156, 0.1); padding: 4px 10px; border-radius: 8px; border: 1px solid var(--turquoise); color: var(--gold); }
+
+        /* КОНТЕЙНЕР */
+        .container { max-width: 800px; margin: 20px auto; padding: 0 15px; flex: 1; display: flex; flex-direction: column; width: 100%; }
+        
+        .main-title { font-family: 'Times New Roman', serif; text-align: center; font-size: 26px; color: var(--gold); margin-bottom: 20px; text-transform: uppercase; }
+
+        /* ВВОД ИМЕНИ */
+        .student-name-container {
+            display: flex; align-items: center; gap: 10px;
+            background: var(--card-bg); padding: 10px 15px;
+            border-radius: 12px; border: 1px solid var(--border-color);
+            margin-bottom: 20px; flex-wrap: wrap;
+        }
+        .student-name-container label { font-size: 15px; color: var(--mint); }
+        .student-name-container input {
+            background: rgba(7, 58, 53, 0.6); border: 1px solid var(--turquoise);
+            color: var(--gold); padding: 6px 12px; border-radius: 6px;
+            font-family: 'Courier New', monospace; font-size: 16px; flex: 1;
+            min-width: 150px;
+        }
+        .student-name-container input:focus { outline: none; border-color: var(--gold); }
+
+        /* ИНСТРУКЦИЯ */
+        .instruction-box {
+            background: rgba(26, 188, 156, 0.1); border-left: 4px solid var(--turquoise);
+            padding: 12px 15px; border-radius: 0 8px 8px 0; margin-bottom: 25px;
+            font-size: 14px; line-height: 1.6;
+        }
+        .instruction-box b { color: var(--mint); }
+
+        /* КАРТОЧКИ */
+        .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 18px; padding: 20px; margin-bottom: 25px; backdrop-filter: blur(10px); position: relative; transition: 0.3s; }
+        .card.correct { border-color: var(--success); box-shadow: 0 0 15px rgba(46, 204, 113, 0.2); }
+        .card.incorrect { border-color: var(--fail); box-shadow: 0 0 15px rgba(255, 107, 107, 0.2); }
+        
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .task-number { background: linear-gradient(135deg, var(--turquoise), var(--mint)); color: #073a35; font-family: 'Courier New', monospace; font-weight: bold; font-size: 18px; width: 36px; height: 36px; display: flex; justify-content: center; align-items: center; border-radius: 8px; }
+        .star-icon { font-size: 24px; color: var(--gold); text-shadow: 0 0 10px rgba(244, 211, 94, 0.5); }
+        
+        .task-text { font-size: 16px; line-height: 1.6; margin-bottom: 15px; }
+        
+        /* КАРТИНКА В КАРТОЧКЕ */
+        .task-image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 15px auto;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            background: white;
+        }
+
+        /* ПОЛЕ ВВОДА */
+        .answer-input-wrapper { margin-top: 15px; display: flex; flex-direction: column; gap: 8px; }
+        .answer-input-wrapper label { font-size: 14px; color: var(--mint); }
+        .answer-input {
+            background: rgba(7, 58, 53, 0.6); border: 2px solid var(--turquoise);
+            color: var(--gold); padding: 10px 15px; border-radius: 8px;
+            font-family: 'Courier New', monospace; font-size: 18px; width: 100%;
+            transition: 0.2s;
+        }
+        .answer-input:focus { outline: none; border-color: var(--gold); }
+        .answer-input:disabled { opacity: 0.7; cursor: not-allowed; border-color: var(--border-color); }
+        
+        .feedback { font-size: 15px; font-weight: bold; margin-top: 5px; display: none; }
+        .feedback.correct { color: var(--success); display: block; }
+        .feedback.incorrect { color: var(--fail); display: block; }
+        .feedback .correct-answer { color: var(--gold); }
+
+        /* ПЛАШКА ДЛЯ ФОТО */
+        .photo-notice {
+            background: rgba(244, 211, 94, 0.1);
+            border: 2px dashed var(--gold);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 15px;
+            color: var(--gold);
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        .photo-notice .icon { font-size: 30px; display: block; margin-bottom: 10px; }
+        .photo-notice b { color: var(--coral); }
+
+        /* КНОПКИ ВНИЗУ */
+        .bottom-actions {
+            display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;
+            margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border-color);
+        }
+        .action-btn {
+            padding: 12px 24px; border-radius: 10px; font-family: 'Georgia', serif;
+            font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s;
+            border: none; display: flex; align-items: center; gap: 8px;
+        }
+        .btn-check { background: var(--turquoise); color: #073a35; }
+        .btn-check:hover { background: var(--mint); transform: translateY(-2px); }
+        .btn-copy { background: rgba(26, 188, 156, 0.2); border: 1px solid var(--turquoise); color: var(--turquoise); }
+        .btn-copy:hover { background: rgba(26, 188, 156, 0.3); transform: translateY(-2px); }
+        .btn-send { background: var(--gold); color: #073a35; }
+        .btn-send:hover { background: #f7e08b; transform: translateY(-2px); }
+        .btn-clear { background: rgba(255, 107, 107, 0.1); border: 1px solid var(--coral); color: var(--coral); }
+        .btn-clear:hover { background: rgba(255, 107, 107, 0.2); transform: translateY(-2px); }
+
+        /* МОДАЛКИ */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 1000; display: none;
+            justify-content: center; align-items: center;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-box {
+            background: #073a35; border: 2px solid var(--turquoise);
+            border-radius: 16px; padding: 25px; max-width: 400px; width: 90%;
+            text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .modal-box h3 { color: var(--gold); margin-bottom: 15px; font-family: 'Times New Roman', serif; }
+        .modal-box p { font-size: 15px; line-height: 1.5; margin-bottom: 20px; color: var(--text-main); }
+        .modal-box input {
+            width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--turquoise);
+            background: rgba(7, 58, 53, 0.8); color: var(--gold); font-family: 'Courier New', monospace;
+            font-size: 18px; text-align: center; margin-bottom: 15px;
+        }
+        .modal-box input:focus { outline: none; border-color: var(--gold); }
+        .modal-btns { display: flex; gap: 10px; justify-content: center; }
+        .modal-btns button {
+            padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer;
+            font-family: 'Georgia', serif; font-weight: bold;
+        }
+        .modal-btns .btn-ok { background: var(--turquoise); color: #073a35; }
+        .modal-btns .btn-cancel { background: rgba(255, 107, 107, 0.2); color: var(--coral); border: 1px solid var(--coral); }
+
+        /* АДАПТИВ */
+        @media (max-width: 600px) {
+            .header-right { flex-direction: column; gap: 5px; align-items: flex-end; }
+            .date-box { font-size: 12px; }
+            .bottom-actions { flex-direction: column; }
+            .action-btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-left">
+            <div class="logo-symbol">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+            <div>
+                <div class="logo-greek-box">ΤΕΤΡΑΚΤΥΣ</div>
+                <div class="logo-sub-box">Школа математики Елены Михалевой</div>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="date-box" id="date-display">Загрузка...</div>
+            <div class="progress-box">✅ <span id="progress-count">0</span> / 4</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1 class="main-title">Домашнее задание: Симметрия</h1>
+
+        <div class="student-name-container">
+            <label for="student-name">Ученик:</label>
+            <input type="text" id="student-name" placeholder="Введи имя..." oninput="saveName()">
+        </div>
+
+        <div class="instruction-box">
+            <b>📝 Инструкция:</b> В заданиях 1–4 запиши ответ в виде букв (например, <b>n,m,o</b>). В заданиях 5–6 (*) реши пример и задачу в тетради и отправь <b>фото</b> учителю.
+        </div>
+
+        <!-- ЗАДАНИЕ 1 -->
+        <div class="card" id="card-1">
+            <div class="card-header">
+                <div class="task-number">1</div>
+            </div>
+            <div class="task-text">
+                На рисунке изображён прямоугольник, проведены его ось симметрии и несколько других прямых. Какая из прямых является осью симметрии прямоугольника?
+            </div>
+            <img src="6.png" alt="Прямоугольник с прямыми" class="task-image">
+            <div class="answer-input-wrapper">
+                <label>Ответ (буквы):</label>
+                <input type="text" class="answer-input" id="ans-1" data-correct="n,m,o" autocomplete="off">
+            </div>
+            <div class="feedback" id="fb-1"></div>
+        </div>
+
+        <!-- ЗАДАНИЕ 2 -->
+        <div class="card" id="card-2">
+            <div class="card-header">
+                <div class="task-number">2</div>
+            </div>
+            <div class="task-text">
+                На рисунке изображён прямоугольник, проведены его ось симметрии и несколько других прямых. Какая из прямых является осью симметрии прямоугольника?
+            </div>
+            <img src="7.png" alt="Прямоугольник с прямыми" class="task-image">
+            <div class="answer-input-wrapper">
+                <label>Ответ (буквы):</label>
+                <input type="text" class="answer-input" id="ans-2" data-correct="n,m,l" autocomplete="off">
+            </div>
+            <div class="feedback" id="fb-2"></div>
+        </div>
+
+        <!-- ЗАДАНИЕ 3 -->
+        <div class="card" id="card-3">
+            <div class="card-header">
+                <div class="task-number">3</div>
+            </div>
+            <div class="task-text">
+                На рисунке изображён правильный шестиугольник, проведены его оси симметрии и несколько других прямых. Какие из прямых являются осями симметрии шестиугольника?
+            </div>
+            <img src="8.png" alt="Шестиугольник с прямыми" class="task-image">
+            <div class="answer-input-wrapper">
+                <label>Ответ (буквы):</label>
+                <input type="text" class="answer-input" id="ans-3" data-correct="n,k" autocomplete="off">
+            </div>
+            <div class="feedback" id="fb-3"></div>
+        </div>
+
+        <!-- ЗАДАНИЕ 4 -->
+        <div class="card" id="card-4">
+            <div class="card-header">
+                <div class="task-number">4</div>
+            </div>
+            <div class="task-text">
+                На рисунке изображён круг, проведены его оси симметрии и несколько других прямых. Какие из прямых являются осями симметрии круга?
+            </div>
+            <img src="9.png" alt="Круг с прямыми" class="task-image">
+            <div class="answer-input-wrapper">
+                <label>Ответ (буквы):</label>
+                <input type="text" class="answer-input" id="ans-4" data-correct="k,o,n" autocomplete="off">
+            </div>
+            <div class="feedback" id="fb-4"></div>
+        </div>
+
+        <!-- ЗАДАНИЕ 5 (СО ЗВЕЗДОЧКОЙ) -->
+        <div class="card" id="card-5">
+            <div class="card-header">
+                <div class="task-number">5</div>
+                <div class="star-icon">⭐</div>
+            </div>
+            <div class="task-text">
+                Вычислите: <span id="formula-5"></span>
+            </div>
+            
+            <!-- Плашка с указанием про фото -->
+            <div class="photo-notice">
+                <span class="icon">📸</span>
+                <b>Внимание!</b> Решение этого задания запиши в тетради и отправь <b>фото решения</b> учителю в Макс.
+            </div>
+        </div>
+
+        <!-- ЗАДАНИЕ 6 (СО ЗВЕЗДОЧКОЙ) -->
+        <div class="card" id="card-6">
+            <div class="card-header">
+                <div class="task-number">6</div>
+                <div class="star-icon">⭐</div>
+            </div>
+            <div class="task-text">
+                В лесном хозяйстве выращивают ели, сосны и пихты. Ели составляют 25 % всех деревьев в лесном хозяйстве. Сосен на треть меньше, чем пихт. Сколько в лесном хозяйстве елей, если сосен 30?
+            </div>
+            
+            <!-- Плашка с указанием про фото -->
+            <div class="photo-notice">
+                <span class="icon">📸</span>
+                <b>Внимание!</b> Реши эту задачу в тетради и отправь <b>фото решения</b> учителю в Макс.
+            </div>
+        </div>
+
+        <!-- КНОПКИ ВНИЗУ -->
+        <div class="bottom-actions">
+            <button class="action-btn btn-check" onclick="checkAll()">✅ Проверить ответы (1–4)</button>
+            <button class="action-btn btn-copy" onclick="copyResults()">📋 Скопировать</button>
+            <button class="action-btn btn-send" onclick="sendToMax()">💬 Отправить в Макс</button>
+            <button class="action-btn btn-clear" onclick="showClearModal()">🔒 Очистить</button>
+        </div>
+    </div>
+
+    <!-- МОДАЛКА ПРЕДУПРЕЖДЕНИЯ -->
+    <div class="modal-overlay" id="alert-modal">
+        <div class="modal-box">
+            <h3 id="alert-title">Внимание</h3>
+            <p id="alert-text">Текст</p>
+            <div class="modal-btns">
+                <button class="btn-ok" onclick="closeModal('alert-modal')">ОК</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛКА ОЧИСТКИ -->
+    <div class="modal-overlay" id="clear-modal">
+        <div class="modal-box">
+            <h3>🔒 Введите пароль</h3>
+            <p>Для очистки всех данных введите пароль:</p>
+            <input type="password" id="clear-password" placeholder="****">
+            <p id="clear-error" style="color: var(--fail); display: none; font-size: 14px; margin-bottom: 10px;">Неверный пароль</p>
+            <div class="modal-btns">
+                <button class="btn-ok" onclick="clearAll()">Очистить</button>
+                <button class="btn-cancel" onclick="closeModal('clear-modal')">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const TOTAL_TASKS = 4; // 4 задания с автопроверкой (1-4). Задания 5 и 6 - на фото.
+        const MAX_URL = "https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes";
+        const PASSWORD = "2810";
+
+        // --- ИНИЦИАЛИЗАЦИЯ ---
+        window.onload = function() {
+            const now = new Date();
+            document.getElementById('date-display').textContent = now.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+
+            const savedName = localStorage.getItem('tetraktys_hw_sym_name');
+            if (savedName) document.getElementById('student-name').value = savedName;
+
+            // Восстановление ответов
+            for (let i = 1; i <= TOTAL_TASKS; i++) {
+                const savedStatus = localStorage.getItem(`tetraktys_hw_sym_task_${i}_status`);
+                const savedAnswer = localStorage.getItem(`tetraktys_hw_sym_task_${i}_answer`);
+                
+                if (savedAnswer) document.getElementById(`ans-${i}`).value = savedAnswer;
+
+                if (savedStatus && savedAnswer) {
+                    checkSingleTask(i, savedAnswer, true);
+                }
+            }
+
+            updateProgress();
+
+            // Рендер формул
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false},
+                    {left: '\\[', right: '\\]', display: true}
+                ],
+                throwOnError: false
+            });
+
+            // Спец. рендер для 5 задания
+            document.getElementById('formula-5').innerHTML = katex.renderToString(`\\frac{16}{25} \\cdot \\left( \\frac{2}{3} + \\frac{7}{12} \\right) - \\frac{9}{10} : \\frac{15}{16}`, {displayMode: true, throwOnError: false});
+        };
+
+        function saveName() {
+            const name = document.getElementById('student-name').value;
+            localStorage.setItem('tetraktys_hw_sym_name', name);
+        }
+
+        // --- ЛОГИКА ПРОВЕРКИ ---
+        function checkAll() {
+            let emptyTasks = [];
+            for (let i = 1; i <= TOTAL_TASKS; i++) {
+                const val = document.getElementById(`ans-${i}`).value.trim();
+                if (!val) emptyTasks.push(i);
+            }
+
+            if (emptyTasks.length > 0) {
+                showAlert('Заполни все поля!', `У тебя пустые задания: №${emptyTasks.join(', №')}`);
+                return;
+            }
+
+            for (let i = 1; i <= TOTAL_TASKS; i++) {
+                const val = document.getElementById(`ans-${i}`).value;
+                checkSingleTask(i, val, false);
+            }
+            updateProgress();
+        }
+
+        function checkSingleTask(id, userAnswer, isRestore) {
+            const input = document.getElementById(`ans-${id}`);
+            const card = document.getElementById(`card-${id}`);
+            const feedback = document.getElementById(`fb-${id}`);
+            const correctAnswer = input.getAttribute('data-correct');
+
+            // Нормализация
+            let userNorm = userAnswer.trim().toLowerCase().replace(/\s+/g, '');
+            let correctNorm = correctAnswer.trim().toLowerCase().replace(/\s+/g, '');
+
+            // Сортировка букв
+            if (/^[a-z,]+$/.test(userNorm) && /^[a-z,]+$/.test(correctNorm)) {
+                userNorm = userNorm.replace(/,/g, '').split('').sort().join('');
+                correctNorm = correctNorm.replace(/,/g, '').split('').sort().join('');
+            }
+
+            let status = 'fail';
+            if (userNorm === correctNorm) {
+                status = 'ok';
+                card.classList.add('correct');
+                feedback.className = 'feedback correct';
+                feedback.textContent = '✅ Верно!';
+            } else {
+                card.classList.add('incorrect');
+                feedback.className = 'feedback incorrect';
+                feedback.innerHTML = `❌ Неверно. Правильный ответ: <span class="correct-answer">${correctAnswer}</span>`;
+            }
+
+            input.disabled = true;
+            if (!isRestore) {
+                localStorage.setItem(`tetraktys_hw_sym_task_${id}_status`, status);
+                localStorage.setItem(`tetraktys_hw_sym_task_${id}_answer`, userAnswer);
+            }
+        }
+
+        function updateProgress() {
+            let count = 0;
+            for (let i = 1; i <= TOTAL_TASKS; i++) {
+                if (localStorage.getItem(`tetraktys_hw_sym_task_${i}_status`) === 'ok') {
+                    count++;
+                }
+            }
+            document.getElementById('progress-count').textContent = count;
+        }
+
+        // --- ОТПРАВКА В МАКС ---
+        function generateReport() {
+            const name = document.getElementById('student-name').value || 'Ученик';
+            const now = new Date();
+            const dateStr = now.toLocaleString('ru-RU');
+
+            let text = `📐 ОТВЕТЫ · ДЗ · Симметрия\n`;
+            text += `Дата: ${dateStr}\n`;
+            text += `Ученик: ${name}\n\n`;
+
+            let correctCount = 0;
+
+            for (let i = 1; i <= TOTAL_TASKS; i++) {
+                const status = localStorage.getItem(`tetraktys_hw_sym_task_${i}_status`);
+                const answer = localStorage.getItem(`tetraktys_hw_sym_task_${i}_answer`) || document.getElementById(`ans-${i}`).value || '—';
+                const correctAnswer = document.getElementById(`ans-${i}`).getAttribute('data-correct');
+
+                if (status === 'ok') {
+                    text += `✅ Задание ${i}. Ответ: ${answer}\n`;
+                    correctCount++;
+                } else if (status === 'fail') {
+                    text += `❌ Задание ${i}. Ответ: ${answer} (правильный: ${correctAnswer})\n`;
+                } else {
+                    text += `— Задание ${i}. Ответ: — (не проверено)\n`;
+                }
+            }
+
+            // Добавляем информацию про 5 и 6 задания
+            text += `📸 Задание 5 (*). Решение на фото.\n`;
+            text += `📸 Задание 6 (*). Решение на фото.\n`;
+
+            text += `\n✅ Итог: ${correctCount} из ${TOTAL_TASKS} верно (задания 5 и 6 — на фото)`;
+            return text;
+        }
+
+        function copyResults() {
+            const text = generateReport();
+            navigator.clipboard.writeText(text).then(() => {
+                showAlert('Успех', 'Текст скопирован в буфер обмена!');
+            }).catch(err => {
+                showAlert('Ошибка', 'Не удалось скопировать текст.');
+            });
+        }
+
+        function sendToMax() {
+            const text = generateReport();
+            navigator.clipboard.writeText(text).then(() => {
+                showAlert('Успех', 'Текст скопирован! Открываю чат...');
+                setTimeout(() => {
+                    window.open(MAX_URL, '_blank');
+                }, 500);
+            }).catch(err => {
+                window.open(MAX_URL, '_blank');
+            });
+        }
+
+        // --- ОЧИСТКА ---
+        function showClearModal() {
+            document.getElementById('clear-password').value = '';
+            document.getElementById('clear-error').style.display = 'none';
+            document.getElementById('clear-modal').classList.add('show');
+        }
+
+        function clearAll() {
+            const pass = document.getElementById('clear-password').value;
+            if (pass === PASSWORD) {
+                // Очищаем только ключи этого урока
+                for (let i = 1; i <= TOTAL_TASKS; i++) {
+                    localStorage.removeItem(`tetraktys_hw_sym_task_${i}_status`);
+                    localStorage.removeItem(`tetraktys_hw_sym_task_${i}_answer`);
+                }
+                localStorage.removeItem('tetraktys_hw_sym_name');
+                location.reload();
+            } else {
+                document.getElementById('clear-error').style.display = 'block';
+            }
+        }
+
+        // --- МОДАЛКИ ---
+        function showAlert(title, text) {
+            document.getElementById('alert-title').textContent = title;
+            document.getElementById('alert-text').textContent = text;
+            document.getElementById('alert-modal').classList.add('show');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+    </script>
+</body>
+</html>
