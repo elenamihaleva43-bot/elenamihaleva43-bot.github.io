@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ΤΕΤΡΑΚΤΥΣ — ДЗ для Ильи (Геометрия)</title>
+    
+    <!-- KaTeX для формул -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        :root {
+            --bg-deep: #073a35;
+            --bg-gradient: radial-gradient(circle at 50% 0%, #126b61 0%, #073a35 80%);
+            --turquoise: #1abc9c;
+            --mint: #7fffd4;
+            --gold: #f4d35e;
+            --coral: #ff6b6b;
+            --text-main: #f0fcf9;
+            --text-muted: #9ccfc7;
+            --card-bg: rgba(18, 107, 97, 0.4);
+            --border-color: rgba(26, 188, 156, 0.25);
+            --success: #2ecc71;
+            --fail: #ff6b6b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-deep);
+            background-image: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'Georgia', serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            padding-bottom: 40px;
+        }
+
+        /* ШАПКА */
+        header {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(7, 58, 53, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-left { display: flex; align-items: center; gap: 12px; flex: 1; }
+        .logo-symbol { font-family: 'Courier New', monospace; color: var(--gold); font-size: 9px; line-height: 1.1; letter-spacing: 4px; font-weight: bold; text-align: center; }
+        .logo-greek-box { border-top: 1px solid var(--gold); border-bottom: 1px solid var(--gold); padding: 2px 0; font-family: 'Times New Roman', serif; font-size: 15px; letter-spacing: 2px; color: var(--gold); font-weight: bold; line-height: 1; }
+        .logo-sub-box { font-size: 9px; color: var(--mint); font-style: italic; margin-top: 2px; }
+        
+        .header-right { display: flex; gap: 15px; align-items: center; font-family: 'Courier New', monospace; font-size: 14px; color: var(--mint); font-weight: bold; }
+        .date-box { background: rgba(26, 188, 156, 0.1); padding: 4px 10px; border-radius: 8px; }
+        .progress-box { background: rgba(26, 188, 156, 0.1); padding: 4px 10px; border-radius: 8px; border: 1px solid var(--turquoise); color: var(--gold); }
+
+        /* КОНТЕЙНЕР */
+        .container { max-width: 800px; margin: 20px auto; padding: 0 15px; flex: 1; display: flex; flex-direction: column; width: 100%; }
+        
+        .main-title { font-family: 'Times New Roman', serif; text-align: center; font-size: 26px; color: var(--gold); margin-bottom: 20px; text-transform: uppercase; }
+
+        /* ВВОД ИМЕНИ */
+        .student-name-container {
+            display: flex; align-items: center; gap: 10px;
+            background: var(--card-bg); padding: 10px 15px;
+            border-radius: 12px; border: 1px solid var(--border-color);
+            margin-bottom: 20px; flex-wrap: wrap;
+        }
+        .student-name-container label { font-size: 15px; color: var(--mint); }
+        .student-name-container input {
+            background: rgba(7, 58, 53, 0.6); border: 1px solid var(--turquoise);
+            color: var(--gold); padding: 6px 12px; border-radius: 6px;
+            font-family: 'Courier New', monospace; font-size: 16px; flex: 1;
+            min-width: 150px;
+        }
+        .student-name-container input:focus { outline: none; border-color: var(--gold); }
+
+        /* ИНСТРУКЦИЯ */
+        .instruction-box {
+            background: rgba(26, 188, 156, 0.1); border-left: 4px solid var(--turquoise);
+            padding: 12px 15px; border-radius: 0 8px 8px 0; margin-bottom: 25px;
+            font-size: 14px; line-height: 1.6;
+        }
+        .instruction-box b { color: var(--mint); }
+
+        /* КАРТОЧКА */
+        .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 18px; padding: 20px; margin-bottom: 25px; backdrop-filter: blur(10px); position: relative; transition: 0.3s; }
+        .card.correct { border-color: var(--success); box-shadow: 0 0 15px rgba(46, 204, 113, 0.2); }
+        .card.incorrect { border-color: var(--fail); box-shadow: 0 0 15px rgba(255, 107, 107, 0.2); }
+        
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .task-number { background: linear-gradient(135deg, var(--turquoise), var(--mint)); color: #073a35; font-family: 'Courier New', monospace; font-weight: bold; font-size: 18px; width: 36px; height: 36px; display: flex; justify-content: center; align-items: center; border-radius: 8px; }
+        
+        .task-text { font-size: 16px; line-height: 1.8; margin-bottom: 15px; }
+        
+        /* СТИЛИ ДЛЯ ЧЕКБОКСОВ */
+        .checkbox-list { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
+        .checkbox-item { 
+            display: flex; align-items: flex-start; gap: 12px; 
+            background: rgba(7, 58, 53, 0.4); padding: 12px 15px; 
+            border-radius: 8px; border: 1px solid transparent;
+            cursor: pointer; transition: 0.2s;
+        }
+        .checkbox-item:hover { background: rgba(26, 188, 156, 0.15); }
+        .checkbox-item input[type="checkbox"] {
+            appearance: none; -webkit-appearance: none;
+            width: 22px; height: 22px; min-width: 22px;
+            border: 2px solid var(--turquoise); border-radius: 6px;
+            background: transparent; cursor: pointer; position: relative;
+            margin-top: 2px; transition: 0.2s;
+        }
+        .checkbox-item input[type="checkbox"]:checked {
+            background: var(--turquoise); border-color: var(--turquoise);
+        }
+        .checkbox-item input[type="checkbox"]:checked::after {
+            content: '✔'; position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); color: #073a35; font-size: 14px; font-weight: bold;
+        }
+        .checkbox-item input[type="checkbox"]:disabled { opacity: 0.5; cursor: not-allowed; }
+        .checkbox-item .text { font-size: 16px; line-height: 1.5; flex: 1; }
+        .checkbox-item.disabled-item { opacity: 0.7; cursor: not-allowed; }
+
+        .feedback { font-size: 15px; font-weight: bold; margin-top: 15px; display: none; text-align: center; }
+        .feedback.correct { color: var(--success); display: block; }
+        .feedback.incorrect { color: var(--fail); display: block; }
+
+        /* КНОПКИ ВНИЗУ */
+        .bottom-actions {
+            display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;
+            margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border-color);
+        }
+        .action-btn {
+            padding: 12px 24px; border-radius: 10px; font-family: 'Georgia', serif;
+            font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s;
+            border: none; display: flex; align-items: center; gap: 8px;
+        }
+        .btn-check { background: var(--turquoise); color: #073a35; }
+        .btn-check:hover { background: var(--mint); transform: translateY(-2px); }
+        .btn-copy { background: rgba(26, 188, 156, 0.2); border: 1px solid var(--turquoise); color: var(--turquoise); }
+        .btn-copy:hover { background: rgba(26, 188, 156, 0.3); transform: translateY(-2px); }
+        .btn-send { background: var(--gold); color: #073a35; }
+        .btn-send:hover { background: #f7e08b; transform: translateY(-2px); }
+        .btn-clear { background: rgba(255, 107, 107, 0.1); border: 1px solid var(--coral); color: var(--coral); }
+        .btn-clear:hover { background: rgba(255, 107, 107, 0.2); transform: translateY(-2px); }
+
+        /* МОДАЛКИ */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 1000; display: none;
+            justify-content: center; align-items: center;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-box {
+            background: #073a35; border: 2px solid var(--turquoise);
+            border-radius: 16px; padding: 25px; max-width: 400px; width: 90%;
+            text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .modal-box h3 { color: var(--gold); margin-bottom: 15px; font-family: 'Times New Roman', serif; }
+        .modal-box p { font-size: 15px; line-height: 1.5; margin-bottom: 20px; color: var(--text-main); }
+        .modal-box input {
+            width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--turquoise);
+            background: rgba(7, 58, 53, 0.8); color: var(--gold); font-family: 'Courier New', monospace;
+            font-size: 18px; text-align: center; margin-bottom: 15px;
+        }
+        .modal-box input:focus { outline: none; border-color: var(--gold); }
+        .modal-btns { display: flex; gap: 10px; justify-content: center; }
+        .modal-btns button {
+            padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer;
+            font-family: 'Georgia', serif; font-weight: bold;
+        }
+        .modal-btns .btn-ok { background: var(--turquoise); color: #073a35; }
+        .modal-btns .btn-cancel { background: rgba(255, 107, 107, 0.2); color: var(--coral); border: 1px solid var(--coral); }
+
+        @media (max-width: 600px) {
+            .header-right { flex-direction: column; gap: 5px; align-items: flex-end; }
+            .date-box { font-size: 12px; }
+            .bottom-actions { flex-direction: column; }
+            .action-btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-left">
+            <div class="logo-symbol">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+            <div>
+                <div class="logo-greek-box">ΤΕΤΡΑΚΤΥΣ</div>
+                <div class="logo-sub-box">Школа математики Елены Михалевой</div>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="date-box" id="date-display">Загрузка...</div>
+            <div class="progress-box">✅ <span id="progress-count">0</span> / 1</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1 class="main-title">ДЗ для Ильи: Геометрия</h1>
+
+        <div class="student-name-container">
+            <label for="student-name">Ученик:</label>
+            <input type="text" id="student-name" placeholder="Введи имя..." value="Илья" oninput="saveName()">
+        </div>
+
+        <div class="instruction-box">
+            <b>📝 Инструкция:</b> Прочитай утверждения и отметь галочками <b>только верные</b>. Будь внимателен, правильных утверждений несколько!
+        </div>
+
+        <!-- ЗАДАНИЕ -->
+        <div class="card" id="card-1">
+            <div class="card-header">
+                <div class="task-number">1</div>
+            </div>
+            <div class="task-text">
+                Укажите номера верных утверждений:
+            </div>
+            
+            <div class="checkbox-list" id="checklist">
+                <!-- Правильные: 1, 3, 4, 9, 11, 13 -->
+                <label class="checkbox-item">
+                    <input type="checkbox" name="q1" value="1" data-correct="true">
+                    <span class="text">1. Если точка лежит на биссектрисе угла, то она равноудалена от сторон этого угла.</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" name="q1" value="2" data-correct="false">
+                    <span class="text">2. Две прямые, параллельные третьей прямой, перпендикулярны.</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" name="q1" value="3" data-correct="true">
+                    <span class="text">3. Через точку, не лежащую на данной прямой, можно провести прямую, параллельную этой прямой.</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" name="q1" value="4" data-correct="true">
+                    <span class="text">4. Вертикальные углы равны.</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" name="q1" value="5" data-correct="false">
+                    <span class="text">5. Если один из смежных углов острый, то и второй угол острый.</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" name="q1" value="6" data-correct="false">
+                    <span class="text">6. Сумма вертикальных углов всегда равна 180°.</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" name="q1" value="7" data-correct="false">
+                    <span class="text">7. Через заданную точку плоскости можно провести только одну прямую.</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" name="q1" value="8" data-correct="false">
+                    <span class="text">8. Существуют три прямые, которые проходят через одну точку.</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" name="q1" value="9" data-correct="true">
+                    <span class="text">9. Если две прямые перпендикулярны третьей прямой, то они параллельны.</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" name="q1" value="10" data-correct="false">
+                    <span class="text">10. Смежные углы всегда равны.</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" name="q1" value="11" data-correct="true">
+                    <span class="text">11. Точка, лежащая на серединном перпендикуляре к отрезку, равноудалена от концов этого отрезка.</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" name="q1" value="12" data-correct="false">
+                    <span class="text">12. Всегда один из двух смежных углов острый, а другой тупой.</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" name="q1" value="13" data-correct="true">
+                    <span class="text">13. Если при пересечении двух прямых секущей накрест лежащие углы равны, то прямые параллельны.</span>
+                </label>
+            </div>
+
+            <div class="feedback" id="fb-1"></div>
+        </div>
+
+        <!-- КНОПКИ ВНИЗУ -->
+        <div class="bottom-actions">
+            <button class="action-btn btn-check" onclick="checkAll()">✅ Проверить ответ</button>
+            <button class="action-btn btn-copy" onclick="copyResults()">📋 Скопировать</button>
+            <button class="action-btn btn-send" onclick="sendToMax()">💬 Отправить в Макс</button>
+            <button class="action-btn btn-clear" onclick="showClearModal()">🔒 Очистить</button>
+        </div>
+    </div>
+
+    <!-- МОДАЛКА ПРЕДУПРЕЖДЕНИЯ -->
+    <div class="modal-overlay" id="alert-modal">
+        <div class="modal-box">
+            <h3 id="alert-title">Внимание</h3>
+            <p id="alert-text">Текст</p>
+            <div class="modal-btns">
+                <button class="btn-ok" onclick="closeModal('alert-modal')">ОК</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛКА ОЧИСТКИ -->
+    <div class="modal-overlay" id="clear-modal">
+        <div class="modal-box">
+            <h3>🔒 Введите пароль</h3>
+            <p>Для очистки всех данных введите пароль:</p>
+            <input type="password" id="clear-password" placeholder="****">
+            <p id="clear-error" style="color: var(--fail); display: none; font-size: 14px; margin-bottom: 10px;">Неверный пароль</p>
+            <div class="modal-btns">
+                <button class="btn-ok" onclick="clearAll()">Очистить</button>
+                <button class="btn-cancel" onclick="closeModal('clear-modal')">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const MAX_URL = "https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes";
+        const PASSWORD = "2810";
+        const CORRECT_ANSWERS = ['1', '3', '4', '9', '11', '13'];
+
+        // --- ИНИЦИАЛИЗАЦИЯ ---
+        window.onload = function() {
+            const now = new Date();
+            document.getElementById('date-display').textContent = now.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+
+            const savedName = localStorage.getItem('tetraktys_hw_ilya_geo_name');
+            if (savedName) document.getElementById('student-name').value = savedName;
+
+            // Восстановление отмеченных чекбоксов
+            const savedStatus = localStorage.getItem(`tetraktys_hw_ilya_geo_task_1_status`);
+            const savedChecked = localStorage.getItem(`tetraktys_hw_ilya_geo_task_1_checked`);
+            
+            if (savedChecked) {
+                const checkedValues = JSON.parse(savedChecked);
+                document.querySelectorAll('input[name="q1"]').forEach(cb => {
+                    if (checkedValues.includes(cb.value)) {
+                        cb.checked = true;
+                    }
+                });
+            }
+
+            if (savedStatus) {
+                checkSingleTask(true); // Восстанавливаем проверку без сохранения
+                updateProgress();
+            }
+        };
+
+        function saveName() {
+            const name = document.getElementById('student-name').value;
+            localStorage.setItem('tetraktys_hw_ilya_geo_name', name);
+        }
+
+        // --- ЛОГИКА ПРОВЕРКИ ---
+        function checkAll() {
+            const checkboxes = document.querySelectorAll('input[name="q1"]');
+            let checkedValues = [];
+            checkboxes.forEach(cb => {
+                if (cb.checked) checkedValues.push(cb.value);
+            });
+
+            if (checkedValues.length === 0) {
+                showAlert('Ничего не выбрано!', 'Пожалуйста, отметь галочками верные утверждения.');
+                return;
+            }
+
+            checkSingleTask(false, checkedValues);
+            updateProgress();
+        }
+
+        function checkSingleTask(isRestore, checkedValues = null) {
+            const card = document.getElementById(`card-1`);
+            const feedback = document.getElementById(`fb-1`);
+            const checkboxes = document.querySelectorAll('input[name="q1"]');
+            
+            if (!checkedValues) {
+                checkedValues = [];
+                checkboxes.forEach(cb => {
+                    if (cb.checked) checkedValues.push(cb.value);
+                });
+            }
+
+            // Проверяем, совпадают ли отмеченные чекбоксы с правильными
+            // Сортируем оба массива для надежности
+            const sortedUser = [...checkedValues].sort((a, b) => a - b);
+            const sortedCorrect = [...CORRECT_ANSWERS].sort((a, b) => a - b);
+
+            const isCorrect = JSON.stringify(sortedUser) === JSON.stringify(sortedCorrect);
+
+            if (isCorrect) {
+                card.classList.add('correct');
+                card.classList.remove('incorrect');
+                feedback.className = 'feedback correct';
+                feedback.textContent = '✅ Отлично! Все верные утверждения найдены.';
+            } else {
+                card.classList.add('incorrect');
+                card.classList.remove('correct');
+                feedback.className = 'feedback incorrect';
+                
+                // Считаем, сколько правильных выбрано, а сколько лишних
+                const correctFound = checkedValues.filter(v => CORRECT_ANSWERS.includes(v)).length;
+                const wrongFound = checkedValues.filter(v => !CORRECT_ANSWERS.includes(v)).length;
+                
+                let hint = `❌ Есть ошибки. `;
+                if (wrongFound > 0 && correctFound < CORRECT_ANSWERS.length) {
+                    hint += `Ты выбрал не все верные и добавил лишние. `;
+                } else if (wrongFound > 0) {
+                    hint += `Ты выбрал все верные, но добавил лишние. `;
+                } else if (correctFound < CORRECT_ANSWERS.length) {
+                    hint += `Ты выбрал не все верные утверждения. `;
+                }
+                hint += `(Правильных утверждений: ${CORRECT_ANSWERS.length})`;
+                
+                feedback.textContent = hint;
+            }
+
+            // Блокируем чекбоксы
+            checkboxes.forEach(cb => {
+                cb.disabled = true;
+                cb.closest('.checkbox-item').classList.add('disabled-item');
+            });
+
+            // Сохраняем, если это не восстановление
+            if (!isRestore) {
+                const status = isCorrect ? 'ok' : 'fail';
+                localStorage.setItem(`tetraktys_hw_ilya_geo_task_1_status`, status);
+                localStorage.setItem(`tetraktys_hw_ilya_geo_task_1_checked`, JSON.stringify(checkedValues));
+            }
+        }
+
+        function updateProgress() {
+            let count = 0;
+            if (localStorage.getItem(`tetraktys_hw_ilya_geo_task_1_status`) === 'ok') {
+                count++;
+            }
+            document.getElementById('progress-count').textContent = count;
+        }
+
+        // --- ОТПРАВКА В МАКС ---
+        function generateReport() {
+            const name = document.getElementById('student-name').value || 'Ученик';
+            const now = new Date();
+            const dateStr = now.toLocaleString('ru-RU');
+
+            let text = `📐 ОТВЕТЫ · ДЗ · Геометрия (Илья)\n`;
+            text += `Дата: ${dateStr}\n`;
+            text += `Ученик: ${name}\n\n`;
+
+            const status = localStorage.getItem(`tetraktys_hw_ilya_geo_task_1_status`);
+            const savedChecked = localStorage.getItem(`tetraktys_hw_ilya_geo_task_1_checked`);
+            
+            let userAnswers = '—';
+            if (savedChecked) {
+                userAnswers = JSON.parse(savedChecked).join(', ');
+            }
+
+            if (status === 'ok') {
+                text += `✅ Задание 1. Отмечено: ${userAnswers} (Верно!)\n`;
+            } else if (status === 'fail') {
+                text += `❌ Задание 1. Отмечено: ${userAnswers} (Правильные: ${CORRECT_ANSWERS.join(', ')})\n`;
+            } else {
+                text += `— Задание 1. Не проверено\n`;
+            }
+
+            return text;
+        }
+
+        function copyResults() {
+            const text = generateReport();
+            navigator.clipboard.writeText(text).then(() => {
+                showAlert('Успех', 'Текст скопирован в буфер обмена!');
+            }).catch(err => {
+                showAlert('Ошибка', 'Не удалось скопировать текст.');
+            });
+        }
+
+        function sendToMax() {
+            const text = generateReport();
+            navigator.clipboard.writeText(text).then(() => {
+                showAlert('Успех', 'Текст скопирован! Открываю чат...');
+                setTimeout(() => {
+                    window.open(MAX_URL, '_blank');
+                }, 500);
+            }).catch(err => {
+                window.open(MAX_URL, '_blank');
+            });
+        }
+
+        // --- ОЧИСТКА ---
+        function showClearModal() {
+            document.getElementById('clear-password').value = '';
+            document.getElementById('clear-error').style.display = 'none';
+            document.getElementById('clear-modal').classList.add('show');
+        }
+
+        function clearAll() {
+            const pass = document.getElementById('clear-password').value;
+            if (pass === PASSWORD) {
+                localStorage.removeItem('tetraktys_hw_ilya_geo_name');
+                localStorage.removeItem('tetraktys_hw_ilya_geo_task_1_status');
+                localStorage.removeItem('tetraktys_hw_ilya_geo_task_1_checked');
+                location.reload();
+            } else {
+                document.getElementById('clear-error').style.display = 'block';
+            }
+        }
+
+        // --- МОДАЛКИ ---
+        function showAlert(title, text) {
+            document.getElementById('alert-title').textContent = title;
+            document.getElementById('alert-text').textContent = text;
+            document.getElementById('alert-modal').classList.add('show');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+    </script>
+</body>
+</html>
