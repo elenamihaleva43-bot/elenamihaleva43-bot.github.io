@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>ДЗ · Квадратные трёхчлены и многочлены · ΤΕΤΡΑΚΤΥΣ</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --teal:#1abc9c;--mint:#7fffd4;--gold:#f4d35e;--gold-light:#ffe89a;
+    --coral:#ff6b6b;--ok:#2ecc71;--err:#ff6b6b;
+    --text:#e8f8f5;--text-soft:#b8d8d0;
+    --glass:rgba(255,255,255,0.04);--glass-brd:rgba(26,188,156,0.4);
+  }
+  html,body{
+    min-height:100vh;font-family:Georgia,'Times New Roman',serif;color:var(--text);
+    background:
+      radial-gradient(ellipse at 15% 10%,rgba(26,188,156,0.22),transparent 55%),
+      radial-gradient(ellipse at 85% 90%,rgba(127,255,212,0.15),transparent 55%),
+      radial-gradient(ellipse at 50% 50%,rgba(244,211,94,0.06),transparent 70%),
+      linear-gradient(160deg,#0a2a33 0%,#0d3b47 50%,#134e5e 100%);
+    background-attachment:fixed;padding:20px;overflow-x:hidden;
+  }
+  .glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.45;}
+  .glow.g1{width:520px;height:520px;top:-120px;left:-120px;background:radial-gradient(circle,rgba(26,188,156,0.55),transparent 70%);}
+  .glow.g2{width:600px;height:600px;bottom:-200px;right:-180px;background:radial-gradient(circle,rgba(127,255,212,0.4),transparent 70%);}
+
+  header.topbar{
+    position:sticky;top:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;gap:14px;
+    padding:10px 18px;margin:-20px -20px 18px -20px;
+    background:rgba(10,42,51,0.88);backdrop-filter:blur(14px);
+    border-bottom:1.5px solid rgba(26,188,156,0.35);
+    box-shadow:0 6px 26px rgba(0,0,0,0.35);flex-wrap:wrap;
+  }
+  .logo-block{display:flex;align-items:center;gap:12px;}
+  .logo-block .dots{font-family:'Courier New',monospace;font-size:10px;letter-spacing:1px;color:var(--mint);line-height:1.05;}
+  .logo-block .brand{font-family:'Times New Roman',serif;font-size:17px;letter-spacing:3px;font-weight:700;color:var(--teal);}
+  .top-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .chip{font-family:'Courier New',monospace;font-size:13px;color:var(--mint-soft);padding:6px 12px;border-radius:10px;background:rgba(26,188,156,0.12);border:1px solid rgba(26,188,156,0.35);white-space:nowrap;}
+  .chip.gold{color:var(--gold-light);border-color:rgba(244,211,94,0.5);background:rgba(244,211,94,0.1);}
+
+  .app{max-width:900px;margin:0 auto;position:relative;z-index:10;padding-bottom:40px;}
+  h1{font-family:'Times New Roman',serif;font-size:clamp(24px,4vw,34px);color:var(--mint);letter-spacing:1px;text-align:center;margin-bottom:6px;text-shadow:0 0 30px rgba(127,255,212,0.35);}
+  .subtitle{text-align:center;color:var(--text-soft);font-style:italic;margin-bottom:24px;font-size:15px;}
+
+  .card{background:var(--glass);border:1.5px solid var(--glass-brd);border-radius:20px;padding:20px 24px;margin-bottom:18px;backdrop-filter:blur(12px);box-shadow:0 8px 30px rgba(0,0,0,0.3);}
+  .card h2{font-family:'Times New Roman',serif;color:var(--gold-light);font-size:19px;margin-bottom:12px;letter-spacing:0.5px;}
+
+  .name-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  .name-row label{color:var(--text-soft);font-size:15px;}
+  .name-input{flex:1;min-width:200px;padding:10px 14px;border-radius:12px;background:rgba(10,42,51,0.6);border:1.5px solid rgba(26,188,156,0.45);color:var(--text);font-family:'Courier New',monospace;font-size:16px;}
+  .name-input:focus{outline:none;border-color:var(--mint);box-shadow:0 0 18px rgba(127,255,212,0.3);}
+
+  .instructions{font-size:14.5px;line-height:1.7;color:var(--text-soft);}
+  .instructions b{color:var(--mint);}
+  .instructions .sym{font-family:'Courier New',monospace;color:var(--gold-light);background:rgba(244,211,94,0.1);padding:1px 6px;border-radius:4px;}
+
+  .part-title{
+    text-align:center;font-family:'Times New Roman',serif;
+    font-size:20px;color:var(--gold);letter-spacing:1.5px;
+    margin:30px 0 14px;display:flex;align-items:center;justify-content:center;gap:14px;
+  }
+  .part-title::before,.part-title::after{
+    content:'';height:1.5px;width:80px;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+    opacity:0.6;
+  }
+
+  .task{
+    background:rgba(10,42,51,0.5);border:1.5px solid rgba(26,188,156,0.35);
+    border-radius:18px;margin:16px 0;overflow:hidden;
+    box-shadow:0 6px 24px rgba(0,0,0,0.3);backdrop-filter:blur(10px);
+    transition:border-color 0.3s, box-shadow 0.3s;
+  }
+  .task.ok{border-color:var(--ok);box-shadow:0 0 22px rgba(46,204,113,0.35);}
+  .task.fail{border-color:var(--err);box-shadow:0 0 22px rgba(255,107,107,0.35);}
+
+  .task-head{
+    display:flex;align-items:center;gap:12px;padding:12px 18px;
+    background:linear-gradient(135deg,rgba(26,188,156,0.18),rgba(244,211,94,0.08));
+    border-bottom:1px solid rgba(26,188,156,0.3);
+  }
+  .task-num{
+    flex-shrink:0;width:34px;height:34px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Courier New',monospace;font-size:15px;font-weight:bold;
+    color:#0a2a33;
+    background:linear-gradient(135deg,var(--mint),var(--gold));
+    box-shadow:0 0 16px rgba(244,211,94,0.4);
+  }
+  .task-title{font-family:'Times New Roman',serif;font-size:16px;color:var(--gold-light);letter-spacing:0.3px;}
+
+  .task-body{padding:18px 20px;}
+  .task-cond{font-size:18px;line-height:1.6;color:var(--text);margin-bottom:14px;}
+
+  .field-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px;}
+  .field-label{font-family:'Courier New',monospace;font-size:15px;color:var(--gold-light);white-space:nowrap;}
+  .answer-input{
+    flex:1;min-width:200px;padding:10px 14px;border-radius:12px;
+    background:rgba(10,42,51,0.6);border:1.5px solid rgba(26,188,156,0.45);
+    color:var(--text);font-family:'Courier New',monospace;font-size:18px;
+    transition:border-color 0.2s, box-shadow 0.2s;
+  }
+  .answer-input:focus{outline:none;border-color:var(--mint);box-shadow:0 0 18px rgba(127,255,212,0.3);}
+  .answer-input:disabled{opacity:0.75;cursor:not-allowed;}
+  .answer-input.ok{border-color:var(--ok);box-shadow:0 0 18px rgba(46,204,113,0.4);}
+  .answer-input.fail{border-color:var(--err);box-shadow:0 0 18px rgba(255,107,107,0.4);}
+
+  .status{font-family:'Courier New',monospace;font-size:14px;margin-top:8px;min-height:20px;}
+  .status.ok{color:var(--ok);}
+  .status.fail{color:var(--err);}
+  .status.fail b{color:var(--gold-light);}
+
+  .actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:26px;}
+  .btn{cursor:pointer;font-family:'Georgia',serif;font-size:15px;padding:12px 20px;border-radius:14px;border:none;transition:all 0.2s;letter-spacing:0.3px;}
+  .btn.primary{background:linear-gradient(135deg,var(--teal),var(--mint));color:#0a2a33;font-weight:bold;box-shadow:0 6px 22px rgba(26,188,156,0.4);}
+  .btn.primary:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(26,188,156,0.5);}
+  .btn.ghost{background:rgba(255,255,255,0.05);border:1.5px solid rgba(26,188,156,0.4);color:var(--text);}
+  .btn.ghost:hover{background:rgba(26,188,156,0.18);}
+  .btn.send{background:rgba(244,211,94,0.15);border:1.5px solid rgba(244,211,94,0.5);color:var(--gold-light);}
+  .btn.send:hover{background:rgba(244,211,94,0.3);}
+  .btn.danger{background:rgba(255,107,107,0.12);border:1.5px solid rgba(255,107,107,0.5);color:#ffd0d0;}
+  .btn.danger:hover{background:rgba(255,107,107,0.25);}
+
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:200;padding:20px;}
+  .modal-bg.show{display:flex;}
+  .modal{background:#0d3b47;border:1.5px solid rgba(26,188,156,0.5);border-radius:20px;padding:24px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.5);}
+  .modal h3{font-family:'Times New Roman',serif;color:var(--gold-light);font-size:19px;margin-bottom:12px;}
+  .modal p{font-size:15px;line-height:1.6;color:var(--text);margin-bottom:14px;}
+  .modal input{width:100%;padding:10px 14px;border-radius:12px;background:rgba(10,42,51,0.6);border:1.5px solid rgba(26,188,156,0.45);color:var(--text);font-family:'Courier New',monospace;font-size:16px;margin-bottom:12px;}
+  .modal input:focus{outline:none;border-color:var(--mint);}
+  .modal-actions{display:flex;gap:10px;justify-content:flex-end;}
+
+  .warn{display:none;background:rgba(255,107,107,0.15);border:1px solid rgba(255,107,107,0.5);border-radius:14px;padding:14px 18px;color:#ffd0d0;font-size:14px;margin-bottom:18px;}
+  .warn.show{display:block;}
+
+  .footer{text-align:center;padding:30px 20px;color:var(--text-soft);font-size:13px;letter-spacing:2px;margin-top:20px;position:relative;z-index:10;}
+  .footer .f-logo{color:var(--teal);font-size:15px;margin-bottom:6px;}
+
+  @media(max-width:600px){
+    body{padding:12px;}
+    header.topbar{margin:-12px -12px 14px -12px;padding:8px 12px;}
+    .card{padding:16px;}
+    .task-body{padding:14px 16px;}
+    .btn{font-size:14px;padding:10px 16px;}
+    .task-cond{font-size:16px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div>
+<div class="glow g2"></div>
+
+<header class="topbar">
+  <div class="logo-block">
+    <div class="dots">●<br>● ●<br>● ● ●<br>● ● ● ●</div>
+    <div class="brand">ΤΕΤΡΑΚΤΥΣ</div>
+  </div>
+  <div class="top-actions">
+    <span class="chip gold" id="dateChip">—</span>
+    <span class="chip" id="progressChip">✅ 0 / 15</span>
+  </div>
+</header>
+
+<div class="app">
+  <h1>Домашнее задание</h1>
+  <div class="subtitle">Квадратные трёхчлены и многочлены · разложение на множители</div>
+
+  <div class="warn" id="katexWarn">⚠️ Формулы не подгрузились. Обновите страницу при появлении интернета.</div>
+
+  <div class="card">
+    <h2>Ученик</h2>
+    <div class="name-row">
+      <label for="studentName">Имя:</label>
+      <input type="text" id="studentName" class="name-input" placeholder="Введите имя и фамилию">
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Как записывать ответы</h2>
+    <div class="instructions">
+      <p><b>Блоки 1–2 (корни уравнения).</b> Перечисли корни в любом порядке через точку с запятой. Например: <span class="sym">2; 3</span> или <span class="sym">3; 2</span>. Можно через запятую или пробел. Знак <span class="sym">x =</span> писать не обязательно. Дробные корни — вида <span class="sym">1/2; 3</span>. Если корень один — просто одно число. Если корней нет — напиши <span class="sym">нет</span> или <span class="sym">∅</span>.</p>
+      <p><b>Блок 3 (разложение на множители).</b> Запиши произведение скобок. Порядок множителей не важен. Пробелы можно не ставить. Знаки умножения <span class="sym">·</span>, <span class="sym">×</span>, <span class="sym">*</span> не нужны — просто скобки подряд. Пример: <span class="sym">(x-2)(x-3)</span> или <span class="sym">(x-3)(x-2)</span>.</p>
+      <p>После проверки поля <b>блокируются</b>.</p>
+    </div>
+  </div>
+
+  <!-- ══════════ БЛОК 1 ══════════ -->
+  <div class="part-title">Блок 1 · Приведённые квадратные трёхчлены</div>
+
+  <div class="task" data-id="1" data-answer="2; 3" data-type="roots">
+    <div class="task-head"><div class="task-num">1</div><div class="task-title">Найдите корни трёхчлена</div></div>
+    <div class="task-body">
+      <div class="task-cond">\(x^2 - 5x + 6\)</div>
+      <div class="field-row"><span class="field-label">Корни:</span><input type="text" class="answer-input" data-field="a" placeholder="Ответ"></div>
+      <div class="status" data-status="a"></div>
+    </div>
+  </div>
+
+  <div class="task" data-id="2" data-answer="-3; -2" data-type="roots">
+    <div class="task-head"><div class="task-num">2</div><div class="task-title">Найдите корни трёхчлена</div></div>
+    <div class="task-body">
+      <div class="task-cond">\(x^2 + 5x + 6\)</div>
+      <div class="field-row"><span class="field-label">Корни:</span><input type="text" class="answer-input" data-field="a" placeholder="Ответ"></div>
+      <div class="status" data-status="a"></div>
+    </div>
+  </div>
+
+  <div class="task" data-id="3" data-answer="1; 1" data-type="roots">
+    <div class="task-head"><div class="task-num">3</div><div class="task-title">Найдите корни трёхчлена</div></div>
+    <div class="task-body">
+      <div class="task-cond">\(x^2 - 2x + 1\)</div>
+      <div class="field-row"><span class="field-label">Корни:</span><input type="text" class="answer-input" data-field="a" placeholder="Ответ"></div>
+      <div class="status" data-status="a"></div>
+    </div>
+  </div>
+
+  <div class="task" data-id="4" data-answer="-3; 3" data-type="roots">
+    <div class="task-head"><div class="task-num">4</div><div class="task-title">Найдите корни трёхчлена</div></div>
+    <div class="task-body">
+      <div class="task-cond">\(x^2 - 9\)</div>
+      <div class="field-row"><span class="field-label">Корни:</span><input type="text" class="answer-input" data-field="a" placeholder="Ответ"></div>
+      <div class="status" data-status="a"></div>
+    </div>
+  </div>
+
+  <div class="task" data-id="5" data-answer="-3; -1" data-type="roots">
+    <div class="task-head"><div class="task-num">5</div><div class="task-title">Найдите корни трёхчлена</div></div>
+    <div class="task-body">
+      <div class="task-cond">\(x^2 + 4x + 3\)</div>
+      <div class="field-row"><span class="field-label">Корни:</span><input type="text" class="answer-input" data-field="a" placeholder="Ответ"></div>
+      <div class="status" data-status="a"></div>
+    </div>
+  </div>
+
+  <!-- ══════════ БЛОК 2 ══════════ -->
+  <div class="part-title">Блок 2 · Неприведённые квадратные трёхчлены</div>
+
+  <div class="task" data-id="6" data-answer="1/2; 3" data-type="roots">
+    <div class="task-head"><div class="task-num">6</div><div class="task-title">Найдите корни трёхчлена</div></div>
+    <div class="task-body">
+      <div class="task-cond">\(2x^2 - 7x + 3\)</div>
+      <div class="field-row"><span class="field-label">Корни:</span><input type="text" class="answer-input" data-field="a" placeholder="Ответ"></div>
+      <div class="status" data-status="a"></div>
+    </div>
+  </div>
+
+  <div class="task" data-id="7" data-answer="-3; -1/3" data-type="roots">
+    <div class="task-head"><div class="task-num">7</div><div class="task-title">Найдите корни трёхчлена</div></div>
+    <div class="task-body">
+      <div class="task-cond">\(3x^2 + 10x + 3\)</div>
+      <div class="field-row"><span class="field-label">Корни:</span><input type="text" class="answer-input" data-field="a" placeholder="Ответ"></div>
+      <div class="status" data-status="a"></div>
+    </div>
+  </div>
+
+  <div class="task" data-id="8" data-answer="1/2; 1/2" data-type="roots">
+    <div class="task-head"><div class="task-num">8</div><div class="task-title">Найдите корни трёхчлена</div></div>
+    <div class="task-body">
+      <div class="task-cond">\(4x^2 - 4x + 1\)</div>
+      <div class="field-row"><span class="field-label">Корни:</span><input type="text" class="answer-input" data-field="a" placeholder="Ответ"></div>
+      <div class="status" data-status="a"></div>
+    </div>
+  </div>
+
+  <div class="task" data-id="9" data-answer="нет" data-type="roots">
+    <div class="task-head"><div class="task-num">9</div><div class="task-title">Найдите корни трёхчлена</div></div>
+    <div class="task-body">
+      <div class="task-cond">\(2x^2 + 3x + 5\)</div>
+      <div class="field-row"><span class="field-label">Корни:</span><input type="text" class="answer-input" data-field="a" placeholder="Ответ"></div>
+      <div class="status" data-status="a"></div>
+    </div>
+  </div>
+
+  <div class="task" data-id="10" data-answer="3/5; 1" data-type="roots">
+    <div class="task-head"><div class="task-num">10</div><div class="task-title">Найдите корни трёхчлена</div></div>
+    <div class="task-body">
+      <div class="task-cond">\(5x^2 - 8x + 3\)</div>
+      <div class="field-row"><span class="field-label">Корни:</span><input type="text" class="answer-input" data-field="a" placeholder="Ответ"></div>
+      <div class="status" data-status="a"></div>
+    </div>
+  </div>
+
+  <!-- ══════════ БЛОК 3 ══════════ -->
+  <div class="part-title">Блок 3 · Разложение на множители</div>
+
+  <div class="task" data-id="11" data-answer="(x+1)(2x-1)(x+3)" data-type="factor">
+    <div class="task-head"><div class="task-num">11</div><div class="task-title">Разложите на множители</div></div>
+    <div class="task-body">
+      <div class="task-cond">\(2x^3 + 5x^2 - x - 6\)</div>
+      <div class="field-row"><span class="field-label">Разложение:</span><input type="text" class="answer-input" data-field="a" placeholder="Ответ"></div>
+      <div class="status" data-status="a"></div>
+    </div>
+  </div>
+
+  <div class="task" data-id="12" data-answer="(x-2)(3x-1)(x+3)" data-type="factor">
+    <div class="task-head"><div class="task-num">12</div><div class="task-title">Разложите на множители</div></div>
+    <div class="task-body">
+      <div class="task-cond">\(3x^3 - 4x^2 - 17x + 6\)</div>
+      <div class="field-row"><span class="field-label">Разложение:</span><input type="text" class="answer-input" data-field="a" placeholder="Ответ"></div>
+      <div class="status" data-status="a"></div>
+    </div>
+  </div>
+
+  <div class="task" data-id="13" data-answer="(x-1)(x+1)(2x-3)(x+2)" data-type="factor">
+    <div class="task-head"><div class="task-num">13</div><div class="task-title">Разложите на множители</div></div>
+    <div class="task-body">
+      <div class="task-cond">\(2x^4 + 3x^3 - 12x^2 - 7x + 6\)</div>
+      <div class="field-row"><span class="field-label">Разложение:</span><input type="text" class="answer-input" data-field="a" placeholder="Ответ"></div>
+      <div class="status" data-status="a"></div>
+    </div>
+  </div>
+
+  <div class="task" data-id="14" data-answer="(x-2)(3x-5)(2x+1)" data-type="factor">
+    <div class="task-head"><div class="task-num">14</div><div class="task-title">Разложите на множители</div></div>
+    <div class="task-body">
+      <div class="task-cond">\(6x^3 - 7x^2 - 9x + 10\)</div>
+      <div class="field-row"><span class="field-label">Разложение:</span><input type="text" class="answer-input" data-field="a" placeholder="Ответ"></div>
+      <div class="status" data-status="a"></div>
+    </div>
+  </div>
+
+  <div class="task" data-id="15" data-answer="x(x-2)(3x^2+4x+4)" data-type="factor">
+    <div class="task-head"><div class="task-num">15</div><div class="task-title">Разложите на множители</div></div>
+    <div class="task-body">
+      <div class="task-cond">\(3x^4 - 2x^3 - 12x^2 + 8x\)</div>
+      <div class="field-row"><span class="field-label">Разложение:</span><input type="text" class="answer-input" data-field="a" placeholder="Ответ"></div>
+      <div class="status" data-status="a"></div>
+    </div>
+  </div>
+
+  <!-- ── Кнопки ── -->
+  <div class="actions">
+    <button class="btn primary" id="checkAllBtn">✅ Проверить все ответы</button>
+    <button class="btn ghost" id="copyBtn">📋 Скопировать</button>
+    <button class="btn send" id="sendBtn">💬 Отправить в Макс</button>
+    <button class="btn danger" id="clearBtn">🔒 Очистить</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalEmpty">
+  <div class="modal">
+    <h3>Заполни все поля!</h3>
+    <p id="emptyList"></p>
+    <div class="modal-actions">
+      <button class="btn primary" onclick="document.getElementById('modalEmpty').classList.remove('show')">Понятно</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalClear">
+  <div class="modal">
+    <h3>Очистить всё?</h3>
+    <p>Введите пароль учителя, чтобы стереть все ответы и прогресс.</p>
+    <input type="password" id="clearPassword" placeholder="Пароль">
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="document.getElementById('modalClear').classList.remove('show')">Отмена</button>
+      <button class="btn danger" id="confirmClear">Очистить</button>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="f-logo">ΤΕΤΡΑΚΤΥΣ · ТЕТРАКТИС</div>
+  <div>где математика превращается в приключение</div>
+</div>
+
+<script>
+  const STORAGE_KEY = 'tetraktys_dz_quadratic_factor_v1';
+  const MAX_URL = 'https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes';
+  const CLEAR_PASSWORD = '2810';
+  let state = { studentName: '', tasks: {} };
+
+  function saveState(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     KaTeX (inline)
+     ═══════════════════════════════════════════════════════════ */
+  function renderInlineTex(root){
+    if(!window.katex) return;
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: function(node){
+        const p = node.parentNode;
+        if(!p) return NodeFilter.FILTER_REJECT;
+        const tag = p.nodeName;
+        if(tag === 'SCRIPT' || tag === 'STYLE' || tag === 'TEXTAREA' || tag === 'OPTION') return NodeFilter.FILTER_REJECT;
+        if(p.classList && (p.classList.contains('katex') || (p.closest && p.closest('.katex')))) return NodeFilter.FILTER_REJECT;
+        if(!node.nodeValue || (node.nodeValue.indexOf('\\(') === -1 && node.nodeValue.indexOf('\\[') === -1)) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    const arr = [];
+    while(walker.nextNode()) arr.push(walker.currentNode);
+    arr.forEach(function(node){
+      const txt = node.nodeValue;
+      const frag = document.createDocumentFragment();
+      const re = /(\\\[([\s\S]+?)\\\])|(\\\(([\s\S]+?)\\\))/g;
+      let last = 0, m;
+      while((m = re.exec(txt)) !== null){
+        if(m.index > last) frag.appendChild(document.createTextNode(txt.slice(last, m.index)));
+        const tex = m[2] || m[4]; const disp = !!m[2];
+        const span = document.createElement('span');
+        try{ span.innerHTML = katex.renderToString(tex, {displayMode: disp, throwOnError:false}); }
+        catch(e){ span.textContent = m[0]; }
+        frag.appendChild(span);
+        last = m.index + m[0].length;
+      }
+      if(last < txt.length) frag.appendChild(document.createTextNode(txt.slice(last)));
+      if(frag.childNodes.length) node.parentNode.replaceChild(frag, node);
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     ПРОВЕРКА КОРНЕЙ (порядок не важен)
+     ═══════════════════════════════════════════════════════════ */
+  function parseRoots(str){
+    if(!str) return [];
+    // нормализация: русские х, запятые → точки, убрать "x=" в начале
+    let s = str.trim()
+      .replace(/[хХ]/g, 'x')
+      .replace(/^x\s*=\s*/i, '')
+      .replace(/x\s*=/gi, '')
+      .replace(/,/g, ' ')
+      .replace(/;/g, ' ');
+    // разбиваем по пробелам
+    const parts = s.split(/\s+/).filter(p => p.length > 0);
+    return parts.map(p => {
+      // дробь a/b
+      const m = p.match(/^(-?\d+)\/(\d+)$/);
+      if(m){
+        const a = Number(m[1]), b = Number(m[2]);
+        if(b === 0) return NaN;
+        return a / b;
+      }
+      const n = Number(p);
+      return isNaN(n) ? NaN : n;
+    });
+  }
+
+  function rootsEqual(userStr, correctStr){
+    const u = parseRoots(userStr);
+    const c = parseRoots(correctStr);
+    if(u.length !== c.length) return false;
+    if(u.some(isNaN)) return false;
+    // сортировка по возрастанию
+    const us = u.slice().sort((a,b) => a - b);
+    const cs = c.slice().sort((a,b) => a - b);
+    for(let i = 0; i < us.length; i++){
+      if(Math.abs(us[i] - cs[i]) > 1e-9) return false;
+    }
+    return true;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     ПРОВЕРКА РАЗЛОЖЕНИЯ (порядок множителей не важен)
+     ═══════════════════════════════════════════════════════════ */
+  function normalizeFactors(str){
+    if(!str) return null;
+    // нормализация: русские х, убрать пробелы, знаки умножения
+    let s = str.trim()
+      .replace(/[хХ]/g, 'x')
+      .replace(/[×·*]/g, '')
+      .replace(/\s+/g, '');
+    // если нет скобок — не разложение
+    // извлекаем множители: последовательность ( ... )
+    const factors = [];
+    let i = 0;
+    while(i < s.length){
+      if(s[i] === '('){
+        let depth = 0, j = i;
+        while(j < s.length){
+          if(s[j] === '(') depth++;
+          else if(s[j] === ')'){ depth--; if(depth === 0) break; }
+          j++;
+        }
+        if(depth !== 0) return null;
+        factors.push(s.slice(i, j+1));
+        i = j + 1;
+      } else if(s[i] === 'x' || s[i] === '-' || s[i] === '+' || /\d/.test(s[i])){
+        // одиночный множитель без скобок: например, "x" в x(x-2)(x-3)
+        let j = i;
+        while(j < s.length && s[j] !== '(') j++;
+        factors.push(s.slice(i, j));
+        i = j;
+      } else {
+        i++;
+      }
+    }
+    return factors;
+  }
+
+  // Сравнение множителя на "каноничность" — просто как строки
+  // (для надёжности можно было бы разворачивать, но для наших заданий достаточно)
+  function factorsEqual(userStr, correctStr){
+    const u = normalizeFactors(userStr);
+    const c = normalizeFactors(correctStr);
+    if(!u || !c) return false;
+    if(u.length !== c.length) return false;
+    const us = u.slice().sort();
+    const cs = c.slice().sort();
+    for(let i = 0; i < us.length; i++){
+      if(us[i] !== cs[i]) return false;
+    }
+    return true;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     УМНАЯ ПРОВЕРКА: общая
+     ═══════════════════════════════════════════════════════════ */
+  function answersEqual(userStr, correctStr, type){
+    if(type === 'roots') return rootsEqual(userStr, correctStr);
+    if(type === 'factor') return factorsEqual(userStr, correctStr);
+    return userStr.trim() === correctStr.trim();
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     ПРОГРЕСС
+     ═══════════════════════════════════════════════════════════ */
+  function updateProgress(){
+    let ok = 0, total = 0;
+    document.querySelectorAll('.task').forEach(function(taskEl){
+      total++;
+      const st = state.tasks[taskEl.dataset.id + 'a'];
+      if(st && st.status === 'ok') ok++;
+    });
+    document.getElementById('progressChip').textContent = '✅ ' + ok + ' / ' + total;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     ПРОВЕРКА
+     ═══════════════════════════════════════════════════════════ */
+  function checkAll(){
+    const empty = [];
+    document.querySelectorAll('.task').forEach(function(taskEl){
+      const id = taskEl.dataset.id;
+      const st = state.tasks[id + 'a'];
+      if(st && st.status) return;
+      const inp = taskEl.querySelector('input[data-field="a"]');
+      if(!inp.value.trim()) empty.push(id);
+    });
+    if(empty.length){
+      document.getElementById('emptyList').innerHTML = 'Пустые поля: <b>' + empty.join(', ') + '</b>.';
+      document.getElementById('modalEmpty').classList.add('show');
+      return;
+    }
+    document.querySelectorAll('.task').forEach(function(taskEl){
+      const id = taskEl.dataset.id;
+      const type = taskEl.dataset.type;
+      const st = state.tasks[id + 'a'];
+      if(st && st.status) return;
+      const inp = taskEl.querySelector('input[data-field="a"]');
+      const correct = taskEl.dataset.answer;
+      const stEl = taskEl.querySelector('[data-status="a"]');
+      const val = inp.value.trim();
+      if(answersEqual(val, correct, type)){
+        inp.classList.add('ok'); inp.disabled = true;
+        stEl.className = 'status ok'; stEl.textContent = '✅ Верно!';
+        state.tasks[id + 'a'] = {value: val, status: 'ok'};
+        taskEl.classList.add('ok'); taskEl.classList.remove('fail');
+      } else {
+        inp.classList.add('fail'); inp.disabled = true;
+        stEl.className = 'status fail';
+        stEl.innerHTML = '❌ Неверно. Правильный ответ: <b>' + correct + '</b>';
+        state.tasks[id + 'a'] = {value: val, status: 'fail'};
+        taskEl.classList.add('fail'); taskEl.classList.remove('ok');
+      }
+    });
+    saveState(); updateProgress();
+  }
+
+  function restoreChecked(){
+    document.querySelectorAll('.task').forEach(function(taskEl){
+      const id = taskEl.dataset.id;
+      const st = state.tasks[id + 'a'];
+      if(!st || !st.status) return;
+      const inp = taskEl.querySelector('input[data-field="a"]');
+      const stEl = taskEl.querySelector('[data-status="a"]');
+      const correct = taskEl.dataset.answer;
+      inp.value = st.value; inp.disabled = true;
+      if(st.status === 'ok'){
+        inp.classList.add('ok');
+        stEl.className = 'status ok'; stEl.textContent = '✅ Верно!';
+        taskEl.classList.add('ok');
+      } else {
+        inp.classList.add('fail');
+        stEl.className = 'status fail';
+        stEl.innerHTML = '❌ Неверно. Правильный ответ: <b>' + correct + '</b>';
+        taskEl.classList.add('fail');
+      }
+    });
+    updateProgress();
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     ОТЧЁТ
+     ═══════════════════════════════════════════════════════════ */
+  function buildReportText(){
+    const now = new Date();
+    const ds = now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
+    let t = '📐 ОТВЕТЫ · ДЗ · Квадратные трёхчлены и многочлены\nДата: ' + ds + '\nУченик: ' + (state.studentName || '—') + '\n\n';
+    let ok = 0, total = 0;
+    document.querySelectorAll('.task').forEach(function(taskEl){
+      const id = taskEl.dataset.id;
+      total++;
+      const st = state.tasks[id + 'a'];
+      const label = '№' + id;
+      if(st && st.status === 'ok'){ ok++; t += '✅ ' + label + '. Ответ: ' + st.value + '\n'; }
+      else if(st && st.status === 'fail'){
+        t += '❌ ' + label + '. Ответ: ' + st.value + ' (правильный: ' + taskEl.dataset.answer + ')\n';
+      } else t += '— ' + label + '. Ответ: — (не проверено)\n';
+    });
+    t += '\n✅ Итог: ' + ok + ' из ' + total + ' верно.';
+    return t;
+  }
+
+  function copyText(text){
+    if(navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(text);
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    return Promise.resolve();
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     СТАРТ
+     ═══════════════════════════════════════════════════════════ */
+  document.addEventListener('DOMContentLoaded', function(){
+    if(!window.katex){
+      let tries = 0;
+      const t = setInterval(function(){
+        tries++;
+        if(window.katex){ clearInterval(t); renderInlineTex(document.body); }
+        else if(tries > 40){ clearInterval(t); document.getElementById('katexWarn').classList.add('show'); }
+      }, 100);
+    } else renderInlineTex(document.body);
+
+    const d = new Date();
+    const months = ['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'];
+    document.getElementById('dateChip').textContent = d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        const s = JSON.parse(raw);
+        if(s.studentName) state.studentName = s.studentName;
+        if(s.tasks) state.tasks = s.tasks;
+      }
+    }catch(e){}
+
+    const nameInput = document.getElementById('studentName');
+    nameInput.value = state.studentName || '';
+    nameInput.addEventListener('input', function(){ state.studentName = nameInput.value; saveState(); });
+
+    restoreChecked();
+
+    document.getElementById('checkAllBtn').addEventListener('click', checkAll);
+    document.getElementById('copyBtn').addEventListener('click', function(){
+      copyText(buildReportText()).then(() => alert('Текст скопирован!'));
+    });
+    document.getElementById('sendBtn').addEventListener('click', function(){
+      copyText(buildReportText()).then(function(){
+        alert('Текст скопирован! Вставьте его в чат Макса.');
+        window.open(MAX_URL, '_blank');
+      });
+    });
+    document.getElementById('clearBtn').addEventListener('click', function(){
+      document.getElementById('clearPassword').value = '';
+      document.getElementById('modalClear').classList.add('show');
+    });
+    document.getElementById('confirmClear').addEventListener('click', function(){
+      if(document.getElementById('clearPassword').value.trim() === CLEAR_PASSWORD){
+        localStorage.clear(); location.reload();
+      } else alert('Неверный пароль');
+    });
+    document.getElementById('clearPassword').addEventListener('keydown', function(e){
+      if(e.key === 'Enter') document.getElementById('confirmClear').click();
+    });
+
+    updateProgress();
+  });
+</script>
+</body>
+</html>
