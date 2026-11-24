@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Контроль 27. Линейные уравнения</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: false}, {left: '$', right: '$', display: false}]});"></script>
+
+<style>
+  :root {
+    --bg: #0d2b26;
+    --panel: rgba(22, 83, 77, 0.6);
+    --bg2: #081c19;
+    --line: rgba(47, 212, 181, 0.3);
+    --turq: #2fd4b5;
+    --mint: #7fffd4;
+    --gold: #f4d35e;
+    --text: #e0f2ec;
+    --coral: #ff6b6b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background-color: var(--bg);
+    background-image: radial-gradient(circle at 15% 10%, rgba(47, 212, 181, 0.15) 0%, transparent 40%),
+                      radial-gradient(circle at 85% 90%, rgba(47, 212, 181, 0.1) 0%, transparent 40%);
+    background-attachment: fixed; color: var(--text);
+    font-family: Georgia, serif; padding: 0 0 40px 0; margin: 0;
+    display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+  }
+  
+  /* ЛИПКАЯ ШАПКА */
+  .sticky-header {
+    position: sticky; top: 0; width: 100%; background: rgba(8, 28, 25, 0.85);
+    backdrop-filter: blur(10px); z-index: 100; border-bottom: 1px solid var(--line);
+    padding: 12px 20px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .logo-block { display: flex; align-items: center; gap: 10px; }
+  .logo-dots { display: flex; flex-direction: column; gap: 2px; }
+  .logo-dots div { display: flex; gap: 2px; color: var(--turq); font-size: 6px; }
+  .logo-text { font-family: 'Times New Roman', serif; font-size: 20px; font-weight: bold; color: var(--turq); letter-spacing: 1px; }
+  .header-info { text-align: right; font-size: 12px; font-family: 'Courier New', monospace; color: var(--mint); }
+  .progress { font-weight: bold; margin-top: 4px; }
+
+  .wrap { max-width: 800px; width: 100%; padding: 20px; margin-top: 10px; }
+  
+  /* БЛОК ИМЕНИ */
+  .name-block {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+    padding: 15px; margin-bottom: 20px; display: flex; gap: 15px; align-items: center;
+  }
+  .name-block label { font-size: 14px; color: var(--mint); font-weight: bold; }
+  .name-block input {
+    flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--line);
+    background: var(--bg2); color: var(--text); font-family: Georgia, serif; outline: none;
+  }
+  
+  /* ИНСТРУКЦИЯ */
+  .instruction {
+    background: rgba(47, 212, 181, 0.1); border-left: 4px solid var(--turq);
+    padding: 15px; border-radius: 0 12px 12px 0; margin-bottom: 20px; font-size: 14px; line-height: 1.5;
+  }
+  .instruction b { color: var(--gold); }
+
+  .context-image {
+    width: 100%; max-width: 600px; display: block; margin: 0 auto 20px auto; border-radius: 12px; border: 1px solid var(--line);
+  }
+  
+  /* КАРТОЧКИ */
+  .task-card {
+    background: var(--panel); backdrop-filter: blur(12px);
+    border: 1px solid var(--line); border-radius: 18px; padding: 24px; margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3); transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .task-card.correct { border-color: #2ecc71; box-shadow: 0 0 15px rgba(46, 204, 113, 0.2); }
+  .task-card.wrong { border-color: var(--coral); box-shadow: 0 0 15px rgba(255, 107, 107, 0.2); }
+  
+  .task-header {
+    display: flex; gap: 12px; align-items: center; margin-bottom: 16px;
+    border-bottom: 1px solid rgba(47, 212, 181, 0.15); padding-bottom: 12px;
+  }
+  .task-num {
+    background: linear-gradient(135deg, var(--turq), #1a9a82);
+    color: #0b2b27; font-weight: bold; font-size: 18px;
+    width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+    border-radius: 10px; font-family: "Courier New", monospace;
+    flex-shrink: 0;
+  }
+  .task-title { color: var(--mint); font-weight: bold; letter-spacing: 1px; font-size: 15px; }
+  
+  .task-body { font-size: 17px; line-height: 1.6; margin-bottom: 10px; }
+  .task-body b { color: var(--gold); }
+  
+  /* ВВОД */
+  .answer-row { display: flex; gap: 10px; margin-top: 15px; }
+  .answer-row input {
+    flex: 1; padding: 14px; border-radius: 12px; border: 1.5px solid var(--line);
+    background: var(--bg2); color: var(--text); font-size: 18px; font-family: "Courier New", monospace;
+    outline: none; transition: 0.3s;
+  }
+  .answer-row input:focus { border-color: var(--turq); box-shadow: 0 0 10px rgba(47,212,181,0.2); }
+  .answer-row input.correct { border-color: #2ecc71; color: #2ecc71; }
+  .answer-row input.wrong { border-color: var(--coral); color: var(--coral); }
+
+  .status {
+    margin-top: 15px; font-weight: bold; display: none; font-size: 15px;
+    padding: 12px; border-radius: 10px;
+  }
+  .status.ok { display: block; background: rgba(46,204,113,0.15); color: #2ecc71; border: 1px solid #2ecc71; }
+  .status.err { display: block; background: rgba(255,107,107,0.15); color: var(--coral); border: 1px solid var(--coral); }
+
+  .svg-container { background: #f8fdfb; padding: 20px; border-radius: 12px; margin-bottom: 15px; text-align: center; }
+  .svg-container svg { max-width: 100%; height: auto; }
+  
+  /* НИЖНИЕ КНОПКИ */
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
+  .btn {
+    padding: 14px 20px; border: none; border-radius: 12px;
+    font-family: Georgia, serif; font-size: 16px; font-weight: bold;
+    cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-primary { background: linear-gradient(135deg, var(--turq), #1a9a82); color: #0b2b27; flex: 1; box-shadow: 0 4px 15px rgba(47,212,181,0.3); min-width: 200px;}
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(47,212,181,0.5); }
+  .btn-outline { background: transparent; border: 1.5px solid var(--turq); color: var(--turq); }
+  .btn-outline:hover { background: rgba(47, 212, 181, 0.1); }
+  .btn-gold { background: transparent; border: 1.5px solid var(--gold); color: var(--gold); }
+  .btn-gold:hover { background: rgba(244, 211, 94, 0.1); }
+  .btn-coral { background: transparent; border: 1.5px solid var(--coral); color: var(--coral); }
+  .btn-coral:hover { background: rgba(255, 107, 107, 0.1); }
+
+  /* Специальная кнопка для отправки решения */
+  .btn-send { background: linear-gradient(135deg, #f4d35e, #d4b13e); color: #0b2b27; width: 100%; margin-top: 10px; }
+  .btn-send:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(244, 211, 94, 0.4); }
+
+  /* МОДАЛКИ */
+  .modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000;
+  }
+  .modal {
+    background: var(--bg); border: 1px solid var(--line); border-radius: 16px;
+    padding: 24px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  }
+  .modal h3 { margin-top: 0; color: var(--turq); }
+  .modal p { margin-bottom: 20px; }
+  .modal input {
+    width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--line);
+    background: var(--bg2); color: var(--text); text-align: center; font-size: 18px;
+    margin-bottom: 15px; font-family: "Courier New", monospace;
+  }
+  .modal-btns { display: flex; gap: 10px; }
+  .modal-btns .btn { flex: 1; padding: 10px; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<!-- ШАПКА -->
+<div class="sticky-header">
+  <div class="logo-block">
+    <div class="logo-dots">
+      <div>●</div><div>● ●</div><div>● ● ●</div><div>● ● ● ●</div>
+    </div>
+    <div class="logo-text">ΤΕΤΡΑΚΤΥΣ</div>
+  </div>
+  <div class="header-info">
+    <div id="dateDisplay"></div>
+    <div class="progress" id="progressDisplay">✅ 0 / 13</div>
+  </div>
+</div>
+
+<div class="wrap">
+  
+  <div class="name-block">
+    <label>Ученик:</label>
+    <input type="text" id="studentName" placeholder="Введи своё имя..." oninput="saveName()">
+  </div>
+
+  <div class="instruction">
+    <b>📝 Оформление ответов:</b><br>
+    • В задачах 1–4 используй план участка ниже.<br>
+    • В задаче 1 введи 4 цифры подряд (например, <b>5327</b>).<br>
+    • Десятичные дроби пиши через точку или запятую. Отрицательные числа с минусом.<br>
+    • <b>Задания 14, 15, 16</b> решай в тетради и отправляй фото/текст в Макс по кнопке.
+  </div>
+
+  <!-- КАРТИНКА УЧАСТКА -->
+  <div style="text-align: center; margin-bottom: 20px;">
+    <!-- Убедись, что картинка лежит по этому пути или поменяй имя файла ниже -->
+    <img src="27-uchastok.png" alt="План дачного участка" class="context-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+    <div style="display: none; padding: 15px; border: 1px dashed var(--coral); border-radius: 12px; color: var(--coral);">
+      ⚠️ Картинка не найдена. Загрузи файл участка в ту же папку, что и этот HTML-файл (или измени имя файла в коде).
+    </div>
+  </div>
+
+  <div id="tasks-container"></div>
+
+  <div class="actions">
+    <button class="btn btn-primary" onclick="checkAll()" id="btnCheck">✅ Проверить все ответы</button>
+    <button class="btn btn-outline" onclick="copyAnswers()">📋 Скопировать</button>
+    <button class="btn btn-coral" onclick="openClearModal()">🔒 Очистить</button>
+  </div>
+</div>
+
+<!-- МОДАЛКИ -->
+<div class="modal-overlay" id="emptyModal">
+  <div class="modal">
+    <h3>Заполни все поля!</h3>
+    <p id="emptyList"></p>
+    <div class="modal-btns">
+      <button class="btn btn-primary" onclick="closeModal('emptyModal')">Понятно</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="clearModal">
+  <div class="modal">
+    <h3>Очистить всё?</h3>
+    <p>Введи пароль для сброса:</p>
+    <input type="password" id="clearPassword" placeholder="Пароль...">
+    <div class="modal-btns">
+      <button class="btn btn-outline" onclick="closeModal('clearModal')">Отмена</button>
+      <button class="btn btn-coral" onclick="confirmClear()">Очистить</button>
+    </div>
+    <p id="passError" style="color: var(--coral); display: none; margin-top: 10px; font-size: 14px;">Неверный пароль</p>
+  </div>
+</div>
+
+<script>
+  const TOTAL_TASKS = 13; // Задания 1-13 проверяются системой, 14-16 отправляются в Макс
+  let tasks = {};
+  let checkedState = {};
+
+  // --- УМНАЯ ПРОВЕРКА ---
+  function normalizeAnswer(s) {
+    return String(s)
+      .trim()
+      .replace(/\s/g, '')
+      .replace(/,/g, '.')
+      .replace(/[−–—]/g, '-')
+      .replace(/х/gi, 'x')
+      .toLowerCase();
+  }
+
+  function checkNumber(userInput, correctStr) {
+    let u = parseFloat(normalizeAnswer(userInput));
+    let c = parseFloat(normalizeAnswer(correctStr));
+    if (isNaN(u) || isNaN(c)) return normalizeAnswer(userInput) === normalizeAnswer(correctStr);
+    return Math.abs(u - c) < 1e-9;
+  }
+
+  // --- ЗАДАЧИ 1-13 ---
+  tasks[1] = { title: "План участка", text: "Установите соответствие... (введи 4 цифры)", answer: "5347" };
+  tasks[2] = { title: "План участка", text: "Найдите расстояние от жилого дома до сарая (в метрах).", answer: "2" };
+  tasks[3] = { title: "План участка", text: "Сколько процентов от площади всего участка занимает плитка? (Ответ округли до целого)", answer: "15" };
+  tasks[4] = { title: "План участка", text: "Сколько упаковок плиток понадобилось?", answer: "12" };
+  
+  tasks[5] = { title: "Отопление", text: "Через сколько часов окупится газовое отопление?", answer: "200" };
+  
+  tasks[6] = { 
+    title: "Вычисления", 
+    text: "Найдите значение выражения: $$ \\frac{4{,}8 \\cdot 0{,}4}{0{,}6} $$", 
+    answer: "3.2" 
+  };
+
+  tasks[7] = { 
+    title: "Координатная прямая", 
+    text: `На координатной прямой отмечены числа. Какое из приведённых утверждений для этих чисел <b>неверно</b>?<br><br>
+           1) $ab < 0$<br>
+           2) $ab^2 > 0$<br>
+           3) $a + b < 0$<br>
+           4) $a - b < 0$<br><br>
+           Введи номер неверного утверждения:`, 
+    answer: "4",
+    svg: `<div class="svg-container"><svg viewBox="0 0 400 60" width="100%" style="max-width: 400px;">
+      <line x1="20" y1="30" x2="380" y2="30" stroke="#333" stroke-width="2"/>
+      <polygon points="380,30 370,25 370,35" fill="#333"/>
+      <line x1="180" y1="20" x2="180" y2="40" stroke="#333" stroke-width="2"/>
+      <text x="175" y="55" font-family="Georgia" font-size="16" font-weight="bold" fill="#333">0</text>
+      <circle cx="100" cy="30" r="4" fill="#333"/><text x="95" y="55" font-family="Georgia" font-size="16" font-style="italic" font-weight="bold" fill="#333">b</text>
+      <circle cx="220" cy="30" r="4" fill="#333"/><text x="215" y="55" font-family="Georgia" font-size="16" font-style="italic" font-weight="bold" fill="#333">a</text>
+    </svg></div>`
+  };
+
+  tasks[8] = { 
+    title: "Корни", 
+    text: "Найдите значение выражения: $$ (\\sqrt{18} - \\sqrt{2}) \\cdot \\sqrt{2} $$", 
+    answer: "4" 
+  };
+  
+  tasks[9] = { 
+    title: "Уравнение", 
+    text: "Найдите корень уравнения: $$ -4 - 6x = 4x - 3 $$", 
+    answer: "0.1" 
+  };
+
+  tasks[10] = { 
+    title: "Площадь треугольника", 
+    text: "Найдите площадь треугольника, изображённого на рисунке.", 
+    answer: "1800",
+    svg: `<div class="svg-container"><svg viewBox="0 0 600 400" width="100%" style="max-width: 450px;">
+      <polygon points="50,350 380,350 220,40" fill="none" stroke="#1b5e20" stroke-width="3" stroke-linejoin="round"/>
+      <line x1="220" y1="40" x2="220" y2="350" stroke="#1b5e20" stroke-width="3" stroke-linecap="round"/>
+      <polyline points="220,325 245,325 245,350" fill="none" stroke="#2e7d32" stroke-width="2"/>
+      <text x="100" y="180" font-family="Georgia" font-size="24" font-weight="bold" fill="#1b5e20" transform="rotate(-38, 100, 180)">73</text>
+      <text x="320" y="180" font-family="Georgia" font-size="24" font-weight="bold" fill="#1b5e20" transform="rotate(38, 320, 180)">52</text>
+      <text x="160" y="200" font-family="Georgia" font-size="24" font-weight="bold" fill="#1b5e20">48</text>
+      <text x="130" y="385" font-family="Georgia" font-size="24" font-weight="bold" fill="#1b5e20">55</text>
+      <text x="290" y="385" font-family="Georgia" font-size="24" font-weight="bold" fill="#1b5e20">20</text>
+    </svg></div>`
+  };
+
+    tasks[11] = { 
+    title: "Трапеция", 
+    text: "Основания трапеции равны 2 и 9. Найдите больший из отрезков, на которые делит среднюю линию диагональ трапеции.", 
+    answer: "4.5",
+    svg: `<div class="svg-container"><svg viewBox="0 0 400 200" width="100%" style="max-width: 400px;">
+      <!-- Трапеция -->
+      <polygon points="50,150 350,150 250,50 100,50" fill="none" stroke="#1b5e20" stroke-width="3" stroke-linejoin="round"/>
+      
+      <!-- Средняя линия (соединяет середины боковых сторон) -->
+      <!-- Середина левой стороны: (50+100)/2 = 75, (150+50)/2 = 100 -->
+      <!-- Середина правой стороны: (350+250)/2 = 300, (150+50)/2 = 100 -->
+      <line x1="75" y1="100" x2="300" y2="100" stroke="#1b5e20" stroke-width="3" stroke-linecap="round" stroke-dasharray="8,4"/>
+      
+      <!-- Диагональ (из левого нижнего угла в правый верхний) -->
+      <line x1="50" y1="150" x2="250" y2="50" stroke="#1b5e20" stroke-width="3" stroke-linecap="round"/>
+    </svg></div>`
+  };
+  
+  tasks[12] = { 
+    title: "Клетчатая бумага", 
+    text: "Найдите расстояние между точками.", 
+    answer: "10",
+    svg: `<div class="svg-container"><svg viewBox="0 0 360 360" width="100%" style="max-width: 320px;">
+      <defs><pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M 30 0 L 0 0 0 30" fill="none" stroke="#a3c4b9" stroke-width="1"/></pattern></defs>
+      <rect width="300" height="300" x="30" y="30" fill="url(#grid)" />
+      <circle cx="60" cy="270" r="5" fill="#1b5e20" />
+      <circle cx="300" cy="90" r="5" fill="#1b5e20" />
+    </svg></div>`
+  };
+
+  tasks[13] = { 
+    title: "Утверждения", 
+    text: `Какое из следующих утверждений верно?<br><br>
+           1) Площадь квадрата равна произведению двух его смежных сторон.<br>
+           2) Диагональ трапеции делит её на два равных треугольника.<br>
+           3) Если две стороны одного треугольника соответственно равны двум сторонам другого треугольника, то такие треугольники равны.<br><br>
+           Введи номер верного утверждения:`, 
+    answer: "1" 
+  };
+  // --- ЛОГИКА ОТРИСОВКИ ---
+  function renderAll() {
+    const container = document.getElementById('tasks-container');
+    container.innerHTML = '';
+    
+    for (let i = 1; i <= TOTAL_TASKS; i++) {
+      const t = tasks[i];
+      const isChecked = checkedState[i] !== undefined;
+      const isOk = checkedState[i] === 'ok';
+      
+      let cardClass = isChecked ? (isOk ? 'correct' : 'wrong') : '';
+      let statusClass = isChecked ? (isOk ? 'status ok' : 'status err') : 'status';
+      let statusText = isChecked ? (isOk ? '✅ Верно!' : `❌ Неверно. Правильный ответ: ${t.answer}`) : '';
+      let inputClass = isChecked ? (isOk ? 'correct' : 'wrong') : '';
+      let disabled = isChecked ? 'disabled' : '';
+      let savedVal = localStorage.getItem('ans_' + i) || '';
+      
+      container.innerHTML += `
+        <div class="task-card ${cardClass}" id="task${i}">
+          <div class="task-header"><div class="task-num">${i}</div><div class="task-title">${t.title}</div></div>
+          <div class="task-body">${t.text}</div>
+          ${t.svg || ''}
+          <div class="answer-row">
+            <input type="text" id="input${i}" value="${savedVal}" placeholder="Введи ответ..." autocomplete="off" class="${inputClass}" ${disabled} oninput="saveAnswer(${i})">
+          </div>
+          <div class="${statusClass}" id="status${i}">${statusText}</div>
+        </div>
+      `;
+    }
+
+    // --- ЗАДАНИЯ 14-16 ---
+    container.innerHTML += `
+      <div class="task-card" style="border-color: var(--gold);">
+        <div class="task-header"><div class="task-num" style="background: linear-gradient(135deg, var(--gold), #d4b13e); color: #0b2b27;"></div><div class="task-title" style="color: var(--gold);">Вторая часть </div></div>
+        <div class="task-body">
+          <b>14.</b> Решите уравнение: $x^3 + 4x^2 - x - 4 = 0$<br><br>
+          <b>15.</b> Свежие фрукты содержат 75% воды, а высушенные — 25%. Сколько требуется свежих фруктов для приготовления 45 кг высушенных?<br><br>
+          <b>16.</b> Прямая, параллельная стороне AC треугольника ABC, пересекает стороны AB и BC в точках M и N соответственно. Найдите BN, если MN=17, AC=51, NC=32.
+        </div>
+        <button class="btn btn-send" onclick="sendToMax()">💬 Отправить решение в Макс</button>
+      </div>
+    `;
+    
+    renderMathInElement(container, {
+      delimiters: [ {left: '$$', right: '$$', display: false}, {left: '$', right: '$', display: false} ]
+    });
+
+    updateProgress();
+  }
+
+  // --- ЛОГИКА ПРОВЕРКИ ---
+  function saveAnswer(n) {
+    localStorage.setItem('ans_' + n, document.getElementById('input'+n).value);
+  }
+
+  function saveName() {
+    localStorage.setItem('studentName', document.getElementById('studentName').value);
+  }
+
+  function checkAll() {
+    let empty = [];
+    for (let i = 1; i <= TOTAL_TASKS; i++) {
+      if (!document.getElementById('input'+i).value.trim()) empty.push('№' + i);
+    }
+    
+    if (empty.length > 0) {
+      document.getElementById('emptyList').innerText = 'У тебя пустые: ' + empty.join(', ');
+      document.getElementById('emptyModal').style.display = 'flex';
+      return;
+    }
+
+    let correctCount = 0;
+    for (let i = 1; i <= TOTAL_TASKS; i++) {
+      const inp = document.getElementById('input'+i);
+      const isOk = checkNumber(inp.value, tasks[i].answer);
+      
+      checkedState[i] = isOk ? 'ok' : 'fail';
+      if (isOk) correctCount++;
+
+      document.getElementById('task'+i).className = isOk ? 'task-card correct' : 'task-card wrong';
+      inp.className = isOk ? 'correct' : 'wrong';
+      inp.disabled = true;
+
+      const st = document.getElementById('status'+i);
+      if (isOk) {
+        st.className = 'status ok';
+        st.innerHTML = '✅ Верно!';
+      } else {
+        st.className = 'status err';
+        st.innerHTML = `❌ Неверно. Твой ответ: ${inp.value.trim()}. <b>Правильный ответ: ${tasks[i].answer}</b>`;
+      }
+    }
+
+    localStorage.setItem('checkedState', JSON.stringify(checkedState));
+    updateProgress();
+  }
+
+  function updateProgress() {
+    let count = 0;
+    for (let i = 1; i <= TOTAL_TASKS; i++) if (checkedState[i] === 'ok') count++;
+    document.getElementById('progressDisplay').innerText = `✅ ${count} / ${TOTAL_TASKS}`;
+  }
+
+  // --- МАКС И ОТЧЁТЫ ---
+  function generateReport() {
+    const name = document.getElementById('studentName').value.trim() || 'Без имени';
+    const date = new Date().toLocaleString('ru-RU');
+    
+    // Заголовок
+    let text = `📐 ОТВЕТЫ · ДЗ · Контроль 27\nДата: ${date}\nУченик: ${name}\n\n`;
+    let correctCount = 0;
+
+    // Проходим только по 13 задачам, которые проверяются системой
+    for (let i = 1; i <= TOTAL_TASKS; i++) {
+      const ans = document.getElementById('input'+i).value.trim() || '—';
+      const status = checkedState[i];
+      
+      if (status === 'ok') {
+        text += `№${i}. Ответ: ${ans} ✅\n`;
+        correctCount++;
+      } else if (status === 'fail') {
+        text += `№${i}. Ответ: ${ans} ❌ (правильный: ${tasks[i].answer})\n`;
+      } else {
+        text += `№${i}. Ответ: ${ans} (не проверено)\n`;
+      }
+    }
+    
+    // Итог
+    text += `\n📊 ИТОГО: ${correctCount} из ${TOTAL_TASKS} верно (${Math.round(correctCount/TOTAL_TASKS*100)}%)\n`;
+    
+    return text;
+  }
+
+  function copyAnswers() {
+    const text = generateReport();
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Отчёт с ответами скопирован в буфер обмена!');
+    });
+  }
+
+  function sendToMax() {
+    const text = generateReport();
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Отчёт скопирован! Сейчас откроется чат Макса — вставь его туда.');
+      window.open('https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes', '_blank');
+    });
+  }
+
+  // --- МОДАЛКИ И ОЧИСТКА ---
+  function openClearModal() {
+    document.getElementById('clearPassword').value = '';
+    document.getElementById('passError').style.display = 'none';
+    document.getElementById('clearModal').style.display = 'flex';
+  }
+
+  function confirmClear() {
+    if (document.getElementById('clearPassword').value === '2810') {
+      localStorage.clear();
+      location.reload();
+    } else {
+      document.getElementById('passError').style.display = 'block';
+    }
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).style.display = 'none';
+  }
+
+  // --- ИНИЦИАЛИЗАЦИЯ ---
+  window.onload = () => {
+    document.getElementById('dateDisplay').innerText = new Date().toLocaleDateString('ru-RU');
+    const savedName = localStorage.getItem('studentName');
+    if (savedName) document.getElementById('studentName').value = savedName;
+    const savedState = localStorage.getItem('checkedState');
+    if (savedState) checkedState = JSON.parse(savedState);
+    renderAll();
+  };
+</script>
+
+</body>
+</html>
