@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ДЗ: Линейные уравнения</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: false}, {left: '$', right: '$', display: false}]});"></script>
+
+<style>
+  :root {
+    --bg: #0d2b26;
+    --panel: rgba(22, 83, 77, 0.6);
+    --bg2: #081c19;
+    --line: rgba(47, 212, 181, 0.3);
+    --turq: #2fd4b5;
+    --mint: #7fffd4;
+    --gold: #f4d35e;
+    --text: #e0f2ec;
+    --coral: #ff6b6b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background-color: var(--bg);
+    background-image: radial-gradient(circle at 15% 10%, rgba(47, 212, 181, 0.15) 0%, transparent 40%),
+                      radial-gradient(circle at 85% 90%, rgba(47, 212, 181, 0.1) 0%, transparent 40%);
+    background-attachment: fixed; color: var(--text);
+    font-family: Georgia, serif; padding: 0 0 40px 0; margin: 0;
+    display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+  }
+  
+  .sticky-header {
+    position: sticky; top: 0; width: 100%; background: rgba(8, 28, 25, 0.85);
+    backdrop-filter: blur(10px); z-index: 100; border-bottom: 1px solid var(--line);
+    padding: 12px 20px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .logo-block { display: flex; align-items: center; gap: 10px; }
+  .logo-dots { display: flex; flex-direction: column; gap: 2px; }
+  .logo-dots div { display: flex; gap: 2px; color: var(--turq); font-size: 6px; }
+  .logo-text { font-family: 'Times New Roman', serif; font-size: 20px; font-weight: bold; color: var(--turq); letter-spacing: 1px; }
+  .header-info { text-align: right; font-size: 12px; font-family: 'Courier New', monospace; color: var(--mint); }
+  .progress { font-weight: bold; margin-top: 4px; }
+
+  .wrap { max-width: 800px; width: 100%; padding: 20px; margin-top: 10px; }
+  
+  .name-block {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+    padding: 15px; margin-bottom: 20px; display: flex; gap: 15px; align-items: center;
+  }
+  .name-block label { font-size: 14px; color: var(--mint); font-weight: bold; }
+  .name-block input {
+    flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--line);
+    background: var(--bg2); color: var(--text); font-family: Georgia, serif; outline: none;
+  }
+  
+  .instruction {
+    background: rgba(47, 212, 181, 0.1); border-left: 4px solid var(--turq);
+    padding: 15px; border-radius: 0 12px 12px 0; margin-bottom: 20px; font-size: 14px; line-height: 1.5;
+  }
+  .instruction b { color: var(--gold); }
+  
+  .task-card {
+    background: var(--panel); backdrop-filter: blur(12px);
+    border: 1px solid var(--line); border-radius: 18px; padding: 24px; margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3); transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .task-card.correct { border-color: #2ecc71; box-shadow: 0 0 15px rgba(46, 204, 113, 0.2); }
+  .task-card.wrong { border-color: var(--coral); box-shadow: 0 0 15px rgba(255, 107, 107, 0.2); }
+  
+  .task-header {
+    display: flex; gap: 12px; align-items: center; margin-bottom: 16px;
+    border-bottom: 1px solid rgba(47, 212, 181, 0.15); padding-bottom: 12px;
+  }
+  .task-num {
+    background: linear-gradient(135deg, var(--turq), #1a9a82);
+    color: #0b2b27; font-weight: bold; font-size: 18px;
+    width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+    border-radius: 10px; font-family: "Courier New", monospace;
+    flex-shrink: 0;
+  }
+  .task-title { color: var(--mint); font-weight: bold; letter-spacing: 1px; font-size: 15px; }
+  
+  .task-body { font-size: 18px; line-height: 1.6; margin-bottom: 10px; }
+  .task-body.math { text-align: center; font-size: 22px; font-family: 'Times New Roman', serif; }
+  
+  .answer-row { display: flex; gap: 10px; margin-top: 15px; }
+  .answer-row input {
+    flex: 1; padding: 14px; border-radius: 12px; border: 1.5px solid var(--line);
+    background: var(--bg2); color: var(--text); font-size: 18px; font-family: "Courier New", monospace;
+    outline: none; transition: 0.3s; text-align: center;
+  }
+  .answer-row input:focus { border-color: var(--turq); box-shadow: 0 0 10px rgba(47,212,181,0.2); }
+  .answer-row input.correct { border-color: #2ecc71; color: #2ecc71; }
+  .answer-row input.wrong { border-color: var(--coral); color: var(--coral); }
+
+  .status {
+    margin-top: 15px; font-weight: bold; display: none; font-size: 15px;
+    padding: 12px; border-radius: 10px; text-align: center;
+  }
+  .status.ok { display: block; background: rgba(46,204,113,0.15); color: #2ecc71; border: 1px solid #2ecc71; }
+  .status.err { display: block; background: rgba(255,107,107,0.15); color: var(--coral); border: 1px solid var(--coral); }
+  
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
+  .btn {
+    padding: 14px 20px; border: none; border-radius: 12px;
+    font-family: Georgia, serif; font-size: 16px; font-weight: bold;
+    cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-primary { background: linear-gradient(135deg, var(--turq), #1a9a82); color: #0b2b27; flex: 1; box-shadow: 0 4px 15px rgba(47,212,181,0.3); min-width: 200px;}
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(47,212,181,0.5); }
+  .btn-outline { background: transparent; border: 1.5px solid var(--turq); color: var(--turq); }
+  .btn-outline:hover { background: rgba(47, 212, 181, 0.1); }
+  .btn-gold { background: transparent; border: 1.5px solid var(--gold); color: var(--gold); }
+  .btn-gold:hover { background: rgba(244, 211, 94, 0.1); }
+  .btn-coral { background: transparent; border: 1.5px solid var(--coral); color: var(--coral); }
+  .btn-coral:hover { background: rgba(255, 107, 107, 0.1); }
+  
+  .btn-send { background: linear-gradient(135deg, var(--gold), #d4b13e); color: #0b2b27; width: 100%; margin-top: 15px; }
+  .btn-send:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(244, 211, 94, 0.4); }
+
+  .modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000;
+  }
+  .modal {
+    background: var(--bg); border: 1px solid var(--line); border-radius: 16px;
+    padding: 24px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  }
+  .modal h3 { margin-top: 0; color: var(--turq); }
+  .modal p { margin-bottom: 20px; }
+  .modal input {
+    width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--line);
+    background: var(--bg2); color: var(--text); text-align: center; font-size: 18px;
+    margin-bottom: 15px; font-family: "Courier New", monospace;
+  }
+  .modal-btns { display: flex; gap: 10px; }
+  .modal-btns .btn { flex: 1; padding: 10px; font-size: 14px; }
+
+  .katex { font-size: 1.2em; color: var(--text); }
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <div class="logo-block">
+    <div class="logo-dots">
+      <div>●</div><div>● ●</div><div>● ● ●</div><div>● ● ● ●</div>
+    </div>
+    <div class="logo-text">ΤΕΤΡΑΚΤΥΣ</div>
+  </div>
+  <div class="header-info">
+    <div id="dateDisplay"></div>
+    <div class="progress" id="progressDisplay">✅ 0 / 10</div>
+  </div>
+</div>
+
+<div class="wrap">
+  
+  <div class="name-block">
+    <label>Ученик:</label>
+    <input type="text" id="studentName" placeholder="Введи своё имя..." oninput="saveName()">
+  </div>
+
+  <div class="instruction">
+    <b>📝 Домашнее задание: Линейные уравнения</b><br>
+    • Вводи только число (целое или десятичную дробь).<br>
+    • Если ответ отрицательный, не забудь минус.<br>
+    • Задание 11 реши в тетради и отправь фото в Макс.
+  </div>
+
+  <div id="tasks-container"></div>
+
+  <div class="actions">
+    <button class="btn btn-primary" onclick="checkAll()" id="btnCheck">✅ Проверить все ответы</button>
+    <button class="btn btn-gold" onclick="sendToMax()">💬 Отправить отчёт в Макс</button>
+    <button class="btn btn-coral" onclick="openClearModal()">🔒 Очистить</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="emptyModal">
+  <div class="modal">
+    <h3>Заполни все поля!</h3>
+    <p id="emptyList"></p>
+    <div class="modal-btns">
+      <button class="btn btn-primary" onclick="closeModal('emptyModal')">Понятно</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="clearModal">
+  <div class="modal">
+    <h3>Очистить всё?</h3>
+    <p>Введи пароль для сброса:</p>
+    <input type="password" id="clearPassword" placeholder="Пароль...">
+    <div class="modal-btns">
+      <button class="btn btn-outline" onclick="closeModal('clearModal')">Отмена</button>
+      <button class="btn btn-coral" onclick="confirmClear()">Очистить</button>
+    </div>
+    <p id="passError" style="color: var(--coral); display: none; margin-top: 10px; font-size: 14px;">Неверный пароль</p>
+  </div>
+</div>
+
+<script>
+  const TOTAL_TASKS = 10;
+  let tasks = {};
+  let checkedState = {};
+
+  // Статичные задачи из PDF
+  tasks[1] = { title: "Уравнение", text: "Решите уравнение: $$3x + 3 = 5x$$", answer: "1.5" };
+  tasks[2] = { title: "Уравнение", text: "Решите уравнение: $$2 + 3x = -7x - 5$$", answer: "-0.7" };
+  tasks[3] = { title: "Уравнение", text: "Решите уравнение: $$10(x + 2) = -7$$", answer: "-2.7" };
+  tasks[4] = { title: "Уравнение", text: "Решите уравнение: $$x + \\frac{x}{2} = -9$$", answer: "-6" };
+  tasks[5] = { title: "Уравнение", text: "Решите уравнение: $$(x + 6)^2 = (15 - x)^2$$", answer: "4.5" };
+  tasks[6] = { title: "Уравнение", text: "Решите уравнение (если корней несколько, в ответ запишите наибольший): $$(x - 2)(-2x - 3) = 0$$", answer: "2" };
+  tasks[7] = { title: "Уравнение", text: "Решите уравнение: $$1 - 7(4+2x) = -9 - 4x$$", answer: "-1.8" };
+  tasks[8] = { title: "При каком значении", text: "При каком значении $x$ значения выражений $7x - 2$ и $3x + 6$ равны?", answer: "2" };
+  
+  // Задачи 9 и 10 (так как в PDF они пустые, добавил классические дробные из ОГЭ)
+  tasks[9] = { title: "Дробное уравнение", text: "Решите уравнение: $$\\frac{x}{3} + \\frac{x}{5} = 8$$", answer: "15" };
+  tasks[10] = { title: "Дробное уравнение", text: "Решите уравнение: $$\\frac{2}{x - 3} = \\frac{3}{x + 2}$$", answer: "13" };
+
+  function renderAll() {
+    const container = document.getElementById('tasks-container');
+    container.innerHTML = '';
+    
+    for (let i = 1; i <= TOTAL_TASKS; i++) {
+      const t = tasks[i];
+      const isChecked = checkedState[i] !== undefined;
+      const isOk = checkedState[i] === 'ok';
+      
+      let cardClass = isChecked ? (isOk ? 'correct' : 'wrong') : '';
+      let statusClass = isChecked ? (isOk ? 'status ok' : 'status err') : 'status';
+      let statusText = isChecked ? (isOk ? '✅ Верно!' : `❌ Неверно. Правильный ответ: ${t.answer}`) : '';
+      let inputClass = isChecked ? (isOk ? 'correct' : 'wrong') : '';
+      let disabled = isChecked ? 'disabled' : '';
+      let savedVal = localStorage.getItem('ans_' + i) || '';
+      
+      container.innerHTML += `
+        <div class="task-card ${cardClass}" id="task${i}">
+          <div class="task-header">
+            <div class="task-num">${i}</div>
+            <div class="task-title">${t.title}</div>
+          </div>
+          <div class="task-body math">${t.text}</div>
+          <div class="answer-row">
+            <input type="text" id="input${i}" value="${savedVal}" placeholder="Введи ответ..." autocomplete="off" class="${inputClass}" ${disabled} oninput="saveAnswer(${i})">
+          </div>
+          <div class="${statusClass}" id="status${i}">${statusText}</div>
+        </div>
+      `;
+    }
+
+    // --- ЗАДАЧА 11 ---
+    container.innerHTML += `
+      <div class="task-card" style="border-color: var(--gold);">
+        <div class="task-header">
+          <div class="task-num" style="background: linear-gradient(135deg, var(--gold), #d4b13e); color: #0b2b27;">11</div>
+          <div class="task-title" style="color: var(--gold);">Текстовая задача (решение в тетради)</div>
+        </div>
+        <div class="task-body">
+          Первый рабочий за час делает на 9 деталей больше, чем второй, и выполняет заказ, состоящий из 216 деталей, на 4 часа быстрее, чем второй рабочий, выполняющий такой же заказ. Сколько деталей в час делает второй рабочий?
+        </div>
+        <button class="btn btn-send" onclick="sendToMax()">💬 Отправить решение в Макс</button>
+      </div>
+    `;
+    
+    // Безопасный рендеринг KaTeX
+    try {
+      renderMathInElement(container, {
+        delimiters: [ {left: '$$', right: '$$', display: false}, {left: '$', right: '$', display: false} ]
+      });
+    } catch(e) {
+      console.error("Ошибка рендеринга KaTeX:", e);
+    }
+
+    updateProgress();
+  }
+
+  function saveAnswer(n) {
+    localStorage.setItem('ans_' + n, document.getElementById('input'+n).value);
+  }
+
+  function saveName() {
+    localStorage.setItem('studentName', document.getElementById('studentName').value);
+  }
+
+  function checkNumber(userInput, correctStr) {
+    let s = String(userInput).trim().replace(/,/g, '.').replace(/\s+/g, '');
+    let u = parseFloat(s);
+    let c = parseFloat(correctStr);
+    if (isNaN(u)) return s === correctStr;
+    return Math.abs(u - c) < 1e-9;
+  }
+
+  function checkAll() {
+    let empty = [];
+    for (let i = 1; i <= TOTAL_TASKS; i++) {
+      if (!document.getElementById('input'+i).value.trim()) empty.push('№' + i);
+    }
+    
+    if (empty.length > 0) {
+      document.getElementById('emptyList').innerText = 'У тебя пустые: ' + empty.join(', ');
+      document.getElementById('emptyModal').style.display = 'flex';
+      return;
+    }
+
+    let correctCount = 0;
+    for (let i = 1; i <= TOTAL_TASKS; i++) {
+      const inp = document.getElementById('input'+i);
+      const isOk = checkNumber(inp.value, tasks[i].answer);
+      
+      checkedState[i] = isOk ? 'ok' : 'fail';
+      if (isOk) correctCount++;
+
+      document.getElementById('task'+i).className = isOk ? 'task-card correct' : 'task-card wrong';
+      inp.className = isOk ? 'correct' : 'wrong';
+      inp.disabled = true;
+
+      const st = document.getElementById('status'+i);
+      if (isOk) {
+        st.className = 'status ok';
+        st.innerHTML = '✅ Верно!';
+      } else {
+        st.className = 'status err';
+        st.innerHTML = `❌ Неверно. Твой ответ: ${inp.value.trim()}. <b>Правильный ответ: ${tasks[i].answer}</b>`;
+      }
+    }
+
+    localStorage.setItem('checkedState', JSON.stringify(checkedState));
+    updateProgress();
+  }
+
+  function updateProgress() {
+    let count = 0;
+    for (let i = 1; i <= TOTAL_TASKS; i++) if (checkedState[i] === 'ok') count++;
+    document.getElementById('progressDisplay').innerText = `✅ ${count} / ${TOTAL_TASKS}`;
+  }
+
+  function generateReport() {
+    const name = document.getElementById('studentName').value.trim() || 'Без имени';
+    const date = new Date().toLocaleString('ru-RU');
+    let text = `📐 ДЗ · Линейные уравнения\nДата: ${date}\nУченик: ${name}\n\n`;
+    let correctCount = 0;
+
+    for (let i = 1; i <= TOTAL_TASKS; i++) {
+      const ans = document.getElementById('input'+i).value.trim() || '—';
+      const status = checkedState[i];
+      
+      if (status === 'ok') {
+        text += `✅ №${i}. Ответ: ${ans}\n`;
+        correctCount++;
+      } else if (status === 'fail') {
+        text += `❌ №${i}. Ответ: ${ans} (правильный: ${tasks[i].answer})\n`;
+      } else {
+        text += `— №${i}. Ответ: ${ans} (не проверено)\n`;
+      }
+    }
+    text += `\n📊 ИТОГО: ${correctCount} из ${TOTAL_TASKS} верно (${Math.round(correctCount/TOTAL_TASKS*100)}%)\n`;
+    text += `\n📷 Задание 11. Решение в тетради (фото отдельно).`;
+    return text;
+  }
+
+  function sendToMax() {
+    const text = generateReport();
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Отчёт скопирован! Сейчас откроется чат Макса — вставь его туда и прикрепи фото решения 11-й задачи.');
+      window.open('https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes', '_blank');
+    });
+  }
+
+  function openClearModal() {
+    document.getElementById('clearPassword').value = '';
+    document.getElementById('passError').style.display = 'none';
+    document.getElementById('clearModal').style.display = 'flex';
+  }
+
+  function confirmClear() {
+    if (document.getElementById('clearPassword').value === '2810') {
+      localStorage.clear();
+      location.reload();
+    } else {
+      document.getElementById('passError').style.display = 'block';
+    }
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).style.display = 'none';
+  }
+
+  window.onload = () => {
+    document.getElementById('dateDisplay').innerText = new Date().toLocaleDateString('ru-RU');
+    const savedName = localStorage.getItem('studentName');
+    if (savedName) document.getElementById('studentName').value = savedName;
+    
+    const savedState = localStorage.getItem('checkedState');
+    if (savedState) checkedState = JSON.parse(savedState);
+
+    renderAll();
+  };
+</script>
+
+</body>
+</html>
