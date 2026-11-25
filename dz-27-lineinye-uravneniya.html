@@ -202,11 +202,11 @@
 </div>
 
 <script>
- const TOTAL_TASKS = 13; // Теперь 10 авто-проверяемых + 3 для фото
+  const TOTAL_TASKS = 13; // 10 уравнений + 3 фото-задачи
   let tasks = {};
   let checkedState = {};
 
-  // Статичные задачи из PDF
+  // Статичные задачи из PDF (проверяемые)
   tasks[1] = { title: "Уравнение", text: "Решите уравнение: $$3x + 3 = 5x$$", answer: "1.5" };
   tasks[2] = { title: "Уравнение", text: "Решите уравнение: $$2 + 3x = -7x - 5$$", answer: "-0.7" };
   tasks[3] = { title: "Уравнение", text: "Решите уравнение: $$10(x + 2) = -7$$", answer: "-2.7" };
@@ -215,16 +215,20 @@
   tasks[6] = { title: "Уравнение", text: "Решите уравнение (если корней несколько, в ответ запишите наибольший): $$(x - 2)(-2x - 3) = 0$$", answer: "2" };
   tasks[7] = { title: "Уравнение", text: "Решите уравнение: $$1 - 7(4+2x) = -9 - 4x$$", answer: "-1.8" };
   tasks[8] = { title: "При каком значении", text: "При каком значении $x$ значения выражений $7x - 2$ и $3x + 6$ равны?", answer: "2" };
-  
-  // Задачи 9 и 10 (так как в PDF они пустые, добавил классические дробные из ОГЭ)
   tasks[9] = { title: "Дробное уравнение", text: "Решите уравнение: $$\\frac{x}{3} + \\frac{x}{5} = 8$$", answer: "15" };
   tasks[10] = { title: "Дробное уравнение", text: "Решите уравнение: $$\\frac{2}{x - 3} = \\frac{3}{x + 2}$$", answer: "13" };
+
+  // Задачи для фото (не проверяются)
+  tasks[11] = { title: "Задача (фото)", text: "Свежие фрукты содержат 88% воды, а высушенные — 30%. Сколько требуется свежих фруктов для приготовления 72 кг высушенных фруктов?", answer: null, photo: true };
+  tasks[12] = { title: "Задача (фото)", text: "Свежие фрукты содержат 86% воды, а высушенные — 23%. Сколько сухих фруктов получится из 396 кг свежих фруктов?", answer: null, photo: true };
+  tasks[13] = { title: "Задача (фото)", text: "Четыре одинаковые рубашки дешевле куртки на 46%. На сколько процентов шесть таких же рубашек дороже куртки?", answer: null, photo: true };
 
   function renderAll() {
     const container = document.getElementById('tasks-container');
     container.innerHTML = '';
     
-    for (let i = 1; i <= TOTAL_TASKS; i++) {
+    // 1. Рендерим проверяемые задачи (1-10)
+    for (let i = 1; i <= 10; i++) {
       const t = tasks[i];
       const isChecked = checkedState[i] !== undefined;
       const isOk = checkedState[i] === 'ok';
@@ -251,43 +255,22 @@
       `;
     }
 
-     // --- ЗАДАЧИ 11, 12, 13 (ФОТО) ---
-    container.innerHTML += `
-      <div class="task-card" style="border-color: var(--gold);">
-        <div class="task-header">
-          <div class="task-num" style="background: linear-gradient(135deg, var(--gold), #d4b13e); color: #0b2b27;">11</div>
-          <div class="task-title" style="color: var(--gold);">Задача (решение в тетради)</div>
+    // 2. Рендерим задачи с фото (11-13)
+    for (let i = 11; i <= 13; i++) {
+      const t = tasks[i];
+      container.innerHTML += `
+        <div class="task-card" style="border-color: var(--gold);">
+          <div class="task-header">
+            <div class="task-num" style="background: linear-gradient(135deg, var(--gold), #d4b13e); color: #0b2b27;">${i}</div>
+            <div class="task-title" style="color: var(--gold);">${t.title}</div>
+          </div>
+          <div class="task-body">
+            ${t.text}
+          </div>
+          <button class="btn btn-send" onclick="sendToMax()">💬 Отправить решение в Макс</button>
         </div>
-        <div class="task-body">
-          Имеются два сосуда, содержащие 48 кг и 42 кг раствора кислоты различной концентрации. Если их слить вместе, то получим раствор, содержащий 42% кислоты. Если же слить равные массы этих растворов, то полученный раствор будет содержать 40% кислоты. Сколько килограммов кислоты содержится во втором растворе?
-        </div>
-        <button class="btn btn-send" onclick="sendToMax()">💬 Отправить решение в Макс</button>
-      </div>
-    `;
-    container.innerHTML += `
-      <div class="task-card" style="border-color: var(--gold);">
-        <div class="task-header">
-          <div class="task-num" style="background: linear-gradient(135deg, var(--gold), #d4b13e); color: #0b2b27;">12</div>
-          <div class="task-title" style="color: var(--gold);">Задача (решение в тетради)</div>
-        </div>
-        <div class="task-body">
-          Свежие фрукты содержат 86% воды, а высушенные — 23%. Сколько сухих фруктов получится из 396 кг свежих фруктов?
-        </div>
-        <button class="btn btn-send" onclick="sendToMax()">💬 Отправить решение в Макс</button>
-      </div>
-    `;
-    container.innerHTML += `
-      <div class="task-card" style="border-color: var(--gold);">
-        <div class="task-header">
-          <div class="task-num" style="background: linear-gradient(135deg, var(--gold), #d4b13e); color: #0b2b27;">13</div>
-          <div class="task-title" style="color: var(--gold);">Задача (решение в тетради)</div>
-        </div>
-        <div class="task-body">
-          Четыре одинаковые рубашки дешевле куртки на 46%. На сколько процентов шесть таких же рубашек дороже куртки?
-        </div>
-        <button class="btn btn-send" onclick="sendToMax()">💬 Отправить решение в Макс</button>
-      </div>
-    `;
+      `;
+    }
     
     // Безопасный рендеринг KaTeX
     try {
@@ -319,12 +302,7 @@
 
   function checkAll() {
     let empty = [];
-        for (let i = 1; i <= TOTAL_TASKS; i++) {
-      if (tasks[i].photo) continue; // Пропускаем задачи с фото
-      
-      if (!document.getElementById('input'+i).value.trim()) empty.push('№' + i);
-    }
-    for (let i = 1; i <= TOTAL_TASKS; i++) {
+    for (let i = 1; i <= 10; i++) { // Проверяем только 1-10
       if (!document.getElementById('input'+i).value.trim()) empty.push('№' + i);
     }
     
@@ -335,7 +313,7 @@
     }
 
     let correctCount = 0;
-    for (let i = 1; i <= TOTAL_TASKS; i++) {
+    for (let i = 1; i <= 10; i++) {
       const inp = document.getElementById('input'+i);
       const isOk = checkNumber(inp.value, tasks[i].answer);
       
@@ -361,14 +339,11 @@
   }
 
   function updateProgress() {
-       let count = 0;
-    let checkable = 0;
-    for (let i = 1; i <= TOTAL_TASKS; i++) {
-      if (tasks[i].photo) continue;
-      checkable++;
+    let count = 0;
+    for (let i = 1; i <= 10; i++) { // Считаем только 1-10
       if (checkedState[i] === 'ok') count++;
     }
-    document.getElementById('progressDisplay').innerText = `✅ ${count} / ${checkable}`;
+    document.getElementById('progressDisplay').innerText = `✅ ${count} / 10`;
   }
 
   function generateReport() {
@@ -377,9 +352,7 @@
     let text = `📐 ДЗ · Линейные уравнения\nДата: ${date}\nУченик: ${name}\n\n`;
     let correctCount = 0;
 
-    for (let i = 1; i <= TOTAL_TASKS; i++) {
-      if (tasks[i].photo) continue; // Пропускаем фото-задачи
-      
+    for (let i = 1; i <= 10; i++) {
       const ans = document.getElementById('input'+i).value.trim() || '—';
       const status = checkedState[i];
       
@@ -392,13 +365,15 @@
         text += `— №${i}. Ответ: ${ans} (не проверено)\n`;
       }
     }
-    text += `\n📊 ИТОГО: ${correctCount} из ${TOTAL_TASKS - 3} верно (${Math.round(correctCount/(TOTAL_TASKS - 3)*100)}%)\n`;
+    text += `\n📊 ИТОГО: ${correctCount} из 10 верно (${Math.round(correctCount/10*100)}%)\n`;
     text += `\n📷 Задания 11, 12, 13. Решение в тетради (фото отдельно).`;
+    return text;
+  }
 
   function sendToMax() {
     const text = generateReport();
     navigator.clipboard.writeText(text).then(() => {
-      alert('Отчёт скопирован! Сейчас откроется чат Макса — вставь его туда и прикрепи фото решения 11-й задачи.');
+      alert('Отчёт скопирован! Сейчас откроется чат Макса — вставь его туда и прикрепи фото решения задач 11, 12, 13.');
       window.open('https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes', '_blank');
     });
   }
