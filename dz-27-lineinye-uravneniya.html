@@ -166,7 +166,7 @@
     <b>📝 Домашнее задание: Линейные уравнения</b><br>
     • Вводи только число (целое или десятичную дробь).<br>
     • Если ответ отрицательный, не забудь минус.<br>
-    • Задание 11 реши в тетради и отправь фото в Макс.
+    • Задания 11, 12, 13 реши в тетради и отправь фото в Макс.
   </div>
 
   <div id="tasks-container"></div>
@@ -202,7 +202,7 @@
 </div>
 
 <script>
-  const TOTAL_TASKS = 10;
+ const TOTAL_TASKS = 13; // Теперь 10 авто-проверяемых + 3 для фото
   let tasks = {};
   let checkedState = {};
 
@@ -251,15 +251,39 @@
       `;
     }
 
-    // --- ЗАДАЧА 11 ---
+     // --- ЗАДАЧИ 11, 12, 13 (ФОТО) ---
     container.innerHTML += `
       <div class="task-card" style="border-color: var(--gold);">
         <div class="task-header">
           <div class="task-num" style="background: linear-gradient(135deg, var(--gold), #d4b13e); color: #0b2b27;">11</div>
-          <div class="task-title" style="color: var(--gold);">Текстовая задача (решение в тетради)</div>
+          <div class="task-title" style="color: var(--gold);">Задача (решение в тетради)</div>
         </div>
         <div class="task-body">
-          Первый рабочий за час делает на 9 деталей больше, чем второй, и выполняет заказ, состоящий из 216 деталей, на 4 часа быстрее, чем второй рабочий, выполняющий такой же заказ. Сколько деталей в час делает второй рабочий?
+          Имеются два сосуда, содержащие 48 кг и 42 кг раствора кислоты различной концентрации. Если их слить вместе, то получим раствор, содержащий 42% кислоты. Если же слить равные массы этих растворов, то полученный раствор будет содержать 40% кислоты. Сколько килограммов кислоты содержится во втором растворе?
+        </div>
+        <button class="btn btn-send" onclick="sendToMax()">💬 Отправить решение в Макс</button>
+      </div>
+    `;
+    container.innerHTML += `
+      <div class="task-card" style="border-color: var(--gold);">
+        <div class="task-header">
+          <div class="task-num" style="background: linear-gradient(135deg, var(--gold), #d4b13e); color: #0b2b27;">12</div>
+          <div class="task-title" style="color: var(--gold);">Задача (решение в тетради)</div>
+        </div>
+        <div class="task-body">
+          Свежие фрукты содержат 86% воды, а высушенные — 23%. Сколько сухих фруктов получится из 396 кг свежих фруктов?
+        </div>
+        <button class="btn btn-send" onclick="sendToMax()">💬 Отправить решение в Макс</button>
+      </div>
+    `;
+    container.innerHTML += `
+      <div class="task-card" style="border-color: var(--gold);">
+        <div class="task-header">
+          <div class="task-num" style="background: linear-gradient(135deg, var(--gold), #d4b13e); color: #0b2b27;">13</div>
+          <div class="task-title" style="color: var(--gold);">Задача (решение в тетради)</div>
+        </div>
+        <div class="task-body">
+          Четыре одинаковые рубашки дешевле куртки на 46%. На сколько процентов шесть таких же рубашек дороже куртки?
         </div>
         <button class="btn btn-send" onclick="sendToMax()">💬 Отправить решение в Макс</button>
       </div>
@@ -295,6 +319,11 @@
 
   function checkAll() {
     let empty = [];
+        for (let i = 1; i <= TOTAL_TASKS; i++) {
+      if (tasks[i].photo) continue; // Пропускаем задачи с фото
+      
+      if (!document.getElementById('input'+i).value.trim()) empty.push('№' + i);
+    }
     for (let i = 1; i <= TOTAL_TASKS; i++) {
       if (!document.getElementById('input'+i).value.trim()) empty.push('№' + i);
     }
@@ -332,9 +361,14 @@
   }
 
   function updateProgress() {
-    let count = 0;
-    for (let i = 1; i <= TOTAL_TASKS; i++) if (checkedState[i] === 'ok') count++;
-    document.getElementById('progressDisplay').innerText = `✅ ${count} / ${TOTAL_TASKS}`;
+       let count = 0;
+    let checkable = 0;
+    for (let i = 1; i <= TOTAL_TASKS; i++) {
+      if (tasks[i].photo) continue;
+      checkable++;
+      if (checkedState[i] === 'ok') count++;
+    }
+    document.getElementById('progressDisplay').innerText = `✅ ${count} / ${checkable}`;
   }
 
   function generateReport() {
@@ -344,6 +378,8 @@
     let correctCount = 0;
 
     for (let i = 1; i <= TOTAL_TASKS; i++) {
+      if (tasks[i].photo) continue; // Пропускаем фото-задачи
+      
       const ans = document.getElementById('input'+i).value.trim() || '—';
       const status = checkedState[i];
       
@@ -356,10 +392,8 @@
         text += `— №${i}. Ответ: ${ans} (не проверено)\n`;
       }
     }
-    text += `\n📊 ИТОГО: ${correctCount} из ${TOTAL_TASKS} верно (${Math.round(correctCount/TOTAL_TASKS*100)}%)\n`;
-    text += `\n📷 Задание 11. Решение в тетради (фото отдельно).`;
-    return text;
-  }
+    text += `\n📊 ИТОГО: ${correctCount} из ${TOTAL_TASKS - 3} верно (${Math.round(correctCount/(TOTAL_TASKS - 3)*100)}%)\n`;
+    text += `\n📷 Задания 11, 12, 13. Решение в тетради (фото отдельно).`;
 
   function sendToMax() {
     const text = generateReport();
