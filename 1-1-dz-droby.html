@@ -1,495 +1,865 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>1-1-DZ-droby</title>
-<!-- Подключаем KaTeX -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: false}, {left: '$', right: '$', display: false}]});"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ΤΕΤΡΑΚΤΥΣ — ДЗ 1. Дроби</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 
-<style>
-  :root {
-    --bg: #0d2b26;
-    --panel: rgba(22, 83, 77, 0.6);
-    --bg2: #081c19;
-    --line: rgba(47, 212, 181, 0.3);
-    --turq: #2fd4b5;
-    --mint: #7fffd4;
-    --gold: #f4d35e;
-    --text: #e0f2ec;
-    --coral: #ff6b6b;
-  }
-  * { box-sizing: border-box; }
-  body {
-    background-color: var(--bg);
-    background-image: radial-gradient(circle at 15% 10%, rgba(47, 212, 181, 0.15) 0%, transparent 40%),
-                      radial-gradient(circle at 85% 90%, rgba(47, 212, 181, 0.1) 0%, transparent 40%);
-    background-attachment: fixed; color: var(--text);
-    font-family: Georgia, serif; padding: 0 0 40px 0; margin: 0;
-    display: flex; flex-direction: column; align-items: center; min-height: 100vh;
-  }
-  
-  /* ЛИПКАЯ ШАПКА */
-  .sticky-header {
-    position: sticky; top: 0; width: 100%; background: rgba(8, 28, 25, 0.85);
-    backdrop-filter: blur(10px); z-index: 100; border-bottom: 1px solid var(--line);
-    padding: 12px 20px; display: flex; justify-content: space-between; align-items: center;
-  }
-  .logo-block { display: flex; align-items: center; gap: 10px; }
-  .logo-dots { display: flex; flex-direction: column; gap: 2px; }
-  .logo-dots div { display: flex; gap: 2px; color: var(--turq); font-size: 6px; }
-  .logo-text { font-family: 'Times New Roman', serif; font-size: 20px; font-weight: bold; color: var(--turq); letter-spacing: 1px; }
-  .header-info { text-align: right; font-size: 12px; font-family: 'Courier New', monospace; color: var(--mint); }
-  .progress { font-weight: bold; margin-top: 4px; }
+    <style>
+        :root {
+            --bg-deep: #073a35;
+            --bg-gradient: radial-gradient(circle at 50% 0%, #126b61 0%, #073a35 80%);
+            --turquoise: #1abc9c;
+            --mint: #7fffd4;
+            --gold: #f4d35e;
+            --coral: #ff6b6b;
+            --text-main: #f0fcf9;
+            --text-muted: #9ccfc7;
+            --card-bg: rgba(18, 107, 97, 0.4);
+            --border-color: rgba(26, 188, 156, 0.25);
+        }
 
-  .wrap { max-width: 700px; width: 100%; padding: 20px; margin-top: 10px; }
-  
-  /* БЛОК ИМЕНИ */
-  .name-block {
-    background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
-    padding: 15px; margin-bottom: 20px; display: flex; gap: 15px; align-items: center;
-  }
-  .name-block label { font-size: 14px; color: var(--mint); font-weight: bold; }
-  .name-block input {
-    flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--line);
-    background: var(--bg2); color: var(--text); font-family: Georgia, serif; outline: none;
-  }
-  
-  /* ИНСТРУКЦИЯ */
-  .instruction {
-    background: rgba(47, 212, 181, 0.1); border-left: 4px solid var(--turq);
-    padding: 15px; border-radius: 0 12px 12px 0; margin-bottom: 20px; font-size: 14px; line-height: 1.5;
-  }
-  .instruction b { color: var(--gold); }
-  
-  /* КАРТОЧКИ */
-  .task-card {
-    background: var(--panel); backdrop-filter: blur(12px);
-    border: 1px solid var(--line); border-radius: 18px; padding: 24px; margin-bottom: 20px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.3); transition: border-color 0.3s, box-shadow 0.3s;
-  }
-  .task-card.correct { border-color: #2ecc71; box-shadow: 0 0 15px rgba(46, 204, 113, 0.2); }
-  .task-card.wrong { border-color: var(--coral); box-shadow: 0 0 15px rgba(255, 107, 107, 0.2); }
-  
-  .task-header {
-    display: flex; gap: 12px; align-items: center; margin-bottom: 16px;
-    border-bottom: 1px solid rgba(47, 212, 181, 0.15); padding-bottom: 12px;
-  }
-  .task-num {
-    background: linear-gradient(135deg, var(--turq), #1a9a82);
-    color: #0b2b27; font-weight: bold; font-size: 18px;
-    width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
-    border-radius: 10px; font-family: "Courier New", monospace;
-  }
-  .task-title { color: var(--mint); font-weight: bold; letter-spacing: 1px; font-size: 15px; }
-  
-  .task-body { font-size: 18px; line-height: 1.6; margin-bottom: 10px; }
-  .task-body b { color: var(--gold); }
-  
-  /* ВВОД */
-  .answer-row { display: flex; gap: 10px; margin-top: 15px; }
-  .answer-row input {
-    flex: 1; padding: 14px; border-radius: 12px; border: 1.5px solid var(--line);
-    background: var(--bg2); color: var(--text); font-size: 18px; font-family: "Courier New", monospace;
-    outline: none; transition: 0.3s;
-  }
-  .answer-row input:focus { border-color: var(--turq); box-shadow: 0 0 10px rgba(47,212,181,0.2); }
-  .answer-row input.correct { border-color: #2ecc71; color: #2ecc71; }
-  .answer-row input.wrong { border-color: var(--coral); color: var(--coral); }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  .status {
-    margin-top: 15px; font-weight: bold; display: none; font-size: 15px;
-    padding: 12px; border-radius: 10px;
-  }
-  .status.ok { display: block; background: rgba(46,204,113,0.15); color: #2ecc71; border: 1px solid #2ecc71; }
-  .status.err { display: block; background: rgba(255,107,107,0.15); color: var(--coral); border: 1px solid var(--coral); }
-  
-  /* НИЖНИЕ КНОПКИ */
-  .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
-  .btn {
-    padding: 14px 20px; border: none; border-radius: 12px;
-    font-family: Georgia, serif; font-size: 16px; font-weight: bold;
-    cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
-  }
-  .btn-primary { background: linear-gradient(135deg, var(--turq), #1a9a82); color: #0b2b27; flex: 1; box-shadow: 0 4px 15px rgba(47,212,181,0.3); min-width: 200px;}
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(47,212,181,0.5); }
-  .btn-outline { background: transparent; border: 1.5px solid var(--turq); color: var(--turq); }
-  .btn-outline:hover { background: rgba(47, 212, 181, 0.1); }
-  .btn-gold { background: transparent; border: 1.5px solid var(--gold); color: var(--gold); }
-  .btn-gold:hover { background: rgba(244, 211, 94, 0.1); }
-  .btn-coral { background: transparent; border: 1.5px solid var(--coral); color: var(--coral); }
-  .btn-coral:hover { background: rgba(255, 107, 107, 0.1); }
+        body {
+            background-color: var(--bg-deep);
+            background-image: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'Georgia', serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 40px;
+        }
 
-  /* МОДАЛКИ */
-  .modal-overlay {
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000;
-  }
-  .modal {
-    background: var(--bg); border: 1px solid var(--line); border-radius: 16px;
-    padding: 24px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-  }
-  .modal h3 { margin-top: 0; color: var(--turq); }
-  .modal p { margin-bottom: 20px; }
-  .modal input {
-    width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--line);
-    background: var(--bg2); color: var(--text); text-align: center; font-size: 18px;
-    margin-bottom: 15px; font-family: "Courier New", monospace;
-  }
-  .modal-btns { display: flex; gap: 10px; }
-  .modal-btns .btn { flex: 1; padding: 10px; font-size: 14px; }
+        /* ШАПКА */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(7, 58, 53, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
 
-  /* Кастомный стиль для KaTeX, чтобы формулы были видны на тёмном фоне */
-  .katex { color: var(--text); font-size: 1.15em; }
-</style>
+        .header-left { display: flex; align-items: center; gap: 12px; }
+
+        .logo-symbol {
+            font-family: 'Courier New', monospace;
+            color: var(--gold);
+            font-size: 10px;
+            line-height: 1.1;
+            letter-spacing: 4px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .logo-greek-box {
+            border-top: 1px solid var(--gold);
+            border-bottom: 1px solid var(--gold);
+            padding: 2px 0;
+            font-family: 'Times New Roman', serif;
+            font-size: 16px;
+            letter-spacing: 2px;
+            color: var(--gold);
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: var(--mint);
+            font-weight: bold;
+        }
+
+        .progress-badge {
+            background: rgba(26, 188, 156, 0.2);
+            border: 1px solid var(--turquoise);
+            padding: 4px 12px;
+            border-radius: 20px;
+            color: var(--gold);
+        }
+
+        /* КОНТЕЙНЕР */
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+            flex: 1;
+            width: 100%;
+        }
+
+        .main-title {
+            font-family: 'Times New Roman', serif;
+            text-align: center;
+            font-size: 26px;
+            color: var(--gold);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--mint);
+            margin-bottom: 20px;
+            font-family: 'Times New Roman', serif;
+            font-size: 18px;
+        }
+
+        /* БЛОКИ ИНСТРУКЦИЙ И ИМЕНИ */
+        .info-block {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .name-input-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .name-input-group label {
+            font-family: 'Times New Roman', serif;
+            font-size: 18px;
+            color: var(--mint);
+        }
+
+        .name-input-group input {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            font-family: 'Georgia', serif;
+            font-size: 16px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            outline: none;
+            flex: 1;
+        }
+
+        .name-input-group input:focus { border-color: var(--gold); }
+
+        .instruction-text {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .instruction-text b { color: var(--gold); }
+
+        /* КАРТОЧКИ ЗАДАНИЙ */
+        .task-card {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .task-card.is-ok {
+            border-color: #2ecc71;
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
+        }
+
+        .task-card.is-fail {
+            border-color: var(--coral);
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.2);
+        }
+
+        .task-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .task-number {
+            background: linear-gradient(135deg, var(--turquoise), #0e8c72);
+            color: #073a35;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 18px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(26, 188, 156, 0.3);
+        }
+
+        .task-text {
+            font-family: 'Times New Roman', serif;
+            font-size: 20px;
+            color: var(--text-main);
+        }
+
+        .task-formula {
+            font-size: 20px;
+            margin: 10px 0 20px 0;
+            overflow-x: auto;
+            padding: 10px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        /* ВВОД ОТВЕТА */
+        .answer-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .input-row span {
+            font-weight: bold;
+            color: var(--mint);
+        }
+
+        .input-row input {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 300px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .input-row input:focus {
+            border-color: var(--gold);
+            background: rgba(0,0,0,0.3);
+        }
+
+        .input-row input:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* КНОПКИ-СИМВОЛЫ (только / и ,) */
+        .symbols-bar {
+            display: flex;
+            gap: 8px;
+            margin-top: 5px;
+        }
+
+        .sym-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--mint);
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            min-width: 44px;
+            height: 40px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.2s;
+        }
+
+        .sym-btn:hover {
+            background: rgba(26, 188, 156, 0.2);
+            border-color: var(--turquoise);
+        }
+
+        /* СТАТУС ОТВЕТА */
+        .status-msg {
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .status-msg.ok { color: #2ecc71; display: block; }
+        .status-msg.fail { color: var(--coral); display: block; }
+
+        /* НИЖНИЕ КНОПКИ */
+        .actions-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+
+        .btn-action {
+            background: var(--card-bg);
+            border: 1px solid var(--turquoise);
+            color: var(--mint);
+            font-family: 'Georgia', serif;
+            font-size: 16px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .btn-action:hover {
+            background: rgba(26, 188, 156, 0.2);
+            color: var(--gold);
+        }
+
+        .btn-action.primary {
+            background: var(--turquoise);
+            color: #073a35;
+            border-color: var(--turquoise);
+            font-weight: bold;
+        }
+
+        .btn-action.primary:hover { background: var(--mint); }
+
+        .btn-action.danger {
+            border-color: var(--coral);
+            color: var(--coral);
+        }
+
+        .btn-action.danger:hover { background: rgba(255, 107, 107, 0.1); }
+
+        /* МОДАЛЬНОЕ ОКНО */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-box {
+            background: #073a35;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .modal-box h3 {
+            color: var(--gold);
+            font-family: 'Times New Roman', serif;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        .modal-box p {
+            color: var(--text-main);
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .modal-box input {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            font-size: 18px;
+            padding: 10px;
+            border-radius: 8px;
+            width: 100%;
+            text-align: center;
+            outline: none;
+            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .modal-box button {
+            background: var(--turquoise);
+            color: #073a35;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .header-right { flex-direction: column; gap: 5px; align-items: flex-end; }
+            .actions-panel { flex-direction: column; }
+            .btn-action { width: 100%; justify-content: center; }
+            .logo-symbol { font-size: 8px; }
+            .logo-greek-box { font-size: 12px; }
+        }
+    </style>
 </head>
 <body>
 
-<!-- ШАПКА -->
-<div class="sticky-header">
-  <div class="logo-block">
-    <div class="logo-dots">
-      <div>●</div>
-      <div>● ●</div>
-      <div>● ● ●</div>
-      <div>● ● ● ●</div>
-    </div>
-    <div class="logo-text">ΤΕΤΡΑΚΤΥΣ</div>
-  </div>
-  <div class="header-info">
-    <div id="dateDisplay"></div>
-    <div class="progress" id="progressDisplay">✅ 0 / 6</div>
-  </div>
-</div>
-
-<div class="wrap">
-  
-  <!-- ИМЯ УЧЕНИКА -->
-  <div class="name-block">
-    <label>Ученик:</label>
-    <input type="text" id="studentName" placeholder="Введи своё имя..." oninput="saveName()">
-  </div>
-
-  <!-- ИНСТРУКЦИЯ -->
-  <div class="instruction">
-    <b>📝 Как записывать ответы:</b><br>
-    • Обыкновенные дроби пиши через <b>/</b> (например, <b>15/4</b> или <b>3 3/4</b>).<br>
-    • Десятичные — через точку или запятую (<b>0.5</b> или <b>0,5</b>).<br>
-    • Если ответ — целое число, можно писать просто <b>12</b>.
-  </div>
-
-  <!-- БЛОК ЗАДАЧ -->
-  <div id="tasks-container"></div>
-
-  <!-- КНОПКИ ДЕЙСТВИЙ -->
-  <div class="actions">
-    <button class="btn btn-primary" onclick="checkAll()" id="btnCheck">✅ Проверить все ответы</button>
-    <button class="btn btn-outline" onclick="copyAnswers()">📋 Скопировать</button>
-    <button class="btn btn-gold" onclick="sendToMax()">💬 Отправить в Макс</button>
-    <button class="btn btn-coral" onclick="openClearModal()">🔒 Очистить</button>
-  </div>
-</div>
-
-<!-- МОДАЛКА: ПУСТЫЕ ПОЛЯ -->
-<div class="modal-overlay" id="emptyModal">
-  <div class="modal">
-    <h3>Заполни все поля!</h3>
-    <p id="emptyList"></p>
-    <div class="modal-btns">
-      <button class="btn btn-primary" onclick="closeModal('emptyModal')">Понятно</button>
-    </div>
-  </div>
-</div>
-
-<!-- МОДАЛКА: ПАРОЛЬ -->
-<div class="modal-overlay" id="clearModal">
-  <div class="modal">
-    <h3>Очистить всё?</h3>
-    <p>Введи пароль для сброса:</p>
-    <input type="password" id="clearPassword" placeholder="Пароль...">
-    <div class="modal-btns">
-      <button class="btn btn-outline" onclick="closeModal('clearModal')">Отмена</button>
-      <button class="btn btn-coral" onclick="confirmClear()">Очистить</button>
-    </div>
-    <p id="passError" style="color: var(--coral); display: none; margin-top: 10px; font-size: 14px;">Неверный пароль</p>
-  </div>
-</div>
-
-<script>
-  const TOTAL_TASKS = 6;
-  let tasks = {};
-  let checkedState = {};
-
-  // --- ПАРСЕР И УМНАЯ ПРОВЕРКА ДРОБЕЙ ---
-  function parseMathAnswer(input) {
-    let s = String(input).trim().replace(/,/g, '.').replace(/\s+/g, ' ').replace(/[−–—]/g, '-');
-    
-    // Смешанная дробь (например, "1 1/2" или "-2 3/4")
-    let mixedMatch = s.match(/^(-?\d+)\s+(\d+)\/(\d+)$/);
-    if (mixedMatch) {
-      let integer = parseInt(mixedMatch[1], 10);
-      let num = parseInt(mixedMatch[2], 10);
-      let den = parseInt(mixedMatch[3], 10);
-      let sign = integer < 0 ? -1 : 1;
-      let n = Math.abs(integer) * den + num;
-      return reduceFraction(n * sign, den);
-    }
-    
-    // Обыкновенная дробь "a/b"
-    let fracMatch = s.match(/^(-?\d+)\/(\d+)$/);
-    if (fracMatch) {
-      return reduceFraction(parseInt(fracMatch[1], 10), parseInt(fracMatch[2], 10));
-    }
-    
-    // Десятичная дробь или целое "0.5", "-2"
-    if (s.match(/^-?\d+(\.\d+)?$/)) {
-      let val = parseFloat(s);
-      if (!s.includes('.')) return { n: val, d: 1 };
-      let parts = s.split('.');
-      let den = Math.pow(10, parts[1].length);
-      let num = parseInt(parts[0] + parts[1], 10);
-      return reduceFraction(num, den);
-    }
-
-    return null; 
-  }
-
-  function gcd(a, b) {
-    a = Math.abs(a); b = Math.abs(b);
-    while (b) { let t = b; b = a % b; a = t; }
-    return a;
-  }
-
-  function reduceFraction(n, d) {
-    if (d === 0) return {n, d};
-    let g = gcd(n, d);
-    return { n: n / g, d: d / g };
-  }
-
-  function isAnswerCorrect(userInput, correctStr) {
-    let u = parseMathAnswer(userInput);
-    let c = parseMathAnswer(correctStr);
-
-    if (!u) return false; 
-    if (!c) return userInput.trim() === correctStr.trim(); 
-
-    // Допускаем небольшую погрешность для чисел с плавающей точкой
-    let uVal = u.n / u.d;
-    let cVal = c.n / c.d;
-    return Math.abs(uVal - cVal) < 1e-9;
-  }
-
-  // --- HTML ЗАДАЧ (С KaTeX) ---
-  // $$ ... $$ — это блок формулы для KaTeX
-  tasks[1] = {
-    title: "Обыкновенные дроби",
-    text: "Найдите значение выражения: $$ 1\\frac{1}{4} + \\frac{2}{7} \\cdot \\frac{23}{28} $$",
-    answer: "201/196"
-  };
-
-  tasks[2] = {
-    title: "Обыкновенные дроби",
-    text: "Найдите значение выражения: $$ 1\\frac{2}{5} \\cdot \\frac{3}{39} - \\frac{39}{40} $$",
-    answer: "-143/520"
-  };
-
-  tasks[3] = {
-    title: "Обыкновенные дроби",
-    text: "Найдите значение выражения: $$ 1\\frac{2}{11} + \\frac{2}{5} \\cdot \\frac{37}{55} $$",
-    answer: "842/605"
-  };
-
-  tasks[4] = {
-    title: "Десятичные дроби",
-    text: "Найдите значение выражения: $$ 8{,}28 - 5{,}34 : 3 $$",
-    answer: "6.5"
-  };
-
-  tasks[5] = {
-    title: "Десятичные дроби",
-    text: "Найдите значение выражения: $$ -3{,}25 \\cdot (-4{,}2 + 3{,}6) $$",
-    answer: "1.95"
-  };
-
-  tasks[6] = {
-    title: "Десятичные дроби",
-    text: "Найдите значение выражения: $$ \\frac{6{,}5}{2{,}3 + 2{,}9} $$",
-    answer: "1.25"
-  };
-
-  // --- ОТРИСОВКА ---
-  function renderAll() {
-    const container = document.getElementById('tasks-container');
-    container.innerHTML = '';
-    
-    for (let i = 1; i <= TOTAL_TASKS; i++) {
-      const t = tasks[i];
-      const isChecked = checkedState[i] !== undefined;
-      const isOk = checkedState[i] === 'ok';
-      
-      let cardClass = isChecked ? (isOk ? 'correct' : 'wrong') : '';
-      let statusClass = isChecked ? (isOk ? 'status ok' : 'status err') : 'status';
-      let statusText = isChecked ? (isOk ? '✅ Верно!' : `❌ Неверно. Правильный ответ: ${t.answer}`) : '';
-      let inputClass = isChecked ? (isOk ? 'correct' : 'wrong') : '';
-      let disabled = isChecked ? 'disabled' : '';
-      let savedVal = localStorage.getItem('ans_' + i) || '';
-      
-      container.innerHTML += `
-        <div class="task-card ${cardClass}" id="task${i}">
-          <div class="task-header"><div class="task-num">${i}</div><div class="task-title">${t.title}</div></div>
-          <div class="task-body">${t.text}</div>
-          <div class="answer-row">
-            <input type="text" id="input${i}" value="${savedVal}" placeholder="Введи ответ..." autocomplete="off" class="${inputClass}" ${disabled} oninput="saveAnswer(${i})">
-          </div>
-          <div class="${statusClass}" id="status${i}">${statusText}</div>
+    <header>
+        <div class="header-left">
+            <div class="logo-symbol">
+                ●<br>● ●<br>● ● ●<br>● ● ● ●
+            </div>
+            <div class="logo-greek-box">ΤΕΤΡΑΚΤΥΣ</div>
         </div>
-      `;
-    }
-    
-    // После добавления HTML вызываем рендер формул KaTeX
-    renderMathInElement(container, {
-      delimiters: [
-        {left: '$$', right: '$$', display: false},
-        {left: '$', right: '$', display: false}
-      ]
-    });
+        <div class="header-right">
+            <span id="date-display"></span>
+            <span class="progress-badge" id="progress-badge">✅ 0 / 6</span>
+        </div>
+    </header>
 
-    updateProgress();
-  }
+    <div class="container">
+        <h1 class="main-title">Домашнее задание</h1>
+        <h2 class="subtitle">Действия с обыкновенными и десятичными дробями</h2>
 
-  // --- ЛОГИКА ---
-  function saveAnswer(n) {
-    const val = document.getElementById('input'+n).value;
-    localStorage.setItem('ans_' + n, val);
-  }
+        <div class="info-block">
+            <div class="name-input-group">
+                <label>👤 Имя ученика:</label>
+                <input type="text" id="student-name" placeholder="Введите ваше имя..." oninput="saveName()">
+            </div>
+        </div>
 
-  function saveName() {
-    localStorage.setItem('studentName', document.getElementById('studentName').value);
-  }
+        <div class="info-block">
+            <div class="instruction-text">
+                <b>Как записывать ответы:</b><br>
+                • Обыкновенные дроби — через косую черту: <b>1/2</b>, <b>3/4</b>.<br>
+                • Десятичные — через запятую: <b>1,25</b>.<br>
+                • Смешанные числа: <b>1 1/2</b> (через пробел).<br>
+                • Используйте кнопки <b>/</b> и <b>,</b> под полем ввода, если печатать с телефона неудобно.
+            </div>
+        </div>
 
-  function checkAll() {
-    let empty = [];
-    for (let i = 1; i <= TOTAL_TASKS; i++) {
-      const val = document.getElementById('input'+i).value.trim();
-      if (!val) empty.push('№' + i);
-    }
-    
-    if (empty.length > 0) {
-      document.getElementById('emptyList').innerText = 'У тебя пустые: ' + empty.join(', ');
-      document.getElementById('emptyModal').style.display = 'flex';
-      return;
-    }
+        <!-- ЗАДАНИЯ -->
+        <div id="tasks-container">
+            <!-- Задание 1 -->
+            <div class="task-card" id="card-1">
+                <div class="task-header">
+                    <div class="task-number">1</div>
+                    <div class="task-text">Вычислите:</div>
+                </div>
+                <div class="task-formula" id="formula-1"></div>
+                <div class="answer-wrapper">
+                    <div class="input-row">
+                        <span>Ответ:</span>
+                        <input type="text" id="input-1" placeholder="Введите ответ" oninput="updateInput(this)">
+                    </div>
+                    <div class="symbols-bar">
+                        <button class="sym-btn" onclick="insertSym('input-1', '/')">/</button>
+                        <button class="sym-btn" onclick="insertSym('input-1', ',')">,</button>
+                    </div>
+                    <div class="status-msg" id="status-1"></div>
+                </div>
+            </div>
 
-    let correctCount = 0;
-    for (let i = 1; i <= TOTAL_TASKS; i++) {
-      const inp = document.getElementById('input'+i);
-      const isOk = isAnswerCorrect(inp.value, tasks[i].answer);
-      
-      checkedState[i] = isOk ? 'ok' : 'fail';
-      if (isOk) correctCount++;
+            <!-- Задание 2 -->
+            <div class="task-card" id="card-2">
+                <div class="task-header">
+                    <div class="task-number">2</div>
+                    <div class="task-text">Вычислите:</div>
+                </div>
+                <div class="task-formula" id="formula-2"></div>
+                <div class="answer-wrapper">
+                    <div class="input-row">
+                        <span>Ответ:</span>
+                        <input type="text" id="input-2" placeholder="Введите ответ" oninput="updateInput(this)">
+                    </div>
+                    <div class="symbols-bar">
+                        <button class="sym-btn" onclick="insertSym('input-2', '/')">/</button>
+                        <button class="sym-btn" onclick="insertSym('input-2', ',')">,</button>
+                    </div>
+                    <div class="status-msg" id="status-2"></div>
+                </div>
+            </div>
 
-      document.getElementById('task'+i).className = isOk ? 'task-card correct' : 'task-card wrong';
-      inp.className = isOk ? 'correct' : 'wrong';
-      inp.disabled = true;
+            <!-- Задание 3 -->
+            <div class="task-card" id="card-3">
+                <div class="task-header">
+                    <div class="task-number">3</div>
+                    <div class="task-text">Вычислите:</div>
+                </div>
+                <div class="task-formula" id="formula-3"></div>
+                <div class="answer-wrapper">
+                    <div class="input-row">
+                        <span>Ответ:</span>
+                        <input type="text" id="input-3" placeholder="Введите ответ" oninput="updateInput(this)">
+                    </div>
+                    <div class="symbols-bar">
+                        <button class="sym-btn" onclick="insertSym('input-3', '/')">/</button>
+                        <button class="sym-btn" onclick="insertSym('input-3', ',')">,</button>
+                    </div>
+                    <div class="status-msg" id="status-3"></div>
+                </div>
+            </div>
 
-      const st = document.getElementById('status'+i);
-      if (isOk) {
-        st.className = 'status ok';
-        st.innerHTML = '✅ Верно!';
-      } else {
-        st.className = 'status err';
-        st.innerHTML = `❌ Неверно. Твой ответ: ${inp.value.trim()}. <b>Правильный ответ: ${tasks[i].answer}</b>`;
-      }
-    }
+            <!-- Задание 4 -->
+            <div class="task-card" id="card-4">
+                <div class="task-header">
+                    <div class="task-number">4</div>
+                    <div class="task-text">Вычислите:</div>
+                </div>
+                <div class="task-formula" id="formula-4"></div>
+                <div class="answer-wrapper">
+                    <div class="input-row">
+                        <span>Ответ:</span>
+                        <input type="text" id="input-4" placeholder="Введите ответ" oninput="updateInput(this)">
+                    </div>
+                    <div class="symbols-bar">
+                        <button class="sym-btn" onclick="insertSym('input-4', '/')">/</button>
+                        <button class="sym-btn" onclick="insertSym('input-4', ',')">,</button>
+                    </div>
+                    <div class="status-msg" id="status-4"></div>
+                </div>
+            </div>
 
-    localStorage.setItem('checkedState', JSON.stringify(checkedState));
-    updateProgress();
-  }
+            <!-- Задание 5 -->
+            <div class="task-card" id="card-5">
+                <div class="task-header">
+                    <div class="task-number">5</div>
+                    <div class="task-text">Вычислите:</div>
+                </div>
+                <div class="task-formula" id="formula-5"></div>
+                <div class="answer-wrapper">
+                    <div class="input-row">
+                        <span>Ответ:</span>
+                        <input type="text" id="input-5" placeholder="Введите ответ" oninput="updateInput(this)">
+                    </div>
+                    <div class="symbols-bar">
+                        <button class="sym-btn" onclick="insertSym('input-5', '/')">/</button>
+                        <button class="sym-btn" onclick="insertSym('input-5', ',')">,</button>
+                    </div>
+                    <div class="status-msg" id="status-5"></div>
+                </div>
+            </div>
 
-  function updateProgress() {
-    let count = 0;
-    for (let i = 1; i <= TOTAL_TASKS; i++) {
-      if (checkedState[i] === 'ok') count++;
-    }
-    document.getElementById('progressDisplay').innerText = `✅ ${count} / ${TOTAL_TASKS}`;
-  }
+            <!-- Задание 6 -->
+            <div class="task-card" id="card-6">
+                <div class="task-header">
+                    <div class="task-number">6</div>
+                    <div class="task-text">Вычислите:</div>
+                </div>
+                <div class="task-formula" id="formula-6"></div>
+                <div class="answer-wrapper">
+                    <div class="input-row">
+                        <span>Ответ:</span>
+                        <input type="text" id="input-6" placeholder="Введите ответ" oninput="updateInput(this)">
+                    </div>
+                    <div class="symbols-bar">
+                        <button class="sym-btn" onclick="insertSym('input-6', '/')">/</button>
+                        <button class="sym-btn" onclick="insertSym('input-6', ',')">,</button>
+                    </div>
+                    <div class="status-msg" id="status-6"></div>
+                </div>
+            </div>
+        </div>
 
-  // --- МАКС И ОТЧЁТЫ ---
-  function generateReport() {
-    const name = document.getElementById('studentName').value.trim() || 'Без имени';
-    const date = new Date().toLocaleString('ru-RU');
-    let text = `📐 ОТВЕТЫ · ДЗ · 1-1-DZ-droby\nДата: ${date}\nУченик: ${name}\n\n`;
-    let correctCount = 0;
-    
-    for (let i = 1; i <= TOTAL_TASKS; i++) {
-      const ans = document.getElementById('input'+i).value.trim() || '—';
-      const status = checkedState[i];
-      
-      if (status === 'ok') {
-        text += `✅ Задание ${i}. Ответ: ${ans}\n`;
-        correctCount++;
-      } else if (status === 'fail') {
-        text += `❌ Задание ${i}. Ответ: ${ans} (правильный: ${tasks[i].answer})\n`;
-      } else {
-        text += `— Задание ${i}. Ответ: ${ans} (не проверено)\n`;
-      }
-    }
-    text += `\n✅ Итог: ${correctCount} из ${TOTAL_TASKS} верно`;
-    return text;
-  }
+        <!-- КНОПКИ ДЕЙСТВИЙ -->
+        <div class="actions-panel">
+            <button class="btn-action primary" onclick="checkAll()">✅ Проверить все ответы</button>
+            <button class="btn-action" onclick="copyResults()">📋 Скопировать</button>
+            <button class="btn-action" onclick="sendToMax()">💬 Отправить в Макс</button>
+            <button class="btn-action danger" onclick="openClearModal()">🔒 Очистить</button>
+        </div>
+    </div>
 
-  function copyAnswers() {
-    const text = generateReport();
-    navigator.clipboard.writeText(text).then(() => {
-      alert('Текст скопирован в буфер обмена!');
-    });
-  }
+    <!-- МОДАЛЬНОЕ ОКНО ВВОДА ПАРОЛЯ -->
+    <div class="modal-overlay" id="clear-modal">
+        <div class="modal-box">
+            <h3>Очистка данных</h3>
+            <p>Введите пароль для сброса:</p>
+            <input type="password" id="clear-password" placeholder="****">
+            <br>
+            <button onclick="confirmClear()">Подтвердить</button>
+            <button style="background: transparent; color: var(--coral); margin-left: 10px;" onclick="closeClearModal()">Отмена</button>
+        </div>
+    </div>
 
-  function sendToMax() {
-    const text = generateReport();
-    navigator.clipboard.writeText(text).then(() => {
-      alert('Текст скопирован! Сейчас откроется чат Макса — вставь его туда.');
-      window.open('https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes', '_blank');
-    });
-  }
+    <script>
+        // Конфигурация заданий (по номерам из общего файла)
+        const TASKS = [
+            { id: 1, tex: `1\\frac{1}{4} + \\frac{2}{7} \\cdot \\frac{23}{28}`, answer: '291/196' },
+            { id: 2, tex: `1\\frac{2}{5} \\cdot \\frac{3}{39} - \\frac{39}{40}`, answer: '-143/520' },
+            { id: 3, tex: `1\\frac{2}{11} + \\frac{2}{5} \\cdot \\frac{37}{55}`, answer: '842/605' },
+            { id: 4, tex: `8{,}28 - 5{,}34 : 3`, answer: '6,5' },
+            { id: 5, tex: `-3{,}25 \\cdot (-4{,}2 + 3{,}6)`, answer: '1,95' },
+            { id: 6, tex: `\\frac{6{,}5}{2{,}3 + 2{,}9}`, answer: '1,25' }
+        ];
 
-  // --- ОЧИСТКА ---
-  function openClearModal() {
-    document.getElementById('clearPassword').value = '';
-    document.getElementById('passError').style.display = 'none';
-    document.getElementById('clearModal').style.display = 'flex';
-  }
+        const STORAGE_PREFIX = 'tetraktys_hw_1_';
 
-  function confirmClear() {
-    const pass = document.getElementById('clearPassword').value;
-    if (pass === '2810') {
-      localStorage.clear();
-      location.reload();
-    } else {
-      document.getElementById('passError').style.display = 'block';
-    }
-  }
+        // --- ИНИЦИАЛИЗАЦИЯ ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const now = new Date();
+            document.getElementById('date-display').textContent = now.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' });
 
-  function closeModal(id) {
-    document.getElementById(id).style.display = 'none';
-  }
+            TASKS.forEach(task => {
+                const el = document.getElementById(`formula-${task.id}`);
+                if (el) {
+                    el.innerHTML = katex.renderToString(task.tex, { displayMode: true, throwOnError: false });
+                }
+            });
 
-  // --- ИНИЦИАЛИЗАЦИЯ ---
-  window.onload = () => {
-    const now = new Date();
-    document.getElementById('dateDisplay').innerText = now.toLocaleDateString('ru-RU');
-    
-    const savedName = localStorage.getItem('studentName');
-    if (savedName) document.getElementById('studentName').value = savedName;
-    
-    const savedState = localStorage.getItem('checkedState');
-    if (savedState) checkedState = JSON.parse(savedState);
+            loadState();
+        });
 
-    renderAll();
-  };
-</script>
+        // --- УТИЛИТЫ ВВОДА ---
+        function insertSym(inputId, sym) {
+            const input = document.getElementById(inputId);
+            if (input.disabled) return;
+            input.value += sym;
+            input.focus();
+            updateInput(input);
+        }
 
+        function updateInput(input) {
+            const id = input.id.replace('input-', '');
+            localStorage.setItem(STORAGE_PREFIX + 'val_' + id, input.value);
+        }
+
+        // --- НОРМАЛИЗАЦИЯ И ПРОВЕРКА ---
+        function normalize(str) {
+            if (!str) return '';
+            return str
+                .replace(/,/g, '.')
+                .replace(/\s+/g, '')
+                .replace(/[−–—]/g, '-')
+                .toLowerCase()
+                .trim();
+        }
+
+        // Проверка дробей: приводим к общему виду (упрощаем, если возможно)
+        function checkFraction(userAns, correctAns) {
+            const u = normalize(userAns);
+            const c = normalize(correctAns);
+
+            if (u === c) return true;
+
+            // Если оба — дроби вида a/b, проверяем равенство через перекрёстное умножение
+            if (u.includes('/') && c.includes('/')) {
+                const parseFrac = (s) => {
+                    const parts = s.split('/');
+                    if (parts.length !== 2) return null;
+                    const num = parseFloat(parts[0]);
+                    const den = parseFloat(parts[1]);
+                    if (isNaN(num) || isNaN(den) || den === 0) return null;
+                    return num / den;
+                };
+                const uVal = parseFrac(u);
+                const cVal = parseFrac(c);
+                if (uVal !== null && cVal !== null) {
+                    return Math.abs(uVal - cVal) < 1e-9;
+                }
+            }
+
+            // Если в ответе десятичная дробь, сравниваем численно
+            const uNum = parseFloat(u);
+            const cNum = parseFloat(c);
+            if (!isNaN(uNum) && !isNaN(cNum)) {
+                return Math.abs(uNum - cNum) < 1e-9;
+            }
+
+            return false;
+        }
+
+        function checkAll() {
+            let emptyTasks = [];
+            let allFilled = true;
+
+            TASKS.forEach(task => {
+                const input = document.getElementById(`input-${task.id}`);
+                if (!input.value.trim() && !input.disabled) {
+                    emptyTasks.push(task.id);
+                    allFilled = false;
+                }
+            });
+
+            if (!allFilled) {
+                alert(`Заполни все поля! У тебя пустые: №${emptyTasks.join(', №')}`);
+                return;
+            }
+
+            TASKS.forEach(task => {
+                const input = document.getElementById(`input-${task.id}`);
+                if (input.disabled) return;
+
+                const userAnswer = input.value;
+                const isCorrect = checkFraction(userAnswer, task.answer);
+                const status = isCorrect ? 'ok' : 'fail';
+
+                saveResult(task.id, input.value, status);
+                applyResultUI(task.id, input.value, status);
+            });
+
+            updateProgress();
+        }
+
+        // --- UI СТАТУСОВ ---
+        function applyResultUI(taskId, answer, status) {
+            const card = document.getElementById(`card-${taskId}`);
+            const input = document.getElementById(`input-${taskId}`);
+            const statusMsg = document.getElementById(`status-${taskId}`);
+            const task = TASKS.find(t => t.id === taskId);
+
+            input.disabled = true;
+
+            if (status === 'ok') {
+                card.classList.add('is-ok');
+                input.style.borderColor = '#2ecc71';
+                input.style.backgroundColor = 'rgba(46, 204, 113, 0.1)';
+                statusMsg.className = 'status-msg ok';
+                statusMsg.textContent = '✅ Верно!';
+            } else {
+                card.classList.add('is-fail');
+                input.style.borderColor = 'var(--coral)';
+                input.style.backgroundColor = 'rgba(255, 107, 107, 0.1)';
+                statusMsg.className = 'status-msg fail';
+                statusMsg.textContent = `❌ Неверно. Правильный ответ: ${task.answer}`;
+            }
+        }
+
+        function updateProgress() {
+            let checkedCount = 0;
+            let okCount = 0;
+
+            TASKS.forEach(task => {
+                const status = localStorage.getItem(STORAGE_PREFIX + 'status_' + task.id);
+                if (status) {
+                    checkedCount++;
+                    if (status === 'ok') okCount++;
+                }
+            });
+
+            const badge = document.getElementById('progress-badge');
+            if (checkedCount === TASKS.length) {
+                badge.textContent = `✅ ${okCount} / ${TASKS.length} (Готово)`;
+                badge.style.color = okCount === TASKS.length ? '#2ecc71' : 'var(--gold)';
+            } else {
+                badge.textContent = `✅ ${okCount} / ${TASKS.length}`;
+            }
+        }
+
+        // --- СОХРАНЕНИЕ ---
+        function saveResult(taskId, answer, status) {
+            localStorage.setItem(STORAGE_PREFIX + 'val_' + taskId, answer);
+            localStorage.setItem(STORAGE_PREFIX + 'status_' + taskId, status);
+        }
+
+        function saveName() {
+            const name = document.getElementById('student-name').value;
+            localStorage.setItem(STORAGE_PREFIX + 'student_name', name);
+        }
+
+        function loadState() {
+            const savedName = localStorage.getItem(STORAGE_PREFIX + 'student_name');
+            if (savedName) document.getElementById('student-name').value = savedName;
+
+            TASKS.forEach(task => {
+                const input = document.getElementById(`input-${task.id}`);
+                const savedVal = localStorage.getItem(STORAGE_PREFIX + 'val_' + task.id);
+                const savedStatus = localStorage.getItem(STORAGE_PREFIX + 'status_' + task.id);
+
+                if (savedVal) input.value = savedVal;
+                if (savedStatus) applyResultUI(task.id, savedVal, savedStatus);
+            });
+
+            updateProgress();
+        }
+
+        // --- ОТЧЕТЫ ---
+        function generateReportText() {
+            const name = document.getElementById('student-name').value.trim() || 'Не указано';
+            const now = new Date();
+            const dateStr = now.toLocaleString('ru-RU');
+            
+            let text = `📐 ОТВЕТЫ · ДЗ 1 · Дроби\n`;
+            text += `Дата: ${dateStr}\n`;
+            text += `Ученик: ${name}\n\n`;
+
+            let okCount = 0;
+
+            TASKS.forEach(task => {
+                const val = localStorage.getItem(STORAGE_PREFIX + 'val_' + task.id) || '—';
+                const status = localStorage.getItem(STORAGE_PREFIX + 'status_' + task.id);
+                
+                if (status === 'ok') {
+                    text += `✅ Задание ${task.id}. Ответ: ${val}\n`;
+                    okCount++;
+                } else if (status === 'fail') {
+                    text += `❌ Задание ${task.id}. Ответ: ${val} (правильный: ${task.answer})\n`;
+                } else {
+                    text += `— Задание ${task.id}. Ответ: — (не проверено)\n`;
+                }
+            });
+
+            text += `\n✅ Итог: ${okCount} из ${TASKS.length} верно`;
+            return text;
+        }
+
+        function copyResults() {
+            const text = generateReportText();
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Текст скопирован в буфер обмена!');
+            }).catch(err => {
+                alert('Ошибка копирования: ' + err);
+            });
+        }
+
+        function sendToMax() {
+            const text = generateReportText();
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Текст скопирован! Сейчас откроется чат в Макс.');
+                window.open('https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes', '_blank');
+            });
+        }
+
+        // --- ОЧИСТКА ---
+        function openClearModal() {
+            document.getElementById('clear-modal').style.display = 'flex';
+            document.getElementById('clear-password').value = '';
+            document.getElementById('clear-password').focus();
+        }
+
+        function closeClearModal() {
+            document.getElementById('clear-modal').style.display = 'none';
+        }
+
+        function confirmClear() {
+            const pass = document.getElementById('clear-password').value;
+            if (pass === '2810') {
+                localStorage.clear();
+                location.reload();
+            } else {
+                alert('Неверный пароль');
+                document.getElementById('clear-password').value = '';
+            }
+        }
+    </script>
 </body>
 </html>
