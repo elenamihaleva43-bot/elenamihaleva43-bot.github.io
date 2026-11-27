@@ -185,7 +185,7 @@
     <h2>Как записывать ответы</h2>
     <div class="instructions">
       <p><b>Блоки 1–2 (корни уравнения).</b> Перечисли корни в любом порядке через точку с запятой. Например: <span class="sym">2; 3</span> или <span class="sym">3; 2</span>. Можно через запятую или пробел. Знак <span class="sym">x =</span> писать не обязательно. Дробные корни — вида <span class="sym">1/2; 3</span>. Если корень один — просто одно число. Если корней нет — напиши <span class="sym">нет</span> или <span class="sym">∅</span>.</p>
-      <p><b>Блок 3 (разложение на множители).</b> Запиши произведение скобок. Порядок множителей не важен. Пробелы можно не ставить. Знаки умножения <span class="sym">·</span>, <span class="sym">×</span>, <span class="sym">*</span> не нужны — просто скобки подряд. Пример: <span class="sym">(x-2)(x-3)</span> или <span class="sym">(x-3)(x-2)</span>.</p>
+      <p><b>Блок 3 (разложение на множители).</b> Запиши произведение скобок. Порядок множителей не важен. Пробелы можно не ставить. Знаки умножения <span class="sym">·</span>, <span class="sym">×</span>, <span class="sym">*</span> не нужны — просто скобки подряд. Пример: <span class="sym">(x-2)(x-3)</span> или <span class="sym">(x-3)(x-2)</span>. Числовой множитель можно вынести вперёд: <span class="sym">2(x-1)(x+3)</span>.</p>
       <p>После проверки поля <b>блокируются</b>.</p>
     </div>
   </div>
@@ -289,7 +289,7 @@
   <!-- ══════════ БЛОК 3 ══════════ -->
   <div class="part-title">Блок 3 · Разложение на множители</div>
 
-  <div class="task" data-id="11" data-answer="(x+1)(2x-1)(x+3)" data-type="factor">
+  <div class="task" data-id="11" data-answer="(x-1)(x+2)(2x+3)" data-type="factor">
     <div class="task-head"><div class="task-num">11</div><div class="task-title">Разложите на множители</div></div>
     <div class="task-body">
       <div class="task-cond">\(2x^3 + 5x^2 - x - 6\)</div>
@@ -298,7 +298,7 @@
     </div>
   </div>
 
-  <div class="task" data-id="12" data-answer="(x-2)(3x-1)(x+3)" data-type="factor">
+  <div class="task" data-id="12" data-answer="(x+2)(x-3)(3x-1)" data-type="factor">
     <div class="task-head"><div class="task-num">12</div><div class="task-title">Разложите на множители</div></div>
     <div class="task-body">
       <div class="task-cond">\(3x^3 - 4x^2 - 17x + 6\)</div>
@@ -307,7 +307,7 @@
     </div>
   </div>
 
-  <div class="task" data-id="13" data-answer="(x-1)(x+1)(2x-3)(x+2)" data-type="factor">
+  <div class="task" data-id="13" data-answer="(x+1)(2x-1)(x-2)(x+3)" data-type="factor">
     <div class="task-head"><div class="task-num">13</div><div class="task-title">Разложите на множители</div></div>
     <div class="task-body">
       <div class="task-cond">\(2x^4 + 3x^3 - 12x^2 - 7x + 6\)</div>
@@ -316,7 +316,7 @@
     </div>
   </div>
 
-  <div class="task" data-id="14" data-answer="(x-2)(3x-5)(2x+1)" data-type="factor">
+  <div class="task" data-id="14" data-answer="(x-1)(6x^2-x-10)" data-type="factor">
     <div class="task-head"><div class="task-num">14</div><div class="task-title">Разложите на множители</div></div>
     <div class="task-body">
       <div class="task-cond">\(6x^3 - 7x^2 - 9x + 10\)</div>
@@ -325,7 +325,7 @@
     </div>
   </div>
 
-  <div class="task" data-id="15" data-answer="x(x-2)(3x^2+4x+4)" data-type="factor">
+  <div class="task" data-id="15" data-answer="x(3x-2)(x-2)(x+2)" data-type="factor">
     <div class="task-head"><div class="task-num">15</div><div class="task-title">Разложите на множители</div></div>
     <div class="task-body">
       <div class="task-cond">\(3x^4 - 2x^3 - 12x^2 + 8x\)</div>
@@ -371,7 +371,7 @@
 </div>
 
 <script>
-  const STORAGE_KEY = 'tetraktys_dz_quadratic_factor_v1';
+  const STORAGE_KEY = 'tetraktys_dz_quadratic_factor_v2';
   const MAX_URL = 'https://max.ru/u/f9LHodD0cOLjga5OFLMq8VyyMVxwRMnAtUTfKxnMebvnxW-IcLDiq4PIfes';
   const CLEAR_PASSWORD = '2810';
   let state = { studentName: '', tasks: {} };
@@ -422,17 +422,14 @@
      ═══════════════════════════════════════════════════════════ */
   function parseRoots(str){
     if(!str) return [];
-    // нормализация: русские х, запятые → точки, убрать "x=" в начале
     let s = str.trim()
       .replace(/[хХ]/g, 'x')
       .replace(/^x\s*=\s*/i, '')
       .replace(/x\s*=/gi, '')
       .replace(/,/g, ' ')
       .replace(/;/g, ' ');
-    // разбиваем по пробелам
     const parts = s.split(/\s+/).filter(p => p.length > 0);
     return parts.map(p => {
-      // дробь a/b
       const m = p.match(/^(-?\d+)\/(\d+)$/);
       if(m){
         const a = Number(m[1]), b = Number(m[2]);
@@ -449,7 +446,6 @@
     const c = parseRoots(correctStr);
     if(u.length !== c.length) return false;
     if(u.some(isNaN)) return false;
-    // сортировка по возрастанию
     const us = u.slice().sort((a,b) => a - b);
     const cs = c.slice().sort((a,b) => a - b);
     for(let i = 0; i < us.length; i++){
@@ -459,54 +455,273 @@
   }
 
   /* ═══════════════════════════════════════════════════════════
-     ПРОВЕРКА РАЗЛОЖЕНИЯ (порядок множителей не важен)
+     ПРОВЕРКА РАЗЛОЖЕНИЯ
+     Стратегия:
+       1) парсим выражение в полином (объект {степень: коэф})
+       2) раскладываем на множители над Q:
+          каждый множитель приводим к виду c*(x - r) или
+          к неприводимому квадратичному c*(x^2 + px + q)
+       3) сравниваем мультимножества (c_i, r_i) и квадратичных
      ═══════════════════════════════════════════════════════════ */
-  function normalizeFactors(str){
-    if(!str) return null;
-    // нормализация: русские х, убрать пробелы, знаки умножения
-    let s = str.trim()
+
+  // --- парсер выражения в полином (Map степень -> коэффициент) ---
+  // Поддерживает: +, -, *, неявное умножение, скобки, x, числа,
+  // дроби вида a/b, степени x^n.
+  function parsePoly(str){
+    let s = String(str)
       .replace(/[хХ]/g, 'x')
       .replace(/[×·*]/g, '')
       .replace(/\s+/g, '');
-    // если нет скобок — не разложение
-    // извлекаем множители: последовательность ( ... )
-    const factors = [];
-    let i = 0;
-    while(i < s.length){
-      if(s[i] === '('){
-        let depth = 0, j = i;
-        while(j < s.length){
-          if(s[j] === '(') depth++;
-          else if(s[j] === ')'){ depth--; if(depth === 0) break; }
-          j++;
-        }
-        if(depth !== 0) return null;
-        factors.push(s.slice(i, j+1));
-        i = j + 1;
-      } else if(s[i] === 'x' || s[i] === '-' || s[i] === '+' || /\d/.test(s[i])){
-        // одиночный множитель без скобок: например, "x" в x(x-2)(x-3)
-        let j = i;
-        while(j < s.length && s[j] !== '(') j++;
-        factors.push(s.slice(i, j));
-        i = j;
-      } else {
-        i++;
+    if(!s) return null;
+    let pos = 0;
+
+    function peek(){ return s[pos]; }
+    function eat(ch){ if(s[pos] === ch){ pos++; return true; } return false; }
+
+    // poly: Map<int, number>
+    function pZero(){ return new Map(); }
+    function pConst(c){ const m = new Map(); if(Math.abs(c) > 1e-12) m.set(0, c); return m; }
+    function pVar(){ const m = new Map(); m.set(1, 1); return m; }
+    function pClone(p){ return new Map(p); }
+    function pAdd(a, b, sign){
+      const r = pClone(a);
+      for(const [k,v] of b){
+        const cur = (r.get(k) || 0) + sign * v;
+        if(Math.abs(cur) < 1e-12) r.delete(k); else r.set(k, cur);
       }
+      return r;
     }
-    return factors;
+    function pMul(a, b){
+      const r = new Map();
+      for(const [ka,va] of a){
+        for(const [kb,vb] of b){
+          const k = ka + kb;
+          const cur = (r.get(k) || 0) + va * vb;
+          if(Math.abs(cur) < 1e-12) r.delete(k); else r.set(k, cur);
+        }
+      }
+      return r;
+    }
+    function pPow(base, n){
+      let r = pConst(1);
+      for(let i = 0; i < n; i++) r = pMul(r, base);
+      return r;
+    }
+
+    function parseExpr(){
+      let p = parseTerm();
+      while(pos < s.length){
+        if(peek() === '+'){
+          pos++; p = pAdd(p, parseTerm(), +1);
+        } else if(peek() === '-'){
+          pos++; p = pAdd(p, parseTerm(), -1);
+        } else break;
+      }
+      return p;
+    }
+
+    function parseTerm(){
+      let p = parseFactor();
+      while(pos < s.length){
+        const ch = peek();
+        if(ch === '(' || ch === 'x' || /\d/.test(ch)){
+          p = pMul(p, parseFactor());
+        } else break;
+      }
+      return p;
+    }
+
+    function parseFactor(){
+      // число/переменная/скобка, затем возможная степень ^n
+      let base;
+      if(peek() === '('){
+        pos++;
+        base = parseExpr();
+        if(!eat(')')) throw new Error('no close paren');
+      } else if(peek() === 'x'){
+        pos++;
+        base = pVar();
+      } else if(/\d/.test(peek())){
+        let num = '';
+        while(pos < s.length && /\d/.test(s[pos])) num += s[pos++];
+        if(peek() === '.'){
+          num += s[pos++];
+          while(pos < s.length && /\d/.test(s[pos])) num += s[pos++];
+        }
+        if(peek() === '/'){
+          pos++;
+          let den = '';
+          while(pos < s.length && /\d/.test(s[pos])) den += s[pos++];
+          if(!den) throw new Error('bad fraction');
+          base = pConst(Number(num) / Number(den));
+        } else {
+          base = pConst(Number(num));
+        }
+      } else if(peek() === '-'){
+        pos++;
+        base = pMul(pConst(-1), parseFactor());
+      } else {
+        throw new Error('unexpected ' + peek());
+      }
+      // степень
+      if(peek() === '^'){
+        pos++;
+        let nStr = '';
+        if(peek() === '('){ pos++; while(peek() !== ')') nStr += s[pos++]; pos++; }
+        else { while(pos < s.length && /\d/.test(s[pos])) nStr += s[pos++]; }
+        const n = parseInt(nStr, 10);
+        if(isNaN(n) || n < 0) throw new Error('bad power');
+        base = pPow(base, n);
+      }
+      return base;
+    }
+
+    try{
+      const p = parseExpr();
+      if(pos !== s.length) return null;
+      return p;
+    }catch(e){ return null; }
   }
 
-  // Сравнение множителя на "каноничность" — просто как строки
-  // (для надёжности можно было бы разворачивать, но для наших заданий достаточно)
+  // НОД двух чисел (для целых)
+  function gcd(a, b){ a = Math.abs(a); b = Math.abs(b); while(b){ [a,b] = [b, a%b]; } return a; }
+
+  // Приводим полином к списку множителей над Q:
+  // возвращает {leading: число, factors: [ {type:'linear', r: корень, mult: n}, {type:'quad', a,b,c} ]}
+  // для полинома степени <= 4 этого достаточно.
+  function factorOverQ(poly){
+    // poly: Map<deg, coef>
+    if(!poly || poly.size === 0) return null;
+    const degs = Array.from(poly.keys()).sort((a,b)=>b-a);
+    const deg = degs[0];
+    let lead = poly.get(deg);
+    // нормируем на старший коэффициент
+    const norm = new Map();
+    for(const [k,v] of poly) norm.set(k, v / lead);
+
+    const factors = [];
+
+    // ищем рациональные корни p/q, p | a0, q | an (после нормировки an=1, a0 свободный)
+    function tryRationalRoots(p){
+      const res = [];
+      const degs = Array.from(p.keys()).sort((a,b)=>b-a);
+      const d = degs[0];
+      if(d <= 0) return res;
+      // свободный член
+      const a0 = p.get(0) || 0;
+      if(Math.abs(a0) < 1e-12){
+        // корень 0
+        res.push(0);
+        return res;
+      }
+      // перебор small rationals: кандидаты p/q, p|a0, q|an
+      // работаем в рациональных числах: представим a0 как дробь
+      // Для простоты перебираем p/q с q<=20, p<=100 и проверяем деление
+      const candidates = [];
+      for(let q = 1; q <= 20; q++){
+        for(let p = -100; p <= 100; p++){
+          if(p === 0) continue;
+          if(gcd(p, q) !== 1 && q !== 1) continue;
+          candidates.push(p / q);
+        }
+      }
+      // уник
+      const uniq = Array.from(new Set(candidates.map(x => Math.round(x * 1e6) / 1e6)));
+      for(const r of uniq){
+        // проверяем p(r) == 0
+        let val = 0, pow = 1;
+        const sorted = Array.from(p.keys()).sort((a,b)=>a-b);
+        for(const k of sorted){ val += (p.get(k) || 0) * Math.pow(r, k); }
+        if(Math.abs(val) < 1e-9){
+          // делим на (x - r)
+          const q2 = new Map();
+          const sd = Array.from(p.keys()).sort((a,b)=>b-a);
+          const D = sd[0];
+          let carry = 0;
+          for(let k = D; k >= 1; k--){
+            const coef = (p.get(k) || 0) + carry;
+            q2.set(k-1, coef);
+            carry = coef * r;
+          }
+          // остаток должен быть ~0
+          const rem = (p.get(0) || 0) + carry;
+          if(Math.abs(rem) < 1e-9) return {root: r, quotient: q2};
+        }
+      }
+      return null;
+    }
+
+    let work = norm;
+    // извлекаем линейные множители
+    const linearRoots = [];
+    while(true){
+      const sd = Array.from(work.keys()).sort((a,b)=>b-a);
+      if(sd.length === 0) break;
+      const D = sd[0];
+      if(D <= 0) break;
+      if(D === 1){
+        // ax + b = 0 -> x = -b/a
+        const b = work.get(0) || 0;
+        const a = work.get(1) || 1;
+        linearRoots.push(-b / a);
+        work = new Map();
+        break;
+      }
+      const found = tryRationalRoots(work);
+      if(!found) break;
+      linearRoots.push(found.root);
+      work = found.quotient;
+    }
+
+    // остаток work — либо константа, либо неприводимый многочлен
+    const sd = Array.from(work.keys()).sort((a,b)=>b-a);
+    let quadFactor = null;
+    if(sd.length > 0){
+      const D = sd[0];
+      if(D === 2){
+        const a = work.get(2) || 1;
+        const b = work.get(1) || 0;
+        const c = work.get(0) || 0;
+        quadFactor = [a, b, c];
+      } else if(D > 2){
+        // не должно случаться для наших задач, но на всякий случай
+        quadFactor = null;
+      }
+    }
+
+    // Группируем кратные корни
+    const rootMap = new Map();
+    for(const r of linearRoots){
+      const key = Math.round(r * 1e6) / 1e6;
+      rootMap.set(key, (rootMap.get(key) || 0) + 1);
+    }
+
+    return { lead: lead, roots: rootMap, quad: quadFactor };
+  }
+
+  // Канонизация множителя-квадратичного: приводим к виду x^2 + px + q
+  function canonQuad(q){
+    if(!q) return null;
+    const [a,b,c] = q;
+    if(Math.abs(a) < 1e-12) return null;
+    return [1, b/a, c/a];
+  }
+
   function factorsEqual(userStr, correctStr){
-    const u = normalizeFactors(userStr);
-    const c = normalizeFactors(correctStr);
+    const u = parsePoly(userStr);
+    const c = parsePoly(correctStr);
     if(!u || !c) return false;
-    if(u.length !== c.length) return false;
-    const us = u.slice().sort();
-    const cs = c.slice().sort();
-    for(let i = 0; i < us.length; i++){
-      if(us[i] !== cs[i]) return false;
+
+    // Сравниваем как полиномы — самый надёжный способ:
+    // пользователь может записать иначе, но математически то же самое
+    const keysU = Array.from(u.keys()).sort((a,b)=>a-b);
+    const keysC = Array.from(c.keys()).sort((a,b)=>a-b);
+    if(keysU.length !== keysC.length) return false;
+    for(let i = 0; i < keysU.length; i++){
+      if(keysU[i] !== keysC[i]) return false;
+      const vu = u.get(keysU[i]);
+      const vc = c.get(keysC[i]);
+      if(Math.abs(vu - vc) > 1e-9 * Math.max(1, Math.abs(vc))) return false;
     }
     return true;
   }
@@ -676,7 +891,7 @@
     });
     document.getElementById('confirmClear').addEventListener('click', function(){
       if(document.getElementById('clearPassword').value.trim() === CLEAR_PASSWORD){
-        localStorage.clear(); location.reload();
+        localStorage.removeItem(STORAGE_KEY); location.reload();
       } else alert('Неверный пароль');
     });
     document.getElementById('clearPassword').addEventListener('keydown', function(e){
